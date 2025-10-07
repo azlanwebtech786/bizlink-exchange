@@ -44,6 +44,38 @@
       margin-top: 15px;
       color: #444;
     }
+    .contact-box {
+      margin-top: 25px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .contact-box h3 {
+      color: #0077b6;
+      margin-bottom: 10px;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    textarea {
+      resize: vertical;
+    }
+    button {
+      background: #0077b6;
+      color: white;
+      border: none;
+      margin-top: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #023e8a;
+    }
     .back {
       display: inline-block;
       margin-top: 20px;
@@ -77,10 +109,8 @@
   <footer>© 2025 BizLink Exchange</footer>
 
   <script>
-    // Get query parameter ?id=
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-
     const detailBox = document.getElementById("detail");
     const listings = JSON.parse(localStorage.getItem("bizListings")) || [];
 
@@ -101,8 +131,43 @@
           <h3>About Business:</h3>
           <p>${biz.desc}</p>
         </div>
+
+        <div class="contact-box">
+          <h3>📩 Contact ${biz.owner}</h3>
+          <form id="contactForm">
+            <input type="text" id="senderName" placeholder="Your Name" required>
+            <input type="email" id="senderEmail" placeholder="Your Email" required>
+            <textarea id="senderMsg" rows="4" placeholder="Your Message..." required></textarea>
+            <button type="submit">Send Message</button>
+          </form>
+        </div>
+
         <a href="business-listing.html" class="back">← Back to Listings</a>
       `;
+
+      // Message handling
+      document.getElementById("contactForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("senderName").value;
+        const email = document.getElementById("senderEmail").value;
+        const msg = document.getElementById("senderMsg").value;
+
+        const messageData = {
+          to: biz.email,
+          toBusiness: biz.name,
+          fromName: name,
+          fromEmail: email,
+          message: msg,
+          date: new Date().toLocaleString()
+        };
+
+        let allMsgs = JSON.parse(localStorage.getItem("contactMessages")) || [];
+        allMsgs.push(messageData);
+        localStorage.setItem("contactMessages", JSON.stringify(allMsgs));
+
+        alert("✅ Message sent successfully to " + biz.name);
+        document.getElementById("contactForm").reset();
+      });
     }
   </script>
 </body>
