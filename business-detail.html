@@ -177,32 +177,32 @@
         </div>
 
         <a href="business-listing.html" class="back">← Back to Listings</a>
-      `;
-
-      // Message handling
-      document.getElementById("contactForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const name = document.getElementById("senderName").value;
-        const email = document.getElementById("senderEmail").value;
-        const msg = document.getElementById("senderMsg").value;
-
-        const messageData = {
-          to: biz.email,
-          toBusiness: biz.name,
-          fromName: name,
-          fromEmail: email,
-          message: msg,
-          date: new Date().toLocaleString()
-        };
-
-        let allMsgs = JSON.parse(localStorage.getItem("contactMessages")) || [];
-        allMsgs.push(messageData);
-        localStorage.setItem("contactMessages", JSON.stringify(allMsgs));
-
-        alert("✅ Message sent successfully to " + biz.name);
-        document.getElementById("contactForm").reset();
-      });
-    }
   </script>
+  <script>
+document.getElementById("contactForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("senderName").value;
+  const email = document.getElementById("senderEmail").value;
+  const msg = document.getElementById("senderMsg").value;
+
+  const messageData = {
+    to: biz.email,
+    toBusiness: biz.name,
+    fromName: name,
+    fromEmail: email,
+    message: msg,
+    date: new Date().toLocaleString()
+  };
+
+  let allMsgs = JSON.parse(localStorage.getItem("contactMessages")) || [];
+  allMsgs.push(messageData);
+  localStorage.setItem("contactMessages", JSON.stringify(allMsgs));
+
+  alert("✅ Message sent successfully to " + biz.name);
+  document.getElementById("contactForm").reset();
+});
+</script>
+
 </body>
+  
 </html>
