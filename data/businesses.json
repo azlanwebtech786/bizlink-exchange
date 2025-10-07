@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "Azlan WebTech",
+    "category": "IT Services",
+    "location": "Delhi",
+    "phone": "9876543210",
+    "email": "info@azlanwebtech.com",
+    "description": "We provide complete web and app development solutions for startups and enterprises."
+  },
+  {
+    "id": 2,
+    "name": "BizLink Digital",
+    "category": "Marketing Agency",
+    "location": "Mumbai",
+    "phone": "9123456780",
+    "email": "contact@bizlinkdigital.com",
+    "description": "Helping small businesses grow through digital marketing, SEO, and branding services."
+  },
+  {
+    "id": 3,
+    "name": "NextGen Traders",
+    "category": "E-commerce",
+    "location": "Bangalore",
+    "phone": "9001122334",
+    "email": "info@nextgentraders.com",
+    "description": "We sell high-quality electronics and accessories at affordable prices."
+  }
+]
