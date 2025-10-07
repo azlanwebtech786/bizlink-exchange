@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard - BizLink Exchange</title>
   <style>
     body {
@@ -72,6 +72,18 @@
       padding: 20px;
       color: #888;
     }
+    button.delete {
+      background: #e63946;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button.delete:hover {
+      background: #d00000;
+    }
     footer {
       text-align: center;
       padding: 15px;
@@ -102,6 +114,7 @@
           <th>Email</th>
           <th>Location</th>
           <th>Category</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -120,6 +133,7 @@
           <th>Email</th>
           <th>Message</th>
           <th>Date</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -133,9 +147,14 @@
     // Load Businesses
     const bizTable = document.querySelector("#bizTable tbody");
     const bizEmpty = document.getElementById("bizEmpty");
-    const businesses = JSON.parse(localStorage.getItem("bizListings")) || [];
+    let businesses = JSON.parse(localStorage.getItem("bizListings")) || [];
 
-    if (businesses.length > 0) {
+    function renderBusinesses() {
+      bizTable.innerHTML = "";
+      if (businesses.length === 0) {
+        bizEmpty.style.display = "block";
+        return;
+      }
       bizEmpty.style.display = "none";
       businesses.forEach((b, i) => {
         const row = document.createElement("tr");
@@ -147,17 +166,31 @@
           <td>${b.email}</td>
           <td>${b.location}</td>
           <td>${b.category}</td>
+          <td><button class="delete" onclick="deleteBusiness(${i})">Delete</button></td>
         `;
         bizTable.appendChild(row);
       });
     }
 
+    function deleteBusiness(index) {
+      if (confirm("Delete this business?")) {
+        businesses.splice(index, 1);
+        localStorage.setItem("bizListings", JSON.stringify(businesses));
+        renderBusinesses();
+      }
+    }
+
     // Load Messages
     const msgTable = document.querySelector("#msgTable tbody");
     const msgEmpty = document.getElementById("msgEmpty");
-    const messages = JSON.parse(localStorage.getItem("contactMessages")) || [];
+    let messages = JSON.parse(localStorage.getItem("contactMessages")) || [];
 
-    if (messages.length > 0) {
+    function renderMessages() {
+      msgTable.innerHTML = "";
+      if (messages.length === 0) {
+        msgEmpty.style.display = "block";
+        return;
+      }
       msgEmpty.style.display = "none";
       messages.forEach((m, i) => {
         const row = document.createElement("tr");
@@ -168,10 +201,23 @@
           <td>${m.fromEmail}</td>
           <td>${m.message}</td>
           <td>${m.date}</td>
+          <td><button class="delete" onclick="deleteMessage(${i})">Delete</button></td>
         `;
         msgTable.appendChild(row);
       });
     }
+
+    function deleteMessage(index) {
+      if (confirm("Delete this message?")) {
+        messages.splice(index, 1);
+        localStorage.setItem("contactMessages", JSON.stringify(messages));
+        renderMessages();
+      }
+    }
+
+    // Render both tables
+    renderBusinesses();
+    renderMessages();
   </script>
 </body>
 </html>
