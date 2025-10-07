@@ -3,186 +3,150 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizLink Exchange - Business Details</title>
+  <title>Business Details | BizLink Exchange</title>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
+      font-family: "Poppins", sans-serif;
       background: linear-gradient(135deg, #9333ea, #3b82f6);
+      color: #fff;
       margin: 0;
       padding: 0;
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      overflow-x: hidden;
     }
 
     header {
       text-align: center;
-      background: rgba(255,255,255,0.15);
-      padding: 1rem;
-      font-size: 1.8rem;
-      font-weight: bold;
-      backdrop-filter: blur(10px);
-      width: 100%;
+      padding: 2rem 0;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
     }
 
-    .detail-card {
-      background: rgba(255,255,255,0.1);
-      margin: 2rem;
-      padding: 2rem;
-      border-radius: 20px;
-      max-width: 700px;
-      width: 90%;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
-      animation: fadeIn 0.6s ease-in-out;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.8s ease-in-out;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     h2 {
-      text-align: center;
-      color: #fff;
-      margin-bottom: 1rem;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
     }
 
     p {
-      color: #e5e7eb;
-      margin: 0.3rem 0;
-      font-size: 1rem;
-    }
-
-    strong {
-      color: #fff;
-    }
-
-    .contact-form {
-      margin-top: 2rem;
-      background: rgba(255,255,255,0.1);
-      padding: 1.5rem;
-      border-radius: 16px;
-    }
-
-    label {
-      display: block;
-      margin: 0.5rem 0 0.3rem;
-      font-weight: bold;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 0.7rem;
-      border-radius: 8px;
-      border: none;
-      margin-bottom: 1rem;
-      font-family: inherit;
-    }
-
-    button {
-      width: 100%;
-      background: #3b82f6;
-      border: none;
-      color: white;
-      font-size: 1rem;
-      font-weight: bold;
-      padding: 0.8rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    button:hover {
-      background: #2563eb;
-      transform: scale(1.02);
-    }
-
-    .success-message {
-      background: rgba(16,185,129,0.2);
-      border: 1px solid #10b981;
-      color: #d1fae5;
-      padding: 0.7rem;
-      border-radius: 8px;
-      text-align: center;
-      margin-top: 1rem;
-      display: none;
+      margin: 0.5rem 0;
+      color: #f0f0f0;
+      line-height: 1.6;
     }
 
     .back-btn {
       display: inline-block;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
+      background: #2563eb;
+      color: white;
+      padding: 0.7rem 1.5rem;
+      border-radius: 10px;
       text-decoration: none;
-      color: #fff;
-      font-weight: bold;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #1e40af;
     }
 
     footer {
       text-align: center;
       padding: 1rem;
-      background: rgba(0,0,0,0.25);
-      width: 100%;
       font-size: 0.9rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+    }
+
+    .highlight {
+      color: #ffe082;
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Business Details</h1>
+    <p>Explore detailed information about this business</p>
+  </header>
 
-  <header>Business Details</header>
+  <div class="container" id="businessDetails"></div>
 
-  <div class="detail-card" id="businessDetails"></div>
-
-  <footer>© 2025 BizLink Exchange | All rights reserved</footer>
+  <footer>
+    <p>© 2025 BizLink Exchange | Built with 💖 by Azlan & ChatGPT</p>
+  </footer>
 
   <script>
     const businesses = [
       {
         id: 1,
         name: "BizLink Digital",
-        category: "Marketing Agency",
-        location: "Mumbai",
-        phone: "9123456780",
+        category: "Marketing",
+        city: "Mumbai",
+        description: "A leading marketing agency helping startups and brands reach global audiences through innovative digital strategies.",
         email: "contact@bizlinkdigital.com",
-        description: "Helping small businesses grow through digital marketing, SEO, and branding services."
+        phone: "+91 9876543210",
+        website: "https://bizlinkdigital.com"
       },
       {
         id: 2,
         name: "TechNova Solutions",
-        category: "Software Development",
-        location: "Bangalore",
-        phone: "9824567890",
-        email: "info@technova.com",
-        description: "Building powerful web and mobile applications for startups and enterprises."
+        category: "IT",
+        city: "Bangalore",
+        description: "We specialize in cutting-edge web development, cloud solutions, and app design tailored for businesses of tomorrow.",
+        email: "support@technova.com",
+        phone: "+91 9123456780",
+        website: "https://technova.com"
       },
       {
         id: 3,
-        name: "GreenLeaf Organics",
-        category: "Organic Farming",
-        location: "Pune",
-        phone: "9988776655",
-        email: "hello@greenleaforganic.in",
-        description: "Promoting sustainable agriculture and delivering fresh organic produce."
+        name: "UrbanStyle Boutique",
+        category: "Fashion",
+        city: "Delhi",
+        description: "Trendy clothing store offering latest urban fashion collections for men and women with a touch of elegance.",
+        email: "info@urbanstyle.com",
+        phone: "+91 9988776655",
+        website: "https://urbanstyle.com"
       },
       {
         id: 4,
-        name: "UrbanStyle Interiors",
-        category: "Interior Design",
-        location: "Delhi",
-        phone: "9786543210",
-        email: "support@urbanstyle.in",
-        description: "Modern interior design solutions for residential and commercial spaces."
+        name: "FitLife Gym",
+        category: "Fitness",
+        city: "Pune",
+        description: "Your ultimate destination for fitness and wellness — join us for personal training, yoga, and nutrition programs.",
+        email: "hello@fitlife.com",
+        phone: "+91 8877665544",
+        website: "https://fitlife.com"
       },
       {
         id: 5,
-        name: "FinEdge Advisors",
-        category: "Finance & Consulting",
-        location: "Hyderabad",
-        phone: "8877665544",
-        email: "care@finedge.com",
-        description: "Helping businesses and individuals make smarter financial decisions."
+        name: "BrightMind Academy",
+        category: "Education",
+        city: "Hyderabad",
+        description: "Empowering students with high-quality education, mentorship, and career guidance for a brighter future.",
+        email: "admissions@brightmind.com",
+        phone: "+91 7766554433",
+        website: "https://brightmind.com"
       }
     ];
 
@@ -192,44 +156,24 @@
 
     const container = document.getElementById("businessDetails");
 
-    if (!business) {
-      container.innerHTML = `<p>No business selected. Please go back.</p>`;
-    } else {
+    if (business) {
       container.innerHTML = `
         <h2>${business.name}</h2>
         <p><strong>Category:</strong> ${business.category}</p>
-        <p><strong>Location:</strong> ${business.location}</p>
-        <p><strong>Phone:</strong> ${business.phone}</p>
-        <p><strong>Email:</strong> ${business.email}</p>
+        <p><strong>Location:</strong> ${business.city}</p>
         <p><strong>Description:</strong> ${business.description}</p>
-        <a href="business-listing.html" class="back-btn">← Back to Listings</a>
-
-        <div class="contact-form">
-          <h3>📩 Contact ${business.name}</h3>
-          <form id="contactForm">
-            <label>Your Name:</label>
-            <input type="text" id="name" required placeholder="Enter your name" />
-            
-            <label>Your Email:</label>
-            <input type="email" id="email" required placeholder="Enter your email" />
-            
-            <label>Message:</label>
-            <textarea id="message" rows="4" placeholder="Type your message here..."></textarea>
-            
-            <button type="submit">Send Message</button>
-          </form>
-          <div class="success-message" id="successMsg">✅ Message sent successfully!</div>
-        </div>
+        <p><strong>Email:</strong> <span class="highlight">${business.email}</span></p>
+        <p><strong>Phone:</strong> <span class="highlight">${business.phone}</span></p>
+        <p><strong>Website:</strong> <a href="${business.website}" target="_blank" class="highlight">${business.website}</a></p>
+        <a href="business-listing.html" class="back-btn">⬅ Back to Listings</a>
+      `;
+    } else {
+      container.innerHTML = `
+        <h2>Business Not Found 😕</h2>
+        <p>The business you're looking for does not exist or may have been removed.</p>
+        <a href="business-listing.html" class="back-btn">⬅ Go Back</a>
       `;
     }
-
-    // Form functionality
-    document.addEventListener("submit", e => {
-      e.preventDefault();
-      localStorage.setItem("message", document.getElementById("message").value);
-      document.getElementById("successMsg").style.display = "block";
-      e.target.reset();
-    });
   </script>
 </body>
 </html>
