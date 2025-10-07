@@ -3,206 +3,146 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Business Details - BizLink Exchange</title>
+  <title>Business Details | BizLink Exchange</title>
   <style>
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
+      font-family: "Poppins", sans-serif;
+      background: #f2f6fc;
       margin: 0;
-      background: #f1f5f9;
+      padding: 0;
     }
     header {
-      background: linear-gradient(90deg, #0077b6, #00b4d8);
+      background: #0077b6;
       color: white;
       text-align: center;
-      padding: 25px;
-      font-size: 26px;
-      font-weight: bold;
+      padding: 1rem 0;
     }
     .container {
-      width: 90%;
-      max-width: 800px;
-      margin: 40px auto;
+      max-width: 700px;
+      margin: 2rem auto;
       background: white;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
-    h2 {
-      color: #0077b6;
-      font-size: 26px;
-      margin-bottom: 10px;
-    }
-    .info p {
-      font-size: 16px;
-      color: #333;
-      margin: 8px 0;
-    }
-    .desc {
-      background: #f8f9fa;
-      padding: 15px;
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      background: #0077b6;
+      color: white;
+      padding: 0.6rem 1.2rem;
       border-radius: 8px;
-      margin-top: 15px;
-      color: #444;
+      transition: 0.3s;
     }
-    .contact-box {
-      margin-top: 25px;
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 10px;
+    .btn:hover {
+      background: #023e8a;
     }
-    .contact-box h3 {
-      color: #0077b6;
-      margin-bottom: 10px;
-    }
-    input, textarea, button {
+    form input, form textarea {
       width: 100%;
-      padding: 10px;
-      margin-top: 8px;
+      margin-bottom: 1rem;
+      padding: 0.8rem;
       border-radius: 8px;
       border: 1px solid #ccc;
-      font-size: 15px;
-    }
-    textarea {
-      resize: vertical;
+      font-size: 1rem;
     }
     button {
       background: #0077b6;
       color: white;
       border: none;
-      margin-top: 10px;
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
+      font-size: 1rem;
     }
     button:hover {
       background: #023e8a;
     }
-    .back {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 18px;
-      background: #0077b6;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      transition: 0.3s;
-    }
-    .back:hover {
-      background: #023e8a;
+    .loading {
+      text-align: center;
+      color: #777;
+      padding: 2rem 0;
     }
     footer {
-      text-align: center;
-      padding: 15px;
-      background-color: #0077b6;
+      background: #023e8a;
       color: white;
-      font-size: 14px;
-      margin-top: 30px;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <header>Business Details</header>
+  <header>
+    <h1>Business Details</h1>
+  </header>
 
-  <div class="container" id="detail">
-    <p>Loading business details...</p>
+  <div class="container" id="bizDetail">
+    <p class="loading">Loading business details...</p>
   </div>
 
-  <footer>© 2025 BizLink Exchange</footer>
+  <footer>
+    © 2025 BizLink Exchange
+  </footer>
 
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-    const detailBox = document.getElementById("detail");
-    const listings = JSON.parse(localStorage.getItem("bizListings")) || [];
+    // ✅ Initialize EmailJS
+    (function() {
+      emailjs.init("YOUR_PUBLIC_KEY_HERE"); // e.g., "Vd4gDk2zA_789xyPq"
+    })();
 
-    if (!id || !listings[id]) {
-      detailBox.innerHTML = "<p>❌ Business not found!</p>";
-    } else {
-      const biz = listings[id];
-      detailBox.innerHTML = `
-        <h2>${biz.name}</h2>
-        <div class="info">
-          <p><strong>Owner:</strong> ${biz.owner}</p>
-          <p><strong>Mobile:</strong> ${biz.phone}</p>
-          <p><strong>Email:</strong> ${biz.email}</p>
-          <p><strong>Location:</strong> ${biz.location}</p>
-          <p><strong>Category:</strong> ${biz.category}</p>
-        </div>
-        <div class="desc">
-          <h3>About Business:</h3>
-          <p>${biz.desc}</p>
-        </div>
+    // ✅ Load business details from localStorage
+    const bizDetail = document.getElementById("bizDetail");
+    const selectedBiz = JSON.parse(localStorage.getItem("selectedBusiness"));
 
-        <div class="contact-box">
-          <h3>📩 Contact ${biz.owner}</h3>
-          <form id="contactForm">
-            <input type="text" id="senderName" placeholder="Your Name" required>
-            <input type="email" id="senderEmail" placeholder="Your Email" required>
-            <textarea id="senderMsg" rows="4" placeholder="Your Message..." required></textarea>
-            <button type="submit">Send Message</button>
-          </form>
-          <!-- EmailJS SDK -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script>
-  // ⚙️ Step 1: Initialize EmailJS (use your own PUBLIC KEY)
-  (function(){
-    emailjs.init("2rcFKuVD8PHLYZJqc"); // Example: "Vd4gDk2zA_789xyPq"
-  })();
+    if (selectedBiz) {
+      bizDetail.innerHTML = `
+        <h2>${selectedBiz.name}</h2>
+        <p><strong>Category:</strong> ${selectedBiz.category}</p>
+        <p><strong>Location:</strong> ${selectedBiz.location}</p>
+        <p><strong>Description:</strong> ${selectedBiz.description}</p>
+        <hr>
+        <h3>📩 Contact ${selectedBiz.name}</h3>
+        <form id="contactForm">
+          <input type="text" id="senderName" name="from_name" placeholder="Your Name" required>
+          <input type="email" id="senderEmail" name="from_email" placeholder="Your Email" required>
+          <input type="tel" id="senderPhone" name="phone" placeholder="Your Mobile Number" required>
+          <textarea id="senderMsg" name="message" placeholder="Write your message..." required></textarea>
+          <button type="submit">Send Message</button>
+        </form>
+        <br>
+        <a href="business-listing.html" class="btn">← Back to Listings</a>
+      `;
 
-  // ⚙️ Step 2: Handle form submission
-  document.getElementById("contactForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+      // ✅ Handle form submission
+      document.getElementById("contactForm").addEventListener("submit", function(e) {
+        e.preventDefault();
 
-    const form = e.target;
-    const params = {
-      to_business: "Azlan WebTech",  // Business name (static for now)
-      from_name: form.name.value,
-      from_email: form.email.value,
-      message: form.message.value,
-      date: new Date().toLocaleString()
-    };
+        const params = {
+          to_business: selectedBiz.name,
+          from_name: document.getElementById("senderName").value,
+          from_email: document.getElementById("senderEmail").value,
+          phone: document.getElementById("senderPhone").value,
+          message: document.getElementById("senderMsg").value,
+          date: new Date().toLocaleString()
+        };
 
-    // ⚙️ Step 3: Send Email
-    emailjs.send("service_js2oegb", "template_bbacw1b", params)
-      .then(() => {
-        alert("✅ Message sent successfully!");
-        form.reset();
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("❌ Failed to send message. Try again later.");
+        emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", params)
+          .then(() => {
+            alert("✅ Message sent successfully to " + selectedBiz.name);
+            e.target.reset();
+          })
+          .catch(err => {
+            console.error(err);
+            alert("❌ Failed to send message. Try again later.");
+          });
       });
-  });
-</script>
 
-        </div>
-
-        <a href="business-listing.html" class="back">← Back to Listings</a>
+    } else {
+      bizDetail.innerHTML = "<p>No business selected. Please go back.</p>";
+    }
   </script>
-  <script>
-document.getElementById("contactForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const name = document.getElementById("senderName").value;
-  const email = document.getElementById("senderEmail").value;
-  const msg = document.getElementById("senderMsg").value;
-
-  const messageData = {
-    to: biz.email,
-    toBusiness: biz.name,
-    fromName: name,
-    fromEmail: email,
-    message: msg,
-    date: new Date().toLocaleString()
-  };
-
-  let allMsgs = JSON.parse(localStorage.getItem("contactMessages")) || [];
-  allMsgs.push(messageData);
-  localStorage.setItem("contactMessages", JSON.stringify(allMsgs));
-
-  alert("✅ Message sent successfully to " + biz.name);
-  document.getElementById("contactForm").reset();
-});
-</script>
-
 </body>
-  
 </html>
