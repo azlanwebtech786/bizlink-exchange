@@ -82,12 +82,57 @@
       color: #ffe082;
       font-weight: 600;
     }
+
+    /* Contact + Review */
+    .form-section {
+      margin-top: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin: 0.5rem 0 0.3rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #22c55e;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      color: white;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    .review {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Business Details</h1>
-    <p>Explore detailed information about this business</p>
+    <p>Explore details, contact, and leave a review!</p>
   </header>
 
   <div class="container" id="businessDetails"></div>
@@ -98,56 +143,11 @@
 
   <script>
     const businesses = [
-      {
-        id: 1,
-        name: "BizLink Digital",
-        category: "Marketing",
-        city: "Mumbai",
-        description: "A leading marketing agency helping startups and brands reach global audiences through innovative digital strategies.",
-        email: "contact@bizlinkdigital.com",
-        phone: "+91 9876543210",
-        website: "https://bizlinkdigital.com"
-      },
-      {
-        id: 2,
-        name: "TechNova Solutions",
-        category: "IT",
-        city: "Bangalore",
-        description: "We specialize in cutting-edge web development, cloud solutions, and app design tailored for businesses of tomorrow.",
-        email: "support@technova.com",
-        phone: "+91 9123456780",
-        website: "https://technova.com"
-      },
-      {
-        id: 3,
-        name: "UrbanStyle Boutique",
-        category: "Fashion",
-        city: "Delhi",
-        description: "Trendy clothing store offering latest urban fashion collections for men and women with a touch of elegance.",
-        email: "info@urbanstyle.com",
-        phone: "+91 9988776655",
-        website: "https://urbanstyle.com"
-      },
-      {
-        id: 4,
-        name: "FitLife Gym",
-        category: "Fitness",
-        city: "Pune",
-        description: "Your ultimate destination for fitness and wellness — join us for personal training, yoga, and nutrition programs.",
-        email: "hello@fitlife.com",
-        phone: "+91 8877665544",
-        website: "https://fitlife.com"
-      },
-      {
-        id: 5,
-        name: "BrightMind Academy",
-        category: "Education",
-        city: "Hyderabad",
-        description: "Empowering students with high-quality education, mentorship, and career guidance for a brighter future.",
-        email: "admissions@brightmind.com",
-        phone: "+91 7766554433",
-        website: "https://brightmind.com"
-      }
+      { id: 1, name: "BizLink Digital", category: "Marketing", city: "Mumbai", description: "A leading marketing agency helping startups and brands reach global audiences through innovative digital strategies.", email: "contact@bizlinkdigital.com", phone: "+91 9876543210", website: "https://bizlinkdigital.com" },
+      { id: 2, name: "TechNova Solutions", category: "IT", city: "Bangalore", description: "We specialize in cutting-edge web development, cloud solutions, and app design tailored for businesses of tomorrow.", email: "support@technova.com", phone: "+91 9123456780", website: "https://technova.com" },
+      { id: 3, name: "UrbanStyle Boutique", category: "Fashion", city: "Delhi", description: "Trendy clothing store offering latest urban fashion collections for men and women with a touch of elegance.", email: "info@urbanstyle.com", phone: "+91 9988776655", website: "https://urbanstyle.com" },
+      { id: 4, name: "FitLife Gym", category: "Fitness", city: "Pune", description: "Your ultimate destination for fitness and wellness — join us for personal training, yoga, and nutrition programs.", email: "hello@fitlife.com", phone: "+91 8877665544", website: "https://fitlife.com" },
+      { id: 5, name: "BrightMind Academy", category: "Education", city: "Hyderabad", description: "Empowering students with high-quality education, mentorship, and career guidance for a brighter future.", email: "admissions@brightmind.com", phone: "+91 7766554433", website: "https://brightmind.com" }
     ];
 
     const params = new URLSearchParams(window.location.search);
@@ -165,8 +165,59 @@
         <p><strong>Email:</strong> <span class="highlight">${business.email}</span></p>
         <p><strong>Phone:</strong> <span class="highlight">${business.phone}</span></p>
         <p><strong>Website:</strong> <a href="${business.website}" target="_blank" class="highlight">${business.website}</a></p>
+
+        <div class="form-section">
+          <h3>📩 Contact ${business.name}</h3>
+          <form id="contactForm">
+            <label>Your Name</label>
+            <input type="text" id="userName" required>
+            <label>Your Email</label>
+            <input type="email" id="userEmail" required>
+            <label>Your Message</label>
+            <textarea id="userMessage" rows="3" required></textarea>
+            <button type="submit">Send Message</button>
+          </form>
+        </div>
+
+        <div class="form-section">
+          <h3>⭐ Leave a Review</h3>
+          <form id="reviewForm">
+            <label>Your Name</label>
+            <input type="text" id="reviewerName" required>
+            <label>Your Review</label>
+            <textarea id="reviewText" rows="3" required></textarea>
+            <button type="submit">Submit Review</button>
+          </form>
+          <div id="reviews"></div>
+        </div>
+
         <a href="business-listing.html" class="back-btn">⬅ Back to Listings</a>
       `;
+
+      // Contact Form
+      document.getElementById("contactForm").addEventListener("submit", e => {
+        e.preventDefault();
+        alert("📤 Message sent successfully!");
+        e.target.reset();
+      });
+
+      // Review Form
+      const reviewsDiv = document.getElementById("reviews");
+      const reviewForm = document.getElementById("reviewForm");
+
+      reviewForm.addEventListener("submit", e => {
+        e.preventDefault();
+        const name = document.getElementById("reviewerName").value;
+        const text = document.getElementById("reviewText").value;
+
+        const div = document.createElement("div");
+        div.classList.add("review");
+        div.innerHTML = `<strong>${name}</strong><p>${text}</p>`;
+        reviewsDiv.appendChild(div);
+
+        reviewForm.reset();
+      });
+
     } else {
       container.innerHTML = `
         <h2>Business Not Found 😕</h2>
