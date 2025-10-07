@@ -1,148 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Business Details | BizLink Exchange</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Details - BizLink Exchange</title>
   <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: #f2f6fc;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #0077b6;
-      color: white;
-      text-align: center;
-      padding: 1rem 0;
-    }
-    .container {
-      max-width: 700px;
-      margin: 2rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    }
-    .btn {
-      display: inline-block;
-      text-decoration: none;
-      background: #0077b6;
-      color: white;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      transition: 0.3s;
-    }
-    .btn:hover {
-      background: #023e8a;
-    }
-    form input, form textarea {
-      width: 100%;
-      margin-bottom: 1rem;
-      padding: 0.8rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-    button {
-      background: #0077b6;
-      color: white;
-      border: none;
-      padding: 0.8rem 1.2rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    button:hover {
-      background: #023e8a;
-    }
-    .loading {
-      text-align: center;
-      color: #777;
-      padding: 2rem 0;
-    }
-    footer {
-      background: #023e8a;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-      font-size: 0.9rem;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f7fb; }
+    .container { max-width: 700px; margin: auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #0077b6; }
+    p { color: #333; line-height: 1.6; }
+    a { display: block; text-align: center; margin-top: 20px; text-decoration: none; background: #0077b6; color: white; padding: 10px 15px; border-radius: 5px; }
+    a:hover { background: #023e8a; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Business Details</h1>
-  </header>
+  <div class="container" id="detailContainer">Loading business details...</div>
 
-  <div class="container" id="bizDetail">
-    <p class="loading">Loading business details...</p>
-  </div>
-
-  <footer>
-    © 2025 BizLink Exchange
-  </footer>
-
-  <!-- EmailJS SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    // ✅ Initialize EmailJS
-    (function() {
-      emailjs.init("2rcFKuVD8PHLYZJqc"); // e.g., "Vd4gDk2zA_789xyPq"
-    })();
+    const urlParams = new URLSearchParams(window.location.search);
+    const bizId = urlParams.get("id");
 
-    // ✅ Load business details from localStorage
-    const bizDetail = document.getElementById("bizDetail");
-    const selectedBiz = JSON.parse(localStorage.getItem("selectedBusiness"));
-
-    if (selectedBiz) {
-      bizDetail.innerHTML = `
-        <h2>${selectedBiz.name}</h2>
-        <p><strong>Category:</strong> ${selectedBiz.category}</p>
-        <p><strong>Location:</strong> ${selectedBiz.location}</p>
-        <p><strong>Description:</strong> ${selectedBiz.description}</p>
-        <hr>
-        <h3>📩 Contact ${selectedBiz.name}</h3>
-        <form id="contactForm">
-          <input type="text" id="senderName" name="from_name" placeholder="Your Name" required>
-          <input type="email" id="senderEmail" name="from_email" placeholder="Your Email" required>
-          <input type="tel" id="senderPhone" name="phone" placeholder="Your Mobile Number" required>
-          <textarea id="senderMsg" name="message" placeholder="Write your message..." required></textarea>
-          <button type="submit">Send Message</button>
-        </form>
-        <br>
-        <a href="business-listing.html" class="btn">← Back to Listings</a>
-      `;
-
-      // ✅ Handle form submission
-      document.getElementById("contactForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        const params = {
-          to_business: selectedBiz.name,
-          from_name: document.getElementById("senderName").value,
-          from_email: document.getElementById("senderEmail").value,
-          phone: document.getElementById("senderPhone").value,
-          message: document.getElementById("senderMsg").value,
-          date: new Date().toLocaleString()
-        };
-
-        emailjs.send("service_js2oegb", "template_bbacw1b", params)
-          .then(() => {
-            alert("✅ Message sent successfully to " + selectedBiz.name);
-            e.target.reset();
-          })
-          .catch(err => {
-            console.error(err);
-            alert("❌ Failed to send message. Try again later.");
-          });
+    fetch('https://azlanwebtech786.github.io/bizlink-exchange/data/businesses.json')
+      .then(res => res.json())
+      .then(data => {
+        const biz = data.find(b => b.id == bizId);
+        const container = document.getElementById("detailContainer");
+        if (biz) {
+          container.innerHTML = `
+            <h1>${biz.name}</h1>
+            <p><strong>Category:</strong> ${biz.category}</p>
+            <p><strong>Location:</strong> ${biz.location}</p>
+            <p><strong>Phone:</strong> ${biz.phone}</p>
+            <p><strong>Email:</strong> ${biz.email}</p>
+            <p><strong>Description:</strong> ${biz.description}</p>
+            <a href="business-listing.html">← Back to Listings</a>
+          `;
+        } else {
+          container.innerHTML = "<p>No business found. Please go back.</p>";
+        }
+      })
+      .catch(err => {
+        document.getElementById("detailContainer").innerHTML = "<p style='color:red;'>❌ Failed to load details.</p>";
+        console.error(err);
       });
-
-    } else {
-      bizDetail.innerHTML = "<p>No business selected. Please go back.</p>";
-    }
   </script>
 </body>
 </html>
