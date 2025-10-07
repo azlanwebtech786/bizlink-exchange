@@ -6,129 +6,128 @@
   <title>BizLink Exchange - Business Listings</title>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
+      font-family: "Poppins", sans-serif;
       background: linear-gradient(135deg, #3b82f6, #9333ea);
+      color: #fff;
       margin: 0;
       padding: 0;
-      color: #fff;
-      min-height: 100vh;
     }
 
     header {
       text-align: center;
-      background: rgba(255,255,255,0.15);
-      padding: 1rem;
-      font-size: 2rem;
-      font-weight: bold;
-      letter-spacing: 1px;
+      padding: 2rem 0;
+      background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(8px);
-      border-bottom: 1px solid rgba(255,255,255,0.2);
     }
 
-    .container {
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      letter-spacing: 1px;
+    }
+
+    .listing-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
       padding: 2rem;
       max-width: 1200px;
-      margin: 0 auto;
+      margin: auto;
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
       padding: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      backdrop-filter: blur(10px);
       transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .card:hover {
-      transform: translateY(-5px);
-      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.25);
     }
 
     .card h2 {
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
+      margin: 0 0 0.5rem;
       color: #fff;
     }
 
     .card p {
-      color: #e5e7eb;
+      margin: 0.3rem 0;
       font-size: 0.95rem;
-      margin-bottom: 1rem;
+      color: #f0f0f0;
     }
 
-    .btn {
+    .view-btn {
       display: inline-block;
-      background: #fff;
-      color: #3b82f6;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      background: #2563eb;
+      color: #fff;
+      border-radius: 8px;
       text-decoration: none;
       font-weight: bold;
-      transition: background 0.3s ease, color 0.3s ease;
+      transition: all 0.3s ease;
     }
 
-    .btn:hover {
-      background: #3b82f6;
-      color: #fff;
+    .view-btn:hover {
+      background: #1e40af;
     }
 
     footer {
       text-align: center;
       padding: 1rem;
-      background: rgba(0,0,0,0.2);
       font-size: 0.9rem;
-      margin-top: 2rem;
+      background: rgba(255, 255, 255, 0.1);
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Business Listings</h1>
+    <p>Discover verified businesses and services easily</p>
+  </header>
 
-  <header>BizLink Exchange - Business Listings</header>
-
-  <div class="container">
-
-    <!-- Business 1 -->
+  <div class="listing-container">
     <div class="card">
       <h2>BizLink Digital</h2>
-      <p>Marketing Agency | Mumbai</p>
-      <a href="business-detail.html?id=1" class="btn">View Details</a>
+      <p><strong>Category:</strong> Marketing Agency</p>
+      <p><strong>Location:</strong> Mumbai</p>
+      <a href="business-detail.html?id=1" class="view-btn">View Details</a>
     </div>
 
-    <!-- Business 2 -->
     <div class="card">
       <h2>TechNova Solutions</h2>
-      <p>Software Development | Bangalore</p>
-      <a href="business-detail.html?id=2" class="btn">View Details</a>
+      <p><strong>Category:</strong> IT Services</p>
+      <p><strong>Location:</strong> Bangalore</p>
+      <a href="business-detail.html?id=2" class="view-btn">View Details</a>
     </div>
 
-    <!-- Business 3 -->
     <div class="card">
-      <h2>GreenLeaf Organics</h2>
-      <p>Organic Farming | Pune</p>
-      <a href="business-detail.html?id=3" class="btn">View Details</a>
+      <h2>UrbanStyle Boutique</h2>
+      <p><strong>Category:</strong> Fashion Store</p>
+      <p><strong>Location:</strong> Delhi</p>
+      <a href="business-detail.html?id=3" class="view-btn">View Details</a>
     </div>
 
-    <!-- Business 4 -->
     <div class="card">
-      <h2>UrbanStyle Interiors</h2>
-      <p>Interior Design | Delhi</p>
-      <a href="business-detail.html?id=4" class="btn">View Details</a>
+      <h2>FitLife Gym</h2>
+      <p><strong>Category:</strong> Fitness Center</p>
+      <p><strong>Location:</strong> Pune</p>
+      <a href="business-detail.html?id=4" class="view-btn">View Details</a>
     </div>
 
-    <!-- Business 5 -->
     <div class="card">
-      <h2>FinEdge Advisors</h2>
-      <p>Finance & Consulting | Hyderabad</p>
-      <a href="business-detail.html?id=5" class="btn">View Details</a>
+      <h2>BrightMind Academy</h2>
+      <p><strong>Category:</strong> Education</p>
+      <p><strong>Location:</strong> Hyderabad</p>
+      <a href="business-detail.html?id=5" class="view-btn">View Details</a>
     </div>
-
   </div>
 
-  <footer>© 2025 BizLink Exchange | All rights reserved</footer>
-
+  <footer>
+    <p>© 2025 BizLink Exchange | Designed with ❤️ by Azlan & ChatGPT</p>
+  </footer>
 </body>
 </html>
