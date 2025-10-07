@@ -3,186 +3,132 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizLink Exchange - Business Listing</title>
+  <title>BizLink Exchange - Business Listings</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
-    * {
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #3b82f6, #9333ea);
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    body {
-      background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
       color: #fff;
       min-height: 100vh;
-      padding: 40px 20px;
-      overflow-x: hidden;
     }
 
     header {
       text-align: center;
-      margin-bottom: 40px;
-    }
-
-    header h1 {
-      font-size: 2.8rem;
-      color: #00e0ff;
-      text-shadow: 0 0 15px rgba(0,224,255,0.6);
+      background: rgba(255,255,255,0.15);
+      padding: 1rem;
+      font-size: 2rem;
+      font-weight: bold;
       letter-spacing: 1px;
-      animation: fadeInDown 1s ease;
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
     }
 
-    .subtext {
-      color: #ccc;
-      margin-top: 10px;
-      font-size: 1rem;
-      animation: fadeIn 2s ease;
-    }
-
-    .business-container {
+    .container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
       max-width: 1200px;
       margin: 0 auto;
-      animation: fadeInUp 1.2s ease;
     }
 
-    .business-card {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+    .card {
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 16px;
-      padding: 25px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       backdrop-filter: blur(10px);
       transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
     }
 
-    .business-card:hover {
-      transform: translateY(-10px);
-      border-color: #00e0ff;
-      box-shadow: 0 15px 30px rgba(0, 224, 255, 0.3);
+    .card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.2);
     }
 
-    .business-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(45deg, rgba(0,224,255,0.2), transparent);
-      transform: rotate(45deg);
-      opacity: 0;
-      transition: opacity 0.5s;
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: #fff;
     }
 
-    .business-card:hover::before {
-      opacity: 1;
-    }
-
-    .business-card h3 {
-      font-size: 1.5rem;
-      color: #00e0ff;
-      margin-bottom: 10px;
-    }
-
-    .business-card p {
-      font-size: 1rem;
-      color: #ddd;
-      margin-bottom: 20px;
+    .card p {
+      color: #e5e7eb;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
     }
 
     .btn {
       display: inline-block;
-      padding: 10px 20px;
-      background: #00e0ff;
-      color: #000;
-      border-radius: 8px;
-      font-weight: 600;
+      background: #fff;
+      color: #3b82f6;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
       text-decoration: none;
-      transition: 0.3s;
+      font-weight: bold;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .btn:hover {
-      background: #00bcd4;
-      transform: scale(1.05);
+      background: #3b82f6;
+      color: #fff;
     }
 
     footer {
       text-align: center;
-      margin-top: 60px;
+      padding: 1rem;
+      background: rgba(0,0,0,0.2);
       font-size: 0.9rem;
-      color: #aaa;
-    }
-
-    @keyframes fadeInDown {
-      from {opacity: 0; transform: translateY(-30px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    @keyframes fadeInUp {
-      from {opacity: 0; transform: translateY(30px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
+      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>💼 BizLink Exchange</h1>
-    <p class="subtext">Connect Skills • Build Business • Grow Together</p>
-  </header>
+  <header>BizLink Exchange - Business Listings</header>
 
-  <div class="business-container">
-    <div class="business-card">
-      <h3>Web Design Studio</h3>
-      <p>Professional website design and development services to help your brand shine online.</p>
+  <div class="container">
+
+    <!-- Business 1 -->
+    <div class="card">
+      <h2>BizLink Digital</h2>
+      <p>Marketing Agency | Mumbai</p>
       <a href="business-detail.html?id=1" class="btn">View Details</a>
     </div>
 
-    <div class="business-card">
-      <h3>Digital Marketing Hub</h3>
-      <p>Grow your reach with SEO, Social Media Ads, and Branding services by experts.</p>
+    <!-- Business 2 -->
+    <div class="card">
+      <h2>TechNova Solutions</h2>
+      <p>Software Development | Bangalore</p>
       <a href="business-detail.html?id=2" class="btn">View Details</a>
     </div>
 
-    <div class="business-card">
-      <h3>Local Grocery Store</h3>
-      <p>Fresh groceries and daily essentials delivered to your doorstep with care.</p>
+    <!-- Business 3 -->
+    <div class="card">
+      <h2>GreenLeaf Organics</h2>
+      <p>Organic Farming | Pune</p>
       <a href="business-detail.html?id=3" class="btn">View Details</a>
     </div>
 
-    <div class="business-card">
-      <h3>Freelance Graphic Artist</h3>
-      <p>Custom logos, posters, and social media visuals to make your business stand out.</p>
+    <!-- Business 4 -->
+    <div class="card">
+      <h2>UrbanStyle Interiors</h2>
+      <p>Interior Design | Delhi</p>
       <a href="business-detail.html?id=4" class="btn">View Details</a>
     </div>
 
-    <div class="business-card">
-      <h3>IT Support & Networking</h3>
-      <p>On-site and remote IT solutions for businesses — setup, maintenance, and repair.</p>
+    <!-- Business 5 -->
+    <div class="card">
+      <h2>FinEdge Advisors</h2>
+      <p>Finance & Consulting | Hyderabad</p>
       <a href="business-detail.html?id=5" class="btn">View Details</a>
     </div>
 
-    <div class="business-card">
-      <h3>Event Planner Pro</h3>
-      <p>From weddings to corporate events, we make every occasion unforgettable.</p>
-      <a href="business-detail.html?id=6" class="btn">View Details</a>
-    </div>
   </div>
 
-  <footer>© 2025 BizLink Exchange | Designed with ❤️ by Sultan & Jony</footer>
+  <footer>© 2025 BizLink Exchange | All rights reserved</footer>
 
 </body>
 </html>
