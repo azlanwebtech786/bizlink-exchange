@@ -140,6 +140,40 @@
             <textarea id="senderMsg" rows="4" placeholder="Your Message..." required></textarea>
             <button type="submit">Send Message</button>
           </form>
+          <!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  // ⚙️ Step 1: Initialize EmailJS (use your own PUBLIC KEY)
+  (function(){
+    emailjs.init("2rcFKuVD8PHLYZJqc"); // Example: "Vd4gDk2zA_789xyPq"
+  })();
+
+  // ⚙️ Step 2: Handle form submission
+  document.getElementById("contactForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const params = {
+      to_business: "Azlan WebTech",  // Business name (static for now)
+      from_name: form.name.value,
+      from_email: form.email.value,
+      message: form.message.value,
+      date: new Date().toLocaleString()
+    };
+
+    // ⚙️ Step 3: Send Email
+    emailjs.send("service_js2oegb", "template_bbacw1b", params)
+      .then(() => {
+        alert("✅ Message sent successfully!");
+        form.reset();
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("❌ Failed to send message. Try again later.");
+      });
+  });
+</script>
+
         </div>
 
         <a href="business-listing.html" class="back">← Back to Listings</a>
