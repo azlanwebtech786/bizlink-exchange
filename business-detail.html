@@ -9,14 +9,25 @@
     .container { max-width: 700px; margin: auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
     h1 { text-align: center; color: #0077b6; }
     p { color: #333; line-height: 1.6; }
-    a { display: block; text-align: center; margin-top: 20px; text-decoration: none; background: #0077b6; color: white; padding: 10px 15px; border-radius: 5px; }
-    a:hover { background: #023e8a; }
+    a.back { display: block; text-align: center; margin-top: 20px; text-decoration: none; background: #0077b6; color: white; padding: 10px 15px; border-radius: 5px; }
+    a.back:hover { background: #023e8a; }
+    form { margin-top: 30px; display: flex; flex-direction: column; gap: 10px; }
+    input, textarea { padding: 10px; border-radius: 5px; border: 1px solid #ccc; width: 100%; }
+    button { background: #0077b6; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #023e8a; }
+    .success { color: green; margin-top: 10px; }
+    .error { color: red; margin-top: 10px; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 </head>
 <body>
   <div class="container" id="detailContainer">Loading business details...</div>
 
   <script>
+    (function() {
+      emailjs.init("2rcFKuVD8PHLYZJqc"); // 🔹 Replace with your actual Public Key
+    })();
+
     const urlParams = new URLSearchParams(window.location.search);
     const bizId = urlParams.get("id");
 
@@ -25,6 +36,7 @@
       .then(data => {
         const biz = data.find(b => b.id == bizId);
         const container = document.getElementById("detailContainer");
+
         if (biz) {
           container.innerHTML = `
             <h1>${biz.name}</h1>
@@ -33,8 +45,41 @@
             <p><strong>Phone:</strong> ${biz.phone}</p>
             <p><strong>Email:</strong> ${biz.email}</p>
             <p><strong>Description:</strong> ${biz.description}</p>
-            <a href="business-listing.html">← Back to Listings</a>
+
+            <h2>📩 Contact ${biz.name}</h2>
+            <form id="contactForm">
+              <input type="text" id="from_name" placeholder="Your Name" required>
+              <input type="email" id="from_email" placeholder="Your Email" required>
+              <input type="tel" id="from_phone" placeholder="Your Phone Number" required>
+              <textarea id="message" rows="4" placeholder="Your Message" required></textarea>
+              <input type="hidden" id="to_email" value="${biz.email}">
+              <button type="submit">Send Message</button>
+              <p id="formStatus"></p>
+            </form>
+
+            <a href="business-listing.html" class="back">← Back to Listings</a>
           `;
+
+          document.getElementById("contactForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const templateParams = {
+              from_name: document.getElementById("from_name").value,
+              from_email: document.getElementById("from_email").value,
+              from_phone: document.getElementById("from_phone").value,
+              message: document.getElementById("message").value,
+              to_email: document.getElementById("to_email").value
+            };
+
+            emailjs.send("service_js2oegb", "template_bbacw1b", templateParams)
+              .then(() => {
+                document.getElementById("formStatus").innerHTML = "<span class='success'>✅ Message sent successfully!</span>";
+                document.getElementById("contactForm").reset();
+              })
+              .catch(() => {
+                document.getElementById("formStatus").innerHTML = "<span class='error'>❌ Failed to send message.</span>";
+              });
+          });
         } else {
           container.innerHTML = "<p>No business found. Please go back.</p>";
         }
