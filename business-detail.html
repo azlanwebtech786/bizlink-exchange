@@ -3,152 +3,193 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Business Details | BizLink Exchange</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <script>
-    (function () {
-      emailjs.init("EkEyRr1U1biNTfGhB"); // 🔹 apna EmailJS Public Key yahan daalein
-    })();
-  </script>
+  <title>BizLink Exchange - Business Details</title>
   <style>
-    .contact-form {
-      background: #fff;
-      padding: 20px;
-      margin-top: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #3b82f6, #9333ea);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .contact-form h3 {
-      color: #005b96;
-      margin-bottom: 15px;
+
+    header {
+      width: 100%;
+      text-align: center;
+      padding: 1.5rem 0;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      font-size: 1.8rem;
+      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+      width: 90%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      margin-top: 2rem;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .business-info {
       text-align: center;
     }
-    .contact-form label {
+
+    .business-info img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      border: 3px solid #fff;
+    }
+
+    .business-info h2 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .business-info .category {
+      background: #fff;
+      color: #3b82f6;
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
       font-weight: 600;
+      margin-top: 0.5rem;
     }
-    .contact-form input,
-    .contact-form textarea {
+
+    .business-info p {
+      margin-top: 1rem;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    form {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input, textarea {
       width: 100%;
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .contact-form button {
-      background: #005b96;
-      color: white;
+      padding: 0.8rem;
+      border-radius: 10px;
       border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
+      font-size: 1rem;
     }
-    .contact-form button:hover {
-      background: #004b7a;
+
+    button {
+      background: linear-gradient(90deg, #3b82f6, #9333ea);
+      border: none;
+      padding: 0.9rem;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #2563eb, #7e22ce);
+    }
+
+    footer {
+      margin-top: 2rem;
+      padding: 1rem;
+      text-align: center;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Business Details</h1>
-  </header>
+  <header>💼 BizLink Exchange</header>
 
-  <main id="business-details"></main>
+  <div class="container">
+    <div class="business-info" id="businessInfo">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Business Logo">
+      <h2>Loading...</h2>
+      <div class="category">Loading...</div>
+      <p>Fetching business details...</p>
+    </div>
 
-  <footer>
-    <p>© 2025 BizLink Exchange</p>
-  </footer>
+    <form id="contactForm">
+      <h3>📩 Contact Business Owner</h3>
+      <input type="text" id="name" placeholder="Your Name" required>
+      <input type="email" id="email" placeholder="Your Email" required>
+      <input type="tel" id="phone" placeholder="Your Mobile Number" required>
+      <textarea id="message" rows="4" placeholder="Your Message..." required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </div>
+
+  <footer>© 2025 BizLink Exchange | Empowering Entrepreneurs Together 🚀</footer>
 
   <script>
-    // Get business ID from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const businessId = urlParams.get("id");
-
-    // Dummy data (example)
-    const businesses = [
+    const businessData = [
       {
         id: 1,
-        name: "ABC Traders",
-        category: "Wholesale",
-        location: "Delhi",
-        phone: "9876543210",
-        email: "abc@traders.com",
-        description: "Leading wholesale supplier of electronics."
+        name: "Azlan WebTech",
+        category: "Web Development",
+        description: "We build modern, responsive websites for small businesses and startups.",
+        image: "https://cdn-icons-png.flaticon.com/512/2920/2920244.png"
       },
       {
         id: 2,
-        name: "BizLink Digital",
-        category: "Marketing Agency",
-        location: "Mumbai",
-        phone: "9123456780",
-        email: "contact@bizlinkdigital.com",
-        description: "Helping small businesses grow through digital marketing, SEO, and branding services."
+        name: "GreenLeaf Foods",
+        category: "Organic Food",
+        description: "Fresh and organic farm products delivered to your doorstep.",
+        image: "https://cdn-icons-png.flaticon.com/512/2909/2909893.png"
+      },
+      {
+        id: 3,
+        name: "SkillConnect Academy",
+        category: "Education",
+        description: "Online skill-building courses connecting learners with industry experts.",
+        image: "https://cdn-icons-png.flaticon.com/512/3201/3201402.png"
       }
     ];
 
-    const business = businesses.find(b => b.id == businessId);
-    const detailsDiv = document.getElementById("business-details");
+    const params = new URLSearchParams(window.location.search);
+    const businessId = parseInt(params.get("id")) || 1;
+    const business = businessData.find(b => b.id === businessId);
 
+    const businessInfo = document.getElementById("businessInfo");
     if (business) {
-      detailsDiv.innerHTML = `
-        <div class="card">
-          <h2>${business.name}</h2>
-          <p><strong>Category:</strong> ${business.category}</p>
-          <p><strong>Location:</strong> ${business.location}</p>
-          <p><strong>Phone:</strong> ${business.phone}</p>
-          <p><strong>Email:</strong> ${business.email}</p>
-          <p><strong>Description:</strong> ${business.description}</p>
-
-          <div class="contact-form">
-            <h3>📩 Contact ${business.name}</h3>
-            <form id="contactForm">
-              <label>Your Name:</label>
-              <input type="text" id="name" required placeholder="Enter your name" />
-              
-              <label>Your Email:</label>
-              <input type="email" id="email" required placeholder="Enter your email" />
-              
-              <label>Message:</label>
-              <textarea id="message" rows="4" required placeholder="Type your message here..."></textarea>
-              
-              <button type="submit">Send Message</button>
-            </form>
-            <p id="statusMsg" style="text-align:center; margin-top:10px; font-weight:600;"></p>
-          </div>
-
-          <button onclick="window.location.href='business-listing.html'">← Back to Listings</button>
-        </div>
+      businessInfo.innerHTML = `
+        <img src="${business.image}" alt="Business Logo">
+        <h2>${business.name}</h2>
+        <div class="category">${business.category}</div>
+        <p>${business.description}</p>
       `;
-    } else {
-      detailsDiv.innerHTML = `<p>No business selected. Please go back.</p>`;
     }
 
-    // Form submission using EmailJS
-    document.addEventListener("submit", function (event) {
-      event.preventDefault();
-
+    // Form submission
+    document.getElementById("contactForm").addEventListener("submit", function(e) {
+      e.preventDefault();
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
       const message = document.getElementById("message").value;
 
-      const params = {
-        from_name: name,
-        from_email: email,
-        message: message,
-        business_name: business.name
-      };
+      const contactData = { business: business.name, name, email, phone, message, date: new Date() };
+      let messages = JSON.parse(localStorage.getItem("bizMessages")) || [];
+      messages.push(contactData);
+      localStorage.setItem("bizMessages", JSON.stringify(messages));
 
-      emailjs.send("service_js2oegb", "template_bbacw1b", params)
-        .then(() => {
-          document.getElementById("statusMsg").textContent = "✅ Message sent successfully!";
-          document.getElementById("contactForm").reset();
-        })
-        .catch((error) => {
-          console.error("EmailJS Error:", error);
-          document.getElementById("statusMsg").textContent = "❌ Failed to send message. Try again!";
-        });
+      alert("✅ Message sent successfully!");
+      this.reset();
     });
   </script>
 </body>
