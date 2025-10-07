@@ -90,7 +90,7 @@
   <script>
     // ✅ Initialize EmailJS
     (function() {
-      emailjs.init("YOUR_PUBLIC_KEY_HERE"); // e.g., "Vd4gDk2zA_789xyPq"
+      emailjs.init("2rcFKuVD8PHLYZJqc"); // e.g., "Vd4gDk2zA_789xyPq"
     })();
 
     // ✅ Load business details from localStorage
@@ -129,7 +129,7 @@
           date: new Date().toLocaleString()
         };
 
-        emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", params)
+        emailjs.send("service_js2oegb", "template_bbacw1b", params)
           .then(() => {
             alert("✅ Message sent successfully to " + selectedBiz.name);
             e.target.reset();
