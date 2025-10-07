@@ -23,14 +23,28 @@
       max-width: 1100px;
       margin: 30px auto;
     }
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .topbar input, .topbar select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      flex: 1;
+      min-width: 180px;
+      font-size: 15px;
+    }
     .add-btn {
-      display: inline-block;
       background: #0077b6;
       color: white;
       padding: 12px 20px;
       text-decoration: none;
       border-radius: 8px;
-      margin-bottom: 20px;
       transition: 0.3s;
     }
     .add-btn:hover {
@@ -71,53 +85,76 @@
 <body>
   <header>BizLink Exchange — Business Listings</header>
   <div class="container">
-    <a href="add-business.html" class="add-btn">+ Add Your Business</a>
+    <div class="topbar">
+      <input type="text" id="searchBox" placeholder="🔍 Search by business, owner, or location...">
+      <select id="categoryFilter">
+        <option value="">All Categories</option>
+        <option>Web Development</option>
+        <option>Marketing</option>
+        <option>Design & Branding</option>
+        <option>Education / Coaching</option>
+        <option>Finance / Consulting</option>
+        <option>Other</option>
+      </select>
+      <a href="add-business.html" class="add-btn">+ Add Your Business</a>
+    </div>
 
     <div class="grid" id="business-list">
-      <div class="card">
-        <h3>Webify Studio</h3>
-        <p><strong>Category:</strong> Web Design & Development</p>
-        <p><strong>Owner:</strong> Amaan Khan</p>
-        <p><strong>Location:</strong> Mumbai, India</p>
-      </div>
-
-      <div class="card">
-        <h3>GreenTech Solar</h3>
-        <p><strong>Category:</strong> Renewable Energy</p>
-        <p><strong>Owner:</strong> Priya Sharma</p>
-        <p><strong>Location:</strong> Delhi, India</p>
-      </div>
-
-      <div class="card">
-        <h3>SkillHub</h3>
-        <p><strong>Category:</strong> Freelance Services</p>
-        <p><strong>Owner:</strong> Rakesh Mehta</p>
-        <p><strong>Location:</strong> Bengaluru, India</p>
-      </div>
+      <!-- Cards load dynamically -->
     </div>
   </div>
 
   <footer>© 2025 BizLink Exchange</footer>
-  <script>
-  const container = document.getElementById("business-list");
-  const listings = JSON.parse(localStorage.getItem("bizListings")) || [];
 
-  if (listings.length > 0) {
-    container.innerHTML = "";
-    listings.forEach((biz) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <h3>${biz.name}</h3>
-        <p><strong>Category:</strong> ${biz.category}</p>
-        <p><strong>Owner:</strong> ${biz.owner}</p>
-        <p><strong>Mobile:</strong> ${biz.phone}</p>
-        <p><strong>Location:</strong> ${biz.location}</p>
-        <p><em>${biz.desc}</em></p>
-      `;
-      container.appendChild(card);
+  <script>
+    const container = document.getElementById("business-list");
+    const searchBox = document.getElementById("searchBox");
+    const categoryFilter = document.getElementById("categoryFilter");
+
+    let listings = JSON.parse(localStorage.getItem("bizListings")) || [];
+
+    function displayBusinesses(data) {
+      container.innerHTML = "";
+      if (data.length === 0) {
+        container.innerHTML = "<p style='text-align:center;width:100%'>No businesses found 🚫</p>";
+        return;
+      }
+
+      data.forEach(biz => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${biz.name}</h3>
+          <p><strong>Category:</strong> ${biz.category}</p>
+          <p><strong>Owner:</strong> ${biz.owner}</p>
+          <p><strong>Mobile:</strong> ${biz.phone}</p>
+          <p><strong>Location:</strong> ${biz.location}</p>
+          <p><em>${biz.desc}</em></p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Initial Display
+    displayBusinesses(listings);
+
+    // 🔍 Search Function
+    searchBox.addEventListener("input", () => {
+      const term = searchBox.value.toLowerCase();
+      const filtered = listings.filter(biz =>
+        biz.name.toLowerCase().includes(term) ||
+        biz.owner.toLowerCase().includes(term) ||
+        biz.location.toLowerCase().includes(term)
+      );
+      displayBusinesses(filtered);
     });
-  }
-</script>
+
+    // 🧩 Category Filter
+    categoryFilter.addEventListener("change", () => {
+      const cat = categoryFilter.value;
+      const filtered = cat ? listings.filter(biz => biz.category === cat) : listings;
+      displayBusinesses(filtered);
+    });
+  </script>
 </body>
 </html>
