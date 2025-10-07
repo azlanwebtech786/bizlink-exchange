@@ -65,16 +65,24 @@
       background-color: rgba(0,0,0,0.2);
       font-size: 14px;
     }
+    .thankyou {
+      display: none;
+      text-align: center;
+      font-size: 20px;
+      padding: 40px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+    }
   </style>
 </head>
 <body>
   <header>Join BizLink Exchange</header>
   <main>
-    <form action="https://formspree.io/f/xqakpepg" method="POST">
+    <form id="joinForm">
       <h2>Sign Up</h2>
-      <input type="text" name="name" placeholder="Full Name" required>
-      <input type="email" name="email" placeholder="Email Address" required>
-      <select name="role" required>
+      <input type="text" id="name" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <select id="role" required>
         <option value="">Select Role</option>
         <option value="Entrepreneur">Entrepreneur</option>
         <option value="Freelancer">Freelancer</option>
@@ -82,7 +90,28 @@
       </select>
       <button type="submit">Submit</button>
     </form>
+
+    <div class="thankyou" id="thankyou">
+      <h2>🎉 Thank You for Joining BizLink Exchange!</h2>
+      <p id="userInfo"></p>
+      <a href="index.html" style="color:white; text-decoration:underline;">← Back to Home</a>
+    </div>
   </main>
   <footer>© 2025 BizLink Exchange</footer>
+
+  <script>
+    const form = document.getElementById('joinForm');
+    const thankyou = document.getElementById('thankyou');
+    const userInfo = document.getElementById('userInfo');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const role = document.getElementById('role').value;
+      form.style.display = 'none';
+      thankyou.style.display = 'block';
+      userInfo.textContent = `Welcome ${name}! You have joined as a ${role}.`;
+    });
+  </script>
 </body>
 </html>
