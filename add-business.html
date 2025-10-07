@@ -74,14 +74,14 @@
 <body>
   <header>Add Your Business</header>
   <main>
-    <form action="thankyou.html" method="GET">
+    <form id="businessForm">
       <h2>Business Registration Form</h2>
-      <input type="text" name="bizname" placeholder="Business Name" required>
-      <input type="text" name="owner" placeholder="Owner Name" required>
-      <input type="email" name="email" placeholder="Email Address" required>
-      <input type="tel" name="phone" placeholder="Mobile Number" pattern="[0-9]{10}" maxlength="10" required>
-      <input type="text" name="location" placeholder="City / Location" required>
-      <select name="category" required>
+      <input type="text" id="bizname" placeholder="Business Name" required>
+      <input type="text" id="owner" placeholder="Owner Name" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="tel" id="phone" placeholder="Mobile Number" pattern="[0-9]{10}" maxlength="10" required>
+      <input type="text" id="location" placeholder="City / Location" required>
+      <select id="category" required>
         <option value="">Select Business Category</option>
         <option>Web Development</option>
         <option>Marketing</option>
@@ -90,10 +90,36 @@
         <option>Finance / Consulting</option>
         <option>Other</option>
       </select>
-      <textarea name="desc" rows="4" placeholder="Short Business Description..." required></textarea>
+      <textarea id="desc" rows="4" placeholder="Short Business Description..." required></textarea>
       <button type="submit">Submit</button>
     </form>
   </main>
   <footer>© 2025 BizLink Exchange</footer>
+
+  <script>
+    document.getElementById("businessForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const biz = {
+        name: document.getElementById("bizname").value,
+        owner: document.getElementById("owner").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        location: document.getElementById("location").value,
+        category: document.getElementById("category").value,
+        desc: document.getElementById("desc").value
+      };
+
+      // Get old data
+      let listings = JSON.parse(localStorage.getItem("bizListings")) || [];
+      listings.push(biz);
+
+      // Save new data
+      localStorage.setItem("bizListings", JSON.stringify(listings));
+
+      alert("✅ Business Added Successfully!");
+      window.location.href = "business-listing.html";
+    });
+  </script>
 </body>
 </html>
