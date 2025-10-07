@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Azlan WebTech",
+    "category": "IT Services",
+    "location": "Delhi",
+    "phone": "9876543210",
+    "email": "info@azlanwebtech.com",
+    "description": "We provide complete web solutions."
+  },
+  {
+    "id": 2,
+    "name": "BizLink Digital",
+    "category": "Marketing",
+    "location": "Mumbai",
+    "phone": "9123456780",
+    "email": "contact@bizlinkdigital.com",
+    "description": "Your business growth partner."
+  }
+]
