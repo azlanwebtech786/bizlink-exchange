@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BizLink Exchange - Business Listing</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
     * {
       margin: 0;
       padding: 0;
@@ -13,18 +15,31 @@
     }
 
     body {
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      background: radial-gradient(circle at top left, #0f2027, #203a43, #2c5364);
       color: #fff;
       min-height: 100vh;
       padding: 40px 20px;
+      overflow-x: hidden;
     }
 
-    h1 {
+    header {
       text-align: center;
       margin-bottom: 40px;
-      font-size: 2.5rem;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
       color: #00e0ff;
-      text-shadow: 0px 0px 10px rgba(0,224,255,0.6);
+      text-shadow: 0 0 15px rgba(0,224,255,0.6);
+      letter-spacing: 1px;
+      animation: fadeInDown 1s ease;
+    }
+
+    .subtext {
+      color: #ccc;
+      margin-top: 10px;
+      font-size: 1rem;
+      animation: fadeIn 2s ease;
     }
 
     .business-container {
@@ -33,21 +48,42 @@
       gap: 25px;
       max-width: 1200px;
       margin: 0 auto;
+      animation: fadeInUp 1.2s ease;
     }
 
     .business-card {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 16px;
       padding: 25px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
       backdrop-filter: blur(10px);
       transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
 
     .business-card:hover {
-      transform: translateY(-8px);
-      background: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.5);
+      transform: translateY(-10px);
+      border-color: #00e0ff;
+      box-shadow: 0 15px 30px rgba(0, 224, 255, 0.3);
+    }
+
+    .business-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, rgba(0,224,255,0.2), transparent);
+      transform: rotate(45deg);
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .business-card:hover::before {
+      opacity: 1;
     }
 
     .business-card h3 {
@@ -58,7 +94,7 @@
 
     .business-card p {
       font-size: 1rem;
-      color: #eee;
+      color: #ddd;
       margin-bottom: 20px;
     }
 
@@ -75,6 +111,7 @@
 
     .btn:hover {
       background: #00bcd4;
+      transform: scale(1.05);
     }
 
     footer {
@@ -83,53 +120,69 @@
       font-size: 0.9rem;
       color: #aaa;
     }
+
+    @keyframes fadeInDown {
+      from {opacity: 0; transform: translateY(-30px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @keyframes fadeInUp {
+      from {opacity: 0; transform: translateY(30px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
   </style>
 </head>
 <body>
 
-  <h1>💼 Explore Business Listings</h1>
+  <header>
+    <h1>💼 BizLink Exchange</h1>
+    <p class="subtext">Connect Skills • Build Business • Grow Together</p>
+  </header>
 
   <div class="business-container">
-    
     <div class="business-card">
       <h3>Web Design Studio</h3>
-      <p>Professional website design and development services to help you go online with style.</p>
+      <p>Professional website design and development services to help your brand shine online.</p>
       <a href="business-detail.html?id=1" class="btn">View Details</a>
     </div>
 
     <div class="business-card">
       <h3>Digital Marketing Hub</h3>
-      <p>Grow your business with SEO, Ads, and Social Media Marketing from our experts.</p>
+      <p>Grow your reach with SEO, Social Media Ads, and Branding services by experts.</p>
       <a href="business-detail.html?id=2" class="btn">View Details</a>
     </div>
 
     <div class="business-card">
       <h3>Local Grocery Store</h3>
-      <p>Fresh vegetables, fruits, and grocery delivered directly to your doorstep.</p>
+      <p>Fresh groceries and daily essentials delivered to your doorstep with care.</p>
       <a href="business-detail.html?id=3" class="btn">View Details</a>
     </div>
 
     <div class="business-card">
       <h3>Freelance Graphic Artist</h3>
-      <p>Custom logos, posters, and social media design for your business branding.</p>
+      <p>Custom logos, posters, and social media visuals to make your business stand out.</p>
       <a href="business-detail.html?id=4" class="btn">View Details</a>
     </div>
 
     <div class="business-card">
       <h3>IT Support & Networking</h3>
-      <p>Affordable computer repair, installation, and network solutions for small businesses.</p>
+      <p>On-site and remote IT solutions for businesses — setup, maintenance, and repair.</p>
       <a href="business-detail.html?id=5" class="btn">View Details</a>
     </div>
 
     <div class="business-card">
       <h3>Event Planner Pro</h3>
-      <p>We make your events memorable — weddings, birthdays, and corporate functions.</p>
+      <p>From weddings to corporate events, we make every occasion unforgettable.</p>
       <a href="business-detail.html?id=6" class="btn">View Details</a>
     </div>
-
   </div>
 
-  <footer>© 2025 BizLink Exchange | Connecting Skills & Businesses</footer>
+  <footer>© 2025 BizLink Exchange | Designed with ❤️ by Sultan & Jony</footer>
 
 </body>
 </html>
