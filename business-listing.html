@@ -11,6 +11,7 @@
       color: #fff;
       margin: 0;
       padding: 0;
+      overflow-x: hidden;
     }
 
     header {
@@ -24,6 +25,30 @@
       margin: 0;
       font-size: 2.5rem;
       letter-spacing: 1px;
+      color: #fff;
+    }
+
+    header p {
+      color: #f0f0f0;
+    }
+
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      flex-wrap: wrap;
+    }
+
+    .search-bar input, .search-bar select {
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      width: 250px;
+      font-family: inherit;
     }
 
     .listing-container {
@@ -39,13 +64,21 @@
       background: rgba(255, 255, 255, 0.15);
       border-radius: 15px;
       padding: 1.5rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.4s ease;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .card.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .card:hover {
       transform: translateY(-8px);
       background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
 
     .card h2 {
@@ -80,54 +113,90 @@
       padding: 1rem;
       font-size: 0.9rem;
       background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Business Listings</h1>
-    <p>Discover verified businesses and services easily</p>
+    <h1>BizLink Exchange</h1>
+    <p>Discover and connect with growing businesses 🚀</p>
   </header>
 
-  <div class="listing-container">
-    <div class="card">
-      <h2>BizLink Digital</h2>
-      <p><strong>Category:</strong> Marketing Agency</p>
-      <p><strong>Location:</strong> Mumbai</p>
-      <a href="business-detail.html?id=1" class="view-btn">View Details</a>
-    </div>
-
-    <div class="card">
-      <h2>TechNova Solutions</h2>
-      <p><strong>Category:</strong> IT Services</p>
-      <p><strong>Location:</strong> Bangalore</p>
-      <a href="business-detail.html?id=2" class="view-btn">View Details</a>
-    </div>
-
-    <div class="card">
-      <h2>UrbanStyle Boutique</h2>
-      <p><strong>Category:</strong> Fashion Store</p>
-      <p><strong>Location:</strong> Delhi</p>
-      <a href="business-detail.html?id=3" class="view-btn">View Details</a>
-    </div>
-
-    <div class="card">
-      <h2>FitLife Gym</h2>
-      <p><strong>Category:</strong> Fitness Center</p>
-      <p><strong>Location:</strong> Pune</p>
-      <a href="business-detail.html?id=4" class="view-btn">View Details</a>
-    </div>
-
-    <div class="card">
-      <h2>BrightMind Academy</h2>
-      <p><strong>Category:</strong> Education</p>
-      <p><strong>Location:</strong> Hyderabad</p>
-      <a href="business-detail.html?id=5" class="view-btn">View Details</a>
-    </div>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="🔍 Search business name..." />
+    <select id="filterCategory">
+      <option value="">All Categories</option>
+      <option value="Marketing">Marketing</option>
+      <option value="IT">IT</option>
+      <option value="Fashion">Fashion</option>
+      <option value="Fitness">Fitness</option>
+      <option value="Education">Education</option>
+    </select>
+    <select id="filterCity">
+      <option value="">All Cities</option>
+      <option value="Mumbai">Mumbai</option>
+      <option value="Bangalore">Bangalore</option>
+      <option value="Delhi">Delhi</option>
+      <option value="Pune">Pune</option>
+      <option value="Hyderabad">Hyderabad</option>
+    </select>
   </div>
+
+  <div class="listing-container" id="businessList"></div>
 
   <footer>
     <p>© 2025 BizLink Exchange | Designed with ❤️ by Azlan & ChatGPT</p>
   </footer>
+
+  <script>
+    const businesses = [
+      { id: 1, name: "BizLink Digital", category: "Marketing", city: "Mumbai" },
+      { id: 2, name: "TechNova Solutions", category: "IT", city: "Bangalore" },
+      { id: 3, name: "UrbanStyle Boutique", category: "Fashion", city: "Delhi" },
+      { id: 4, name: "FitLife Gym", category: "Fitness", city: "Pune" },
+      { id: 5, name: "BrightMind Academy", category: "Education", city: "Hyderabad" }
+    ];
+
+    const listContainer = document.getElementById("businessList");
+
+    function renderBusinesses(filteredList) {
+      listContainer.innerHTML = "";
+      filteredList.forEach(b => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.innerHTML = `
+          <h2>${b.name}</h2>
+          <p><strong>Category:</strong> ${b.category}</p>
+          <p><strong>Location:</strong> ${b.city}</p>
+          <a href="business-detail.html?id=${b.id}" class="view-btn">View Details</a>
+        `;
+        listContainer.appendChild(card);
+        setTimeout(() => card.classList.add("show"), 100);
+      });
+    }
+
+    // Initial render
+    renderBusinesses(businesses);
+
+    // Search + Filter Functionality
+    document.getElementById("searchInput").addEventListener("input", filterBusinesses);
+    document.getElementById("filterCategory").addEventListener("change", filterBusinesses);
+    document.getElementById("filterCity").addEventListener("change", filterBusinesses);
+
+    function filterBusinesses() {
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const category = document.getElementById("filterCategory").value;
+      const city = document.getElementById("filterCity").value;
+
+      const filtered = businesses.filter(b =>
+        b.name.toLowerCase().includes(search) &&
+        (category === "" || b.category === category) &&
+        (city === "" || b.city === city)
+      );
+
+      renderBusinesses(filtered);
+    }
+  </script>
 </body>
 </html>
