@@ -10,6 +10,7 @@
       background: linear-gradient(135deg, #f3f4f6, #dbeafe);
       color: #222;
       margin: 0;
+      padding: 0;
     }
 
     header {
@@ -86,69 +87,37 @@
     <hr />
 
     <h2>📩 Contact Owner</h2>
-    <form id="contactForm">
-      <input type="text" id="userName" placeholder="Your Name" required />
-      <input type="email" id="userEmail" placeholder="Your Email" required />
-      <textarea id="userMessage" rows="5" placeholder="Write your message..." required></textarea>
+    <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="0fcfe81d-7fa3-42c7-952e-04615640a690">
+
+      <input type="text" name="name" id="userName" placeholder="Your Name" required />
+      <input type="email" name="email" id="userEmail" placeholder="Your Email" required />
+      <textarea name="message" id="userMessage" rows="5" placeholder="Write your message..." required></textarea>
+      
       <button id="sendBtn" type="submit">Send Message</button>
     </form>
   </div>
 
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-  // ✅ Initialize EmailJS
-  (function() {
-      emailjs.init("cHIk8f3mvNgvX2YtC"); // Your public key
-  })();
+  <script>
+    // ✅ Business data
+    const businesses = [
+      { id: 1, name: "Digital Boost Marketing", desc: "We help small businesses grow through SEO and ads." },
+      { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
+      { id: 3, name: "TechFix Solutions", desc: "Expert laptop and smartphone repair center." }
+    ];
 
-  // ✅ Business data
-  const businesses = [
-    { id: 1, name: "Digital Boost Marketing", desc: "Grow your business with expert SEO and ad campaigns." },
-    { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
-    { id: 3, name: "TechFix Solutions", desc: "Expert laptop, mobile, and gadget repair services." },
-    { id: 4, name: "StyleHub Boutique", desc: "Trendy fashion and accessories for all occasions." }
-  ];
+    // ✅ Load business by ID
+    const urlParams = new URLSearchParams(window.location.search);
+    const businessId = parseInt(urlParams.get("id"));
+    const business = businesses.find(b => b.id === businessId);
 
-  // ✅ Load business by ID
-  const urlParams = new URLSearchParams(window.location.search);
-  const businessId = parseInt(urlParams.get("id"));
-  const business = businesses.find(b => b.id === businessId);
-
-  if (business) {
-    document.getElementById("businessName").textContent = business.name;
-    document.getElementById("businessDesc").textContent = business.desc;
-  } else {
-    document.getElementById("businessName").textContent = "Business Not Found";
-    document.getElementById("businessDesc").textContent = "";
-  }
-
-  // ✅ Form Submission
-  const contactForm = document.getElementById("contactForm");
-  const sendBtn = document.getElementById("sendBtn");
-
-  contactForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    sendBtn.disabled = true;
-    sendBtn.innerHTML = "⏳ Sending...";
-
-    emailjs.send("service_js2oegb", "template_bbacw1b", {
-      name: document.getElementById("userName").value,
-      email: document.getElementById("userEmail").value,
-      message: document.getElementById("userMessage").value
-    })
-    .then(() => {
-      alert("✅ Message sent successfully!");
-      contactForm.reset();
-      sendBtn.disabled = false;
-      sendBtn.innerHTML = "Send Message";
-    })
-    .catch((error) => {
-      console.error("Email error:", error);
-      alert("⚠️ Failed to send message. Please check your EmailJS setup.");
-      sendBtn.disabled = false;
-      sendBtn.innerHTML = "Send Message";
-    });
-  });
-</script>
+    if (business) {
+      document.getElementById("businessName").textContent = business.name;
+      document.getElementById("businessDesc").textContent = business.desc;
+    } else {
+      document.getElementById("businessName").textContent = "Business Not Found";
+      document.getElementById("businessDesc").textContent = "";
+    }
+  </script>
 </body>
 </html>
