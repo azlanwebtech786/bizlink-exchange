@@ -7,112 +7,107 @@
   <style>
     body {
       font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
       margin: 0;
-      background: linear-gradient(135deg, #eef2ff, #dbeafe);
-      color: #1e293b;
+      color: #1e3a8a;
     }
 
     header {
       background: linear-gradient(90deg, #2563eb, #1e40af);
       color: white;
+      padding: 20px;
       text-align: center;
-      padding: 25px 10px;
       font-size: 2rem;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      font-weight: 700;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     }
 
     .container {
       max-width: 1000px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-
-    .grid {
+      margin: 50px auto;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+      gap: 25px;
+      padding: 0 20px;
     }
 
     .card {
       background: white;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
       padding: 25px;
-      transition: 0.3s ease;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
     .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+      transform: translateY(-6px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     }
 
-    .card h2 {
+    h2 {
+      margin-top: 0;
+      font-size: 1.3rem;
       color: #1e3a8a;
-      font-size: 1.4rem;
-      margin-bottom: 10px;
     }
 
-    .card p {
-      color: #475569;
+    p {
       font-size: 0.95rem;
-      margin-bottom: 15px;
+      color: #374151;
     }
 
-    .btn {
-      background: linear-gradient(90deg, #2563eb, #1e40af);
+    a {
+      display: inline-block;
+      margin-top: 10px;
+      background: linear-gradient(90deg, #2563eb, #1e3a8a);
       color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      transition: 0.3s;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: background 0.3s;
     }
 
-    .btn:hover {
-      background: linear-gradient(90deg, #1d4ed8, #1e3a8a);
-      transform: translateY(-2px);
+    a:hover {
+      background: linear-gradient(90deg, #1d4ed8, #1e40af);
     }
 
     footer {
       text-align: center;
-      padding: 15px;
-      background: #1e40af;
+      padding: 20px;
+      background: #1e3a8a;
       color: white;
+      margin-top: 50px;
       font-size: 0.9rem;
-      margin-top: 40px;
     }
   </style>
 </head>
 <body>
   <header>BizLink Exchange</header>
 
-  <div class="container">
-    <div class="grid" id="businessGrid"></div>
+  <div class="container" id="businessList">
+    <!-- Businesses will load here -->
   </div>
 
   <footer>© 2025 BizLink Exchange. All rights reserved.</footer>
 
   <script>
     const businesses = [
-      { id: 1, name: "Digital Boost Marketing", desc: "We help small businesses grow through SEO and online ads." },
+      { id: 1, name: "Digital Boost Marketing", desc: "Grow your business with expert SEO and ad campaigns." },
       { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
-      { id: 3, name: "TechFix Solutions", desc: "Expert laptop and smartphone repair center." },
-      { id: 4, name: "UrbanStyle Boutique", desc: "Trendy fashion boutique for modern wearables." }
+      { id: 3, name: "TechFix Solutions", desc: "Expert laptop, mobile, and gadget repair services." },
+      { id: 4, name: "StyleHub Boutique", desc: "Trendy fashion and accessories for all occasions." }
     ];
 
-    const grid = document.getElementById("businessGrid");
-
-    businesses.forEach(b => {
+    const businessList = document.getElementById("businessList");
+    businesses.forEach(biz => {
       const card = document.createElement("div");
-      card.className = "card";
+      card.classList.add("card");
       card.innerHTML = `
-        <h2>${b.name}</h2>
-        <p>${b.desc}</p>
-        <button class="btn" onclick="location.href='business.html?id=${b.id}'">View Details</button>
+        <h2>${biz.name}</h2>
+        <p>${biz.desc}</p>
+        <a href="business.html?id=${biz.id}">View Details</a>
       `;
-      grid.appendChild(card);
+      businessList.appendChild(card);
     });
   </script>
 </body>
