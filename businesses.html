@@ -5,39 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Businesses | BizLink Exchange</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #eef2ff, #f0f9ff);
+      font-family: "Poppins", sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-  <header class="bg-blue-600 text-white p-5 text-center text-2xl font-bold shadow-lg">
-    BizLink Exchange — Businesses
+<body class="text-gray-800">
+  <!-- HEADER -->
+  <header class="bg-gradient-to-r from-blue-700 to-indigo-600 text-white py-5 shadow-lg">
+    <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
+      <h1 class="text-2xl font-bold tracking-wide">BizLink Exchange</h1>
+      <a href="index.html" class="bg-white text-blue-700 px-4 py-2 rounded-xl font-medium shadow hover:bg-gray-100 transition">🏠 Home</a>
+    </div>
   </header>
 
-  <main class="max-w-5xl mx-auto mt-10">
-    <h1 class="text-3xl font-semibold text-center text-blue-700 mb-6">All Registered Businesses</h1>
+  <!-- HERO SECTION -->
+  <section class="text-center py-16">
+    <h2 class="text-4xl font-extrabold text-blue-700 mb-4">Discover Trusted Businesses</h2>
+    <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+      Explore verified businesses and connect with professionals who can help you grow.  
+      Each business is handpicked for quality and reliability.
+    </p>
+  </section>
 
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="p-5 bg-white shadow-md rounded-xl text-center hover:shadow-lg transition">
-        <h2 class="font-bold text-xl text-blue-600">Digital Boost Marketing</h2>
-        <p class="mt-2 text-gray-600">We help brands grow with SEO and digital ads.</p>
-      </div>
-
-      <div class="p-5 bg-white shadow-md rounded-xl text-center hover:shadow-lg transition">
-        <h2 class="font-bold text-xl text-blue-600">GreenLeaf Café</h2>
-        <p class="mt-2 text-gray-600">Eco-friendly café serving organic food & drinks.</p>
-      </div>
-
-      <div class="p-5 bg-white shadow-md rounded-xl text-center hover:shadow-lg transition">
-        <h2 class="font-bold text-xl text-blue-600">TechFix Solutions</h2>
-        <p class="mt-2 text-gray-600">Expert repair services for laptops and smartphones.</p>
-      </div>
+  <!-- BUSINESS GRID -->
+  <main class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+    <!-- Card 1 -->
+    <div class="glass rounded-2xl p-6 shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2">
+      <img src="https://source.unsplash.com/400x250/?marketing" alt="Digital Boost Marketing" class="rounded-xl mb-4 w-full h-48 object-cover">
+      <h3 class="text-xl font-semibold text-blue-700">Digital Boost Marketing</h3>
+      <p class="text-gray-600 mt-2 mb-4">We help brands grow with SEO, content, and digital ads.</p>
+      <a href="business-details.html?id=1" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">View Details</a>
     </div>
 
-    <div class="text-center mt-10">
-      <a href="index.html" class="text-blue-600 underline hover:text-blue-800">⬅ Back to Home</a>
+    <!-- Card 2 -->
+    <div class="glass rounded-2xl p-6 shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2">
+      <img src="https://source.unsplash.com/400x250/?cafe" alt="GreenLeaf Café" class="rounded-xl mb-4 w-full h-48 object-cover">
+      <h3 class="text-xl font-semibold text-blue-700">GreenLeaf Café</h3>
+      <p class="text-gray-600 mt-2 mb-4">Eco-friendly café serving organic food & beverages.</p>
+      <a href="business-details.html?id=2" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">View Details</a>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="glass rounded-2xl p-6 shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2">
+      <img src="https://source.unsplash.com/400x250/?technology" alt="TechFix Solutions" class="rounded-xl mb-4 w-full h-48 object-cover">
+      <h3 class="text-xl font-semibold text-blue-700">TechFix Solutions</h3>
+      <p class="text-gray-600 mt-2 mb-4">Expert repair for laptops, smartphones & gadgets.</p>
+      <a href="business-details.html?id=3" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">View Details</a>
     </div>
   </main>
 
-  <footer class="mt-16 text-center p-5 bg-gray-200 text-sm text-gray-700">
-    © 2025 BizLink Exchange — All rights reserved.
+  <!-- CTA SECTION -->
+  <section class="mt-20 text-center py-12 bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
+    <h3 class="text-3xl font-bold mb-3">Want to feature your business?</h3>
+    <p class="text-lg mb-6">Join our growing network and gain visibility among trusted partners.</p>
+    <a href="contact.html" class="bg-white text-blue-700 px-6 py-3 rounded-xl font-medium shadow hover:bg-gray-100 transition">🚀 Get Listed</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="text-center py-6 text-gray-700 bg-gray-100 mt-10">
+    © 2025 BizLink Exchange. All Rights Reserved.
   </footer>
 </body>
 </html>
