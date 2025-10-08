@@ -15,39 +15,61 @@
       <span class="font-semibold text-white">BizLink Exchange</span>.
     </p>
 
-    <form id="bizForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
+  <form id="bizForm" 
+      action="https://script.google.com/macros/s/AKfycbwjuGvIH9F7vlE-QV5zT3hLnCvf600eRkNLYuM040vBIOQCJW3JEHMzsVDebaNL4XmytQ/exec"
+      method="POST"
+      class="space-y-4 w-full">
 
-  <!-- 🔑 Web3Forms Access Key -->
   <input type="hidden" name="access_key" value="0fcfe81d-7fa3-42c7-952e-04615640a690">
 
-  <!-- 🔗 Redirect page after submit -->
-  <input type="hidden" name="redirect" value="https://azlanwebtech786.github.io/bizlink-exchange/thankyou.html">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="block text-sm font-medium mb-1 text-white">Business Name *</label>
+      <input type="text" name="Business Name" placeholder="Enter Business Name" required
+             class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800">
+    </div>
 
-  <!-- 📊 Google Sheets webhook (your Apps Script URL) -->
-  <input type="hidden" name="webhook" value="https://script.google.com/macros/s/AKfycbwjuGvIH9F7vlE-QV5zT3hLnCvf600eRkNLYuM040vBIOQCJW3JEHMzsVDebaNL4XmytQ/exec">
+    <div>
+      <label class="block text-sm font-medium mb-1 text-white">Owner Name *</label>
+      <input type="text" name="Owner Name" placeholder="Enter Owner Name" required
+             class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800">
+    </div>
+  </div>
 
-  <label>Business Name *</label>
-  <input type="text" name="business_name" placeholder="Enter Business Name" required>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="block text-sm font-medium mb-1 text-white">Email *</label>
+      <input type="email" name="Email" placeholder="Enter Email" required
+             class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800">
+    </div>
 
-  <label>Owner Name *</label>
-  <input type="text" name="owner_name" placeholder="Enter Owner Name" required>
+    <div>
+      <label class="block text-sm font-medium mb-1 text-white">Business Category *</label>
+      <input type="text" name="Business Category" placeholder="e.g. Marketing, IT, Retail..." required
+             class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800">
+    </div>
+  </div>
 
-  <label>Email *</label>
-  <input type="email" name="email" placeholder="Enter Email" required>
+  <div>
+    <label class="block text-sm font-medium mb-1 text-white">Business Description *</label>
+    <textarea name="Business Description" placeholder="Describe your business..." required
+              class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800"></textarea>
+  </div>
 
-  <label>Business Category *</label>
-  <input type="text" name="category" placeholder="e.g. Marketing, IT, Retail..." required>
+  <div>
+    <label class="block text-sm font-medium mb-1 text-white">Location / City *</label>
+    <input type="text" name="City" placeholder="Enter City" required
+           class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800">
+  </div>
 
-  <label>Business Description *</label>
-  <textarea name="description" placeholder="Describe your business..." required></textarea>
-
-  <label>Location / City *</label>
-  <input type="text" name="location" placeholder="Enter City" required>
-
-  <button type="submit" class="bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition">
-    🚀 Submit Listing
-  </button>
+  <div class="text-center">
+    <button type="submit"
+            class="bg-purple-700 hover:bg-purple-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition duration-300">
+      🚀 Submit Listing
+    </button>
+  </div>
 </form>
+
 
 <script>
 document.getElementById("bizForm").addEventListener("submit", async function(e) {
