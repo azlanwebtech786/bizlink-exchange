@@ -100,21 +100,23 @@
     </form>
   </div>
 
+  <!-- ✅ EmailJS CDN -->
   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+
   <script>
-    // Initialize EmailJS
+    // ✅ Initialize EmailJS
     (function() {
       emailjs.init("cHIk8f3mvNgvX2YtC");
     })();
 
-    // Business data (sample)
+    // ✅ Business data
     const businesses = [
       { id: 1, name: "Digital Boost Marketing", desc: "We help small businesses grow through SEO and ads." },
       { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
       { id: 3, name: "TechFix Solutions", desc: "Expert laptop and smartphone repair center." }
     ];
 
-    // Load Business by ID
+    // ✅ Load Business Info by ID
     const urlParams = new URLSearchParams(window.location.search);
     const businessId = parseInt(urlParams.get("id"));
     const business = businesses.find(b => b.id === businessId);
@@ -127,7 +129,7 @@
       document.getElementById("businessDesc").textContent = "";
     }
 
-    // Contact Form Submission
+    // ✅ Contact Form Handler
     const contactForm = document.getElementById("contactForm");
     const sendBtn = document.getElementById("sendBtn");
 
@@ -137,11 +139,13 @@
       sendBtn.disabled = true;
       sendBtn.innerHTML = "⏳ Sending...";
 
-      emailjs.send("service_js2oegb", "template_bbacw1b", {
-        user_name: document.getElementById("userName").value,
-        user_email: document.getElementById("userEmail").value,
-        user_message: document.getElementById("userMessage").value
-      })
+      const formData = {
+        name: document.getElementById("userName").value,
+        email: document.getElementById("userEmail").value,
+        message: document.getElementById("userMessage").value
+      };
+
+      emailjs.send("service_js2oegb", "template_bbacw1b", formData)
       .then(() => {
         const successBox = document.createElement("div");
         successBox.innerHTML = `
@@ -174,7 +178,7 @@
       })
       .catch((err) => {
         console.error("Email error:", err);
-        alert("⚠️ Failed to send message. Try again later.");
+        alert("⚠️ Failed to send message. Please check your EmailJS setup or try again later.");
         sendBtn.disabled = false;
         sendBtn.innerHTML = "Send Message";
       });
