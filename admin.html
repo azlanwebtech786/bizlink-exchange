@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BizLink Admin Panel</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #fff;
+    text-align: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  button {
+    background: #00e676;
+    border: none;
+    color: #000;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background: #00c853;
+  }
+
+  table {
+    width: 95%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+  }
+
+  th {
+    background: #6200ea;
+    color: white;
+  }
+
+  tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .loading {
+    margin-top: 20px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+  <h1>📊 BizLink Admin Panel</h1>
+  <p>View all business listings submitted via your form</p>
+  <button onclick="fetchData()">🔄 Refresh Data</button>
+  <div class="loading" id="loading">Loading data...</div>
+
+  <table id="data-table">
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Business Name</th>
+        <th>Owner Name</th>
+        <th>Email</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Location</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+<script>
+const sheetURL = "https://script.google.com/macros/s/AKfycbwgNWhd2AFIbBIXK46NZRYRRiCVci-yobuxT_mUZl1l3FVYDtwXNA49rF1z0Z3ttBPMgg/exec";
+
+async function fetchData() {
+  const loading = document.getElementById("loading");
+  loading.textContent = "Loading data...";
+  try {
+    const res = await fetch(sheetURL);
+    if (!res.ok) throw new Error("Failed to fetch data");
+    const data = await res.json();
+    displayTable(data);
+    loading.textContent = "";
+  } catch (err) {
+    console.error("Error loading data:", err);
+    loading.textContent = "⚠️ Failed to load data.";
+  }
+}
+
+function displayTable(data) {
+  const tbody = document.querySelector("#data-table tbody");
+  tbody.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7">No data available</td></tr>`;
+    return;
+  }
+
+  data.forEach((row) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row.Timestamp || ""}</td>
+      <td>${row["Business Name"] || ""}</td>
+      <td>${row["Owner Name"] || ""}</td>
+      <td>${row.Email || ""}</td>
+      <td>${row.Category || ""}</td>
+      <td>${row.Description || ""}</td>
+      <td>${row.Location || ""}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+fetchData();
+</script>
+</body>
+</html>
