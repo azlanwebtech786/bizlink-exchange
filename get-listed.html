@@ -14,61 +14,52 @@
       Get discovered by thousands of clients through 
       <span class="font-semibold text-white">BizLink Exchange</span>.
     </p>
+<form action="https://script.google.com/macros/s/AKfycbwjuGvIH9F7vlE-QV5zT3hLnCvf600eRkNLYuM040vBIOQCJW3JEHMzsVDebaNL4XmytQ/exec" 
+      method="POST" 
+      class="space-y-4 bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-lg text-left text-white max-w-2xl w-full">
 
-  <form id="bizForm" 
-      action="https://script.google.com/macros/s/AKfycbwjuGvIH9F7vlE-QV5zT3hLnCvf600eRkNLYuM040vBIOQCJW3JEHMzsVDebaNL4XmytQ/exec"
-      method="POST"
-      class="space-y-4 w-full">
-
-  <input type="hidden" name="access_key" value="0fcfe81d-7fa3-42c7-952e-04615640a690">
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label class="block text-sm font-medium mb-1 text-white">Business Name *</label>
-      <input type="text" name="Business Name" placeholder="Enter Business Name" required
-             class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800">
-    </div>
-
-    <div>
-      <label class="block text-sm font-medium mb-1 text-white">Owner Name *</label>
-      <input type="text" name="Owner Name" placeholder="Enter Owner Name" required
-             class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800">
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label class="block text-sm font-medium mb-1 text-white">Email *</label>
-      <input type="email" name="Email" placeholder="Enter Email" required
-             class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800">
-    </div>
-
-    <div>
-      <label class="block text-sm font-medium mb-1 text-white">Business Category *</label>
-      <input type="text" name="Business Category" placeholder="e.g. Marketing, IT, Retail..." required
-             class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800">
-    </div>
+  <div>
+    <label class="block text-sm mb-2">Business Name *</label>
+    <input name="business_name" type="text" required placeholder="Enter Business Name"
+           class="w-full px-4 py-2 rounded-md text-gray-900 focus:ring-2 focus:ring-purple-500">
   </div>
 
   <div>
-    <label class="block text-sm font-medium mb-1 text-white">Business Description *</label>
-    <textarea name="Business Description" placeholder="Describe your business..." required
-              class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800"></textarea>
+    <label class="block text-sm mb-2">Owner Name *</label>
+    <input name="owner_name" type="text" required placeholder="Enter Owner Name"
+           class="w-full px-4 py-2 rounded-md text-gray-900 focus:ring-2 focus:ring-purple-500">
   </div>
 
   <div>
-    <label class="block text-sm font-medium mb-1 text-white">Location / City *</label>
-    <input type="text" name="City" placeholder="Enter City" required
-           class="w-full p-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 text-gray-800">
+    <label class="block text-sm mb-2">Email *</label>
+    <input name="email" type="email" required placeholder="Enter Email"
+           class="w-full px-4 py-2 rounded-md text-gray-900 focus:ring-2 focus:ring-purple-500">
   </div>
 
-  <div class="text-center">
-    <button type="submit"
-            class="bg-purple-700 hover:bg-purple-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition duration-300">
-      🚀 Submit Listing
-    </button>
+  <div>
+    <label class="block text-sm mb-2">Business Category *</label>
+    <input name="category" type="text" required placeholder="e.g. Marketing, IT, Retail..."
+           class="w-full px-4 py-2 rounded-md text-gray-900 focus:ring-2 focus:ring-purple-500">
   </div>
+
+  <div>
+    <label class="block text-sm mb-2">Business Description *</label>
+    <textarea name="description" required placeholder="Describe your business..."
+              class="w-full px-4 py-2 rounded-md text-gray-900 focus:ring-2 focus:ring-purple-500"></textarea>
+  </div>
+
+  <div>
+    <label class="block text-sm mb-2">Location / City *</label>
+    <input name="city" type="text" required placeholder="Enter City"
+           class="w-full px-4 py-2 rounded-md text-gray-900 focus:ring-2 focus:ring-purple-500">
+  </div>
+
+  <button type="submit"
+          class="w-full bg-purple-600 hover:bg-purple-700 transition text-white py-3 rounded-xl font-semibold">
+    🚀 Submit Listing
+  </button>
 </form>
+
 
 
 <script>
