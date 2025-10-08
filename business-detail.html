@@ -7,214 +7,178 @@
   <style>
     body {
       font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #9333ea, #3b82f6);
-      color: #fff;
+      background: linear-gradient(135deg, #f3f4f6, #dbeafe);
+      color: #222;
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
     }
 
     header {
+      background: linear-gradient(90deg, #2563eb, #1e40af);
+      color: white;
+      padding: 20px;
       text-align: center;
-      padding: 2rem 0;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(6px);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2.2rem;
-      color: #fff;
+      font-size: 1.8rem;
+      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .container {
-      max-width: 900px;
-      margin: 2rem auto;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
       border-radius: 20px;
-      padding: 2rem;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-      animation: fadeIn 0.8s ease-in-out;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .business-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e3a8a;
     }
 
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
+    .business-desc {
+      margin: 15px 0;
+      font-size: 1rem;
+      color: #444;
     }
 
-    p {
-      margin: 0.5rem 0;
-      color: #f0f0f0;
-      line-height: 1.6;
-    }
-
-    .back-btn {
-      display: inline-block;
-      margin-top: 1.5rem;
-      background: #2563eb;
-      color: white;
-      padding: 0.7rem 1.5rem;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-
-    .back-btn:hover {
-      background: #1e40af;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.9rem;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(5px);
-    }
-
-    .highlight {
-      color: #ffe082;
-      font-weight: 600;
-    }
-
-    /* Contact + Review */
-    .form-section {
-      margin-top: 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 1.5rem;
-    }
-
-    label {
-      display: block;
-      margin: 0.5rem 0 0.3rem;
+    form {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     input, textarea {
-      width: 100%;
-      padding: 0.8rem;
-      border: none;
-      border-radius: 8px;
-      margin-bottom: 1rem;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
       font-size: 1rem;
+      width: 100%;
     }
 
     button {
-      background: #22c55e;
-      border: none;
-      padding: 0.8rem 1.5rem;
+      background: linear-gradient(90deg, #2563eb, #1e3a8a);
       color: white;
-      border-radius: 8px;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
       font-size: 1rem;
-      font-weight: bold;
       cursor: pointer;
       transition: 0.3s;
     }
 
     button:hover {
-      background: #16a34a;
+      background: linear-gradient(90deg, #1d4ed8, #1e40af);
+      transform: translateY(-2px);
     }
 
-    .review {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1rem;
-      border-radius: 10px;
-      margin-top: 1rem;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -60%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
     }
   </style>
 </head>
+
 <body>
-  <header>
-    <h1>Business Details</h1>
-    <p>Explore details, contact, and leave a review!</p>
-  </header>
+  <header>BizLink Exchange — Business Details</header>
 
-  <div class="container" id="businessDetails"></div>
+  <div class="container">
+    <h1 class="business-title" id="businessName">Loading...</h1>
+    <p class="business-desc" id="businessDesc">Please wait...</p>
 
-  <footer>
-    <p>© 2025 BizLink Exchange | Built 💖 by Azlan Web Tech </p>
-  </footer>
+    <hr />
 
-  <!-- ✅ EmailJS CDN -->
+    <h2>📩 Contact Owner</h2>
+    <form id="contactForm">
+      <input type="text" id="userName" placeholder="Your Name" required />
+      <input type="email" id="userEmail" placeholder="Your Email" required />
+      <textarea id="userMessage" rows="5" placeholder="Write your message..." required></textarea>
+      <button id="sendBtn" type="submit">Send Message</button>
+    </form>
+  </div>
+
   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-
   <script>
-   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-  (function() {
-    emailjs.init("cHIk8f3mvNgvX2YtC"); // 🔑 Tera public key
-  })();
+    // Initialize EmailJS
+    (function() {
+      emailjs.init("cHIk8f3mvNgvX2YtC");
+    })();
 
-  const contactForm = document.getElementById("contactForm");
-  const sendBtn = document.getElementById("sendBtn");
+    // Business data (sample)
+    const businesses = [
+      { id: 1, name: "Digital Boost Marketing", desc: "We help small businesses grow through SEO and ads." },
+      { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
+      { id: 3, name: "TechFix Solutions", desc: "Expert laptop and smartphone repair center." }
+    ];
 
-  contactForm.addEventListener("submit", function(e) {
-    e.preventDefault();
+    // Load Business by ID
+    const urlParams = new URLSearchParams(window.location.search);
+    const businessId = parseInt(urlParams.get("id"));
+    const business = businesses.find(b => b.id === businessId);
 
-    // Show loading animation
-    sendBtn.disabled = true;
-    sendBtn.innerHTML = "⏳ Sending...";
+    if (business) {
+      document.getElementById("businessName").textContent = business.name;
+      document.getElementById("businessDesc").textContent = business.desc;
+    } else {
+      document.getElementById("businessName").textContent = "Business Not Found";
+      document.getElementById("businessDesc").textContent = "";
+    }
 
-    emailjs.send("service_js2oegb", "template_bbacw1b", {
-      user_name: document.getElementById("userName").value,
-      user_email: document.getElementById("userEmail").value,
-      user_message: document.getElementById("userMessage").value
-    })
-    .then(() => {
-      // Add success animation box
-      const successBox = document.createElement("div");
-      successBox.innerHTML = `
-        <div id="successAnimation" 
-             style="
-               position: fixed;
-               top: 50%;
-               left: 50%;
-               transform: translate(-50%, -50%);
-               background: linear-gradient(135deg,#00c853,#b2ff59);
-               color: #fff;
-               padding: 30px 40px;
-               border-radius: 20px;
-               box-shadow: 0 0 25px rgba(0,0,0,0.3);
-               font-size: 1.2rem;
-               font-weight: 600;
-               animation: fadeIn 0.4s ease;">
-          ✅ Message Sent Successfully! 
-        </div>
-      `;
-      document.body.appendChild(successBox);
+    // Contact Form Submission
+    const contactForm = document.getElementById("contactForm");
+    const sendBtn = document.getElementById("sendBtn");
 
-      // Reset form
-      contactForm.reset();
-      sendBtn.disabled = false;
-      sendBtn.innerHTML = "Send Message";
+    contactForm.addEventListener("submit", function(e) {
+      e.preventDefault();
 
-      // Remove animation after 3 seconds
-      setTimeout(() => {
-        successBox.remove();
-      }, 3000);
-    })
-    .catch((err) => {
-      console.error("Email error:", err);
-      alert("⚠️ Failed to send message. Try again later.");
-      sendBtn.disabled = false;
-      sendBtn.innerHTML = "Send Message";
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = "⏳ Sending...";
+
+      emailjs.send("service_js2oegb", "template_bbacw1b", {
+        user_name: document.getElementById("userName").value,
+        user_email: document.getElementById("userEmail").value,
+        user_message: document.getElementById("userMessage").value
+      })
+      .then(() => {
+        const successBox = document.createElement("div");
+        successBox.innerHTML = `
+          <div id="successAnimation" 
+               style="
+                 position: fixed;
+                 top: 50%;
+                 left: 50%;
+                 transform: translate(-50%, -50%);
+                 background: linear-gradient(135deg,#00c853,#b2ff59);
+                 color: #fff;
+                 padding: 30px 40px;
+                 border-radius: 20px;
+                 box-shadow: 0 0 25px rgba(0,0,0,0.3);
+                 font-size: 1.2rem;
+                 font-weight: 600;
+                 animation: fadeIn 0.4s ease;">
+            ✅ Message Sent Successfully!
+          </div>
+        `;
+        document.body.appendChild(successBox);
+
+        contactForm.reset();
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = "Send Message";
+
+        setTimeout(() => {
+          successBox.remove();
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error("Email error:", err);
+        alert("⚠️ Failed to send message. Try again later.");
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = "Send Message";
+      });
     });
-  });
-</script>
-
-<style>
-@keyframes fadeIn {
-  from { opacity: 0; transform: translate(-50%, -60%); }
-  to { opacity: 1; transform: translate(-50%, -50%); }
-}
-</style>
-
   </script>
 </body>
 </html>
