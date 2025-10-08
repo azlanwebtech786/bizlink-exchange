@@ -6,6 +6,7 @@
   <title>Get Listed | BizLink Exchange</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="min-h-screen bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center p-6">
 
   <div class="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 text-white">
@@ -14,67 +15,45 @@
       Get discovered by thousands of clients through 
       <span class="font-semibold text-white">BizLink Exchange</span>.
     </p>
-<form id="bizForm">
-  <input id="business_name" name="business_name" placeholder="Business Name">
-  <input id="owner_name" name="owner_name" placeholder="Owner Name">
-  <input id="email" name="email" placeholder="Email">
-  <input id="category" name="category" placeholder="Category">
-  <textarea id="description" name="description" placeholder="Description"></textarea>
-  <input id="city" name="city" placeholder="City">
-  <button type="submit">🚀 Submit Listing</button>
-</form>
 
-<script>
-document.getElementById("bizForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  
-  fetch("https://script.google.com/macros/s/AKfycbxX1V4jP_NOYwWcW8wZ2PQLaKEfttpsuU_qIgwxhni49n_lOWdkeaNLGdw2s9VN85m4zA/exec", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      business_name: document.getElementById("business_name").value,
-      owner_name: document.getElementById("owner_name").value,
-      email: document.getElementById("email").value,
-      category: document.getElementById("category").value,
-      description: document.getElementById("description").value,
-      city: document.getElementById("city").value
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert("✅ " + data.message);
-    document.getElementById("bizForm").reset();
-  })
-  .catch(err => alert("⚠️ Error: " + err.message));
-});
-</script>
+    <form id="bizForm" class="space-y-4">
+      <input id="business_name" name="business_name" placeholder="Business Name" required class="w-full p-3 rounded-lg bg-white/20 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white">
+      <input id="owner_name" name="owner_name" placeholder="Owner Name" required class="w-full p-3 rounded-lg bg-white/20 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white">
+      <input id="email" name="email" type="email" placeholder="Email" required class="w-full p-3 rounded-lg bg-white/20 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white">
+      <input id="category" name="category" placeholder="Business Category" required class="w-full p-3 rounded-lg bg-white/20 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white">
+      <textarea id="description" name="description" placeholder="Business Description" required class="w-full p-3 rounded-lg bg-white/20 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white"></textarea>
+      <input id="city" name="city" placeholder="Location / City" required class="w-full p-3 rounded-lg bg-white/20 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white">
 
+      <button type="submit" class="w-full bg-white text-indigo-700 font-semibold py-3 rounded-xl shadow hover:bg-gray-100 transition">
+        🚀 Submit Listing
+      </button>
+    </form>
+  </div>
 
+  <script>
+  document.getElementById("bizForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-<script>
-document.getElementById("bizForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
-  const form = e.target;
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxX1V4jP_NOYwWcW8wZ2PQLaKEfttpsuU_qIgwxhni49n_lOWdkeaNLGdw2s9VN85m4zA/exec";
+    const form = e.target;
 
-  try {
-    const res = await fetch(form.action, {
-      method: form.method,
-      body: new FormData(form)
-    });
+    try {
+      const res = await fetch(scriptURL, {
+        method: "POST",
+        body: new FormData(form)
+      });
 
-    if (res.ok) {
-      alert("✅ Your business listing has been submitted successfully!");
-      form.reset();
-      window.location.href = "thankyou.html";
-    } else {
-      alert("❌ Something went wrong. Please try again.");
+      if (res.ok) {
+        alert("✅ Your business listing has been submitted successfully!");
+        form.reset();
+      } else {
+        alert("❌ Something went wrong. Please try again.");
+      }
+    } catch (err) {
+      alert("⚠️ Error: " + err.message);
     }
-  } catch (err) {
-    alert("⚠️ Error: " + err.message);
-  }
-});
-</script>
-
+  });
+  </script>
 
 </body>
 </html>
