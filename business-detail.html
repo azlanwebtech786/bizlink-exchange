@@ -138,113 +138,83 @@
   <div class="container" id="businessDetails"></div>
 
   <footer>
-    <p>© 2025 BizLink Exchange | Built with 💖 by Azlan & ChatGPT</p>
+    <p>© 2025 BizLink Exchange | Built 💖 by Azlan Web Tech </p>
   </footer>
 
   <!-- ✅ EmailJS CDN -->
   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 
   <script>
-    // ✅ Initialize EmailJS
-    (function() {
-      emailjs.init("cHIk8f3mvNgvX2YtC"); // 👈 Your Public Key
-    })();
+   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  (function() {
+    emailjs.init("cHIk8f3mvNgvX2YtC"); // 🔑 Tera public key
+  })();
 
-    const businesses = [
-      { id: 1, name: "BizLink Digital", category: "Marketing", city: "Mumbai", description: "A leading marketing agency helping startups and brands reach global audiences through innovative digital strategies.", email: "contact@bizlinkdigital.com", phone: "+91 9876543210", website: "https://bizlinkdigital.com" },
-      { id: 2, name: "TechNova Solutions", category: "IT", city: "Bangalore", description: "We specialize in cutting-edge web development, cloud solutions, and app design tailored for businesses of tomorrow.", email: "support@technova.com", phone: "+91 9123456780", website: "https://technova.com" },
-      { id: 3, name: "UrbanStyle Boutique", category: "Fashion", city: "Delhi", description: "Trendy clothing store offering latest urban fashion collections for men and women with a touch of elegance.", email: "info@urbanstyle.com", phone: "+91 9988776655", website: "https://urbanstyle.com" },
-      { id: 4, name: "FitLife Gym", category: "Fitness", city: "Pune", description: "Your ultimate destination for fitness and wellness — join us for personal training, yoga, and nutrition programs.", email: "hello@fitlife.com", phone: "+91 8877665544", website: "https://fitlife.com" },
-      { id: 5, name: "BrightMind Academy", category: "Education", city: "Hyderabad", description: "Empowering students with high-quality education, mentorship, and career guidance for a brighter future.", email: "admissions@brightmind.com", phone: "+91 7766554433", website: "https://brightmind.com" }
-    ];
+  const contactForm = document.getElementById("contactForm");
+  const sendBtn = document.getElementById("sendBtn");
 
-    const params = new URLSearchParams(window.location.search);
-    const id = parseInt(params.get("id"));
-    const business = businesses.find(b => b.id === id);
-    const container = document.getElementById("businessDetails");
+  contactForm.addEventListener("submit", function(e) {
+    e.preventDefault();
 
-    if (business) {
-      container.innerHTML = `
-        <h2>${business.name}</h2>
-        <p><strong>Category:</strong> ${business.category}</p>
-        <p><strong>Location:</strong> ${business.city}</p>
-        <p><strong>Description:</strong> ${business.description}</p>
-        <p><strong>Email:</strong> <span class="highlight">${business.email}</span></p>
-        <p><strong>Phone:</strong> <span class="highlight">${business.phone}</span></p>
-        <p><strong>Website:</strong> <a href="${business.website}" target="_blank" class="highlight">${business.website}</a></p>
+    // Show loading animation
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = "⏳ Sending...";
 
-        <div class="form-section">
-          <h3>📩 Contact ${business.name}</h3>
-          <form id="contactForm">
-            <label>Your Name</label>
-            <input type="text" id="userName" required>
-            <label>Your Email</label>
-            <input type="email" id="userEmail" required>
-            <label>Your Message</label>
-            <textarea id="userMessage" rows="3" required></textarea>
-            <button type="submit">Send Message</button>
-          </form>
+    emailjs.send("service_js2oegb", "template_bbacw1b", {
+      user_name: document.getElementById("userName").value,
+      user_email: document.getElementById("userEmail").value,
+      user_message: document.getElementById("userMessage").value
+    })
+    .then(() => {
+      // Add success animation box
+      const successBox = document.createElement("div");
+      successBox.innerHTML = `
+        <div id="successAnimation" 
+             style="
+               position: fixed;
+               top: 50%;
+               left: 50%;
+               transform: translate(-50%, -50%);
+               background: linear-gradient(135deg,#00c853,#b2ff59);
+               color: #fff;
+               padding: 30px 40px;
+               border-radius: 20px;
+               box-shadow: 0 0 25px rgba(0,0,0,0.3);
+               font-size: 1.2rem;
+               font-weight: 600;
+               animation: fadeIn 0.4s ease;">
+          ✅ Message Sent Successfully! 
         </div>
-
-        <div class="form-section">
-          <h3>⭐ Leave a Review</h3>
-          <form id="reviewForm">
-            <label>Your Name</label>
-            <input type="text" id="reviewerName" required>
-            <label>Your Review</label>
-            <textarea id="reviewText" rows="3" required></textarea>
-            <button type="submit">Submit Review</button>
-          </form>
-          <div id="reviews"></div>
-        </div>
-
-        <a href="business-listing.html" class="back-btn">⬅ Back to Listings</a>
       `;
+      document.body.appendChild(successBox);
 
-      // ✅ Contact Form (EmailJS)
-      document.getElementById("contactForm").addEventListener("submit", function(e) {
-        e.preventDefault();
+      // Reset form
+      contactForm.reset();
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = "Send Message";
 
-        emailjs.send("service_js2oegb", "template_bbacw1b", {
-          user_name: document.getElementById("userName").value,
-          user_email: document.getElementById("userEmail").value,
-          user_message: document.getElementById("userMessage").value,
-          to_name: business.name
-        })
-        .then(() => {
-          alert("✅ Message sent successfully!");
-          e.target.reset();
-        })
-        .catch(err => {
-          console.error("EmailJS Error:", err);
-          alert("⚠️ Message failed! Check console for error.");
-        });
-      });
+      // Remove animation after 3 seconds
+      setTimeout(() => {
+        successBox.remove();
+      }, 3000);
+    })
+    .catch((err) => {
+      console.error("Email error:", err);
+      alert("⚠️ Failed to send message. Try again later.");
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = "Send Message";
+    });
+  });
+</script>
 
-      // ✅ Review Form
-      const reviewsDiv = document.getElementById("reviews");
-      const reviewForm = document.getElementById("reviewForm");
+<style>
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -60%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+</style>
 
-      reviewForm.addEventListener("submit", e => {
-        e.preventDefault();
-        const name = document.getElementById("reviewerName").value;
-        const text = document.getElementById("reviewText").value;
-
-        const div = document.createElement("div");
-        div.classList.add("review");
-        div.innerHTML = `<strong>${name}</strong><p>${text}</p>`;
-        reviewsDiv.appendChild(div);
-
-        reviewForm.reset();
-      });
-
-    } else {
-      container.innerHTML = `
-        <h2>Business Not Found 😕</h2>
-        <p>The business you're looking for does not exist or may have been removed.</p>
-        <a href="business-listing.html" class="back-btn">⬅ Go Back</a>
-      `;
-    }
   </script>
 </body>
 </html>
