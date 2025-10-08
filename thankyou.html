@@ -1,35 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thank You | BizLink Exchange</title>
   <style>
     body {
+      margin: 0;
       font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-      color: #1e3a8a;
+      background: linear-gradient(135deg, #e0f2fe, #dbeafe, #bfdbfe);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
       text-align: center;
-      padding: 80px 20px;
     }
-    h1 {
-      color: #2563eb;
-      font-size: 2.2rem;
+
+    .card {
+      background: white;
+      padding: 40px 50px;
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      animation: fadeIn 0.8s ease forwards;
     }
-    a {
+
+    .checkmark {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
       display: inline-block;
-      margin-top: 20px;
+      border: 5px solid #22c55e;
+      position: relative;
+      margin-bottom: 20px;
+      animation: popIn 0.6s ease forwards;
+    }
+
+    .checkmark::after {
+      content: "";
+      position: absolute;
+      left: 25px;
+      top: 45px;
+      width: 20px;
+      height: 40px;
+      border-right: 5px solid #22c55e;
+      border-bottom: 5px solid #22c55e;
+      transform: rotate(45deg);
+      opacity: 0;
+      animation: drawCheck 0.5s 0.6s ease forwards;
+    }
+
+    h1 {
+      color: #1e3a8a;
+      font-size: 2rem;
+      margin: 0 0 10px;
+    }
+
+    p {
+      color: #444;
+      font-size: 1rem;
+      margin-bottom: 25px;
+    }
+
+    a.button {
       text-decoration: none;
-      background: #2563eb;
+      background: linear-gradient(90deg, #2563eb, #1e3a8a);
       color: white;
       padding: 12px 25px;
-      border-radius: 8px;
+      border-radius: 12px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    a.button:hover {
+      background: linear-gradient(90deg, #1d4ed8, #1e40af);
+      transform: translateY(-2px);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes drawCheck {
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 🎉 Confetti Animation */
+    .confetti {
+      position: absolute;
+      top: 0;
+      width: 10px;
+      height: 10px;
+      background: #3b82f6;
+      opacity: 0.8;
+      animation: fall 3s linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <h1>✅ Message Sent Successfully!</h1>
-  <p>Thank you for contacting BizLink Exchange.<br>We’ll get back to you soon!</p>
-  <a href="index.html">← Back to Home</a>
+  <div id="confetti-container"></div>
+  <div class="card">
+    <div class="checkmark"></div>
+    <h1>Form Submitted Successfully!</h1>
+    <p>Thank you for contacting us — we’ll get back to you soon.</p>
+    <a href="index.html" class="button">⬅ Back to Home</a>
+  </div>
+
+  <script>
+    // 🎉 Confetti Animation Generator
+    const container = document.getElementById("confetti-container");
+    for (let i = 0; i < 40; i++) {
+      const confetti = document.createElement("div");
+      confetti.classList.add("confetti");
+      confetti.style.left = Math.random() * 100 + "vw";
+      confetti.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
+      confetti.style.animationDuration = 2 + Math.random() * 3 + "s";
+      confetti.style.width = confetti.style.height = Math.random() * 8 + 4 + "px";
+      container.appendChild(confetti);
+
+      setTimeout(() => confetti.remove(), 5000);
+    }
+  </script>
 </body>
 </html>
