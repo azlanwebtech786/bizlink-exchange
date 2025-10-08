@@ -3,171 +3,128 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizLink Exchange | Connect Businesses Easily</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>BizLink Exchange | Connect & Grow</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
+    html {
+      scroll-behavior: smooth;
     }
-
-    body {
-      background: linear-gradient(135deg, #f0f4ff, #dbeafe);
-      color: #1e3a8a;
-      overflow-x: hidden;
-    }
-
-    header {
-      background: linear-gradient(90deg, #1d4ed8, #1e3a8a);
-      color: white;
-      padding: 20px 40px;
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: 700;
-      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .hero {
-      text-align: center;
-      padding: 80px 20px;
-    }
-
-    .hero h1 {
-      font-size: 2.8rem;
-      font-weight: 700;
-      color: #1e40af;
-      margin-bottom: 10px;
-    }
-
-    .hero p {
-      color: #334155;
-      font-size: 1.2rem;
-      margin-bottom: 25px;
-    }
-
-    .hero button {
-      background: linear-gradient(90deg, #2563eb, #1e40af);
-      color: white;
-      padding: 12px 28px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .hero button:hover {
-      transform: translateY(-3px);
-      background: linear-gradient(90deg, #1e3a8a, #172554);
-    }
-
-    .section {
-      max-width: 1100px;
-      margin: 50px auto;
-      padding: 20px;
-    }
-
-    .section h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 30px;
-      color: #1e3a8a;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 25px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      padding: 25px;
-      transition: all 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-    }
-
-    .card h3 {
-      color: #1e3a8a;
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-    }
-
-    .card p {
-      color: #475569;
-      margin-bottom: 15px;
-    }
-
-    .card a {
-      text-decoration: none;
-      background: linear-gradient(90deg, #2563eb, #1e40af);
-      color: white;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-weight: 500;
-      transition: 0.3s;
-      display: inline-block;
-    }
-
-    .card a:hover {
-      background: linear-gradient(90deg, #1e3a8a, #172554);
-    }
-
-    footer {
-      background: linear-gradient(90deg, #1e3a8a, #1d4ed8);
-      color: white;
-      text-align: center;
-      padding: 20px;
-      margin-top: 60px;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
-      font-size: 0.9rem;
+    .glass {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
   </style>
 </head>
-<body>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800 font-sans">
 
-  <header>🌐 BizLink Exchange</header>
+  <!-- 🌟 Navbar -->
+  <header class="fixed top-0 left-0 w-full z-50 glass shadow-md py-3">
+    <div class="container mx-auto flex justify-between items-center px-6">
+      <h1 class="text-2xl font-bold text-indigo-700">BizLink Exchange</h1>
+      <nav class="hidden md:flex space-x-6 text-gray-700">
+        <a href="#home" class="hover:text-indigo-600 transition">Home</a>
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#businesses" class="hover:text-indigo-600 transition">Businesses</a>
+        <a href="#contact" class="hover:text-indigo-600 transition">Contact</a>
+      </nav>
+      <a href="#contact" class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition">
+        Get Started
+      </a>
+    </div>
+  </header>
 
-  <section class="hero">
-    <h1>Connect. Grow. Exchange Opportunities.</h1>
-    <p>Discover and connect with businesses from various industries instantly.</p>
-    <button onclick="window.location.href='#businesses'">Explore Businesses</button>
+  <!-- 💫 Hero Section -->
+  <section id="home" class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
+    <h2 class="text-5xl md:text-6xl font-extrabold text-indigo-700 mb-4">
+      Connect, Collaborate & Grow 🌐
+    </h2>
+    <p class="max-w-2xl text-gray-600 text-lg mb-6">
+      Discover trusted business partners, connect with clients, and grow your network — all in one place.
+    </p>
+    <div class="flex gap-4">
+      <a href="#businesses" class="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition">
+        Explore Businesses
+      </a>
+      <a href="#contact" class="border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-50 transition">
+        Contact Us
+      </a>
+    </div>
+
+    <div class="mt-10">
+      <lottie-player src="https://assets9.lottiefiles.com/packages/lf20_lk80fpsm.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
+    </div>
   </section>
 
-  <section id="businesses" class="section">
-    <h2>🔥 Featured Businesses</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Digital Boost Marketing</h3>
-        <p>Helping small businesses grow through SEO and digital advertising strategies.</p>
-        <a href="business.html?id=1">View Details</a>
-      </div>
-      <div class="card">
-        <h3>GreenLeaf Café</h3>
-        <p>Eco-friendly cafe serving organic meals, smoothies, and premium coffee blends.</p>
-        <a href="business.html?id=2">View Details</a>
-      </div>
-      <div class="card">
-        <h3>TechFix Solutions</h3>
-        <p>Professional repair services for laptops, smartphones, and other electronics.</p>
-        <a href="business.html?id=3">View Details</a>
+  <!-- ⚡ Features Section -->
+  <section id="features" class="py-20 bg-white">
+    <div class="container mx-auto text-center px-6">
+      <h3 class="text-3xl font-bold text-indigo-700 mb-10">Why Choose BizLink?</h3>
+      <div class="grid md:grid-cols-3 gap-10">
+        <div class="p-6 bg-indigo-50 rounded-2xl shadow hover:shadow-lg transition">
+          <h4 class="font-semibold text-xl mb-3 text-indigo-700">Verified Businesses</h4>
+          <p class="text-gray-600">All partners are vetted to ensure authenticity and reliability.</p>
+        </div>
+        <div class="p-6 bg-indigo-50 rounded-2xl shadow hover:shadow-lg transition">
+          <h4 class="font-semibold text-xl mb-3 text-indigo-700">Smart Connections</h4>
+          <p class="text-gray-600">AI-driven recommendations help you connect with the right partners.</p>
+        </div>
+        <div class="p-6 bg-indigo-50 rounded-2xl shadow hover:shadow-lg transition">
+          <h4 class="font-semibold text-xl mb-3 text-indigo-700">Growth Insights</h4>
+          <p class="text-gray-600">Get analytics to measure impact and opportunities.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <footer>
-    © 2025 BizLink Exchange | Built with 💙 by Azlan WebTech
+  <!-- 🏢 Businesses Section -->
+  <section id="businesses" class="py-20 bg-gradient-to-r from-indigo-50 to-blue-50">
+    <div class="container mx-auto text-center px-6">
+      <h3 class="text-3xl font-bold text-indigo-700 mb-10">Featured Businesses</h3>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:scale-105 transition">
+          <img src="https://source.unsplash.com/400x250/?marketing,office" class="rounded-xl mb-4" alt="Business">
+          <h4 class="text-xl font-semibold mb-2 text-indigo-700">Digital Boost Marketing</h4>
+          <p class="text-gray-600">We help brands grow with SEO, content, and digital ads.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:scale-105 transition">
+          <img src="https://source.unsplash.com/400x250/?cafe,coffee" class="rounded-xl mb-4" alt="Business">
+          <h4 class="text-xl font-semibold mb-2 text-indigo-700">GreenLeaf Café</h4>
+          <p class="text-gray-600">Eco-friendly cafe serving organic food & drinks.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:scale-105 transition">
+          <img src="https://source.unsplash.com/400x250/?repair,technology" class="rounded-xl mb-4" alt="Business">
+          <h4 class="text-xl font-semibold mb-2 text-indigo-700">TechFix Solutions</h4>
+          <p class="text-gray-600">Fast, expert repair for laptops & smartphones.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 📞 Contact Section -->
+  <section id="contact" class="py-20 bg-white">
+    <div class="container mx-auto text-center px-6">
+      <h3 class="text-3xl font-bold text-indigo-700 mb-10">Get in Touch</h3>
+      <form action="https://api.web3forms.com/submit" method="POST" class="max-w-xl mx-auto bg-indigo-50 p-8 rounded-2xl shadow-lg space-y-4">
+        <input type="hidden" name="access_key" value="0fcfe81d-7fa3-42c7-952e-04615640a690">
+        <input type="hidden" name="redirect" value="https://azlanwebtech786.github.io/bizlink-exchange/thankyou.html">
+        <input type="text" name="name" placeholder="Your Name" class="w-full p-3 rounded-lg border border-gray-300" required>
+        <input type="email" name="email" placeholder="Your Email" class="w-full p-3 rounded-lg border border-gray-300" required>
+        <textarea name="message" rows="5" placeholder="Your Message" class="w-full p-3 rounded-lg border border-gray-300" required></textarea>
+        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition">
+          Send Message 🚀
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- 🧭 Footer -->
+  <footer class="bg-indigo-700 text-white py-6 text-center">
+    <p>© 2025 BizLink Exchange. All rights reserved.</p>
   </footer>
 
 </body>
