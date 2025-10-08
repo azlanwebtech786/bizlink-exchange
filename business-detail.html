@@ -100,13 +100,11 @@
     </form>
   </div>
 
-  <!-- ✅ EmailJS CDN -->
   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-
   <script>
     // ✅ Initialize EmailJS
     (function() {
-      emailjs.init("cHIk8f3mvNgvX2YtC");
+      emailjs.init("cHIk8f3mvNgvX2YtC"); // Your public key
     })();
 
     // ✅ Business data
@@ -116,7 +114,7 @@
       { id: 3, name: "TechFix Solutions", desc: "Expert laptop and smartphone repair center." }
     ];
 
-    // ✅ Load Business Info by ID
+    // ✅ Load Business by ID
     const urlParams = new URLSearchParams(window.location.search);
     const businessId = parseInt(urlParams.get("id"));
     const business = businesses.find(b => b.id === businessId);
@@ -129,7 +127,7 @@
       document.getElementById("businessDesc").textContent = "";
     }
 
-    // ✅ Contact Form Handler
+    // ✅ Contact Form Submission
     const contactForm = document.getElementById("contactForm");
     const sendBtn = document.getElementById("sendBtn");
 
@@ -139,13 +137,12 @@
       sendBtn.disabled = true;
       sendBtn.innerHTML = "⏳ Sending...";
 
-      const formData = {
+      // ✅ Variable names now match your EmailJS template
+      emailjs.send("service_js2oegb", "template_bbacw1b", {
         name: document.getElementById("userName").value,
         email: document.getElementById("userEmail").value,
         message: document.getElementById("userMessage").value
-      };
-
-      emailjs.send("service_js2oegb", "template_bbacw1b", formData)
+      })
       .then(() => {
         const successBox = document.createElement("div");
         successBox.innerHTML = `
