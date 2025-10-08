@@ -128,58 +128,38 @@
     }
 
     // ✅ Contact Form Submission
-    const contactForm = document.getElementById("contactForm");
-    const sendBtn = document.getElementById("sendBtn");
+    // ✅ New Working EmailJS Code
+(function() {
+    emailjs.init("cHIk8f3mvNgvX2YtC"); // <-- your public key
+})();
 
-    contactForm.addEventListener("submit", function(e) {
-      e.preventDefault();
+const contactForm = document.getElementById("contactForm");
+const sendBtn = document.getElementById("sendBtn");
 
-      sendBtn.disabled = true;
-      sendBtn.innerHTML = "⏳ Sending...";
+contactForm.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-      // ✅ Variable names now match your EmailJS template
-      emailjs.send("service_js2oegb", "template_bbacw1b", {
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = "⏳ Sending...";
+
+    emailjs.send("service_js2oegb", "template_bbacw1t", {
         name: document.getElementById("userName").value,
         email: document.getElementById("userEmail").value,
         message: document.getElementById("userMessage").value
-      })
-      .then(() => {
-        const successBox = document.createElement("div");
-        successBox.innerHTML = `
-          <div id="successAnimation" 
-               style="
-                 position: fixed;
-                 top: 50%;
-                 left: 50%;
-                 transform: translate(-50%, -50%);
-                 background: linear-gradient(135deg,#00c853,#b2ff59);
-                 color: #fff;
-                 padding: 30px 40px;
-                 border-radius: 20px;
-                 box-shadow: 0 0 25px rgba(0,0,0,0.3);
-                 font-size: 1.2rem;
-                 font-weight: 600;
-                 animation: fadeIn 0.4s ease;">
-            ✅ Message Sent Successfully!
-          </div>
-        `;
-        document.body.appendChild(successBox);
-
+    })
+    .then(() => {
+        alert("✅ Message sent successfully!");
         contactForm.reset();
         sendBtn.disabled = false;
         sendBtn.innerHTML = "Send Message";
-
-        setTimeout(() => {
-          successBox.remove();
-        }, 3000);
-      })
-      .catch((err) => {
-        console.error("Email error:", err);
+    })
+    .catch((error) => {
+        console.error("Error:", error);
         alert("⚠️ Failed to send message. Please check your EmailJS setup or try again later.");
         sendBtn.disabled = false;
         sendBtn.innerHTML = "Send Message";
-      });
     });
+});
   </script>
 </body>
 </html>
