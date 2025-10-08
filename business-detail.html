@@ -87,55 +87,21 @@
     <hr />
 
     <h2>📩 Contact Owner</h2>
-    <form id="contactForm">
-      <input type="text" id="userName" placeholder="Your Name" name="name" required />
-      <input type="email" id="userEmail" placeholder="Your Email" name="email" required />
-      <textarea id="userMessage" rows="5" placeholder="Write your message..." name="message" required></textarea>
-      <button id="sendBtn" type="submit">Send Message</button>
+    <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+      <!-- ✅ Web3Forms Access Key -->
+      <input type="hidden" name="access_key" value="0fcfe81d-7fa3-42c7-952e-04615640a690">
+
+      <!-- ✅ Redirect after success -->
+      <input type="hidden" name="redirect" value="https://azlanwebtech786.github.io/bizlink-exchange/thankyou.html">
+
+      <input type="text" name="name" placeholder="Your Name" required />
+      <input type="email" name="email" placeholder="Your Email" required />
+      <textarea name="message" rows="5" placeholder="Write your message..." required></textarea>
+      <button type="submit" id="sendBtn">Send Message</button>
     </form>
   </div>
 
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
-  // ✅ Initialize EmailJS
-  (function() {
-    emailjs.init("cHIk8f3mvNgvX2YtC"); // Your public key
-  })();
-
-  // ✅ Toast message system
-  function showToast(message, type = "success") {
-    const toast = document.createElement("div");
-    toast.textContent = message;
-    toast.style.position = "fixed";
-    toast.style.bottom = "30px";
-    toast.style.right = "30px";
-    toast.style.padding = "15px 25px";
-    toast.style.borderRadius = "12px";
-    toast.style.fontSize = "1rem";
-    toast.style.color = "white";
-    toast.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
-    toast.style.zIndex = "9999";
-    toast.style.transition = "all 0.5s ease";
-    toast.style.opacity = "0";
-    toast.style.transform = "translateY(30px)";
-    toast.style.background = type === "success"
-      ? "linear-gradient(90deg, #22c55e, #15803d)"
-      : "linear-gradient(90deg, #ef4444, #991b1b)";
-
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.opacity = "1";
-      toast.style.transform = "translateY(0)";
-    }, 100);
-
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      toast.style.transform = "translateY(30px)";
-      setTimeout(() => toast.remove(), 500);
-    }, 3500);
-  }
-
   // ✅ Business data
   const businesses = [
     { id: 1, name: "Digital Boost Marketing", desc: "We help small businesses grow through SEO and ads." },
@@ -155,35 +121,6 @@
     document.getElementById("businessName").textContent = "Business Not Found";
     document.getElementById("businessDesc").textContent = "";
   }
-
-  // ✅ Form submission
-  const contactForm = document.getElementById("contactForm");
-  const sendBtn = document.getElementById("sendBtn");
-
-  contactForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    sendBtn.disabled = true;
-    sendBtn.innerHTML = "⏳ Sending...";
-
-    emailjs.send("service_js2oegb", "template_bbacw1b", {
-      name: document.getElementById("userName").value,
-      email: document.getElementById("userEmail").value,
-      message: document.getElementById("userMessage").value
-    })
-    .then(() => {
-      showToast("✅ Message sent successfully!", "success");
-      contactForm.reset();
-      sendBtn.disabled = false;
-      sendBtn.innerHTML = "Send Message";
-    })
-    .catch((error) => {
-      console.error("Email error:", error);
-      showToast("⚠️ Failed to send message. Please try again.", "error");
-      sendBtn.disabled = false;
-      sendBtn.innerHTML = "Send Message";
-    });
-  });
 </script>
 </body>
 </html>
