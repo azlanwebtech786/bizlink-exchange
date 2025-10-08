@@ -141,7 +141,15 @@
     <p>© 2025 BizLink Exchange | Built with 💖 by Azlan & ChatGPT</p>
   </footer>
 
+  <!-- ✅ EmailJS CDN -->
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+
   <script>
+    // ✅ Initialize EmailJS
+    (function() {
+      emailjs.init("cHIk8f3mvNgvX2YtC"); // 👈 Your Public Key
+    })();
+
     const businesses = [
       { id: 1, name: "BizLink Digital", category: "Marketing", city: "Mumbai", description: "A leading marketing agency helping startups and brands reach global audiences through innovative digital strategies.", email: "contact@bizlinkdigital.com", phone: "+91 9876543210", website: "https://bizlinkdigital.com" },
       { id: 2, name: "TechNova Solutions", category: "IT", city: "Bangalore", description: "We specialize in cutting-edge web development, cloud solutions, and app design tailored for businesses of tomorrow.", email: "support@technova.com", phone: "+91 9123456780", website: "https://technova.com" },
@@ -153,7 +161,6 @@
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get("id"));
     const business = businesses.find(b => b.id === id);
-
     const container = document.getElementById("businessDetails");
 
     if (business) {
@@ -194,14 +201,27 @@
         <a href="business-listing.html" class="back-btn">⬅ Back to Listings</a>
       `;
 
-      // Contact Form
-      document.getElementById("contactForm").addEventListener("submit", e => {
+      // ✅ Contact Form (EmailJS)
+      document.getElementById("contactForm").addEventListener("submit", function(e) {
         e.preventDefault();
-        alert("📤 Message sent successfully!");
-        e.target.reset();
+
+        emailjs.send("service_js2oegb", "template_bbacw1b", {
+          user_name: document.getElementById("userName").value,
+          user_email: document.getElementById("userEmail").value,
+          user_message: document.getElementById("userMessage").value,
+          to_name: business.name
+        })
+        .then(() => {
+          alert("✅ Message sent successfully!");
+          e.target.reset();
+        })
+        .catch(err => {
+          console.error("EmailJS Error:", err);
+          alert("⚠️ Message failed! Check console for error.");
+        });
       });
 
-      // Review Form
+      // ✅ Review Form
       const reviewsDiv = document.getElementById("reviews");
       const reviewForm = document.getElementById("reviewForm");
 
