@@ -102,7 +102,7 @@
 
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
-  // ✅ Initialize EmailJS (only once)
+  // ✅ Initialize EmailJS
   (function() {
       emailjs.init("cHIk8f3mvNgvX2YtC"); // your public key
   })();
@@ -137,7 +137,7 @@
     sendBtn.disabled = true;
     sendBtn.innerHTML = "⏳ Sending...";
 
-    emailjs.send("service_js2oegb", "template_bbacw1t", {
+    emailjs.send("service_js2oegb", "template_bbacw1b", {
       name: document.getElementById("userName").value,
       email: document.getElementById("userEmail").value,
       message: document.getElementById("userMessage").value
@@ -156,5 +156,6 @@
     });
   });
 </script>
+
 </body>
 </html>
