@@ -100,66 +100,61 @@
     </form>
   </div>
 
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <script>
-    // ✅ Initialize EmailJS
-    (function() {
-      emailjs.init("cHIk8f3mvNgvX2YtC"); // Your public key
-    })();
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  // ✅ Initialize EmailJS (only once)
+  (function() {
+      emailjs.init("cHIk8f3mvNgvX2YtC"); // your public key
+  })();
 
-    // ✅ Business data
-    const businesses = [
-      { id: 1, name: "Digital Boost Marketing", desc: "We help small businesses grow through SEO and ads." },
-      { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
-      { id: 3, name: "TechFix Solutions", desc: "Expert laptop and smartphone repair center." }
-    ];
+  // ✅ Business data
+  const businesses = [
+    { id: 1, name: "Digital Boost Marketing", desc: "We help small businesses grow through SEO and ads." },
+    { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
+    { id: 3, name: "TechFix Solutions", desc: "Expert laptop and smartphone repair center." }
+  ];
 
-    // ✅ Load Business by ID
-    const urlParams = new URLSearchParams(window.location.search);
-    const businessId = parseInt(urlParams.get("id"));
-    const business = businesses.find(b => b.id === businessId);
+  // ✅ Load business by ID
+  const urlParams = new URLSearchParams(window.location.search);
+  const businessId = parseInt(urlParams.get("id"));
+  const business = businesses.find(b => b.id === businessId);
 
-    if (business) {
-      document.getElementById("businessName").textContent = business.name;
-      document.getElementById("businessDesc").textContent = business.desc;
-    } else {
-      document.getElementById("businessName").textContent = "Business Not Found";
-      document.getElementById("businessDesc").textContent = "";
-    }
+  if (business) {
+    document.getElementById("businessName").textContent = business.name;
+    document.getElementById("businessDesc").textContent = business.desc;
+  } else {
+    document.getElementById("businessName").textContent = "Business Not Found";
+    document.getElementById("businessDesc").textContent = "";
+  }
 
-    // ✅ Contact Form Submission
-    // ✅ New Working EmailJS Code
-(function() {
-    emailjs.init("cHIk8f3mvNgvX2YtC"); // <-- your public key
-})();
+  // ✅ Form submission
+  const contactForm = document.getElementById("contactForm");
+  const sendBtn = document.getElementById("sendBtn");
 
-const contactForm = document.getElementById("contactForm");
-const sendBtn = document.getElementById("sendBtn");
-
-contactForm.addEventListener("submit", function (e) {
+  contactForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
     sendBtn.disabled = true;
     sendBtn.innerHTML = "⏳ Sending...";
 
     emailjs.send("service_js2oegb", "template_bbacw1t", {
-        name: document.getElementById("userName").value,
-        email: document.getElementById("userEmail").value,
-        message: document.getElementById("userMessage").value
+      name: document.getElementById("userName").value,
+      email: document.getElementById("userEmail").value,
+      message: document.getElementById("userMessage").value
     })
     .then(() => {
-        alert("✅ Message sent successfully!");
-        contactForm.reset();
-        sendBtn.disabled = false;
-        sendBtn.innerHTML = "Send Message";
+      alert("✅ Message sent successfully!");
+      contactForm.reset();
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = "Send Message";
     })
     .catch((error) => {
-        console.error("Error:", error);
-        alert("⚠️ Failed to send message. Please check your EmailJS setup or try again later.");
-        sendBtn.disabled = false;
-        sendBtn.innerHTML = "Send Message";
+      console.error("Email error:", error);
+      alert("⚠️ Failed to send message. Please check your EmailJS setup or try again later.");
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = "Send Message";
     });
-});
-  </script>
+  });
+</script>
 </body>
 </html>
