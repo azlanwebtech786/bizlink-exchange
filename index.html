@@ -3,112 +3,172 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizLink Exchange | Find Businesses</title>
+  <title>BizLink Exchange | Connect Businesses Easily</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f0f4ff, #dbeafe);
       color: #1e3a8a;
+      overflow-x: hidden;
     }
 
     header {
-      background: linear-gradient(90deg, #2563eb, #1e40af);
+      background: linear-gradient(90deg, #1d4ed8, #1e3a8a);
       color: white;
-      padding: 20px;
+      padding: 20px 40px;
       text-align: center;
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 700;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
     }
 
-    .container {
-      max-width: 1000px;
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: #334155;
+      font-size: 1.2rem;
+      margin-bottom: 25px;
+    }
+
+    .hero button {
+      background: linear-gradient(90deg, #2563eb, #1e40af);
+      color: white;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero button:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(90deg, #1e3a8a, #172554);
+    }
+
+    .section {
+      max-width: 1100px;
       margin: 50px auto;
+      padding: 20px;
+    }
+
+    .section h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 30px;
+      color: #1e3a8a;
+    }
+
+    .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 25px;
-      padding: 0 20px;
     }
 
     .card {
       background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: all 0.3s ease;
     }
 
     .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
     }
 
-    h2 {
-      margin-top: 0;
-      font-size: 1.3rem;
+    .card h3 {
       color: #1e3a8a;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
     }
 
-    p {
-      font-size: 0.95rem;
-      color: #374151;
+    .card p {
+      color: #475569;
+      margin-bottom: 15px;
     }
 
-    a {
-      display: inline-block;
-      margin-top: 10px;
-      background: linear-gradient(90deg, #2563eb, #1e3a8a);
-      color: white;
+    .card a {
       text-decoration: none;
+      background: linear-gradient(90deg, #2563eb, #1e40af);
+      color: white;
       padding: 10px 18px;
       border-radius: 10px;
       font-weight: 500;
-      transition: background 0.3s;
+      transition: 0.3s;
+      display: inline-block;
     }
 
-    a:hover {
-      background: linear-gradient(90deg, #1d4ed8, #1e40af);
+    .card a:hover {
+      background: linear-gradient(90deg, #1e3a8a, #172554);
     }
 
     footer {
+      background: linear-gradient(90deg, #1e3a8a, #1d4ed8);
+      color: white;
       text-align: center;
       padding: 20px;
-      background: #1e3a8a;
-      color: white;
-      margin-top: 50px;
+      margin-top: 60px;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
       font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <header>BizLink Exchange</header>
 
-  <div class="container" id="businessList">
-    <!-- Businesses will load here -->
-  </div>
+  <header>🌐 BizLink Exchange</header>
 
-  <footer>© 2025 BizLink Exchange. All rights reserved.</footer>
+  <section class="hero">
+    <h1>Connect. Grow. Exchange Opportunities.</h1>
+    <p>Discover and connect with businesses from various industries instantly.</p>
+    <button onclick="window.location.href='#businesses'">Explore Businesses</button>
+  </section>
 
-  <script>
-    const businesses = [
-      { id: 1, name: "Digital Boost Marketing", desc: "Grow your business with expert SEO and ad campaigns." },
-      { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
-      { id: 3, name: "TechFix Solutions", desc: "Expert laptop, mobile, and gadget repair services." },
-      { id: 4, name: "StyleHub Boutique", desc: "Trendy fashion and accessories for all occasions." }
-    ];
+  <section id="businesses" class="section">
+    <h2>🔥 Featured Businesses</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Digital Boost Marketing</h3>
+        <p>Helping small businesses grow through SEO and digital advertising strategies.</p>
+        <a href="business.html?id=1">View Details</a>
+      </div>
+      <div class="card">
+        <h3>GreenLeaf Café</h3>
+        <p>Eco-friendly cafe serving organic meals, smoothies, and premium coffee blends.</p>
+        <a href="business.html?id=2">View Details</a>
+      </div>
+      <div class="card">
+        <h3>TechFix Solutions</h3>
+        <p>Professional repair services for laptops, smartphones, and other electronics.</p>
+        <a href="business.html?id=3">View Details</a>
+      </div>
+    </div>
+  </section>
 
-    const businessList = document.getElementById("businessList");
-    businesses.forEach(biz => {
-      const card = document.createElement("div");
-      card.classList.add("card");
-      card.innerHTML = `
-        <h2>${biz.name}</h2>
-        <p>${biz.desc}</p>
-        <a href="business.html?id=${biz.id}">View Details</a>
-      `;
-      businessList.appendChild(card);
-    });
-  </script>
+  <footer>
+    © 2025 BizLink Exchange | Built with 💙 by Azlan WebTech
+  </footer>
+
 </body>
 </html>
