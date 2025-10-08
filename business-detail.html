@@ -105,7 +105,11 @@
   // ✅ Initialize EmailJS
   (function() {
       emailjs.init("cHIk8f3mvNgvX2YtC"); // your public key
-  })();
+    emailjs.__init({
+  publicKey: "cHIk8f3mvNgvX2YtC",
+  blockList: [],
+  allowList: ["https://azlanwebtech786.github.io"]
+    })();
 
   // ✅ Business data
   const businesses = [
