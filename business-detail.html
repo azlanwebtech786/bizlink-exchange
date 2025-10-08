@@ -74,11 +74,6 @@
       background: linear-gradient(90deg, #1d4ed8, #1e40af);
       transform: translateY(-2px);
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translate(-50%, -60%); }
-      to { opacity: 1; transform: translate(-50%, -50%); }
-    }
   </style>
 </head>
 
@@ -93,32 +88,22 @@
 
     <h2>📩 Contact Owner</h2>
     <form id="contactForm">
-      <input type="text" id="userName" placeholder="Your Name" required />
-      <input type="email" id="userEmail" placeholder="Your Email" required />
-      <textarea id="userMessage" rows="5" placeholder="Write your message..." required></textarea>
+      <input type="text" id="userName" placeholder="Your Name" name="name" required />
+      <input type="email" id="userEmail" placeholder="Your Email" name="email" required />
+      <textarea id="userMessage" rows="5" placeholder="Write your message..." name="message" required></textarea>
       <button id="sendBtn" type="submit">Send Message</button>
     </form>
   </div>
 
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
-  // ✅ Initialize EmailJS
-  (function() {
-      emailjs.init("cHIk8f3mvNgvX2YtC"); // your public key
-    emailjs.__init({
-  publicKey: "cHIk8f3mvNgvX2YtC",
-  blockList: [],
-  allowList: ["https://azlanwebtech786.github.io"]
-    })();
-
-  // ✅ Business data
+  // ✅ Business Data
   const businesses = [
     { id: 1, name: "Digital Boost Marketing", desc: "We help small businesses grow through SEO and ads." },
     { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
     { id: 3, name: "TechFix Solutions", desc: "Expert laptop and smartphone repair center." }
   ];
 
-  // ✅ Load business by ID
+  // ✅ Load Business by ID
   const urlParams = new URLSearchParams(window.location.search);
   const businessId = parseInt(urlParams.get("id"));
   const business = businesses.find(b => b.id === businessId);
@@ -131,35 +116,35 @@
     document.getElementById("businessDesc").textContent = "";
   }
 
-  // ✅ Form submission
-  const contactForm = document.getElementById("contactForm");
+  // ✅ Web3Forms setup
+  const form = document.getElementById("contactForm");
   const sendBtn = document.getElementById("sendBtn");
 
-  contactForm.addEventListener("submit", function (e) {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     sendBtn.disabled = true;
     sendBtn.innerHTML = "⏳ Sending...";
 
-    emailjs.send("service_js2oegb", "template_bbacw1b", {
-      name: document.getElementById("userName").value,
-      email: document.getElementById("userEmail").value,
-      message: document.getElementById("userMessage").value
-    })
-    .then(() => {
-      alert("✅ Message sent successfully!");
-      contactForm.reset();
-      sendBtn.disabled = false;
-      sendBtn.innerHTML = "Send Message";
-    })
-    .catch((error) => {
-      console.error("Email error:", error);
-      alert("⚠️ Failed to send message. Please check your EmailJS setup or try again later.");
-      sendBtn.disabled = false;
-      sendBtn.innerHTML = "Send Message";
+    const formData = new FormData(form);
+    formData.append("access_key", "0fcfe81d-7fa3-42c7-952e-04615640a690");
+
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: formData
     });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert("✅ Message sent successfully!");
+      form.reset();
+    } else {
+      alert("⚠️ Failed to send message. Try again later.");
+    }
+
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = "Send Message";
   });
 </script>
-
 </body>
 </html>
