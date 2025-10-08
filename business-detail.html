@@ -87,20 +87,19 @@
     <hr />
 
     <h2>📩 Contact Owner</h2>
-    <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
-      <!-- ✅ Web3Forms Access Key -->
-      <input type="hidden" name="access_key" value="0fcfe81d-7fa3-42c7-952e-04615640a690">
-      <input type="hidden" name="redirect" value="https://azlanwebtech786.github.io/bizlink-exchange/thankyou.html">
+    <form action="https://api.web3forms.com/submit" method="POST">
+  <!-- 🔑 Your Access Key -->
+  <input type="hidden" name="access_key" value="0fcfe81d-7fa3-42c7-952e-04615640a690">
+  
+  <!-- 🔁 Redirect to Thank You Page -->
+  <input type="hidden" name="redirect" value="https://azlanwebtech786.github.io/bizlink-exchange/thankyou.html">
 
+  <input type="text" name="name" placeholder="Your Name" required>
+  <input type="email" name="email" placeholder="Your Email" required>
+  <textarea name="message" rows="5" placeholder="Write your message..." required></textarea>
 
-      <!-- ✅ Redirect after success -->
-      <input type="hidden" name="redirect" value="https://azlanwebtech786.github.io/bizlink-exchange/thankyou.html">
-
-      <input type="text" name="name" placeholder="Your Name" required />
-      <input type="email" name="email" placeholder="Your Email" required />
-      <textarea name="message" rows="5" placeholder="Write your message..." required></textarea>
-      <button type="submit" id="sendBtn">Send Message</button>
-    </form>
+  <button type="submit">Send Message</button>
+</form>
   </div>
 
 <script>
