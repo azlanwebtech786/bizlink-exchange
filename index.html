@@ -1,69 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BizLink Exchange</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizLink Exchange | Find Businesses</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0077b6, #00b4d8);
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #eef2ff, #dbeafe);
+      color: #1e293b;
+    }
+
+    header {
+      background: linear-gradient(90deg, #2563eb, #1e40af);
       color: white;
       text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: rgba(0, 0, 0, 0.2);
-      padding: 20px;
-      font-size: 24px;
+      padding: 25px 10px;
+      font-size: 2rem;
       font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    main {
-      padding: 40px 20px;
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
     }
-    h1 {
-      font-size: 36px;
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      padding: 25px;
+      transition: 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+    }
+
+    .card h2 {
+      color: #1e3a8a;
+      font-size: 1.4rem;
       margin-bottom: 10px;
     }
-    p {
-      font-size: 18px;
-      line-height: 1.5;
-      max-width: 600px;
-      margin: 0 auto 30px;
+
+    .card p {
+      color: #475569;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
     }
-    a.button {
-      display: inline-block;
-      background-color: #fff;
-      color: #0077b6;
-      padding: 12px 25px;
+
+    .btn {
+      background: linear-gradient(90deg, #2563eb, #1e40af);
+      color: white;
+      border: none;
       border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 0.95rem;
       transition: 0.3s;
     }
-    a.button:hover {
-      background-color: #caf0f8;
+
+    .btn:hover {
+      background: linear-gradient(90deg, #1d4ed8, #1e3a8a);
+      transform: translateY(-2px);
     }
+
     footer {
-      margin-top: 40px;
+      text-align: center;
       padding: 15px;
-      background-color: rgba(0, 0, 0, 0.2);
-      font-size: 14px;
+      background: #1e40af;
+      color: white;
+      font-size: 0.9rem;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
   <header>BizLink Exchange</header>
-  <main>
-    <h1>Connect. Collaborate. Grow.</h1>
-    <p>
-      BizLink Exchange connects skilled professionals with small business owners for seamless, profit-sharing collaborations. 
-      Start your journey — no upfront investment required.
-    </p>
-<a href="join.html" class="button">Join Now</a>
-  </main>
-  <footer>© 2025 BizLink Exchange — Empowering Entrepreneurs</footer>
+
+  <div class="container">
+    <div class="grid" id="businessGrid"></div>
+  </div>
+
+  <footer>© 2025 BizLink Exchange. All rights reserved.</footer>
+
+  <script>
+    const businesses = [
+      { id: 1, name: "Digital Boost Marketing", desc: "We help small businesses grow through SEO and online ads." },
+      { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
+      { id: 3, name: "TechFix Solutions", desc: "Expert laptop and smartphone repair center." },
+      { id: 4, name: "UrbanStyle Boutique", desc: "Trendy fashion boutique for modern wearables." }
+    ];
+
+    const grid = document.getElementById("businessGrid");
+
+    businesses.forEach(b => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <h2>${b.name}</h2>
+        <p>${b.desc}</p>
+        <button class="btn" onclick="location.href='business.html?id=${b.id}'">View Details</button>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
 </body>
 </html>
-<a href="business-listing.html" class="button">View Business Listings</a>
