@@ -87,48 +87,40 @@
   </table>
 
 <script>
-const sheetURL = "https://script.google.com/macros/s/AKfycbwgNWhd2AFIbBIXK46NZRYRRiCVci-yobuxT_mUZl1l3FVYDtwXNA49rF1z0Z3ttBPMgg/exec";
-
-async function fetchData() {
-  const loading = document.getElementById("loading");
-  loading.textContent = "Loading data...";
+async function loadData() {
+  const table = document.getElementById("dataBody");
+  table.innerHTML = "<tr><td colspan='7'>⏳ Loading...</td></tr>";
+  
   try {
-    const res = await fetch(sheetURL);
-    if (!res.ok) throw new Error("Failed to fetch data");
-    const data = await res.json();
-    displayTable(data);
-    loading.textContent = "";
+    const res = await fetch("https://script.google.com/macros/s/AKfycby8ewDWUhLAdefJWc37EG_NCJ2OiAXiQK2xhxr1PiPETosdLr_WmJduYYSDYKKcz5gwyQ/exec");
+    const json = await res.json();
+    
+    if (json.result === "success") {
+      table.innerHTML = "";
+      json.data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.Timestamp || ""}</td>
+          <td>${row["Business Name"] || ""}</td>
+          <td>${row["Owner Name"] || ""}</td>
+          <td>${row.Email || ""}</td>
+          <td>${row.Category || ""}</td>
+          <td>${row.Description || ""}</td>
+          <td>${row.Location || ""}</td>
+        `;
+        table.appendChild(tr);
+      });
+    } else {
+      table.innerHTML = "<tr><td colspan='7'>❌ Failed to load data</td></tr>";
+    }
   } catch (err) {
-    console.error("Error loading data:", err);
-    loading.textContent = "⚠️ Failed to load data.";
+    table.innerHTML = `<tr><td colspan='7'>⚠️ Error: ${err.message}</td></tr>`;
   }
 }
 
-function displayTable(data) {
-  const tbody = document.querySelector("#data-table tbody");
-  tbody.innerHTML = "";
-
-  if (!data || data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7">No data available</td></tr>`;
-    return;
-  }
-
-  data.forEach((row) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${row.Timestamp || ""}</td>
-      <td>${row["Business Name"] || ""}</td>
-      <td>${row["Owner Name"] || ""}</td>
-      <td>${row.Email || ""}</td>
-      <td>${row.Category || ""}</td>
-      <td>${row.Description || ""}</td>
-      <td>${row.Location || ""}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-fetchData();
+document.getElementById("refreshBtn").addEventListener("click", loadData);
+window.onload = loadData;
 </script>
+
 </body>
 </html>
