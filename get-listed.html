@@ -7,30 +7,66 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="min-h-screen bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center p-6">
+<body class="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center p-6">
 
-  <div class="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 text-white">
-    <h1 class="text-3xl font-bold text-center mb-4">List Your Business</h1>
+  <div class="max-w-2xl w-full bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 text-white">
+    <h1 class="text-3xl font-bold text-center mb-4">🚀 List Yourself on BizLink Exchange</h1>
     <p class="text-center mb-8 text-gray-200">
-      Get discovered by thousands of clients through 
-      <span class="font-semibold text-white">BizLink Exchange</span>.
+      Create your professional profile — whether you’re a <span class="font-semibold text-white">freelancer</span> or a <span class="font-semibold text-white">business</span>.
     </p>
 
     <form id="bizForm" class="space-y-4">
-      <input id="business_name" name="business_name" placeholder="Business Name" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <input id="owner_name" name="owner_name" placeholder="Owner Name" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <input id="email" name="email" type="email" placeholder="Email" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <input id="category" name="category" placeholder="Category" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <textarea id="description" name="description" placeholder="Description" rows="3" class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"></textarea>
+
+      <!-- Role Selector -->
+      <div>
+        <label class="block mb-1 text-sm text-gray-300">Profile Type</label>
+        <select id="role" name="role" required class="w-full p-3 rounded-xl bg-white/20 text-white outline-none">
+          <option value="" disabled selected>Select your role</option>
+          <option value="Business">Business / Company</option>
+          <option value="Freelancer">Freelancer / Skill Professional</option>
+        </select>
+      </div>
+
+      <!-- Business Type (only for businesses) -->
+      <div id="businessTypeGroup" class="hidden">
+        <label class="block mb-1 text-sm text-gray-300">Business Type</label>
+        <select id="business_type" name="business_type" class="w-full p-3 rounded-xl bg-white/20 text-white outline-none">
+          <option value="" disabled selected>Select business type</option>
+          <option value="Small">Small Business</option>
+          <option value="Startup">New Startup</option>
+          <option value="Corporate">Corporate Business</option>
+        </select>
+      </div>
+
+      <input id="business_name" name="business_name" placeholder="Business or Skill Name" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <input id="owner_name" name="owner_name" placeholder="Your Name" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <input id="email" name="email" type="email" placeholder="Email Address" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <input id="category" name="category" placeholder="Category (e.g. Web Design, Marketing...)" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <textarea id="description" name="description" placeholder="Short Description" rows="3" class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"></textarea>
       <input id="city" name="city" placeholder="City" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <button type="submit" id="submitBtn" class="w-full py-3 bg-indigo-500 hover:bg-indigo-600 rounded-xl font-semibold transition">🚀 Submit Listing</button>
+
+      <button type="submit" id="submitBtn" class="w-full py-3 bg-indigo-500 hover:bg-indigo-600 rounded-xl font-semibold transition">
+        🚀 Submit Listing
+      </button>
     </form>
   </div>
 
   <script>
     const form = document.getElementById("bizForm");
     const btn = document.getElementById("submitBtn");
+    const roleSelect = document.getElementById("role");
+    const businessTypeGroup = document.getElementById("businessTypeGroup");
 
+    // Show/hide Business Type dropdown based on Role
+    roleSelect.addEventListener("change", () => {
+      if (roleSelect.value === "Business") {
+        businessTypeGroup.classList.remove("hidden");
+      } else {
+        businessTypeGroup.classList.add("hidden");
+      }
+    });
+
+    // Form Submission
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       btn.disabled = true;
@@ -47,13 +83,10 @@
         const data = await response.json();
 
         if (data.result === "success") {
-          alert("✅ Your business has been listed successfully!");
-          form.reset();
-          setTimeout(() => {
-            window.location.href = "thankyou.html";
-          }, 1000);
+          alert("✅ Listed Successfully! Opening your portfolio...");
+          window.location.href = data.link;
         } else {
-          alert("⚠️ Submission failed: " + (data.message || "Unknown error"));
+          alert("⚠️ " + data.message);
         }
       } catch (err) {
         alert("❌ Error: " + err.message);
