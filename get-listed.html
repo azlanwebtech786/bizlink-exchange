@@ -15,52 +15,56 @@
       <span class="font-semibold text-white">BizLink Exchange</span>.
     </p>
 
-    <!-- ✅ FORM -->
     <form id="bizForm" class="space-y-4">
-      <input id="business_name" name="business_name" placeholder="Business Name" class="w-full p-3 rounded-lg text-black" required>
-      <input id="owner_name" name="owner_name" placeholder="Owner Name" class="w-full p-3 rounded-lg text-black" required>
-      <input id="email" name="email" type="email" placeholder="Email" class="w-full p-3 rounded-lg text-black" required>
-      <input id="category" name="category" placeholder="Category" class="w-full p-3 rounded-lg text-black" required>
-      <textarea id="description" name="description" placeholder="Description" class="w-full p-3 rounded-lg text-black" required></textarea>
-      <input id="city" name="city" placeholder="City" class="w-full p-3 rounded-lg text-black" required>
-      
-      <button type="submit" class="w-full bg-white text-indigo-700 font-semibold py-3 rounded-lg hover:bg-gray-100 transition">
-        🚀 Submit Listing
-      </button>
+      <input id="business_name" name="business_name" placeholder="Business Name" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <input id="owner_name" name="owner_name" placeholder="Owner Name" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <input id="email" name="email" type="email" placeholder="Email" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <input id="category" name="category" placeholder="Category" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <textarea id="description" name="description" placeholder="Description" rows="3" class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"></textarea>
+      <input id="city" name="city" placeholder="City" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <button type="submit" id="submitBtn" class="w-full py-3 bg-indigo-500 hover:bg-indigo-600 rounded-xl font-semibold transition">🚀 Submit Listing</button>
     </form>
   </div>
 
-  <!-- ✅ Script -->
   <script>
-  document.getElementById("bizForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+    const form = document.getElementById("bizForm");
+    const btn = document.getElementById("submitBtn");
 
-    const form = e.target;
-    const button = form.querySelector("button");
-    button.disabled = true;
-    button.textContent = "⏳ Submitting...";
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.innerText = "⏳ Submitting...";
 
-    const data = new FormData(form);
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwYVQ6WVn7wMdUANk_YnTSfE-FUxBmKesGTfs_lvD5LEDANQkftE86Cn8EfkZafLGQVfw/exec", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            business_name: form.business_name.value,
+            owner_name: form.owner_name.value,
+            email: form.email.value,
+            category: form.category.value,
+            description: form.description.value,
+            city: form.city.value
+          })
+        });
 
-    fetch("https://script.google.com/macros/s/AKfycbwYVQ6WVn7wMdUANk_YnTSfE-FUxBmKesGTfs_lvD5LEDANQkftE86Cn8EfkZafLGQVfw/exec", {
-      method: "POST",
-      body: data
-    })
-    .then(response => {
-      if (response.ok) {
-        window.location.href = "thankyou.html"; // ✅ Redirect
-      } else {
-        alert("⚠️ Something went wrong. Please try again.");
+        const data = await response.json();
+
+        if (data.result === "success") {
+          alert("✅ " + data.message);
+          form.reset();
+          window.location.href = "thankyou.html";
+        } else {
+          alert("⚠️ " + data.message);
+        }
+      } catch (err) {
+        alert("❌ Error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "🚀 Submit Listing";
       }
-    })
-    .catch(error => {
-      alert("❌ Error: " + error.message);
-    })
-    .finally(() => {
-      button.disabled = false;
-      button.textContent = "🚀 Submit Listing";
     });
-  });
   </script>
 
 </body>
