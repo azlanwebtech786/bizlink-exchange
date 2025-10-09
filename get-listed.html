@@ -6,6 +6,7 @@
   <title>Get Listed | BizLink Exchange</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="min-h-screen bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center p-6">
 
   <div class="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 text-white">
@@ -35,26 +36,17 @@
       btn.disabled = true;
       btn.innerText = "⏳ Submitting...";
 
-      try {
-       const response = await fetch("https://script.google.com/macros/s/AKfycbwYVQ6WVn7wMdUANk_YnTSfE-FUxBmKesGTfs_lvD5LEDANQkftE86Cn8EfkZafLGQVfw/exec", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    business_name: form.business_name.value,
-    owner_name: form.owner_name.value,
-    email: form.email.value,
-    category: form.category.value,
-    description: form.description.value,
-    city: form.city.value
-  })
-});
+      const formData = new FormData(form);
 
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwYVQ6WVn7wMdUANk_YnTSfE-FUxBmKesGTfs_lvD5LEDANQkftE86Cn8EfkZafLGQVfw/exec", {
+          method: "POST",
+          body: formData,
+        });
 
         const data = await response.json();
 
         if (data.result === "success") {
-          alert("✅ " + data.message);
-          form.reset();
           window.location.href = "thankyou.html";
         } else {
           alert("⚠️ " + data.message);
