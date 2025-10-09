@@ -1,52 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Get Listed | BizLink Exchange</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="min-h-screen bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center p-6">
+<script>
+document.getElementById("bizForm").addEventListener("submit", function(e) {
+  e.preventDefault();
 
-  <div class="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 text-white">
-    <h1 class="text-3xl font-bold text-center mb-4">List Your Business</h1>
-    <p class="text-center mb-8 text-gray-200">
-      Get discovered by thousands of clients through 
-      <span class="font-semibold text-white">BizLink Exchange</span>.
-    </p>
+  const form = e.target;
+  const button = form.querySelector("button");
+  button.disabled = true;
+  button.textContent = "⏳ Submitting...";
 
-    <form id="bizForm" method="POST" action="https://script.google.com/macros/s/AKfycbwWgr8O5ExJvMsMwIcX1cGQ5r-9STaL4BM3HKi_JJxvGP-69ricyEApzR4-VCyke7cJkw/exec">
-      <input name="business_name" placeholder="Business Name" required class="w-full mb-3 p-3 rounded text-black" />
-      <input name="owner_name" placeholder="Owner Name" required class="w-full mb-3 p-3 rounded text-black" />
-      <input name="email" type="email" placeholder="Email" required class="w-full mb-3 p-3 rounded text-black" />
-      <input name="category" placeholder="Business Category" required class="w-full mb-3 p-3 rounded text-black" />
-      <textarea name="description" placeholder="Business Description" required class="w-full mb-3 p-3 rounded text-black"></textarea>
-      <input name="city" placeholder="Location / City" required class="w-full mb-3 p-3 rounded text-black" />
-      <button type="submit" class="bg-indigo-700 hover:bg-indigo-800 px-6 py-3 rounded-xl w-full font-semibold text-white transition">🚀 Submit Listing</button>
-    </form>
-  </div>
+  const data = new FormData(form);
 
-  <script>
-  document.getElementById("bizForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-    const form = e.target;
-
-    try {
-      const res = await fetch(form.action, {
-        method: form.method,
-        body: new FormData(form)
-      });
-
-      if (res.ok) {
-        alert("✅ Your business listing has been submitted successfully!");
-        form.reset();
-      } else {
-        alert("❌ Something went wrong. Please try again.");
-      }
-    } catch (err) {
-      alert("⚠️ Error: " + err.message);
+  fetch("https://script.google.com/macros/s/AKfycbwWgr8O5ExJvMsMwIcX1cGQ5r-9STaL4BM3HKi_JJxvGP-69ricyEApzR4-VCyke7cJkw/exec", {
+    method: "POST",
+    body: data
+  })
+  .then(response => {
+    if (response.ok) {
+      // ✅ Redirect to thankyou page after successful submit
+      window.location.href = "thankyou.html";
+    } else {
+      alert("⚠️ Something went wrong! Please try again.");
     }
+  })
+  .catch(error => {
+    alert("❌ Error: Failed to send data.\n" + error.message);
+  })
+  .finally(() => {
+    button.disabled = false;
+    button.textContent = "🚀 Submit Listing";
   });
-  </script>
-</body>
-</html>
+});
+</script>
