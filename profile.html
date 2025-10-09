@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Profile | BizLink Exchange</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-purple-700 via-indigo-700 to-blue-700 text-white flex items-center justify-center p-6">
+  <div id="profileCard" class="max-w-3xl w-full bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-8 hidden">
+    <h1 class="text-4xl font-bold mb-4 text-center">📇 Business Profile</h1>
+    <div id="profileData" class="space-y-4 text-lg"></div>
+    <div class="text-center mt-6">
+      <a href="index.html" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold transition">🏠 Back to Home</a>
+    </div>
+  </div>
+
+  <div id="loading" class="text-center text-xl">⏳ Loading Profile...</div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    if (!id) {
+      document.getElementById("loading").innerText = "❌ Invalid profile link.";
+    } else {
+      const [sheetName, rowId] = id.split("-");
+      fetch(`https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec?sheet=${sheetName}&row=${rowId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.result === "success") {
+            const d = data.record;
+            const profileHTML = `
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div><strong>🏢 Business Name:</strong> ${d.name}</div>
+                <div><strong>👤 Owner Name:</strong> ${d.role}</div>
+                <div><strong>📧 Email:</strong> ${d.email}</div>
+                <div><strong>🏷️ Category:</strong> ${d.category}</div>
+                <div><strong>📝 Description:</strong> ${d.description}</div>
+                <div><strong>📍 City:</strong> ${d.city}</div>
+              </div>
+            `;
+            document.getElementById("profileData").innerHTML = profileHTML;
+            document.getElementById("loading").classList.add("hidden");
+            document.getElementById("profileCard").classList.remove("hidden");
+          } else {
+            document.getElementById("loading").innerText = "⚠️ Profile not found.";
+          }
+        })
+        .catch(err => {
+          document.getElementById("loading").innerText = "❌ Error fetching data.";
+          console.error(err);
+        });
+    }
+  </script>
+</body>
+</html>
