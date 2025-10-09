@@ -85,6 +85,7 @@ const profileLink = `https://azlanwebtech786.github.io/bizlink-exchange/profile.
 // अब इस लिंक को formData में जोड़ दो
 
       const formData = new FormData(form);
+formData.append("profileLink", profileLink);
 
       try {
         const response = await fetch("https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec", {
