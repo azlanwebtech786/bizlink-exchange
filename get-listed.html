@@ -1,32 +1,67 @@
-<script>
-document.getElementById("bizForm").addEventListener("submit", function(e) {
-  e.preventDefault();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Listed | BizLink Exchange</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center p-6">
 
-  const form = e.target;
-  const button = form.querySelector("button");
-  button.disabled = true;
-  button.textContent = "⏳ Submitting...";
+  <div class="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 text-white">
+    <h1 class="text-3xl font-bold text-center mb-4">List Your Business</h1>
+    <p class="text-center mb-8 text-gray-200">
+      Get discovered by thousands of clients through 
+      <span class="font-semibold text-white">BizLink Exchange</span>.
+    </p>
 
-  const data = new FormData(form);
+    <!-- ✅ FORM -->
+    <form id="bizForm" class="space-y-4">
+      <input id="business_name" name="business_name" placeholder="Business Name" class="w-full p-3 rounded-lg text-black" required>
+      <input id="owner_name" name="owner_name" placeholder="Owner Name" class="w-full p-3 rounded-lg text-black" required>
+      <input id="email" name="email" type="email" placeholder="Email" class="w-full p-3 rounded-lg text-black" required>
+      <input id="category" name="category" placeholder="Category" class="w-full p-3 rounded-lg text-black" required>
+      <textarea id="description" name="description" placeholder="Description" class="w-full p-3 rounded-lg text-black" required></textarea>
+      <input id="city" name="city" placeholder="City" class="w-full p-3 rounded-lg text-black" required>
+      
+      <button type="submit" class="w-full bg-white text-indigo-700 font-semibold py-3 rounded-lg hover:bg-gray-100 transition">
+        🚀 Submit Listing
+      </button>
+    </form>
+  </div>
 
-  fetch("https://script.google.com/macros/s/AKfycbwWgr8O5ExJvMsMwIcX1cGQ5r-9STaL4BM3HKi_JJxvGP-69ricyEApzR4-VCyke7cJkw/exec", {
-    method: "POST",
-    body: data
-  })
-  .then(response => {
-    if (response.ok) {
-      // ✅ Redirect to thankyou page after successful submit
-      window.location.href = "thankyou.html";
-    } else {
-      alert("⚠️ Something went wrong! Please try again.");
-    }
-  })
-  .catch(error => {
-    alert("❌ Error: Failed to send data.\n" + error.message);
-  })
-  .finally(() => {
-    button.disabled = false;
-    button.textContent = "🚀 Submit Listing";
+  <!-- ✅ Script -->
+  <script>
+  document.getElementById("bizForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const button = form.querySelector("button");
+    button.disabled = true;
+    button.textContent = "⏳ Submitting...";
+
+    const data = new FormData(form);
+
+    fetch("https://script.google.com/macros/s/AKfycbwWgr8O5ExJvMsMwIcX1cGQ5r-9STaL4BM3HKi_JJxvGP-69ricyEApzR4-VCyke7cJkw/exec", {
+      method: "POST",
+      body: data
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.href = "thankyou.html"; // ✅ Redirect
+      } else {
+        alert("⚠️ Something went wrong. Please try again.");
+      }
+    })
+    .catch(error => {
+      alert("❌ Error: " + error.message);
+    })
+    .finally(() => {
+      button.disabled = false;
+      button.textContent = "🚀 Submit Listing";
+    });
   });
-});
-</script>
+  </script>
+
+</body>
+</html>
