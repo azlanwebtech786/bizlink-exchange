@@ -36,18 +36,19 @@
       btn.innerText = "⏳ Submitting...";
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbwYVQ6WVn7wMdUANk_YnTSfE-FUxBmKesGTfs_lvD5LEDANQkftE86Cn8EfkZafLGQVfw/exec", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            business_name: form.business_name.value,
-            owner_name: form.owner_name.value,
-            email: form.email.value,
-            category: form.category.value,
-            description: form.description.value,
-            city: form.city.value
-          })
-        });
+       const response = await fetch("https://script.google.com/macros/s/AKfycbwYVQ6WVn7wMdUANk_YnTSfE-FUxBmKesGTfs_lvD5LEDANQkftE86Cn8EfkZafLGQVfw/exec", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    business_name: form.business_name.value,
+    owner_name: form.owner_name.value,
+    email: form.email.value,
+    category: form.category.value,
+    description: form.description.value,
+    city: form.city.value
+  })
+});
+
 
         const data = await response.json();
 
