@@ -71,6 +71,18 @@
       e.preventDefault();
       btn.disabled = true;
       btn.innerText = "⏳ Submitting...";
+// 🟩 Portfolio Link बनाने का Logic
+const profileType = document.getElementById("role").value; // जैसे Business या Freelancer
+const businessType = document.getElementById("businessType").value; // जैसे Startups, Small Business etc.
+
+const sheetName = businessType
+  ? businessType.toLowerCase().replace(/\s+/g, "_")
+  : profileType.toLowerCase().replace(/\s+/g, "_");
+
+const newId = Date.now().toString().slice(-5); // Unique ID
+const profileLink = `https://azlanwebtech786.github.io/bizlink-exchange/profile.html?id=${sheetName}-${newId}`;
+
+// अब इस लिंक को formData में जोड़ दो
 
       const formData = new FormData(form);
 
