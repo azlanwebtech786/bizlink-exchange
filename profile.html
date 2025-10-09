@@ -47,15 +47,19 @@
         .then((data) => {
           if (data.status === "success") {
             const p = data.profile;
+
             container.innerHTML = `
               <div class="card">
-                <h1>${p.Name || "Unnamed"}</h1>
+                <h1>${p["Business Name"] || "Unnamed"}</h1>
                 <p><b>Role:</b> ${p.Role || "-"}</p>
+                <p><b>Owner:</b> ${p["Owner Name"] || "-"}</p>
                 <p><b>Email:</b> ${p.Email || "-"}</p>
                 <p><b>Category:</b> ${p.Category || "-"}</p>
                 <p><b>Description:</b> ${p.Description || "-"}</p>
                 <p><b>City:</b> ${p.City || "-"}</p>
-                <p><b>Portfolio Link:</b> <a href="${p.Portfolio_Link}" target="_blank" style="color:#fff;">View</a></p>
+                <p><b>Portfolio Link:</b> 
+                  <a href="${p.ProfileLink || "#"}" target="_blank" style="color:#fff;">View</a>
+                </p>
               </div>
             `;
           } else if (data.status === "not_found") {
