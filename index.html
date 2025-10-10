@@ -3,146 +3,183 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizLink Exchange | Home</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>BizLink Exchange</title>
   <style>
     body {
+      margin: 0;
       font-family: "Poppins", sans-serif;
-      background: linear-gradient(to bottom right, #6a11cb, #2575fc);
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
       color: white;
+      text-align: center;
     }
+
+    h1 {
+      margin-top: 80px;
+      font-size: 2.5rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+    }
+
+    .btn {
+      display: inline-block;
+      background: white;
+      color: #6a11cb;
+      padding: 10px 25px;
+      border-radius: 30px;
+      font-weight: bold;
+      text-decoration: none;
+      margin: 15px 0;
+    }
+
+    .search-bar {
+      margin: 20px auto;
+      max-width: 500px;
+      display: flex;
+      background: white;
+      border-radius: 30px;
+      overflow: hidden;
+    }
+
+    .search-bar input {
+      flex: 1;
+      border: none;
+      padding: 10px 15px;
+      outline: none;
+    }
+
+    .category-buttons button {
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      color: white;
+      margin: 5px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .category-buttons button.active {
+      background: white;
+      color: #6a11cb;
+      font-weight: bold;
+    }
+
+    .profiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 40px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
     .card {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 1rem;
-      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 20px;
       text-align: left;
-      transition: all 0.3s ease;
       backdrop-filter: blur(10px);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
-    .card:hover {
-      transform: translateY(-5px);
-      background: rgba(255, 255, 255, 0.2);
+
+    .card h3 {
+      margin: 0;
     }
-    .category-tag {
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff;
-      padding: 0.3rem 0.8rem;
-      border-radius: 9999px;
-      font-size: 0.8rem;
+
+    .card p {
+      color: #f0f0f0;
     }
-    .filter-btn.active {
-      background: #6a11cb;
-      color: white;
+
+    .view-btn {
+      background: white;
+      color: #6a11cb;
+      border: none;
+      padding: 7px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    footer {
+      padding: 20px;
+      color: #ddd;
+      font-size: 0.9rem;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
+  <h1>BizLink Exchange</h1>
+  <p>Connect Skills. Build Business. Grow Together 🚀</p>
+  <a href="get-listed.html" class="btn">+ Get Listed</a>
 
-  <!-- Hero Section -->
-  <section class="text-center py-16">
-    <h1 class="text-4xl font-bold mb-2">BizLink Exchange</h1>
-    <p class="text-lg text-gray-200 mb-6">Connect Skills. Build Business. Grow Together 🚀</p>
-    
-    <a href="get-listed.html" class="bg-white text-indigo-600 px-5 py-3 rounded-full font-semibold shadow hover:bg-gray-200 transition">
-      + Get Listed
-    </a>
-  </section>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search business, category, or city..." />
+  </div>
 
-  <!-- Search + Filters -->
-  <section class="max-w-5xl mx-auto text-center px-4">
-    <input id="searchInput" type="text" placeholder="Search business, category, or city..."
-      class="w-full p-3 rounded-full text-gray-800 outline-none shadow mb-6" />
-    
-    <div class="flex flex-wrap justify-center gap-3 mb-10">
-      <button class="filter-btn active px-4 py-2 bg-white/20 rounded-full" data-sheet="startups">Startups</button>
-      <button class="filter-btn px-4 py-2 bg-white/20 rounded-full" data-sheet="Small_Business">Small Business</button>
-      <button class="filter-btn px-4 py-2 bg-white/20 rounded-full" data-sheet="corporate">Corporate</button>
-      <button class="filter-btn px-4 py-2 bg-white/20 rounded-full" data-sheet="freelancers">Freelancers</button>
-    </div>
-  </section>
+  <div class="category-buttons">
+    <button class="active" onclick="loadProfiles('startups')">Startups</button>
+    <button onclick="loadProfiles('small_business')">Small Business</button>
+    <button onclick="loadProfiles('corporate')">Corporate</button>
+    <button onclick="loadProfiles('freelancers')">Freelancers</button>
+  </div>
 
-  <!-- Profiles Section -->
-  <section id="profiles" class="grid gap-6 max-w-6xl mx-auto px-6 pb-20 sm:grid-cols-2 lg:grid-cols-3 text-black">
-    <p class="text-center text-white">Loading profiles...</p>
-  </section>
+  <div id="profiles" class="profiles">Loading...</div>
 
-  <!-- Footer -->
-  <footer class="text-center py-6 text-sm text-gray-300">
-    © 2025 BizLink Exchange. All Rights Reserved.
-  </footer>
+  <footer>© 2025 BizLink Exchange. All Rights Reserved.</footer>
 
-<script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec";
-const profilesContainer = document.getElementById("profiles");
-const searchInput = document.getElementById("searchInput");
-const filterButtons = document.querySelectorAll(".filter-btn");
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec";
+    const profilesDiv = document.getElementById("profiles");
+    const searchInput = document.getElementById("searchInput");
 
-let allProfiles = [];
-let activeCategory = "startups";
+    let allProfiles = [];
+    let activeSheet = "startups";
 
-// ✅ Fetch and display data
-async function fetchProfiles(category = "startups") {
-  profilesContainer.innerHTML = `<p>Loading profiles...</p>`;
-  try {
-    const response = await fetch(`${scriptURL}?sheet=${category}`);
-    const data = await response.json();
+    async function loadProfiles(sheet = "startups") {
+      activeSheet = sheet;
+      document.querySelectorAll(".category-buttons button").forEach(btn => btn.classList.remove("active"));
+      event.target.classList.add("active");
 
-    if (!data || data.length === 0) {
-      profilesContainer.innerHTML = `<p>No profiles found.</p>`;
-      return;
+      profilesDiv.innerHTML = "Loading...";
+      try {
+        const res = await fetch(`${scriptURL}?sheet=${sheet}`);
+        const data = await res.json();
+
+        if (data && data.length > 0) {
+          allProfiles = data;
+          renderProfiles(data);
+        } else {
+          profilesDiv.innerHTML = "<p>No profiles found.</p>";
+        }
+      } catch (err) {
+        console.error(err);
+        profilesDiv.innerHTML = "<p>Error loading profiles.</p>";
+      }
     }
 
-    allProfiles = data;
-    displayProfiles(data);
-  } catch (error) {
-    profilesContainer.innerHTML = `<p>Error loading profiles 😞</p>`;
-    console.error("Fetch error:", error);
-  }
-}
+    function renderProfiles(list) {
+      profilesDiv.innerHTML = list.map(p => `
+        <div class="card">
+          <h3>${p["Business Name"] || "Unnamed"}</h3>
+          <p>📍 ${p["City"] || "-"}</p>
+          <p>${p["Description"] || "No description"}</p>
+          <button class="view-btn" onclick="window.open('${p.ProfileLink}', '_blank')">View Profile</button>
+        </div>
+      `).join("");
+    }
 
-// ✅ Display profiles
-function displayProfiles(profiles) {
-  profilesContainer.innerHTML = profiles
-    .map(
-      (p) => `
-      <div class="bg-white rounded-2xl shadow-md p-5 text-left transition hover:-translate-y-1 hover:shadow-lg duration-300">
-        <h3 class="font-semibold text-lg text-gray-800 mb-2">${p["Business Name"]}</h3>
-        <p class="text-sm text-gray-600 mb-1">👤 ${p["Owner Name"]}</p>
-        <p class="text-sm text-gray-600 mb-1">📍 ${p["City"]}</p>
-        <p class="text-sm text-gray-500 mb-3">${p["Description"] || "No description"}</p>
-        <a href="${p["ProfileLink"]}" target="_blank" class="inline-block bg-purple-600 text-white text-sm px-4 py-2 rounded-full hover:bg-purple-700 transition">
-          View Profile
-        </a>
-      </div>`
-    )
-    .join("");
-}
+    searchInput.addEventListener("input", (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtered = allProfiles.filter(p =>
+        (p["Business Name"] || "").toLowerCase().includes(term) ||
+        (p["Category"] || "").toLowerCase().includes(term) ||
+        (p["City"] || "").toLowerCase().includes(term)
+      );
+      renderProfiles(filtered);
+    });
 
-// ✅ Filter Buttons
-filterButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    filterButtons.forEach((b) => b.classList.remove("bg-purple-600", "text-white"));
-    btn.classList.add("bg-purple-600", "text-white");
-    activeCategory = btn.dataset.category;
-    fetchProfiles(activeCategory);
-  });
-});
-
-// ✅ Search
-searchInput.addEventListener("input", (e) => {
-  const term = e.target.value.toLowerCase();
-  const filtered = allProfiles.filter(
-    (p) =>
-      p["Business Name"].toLowerCase().includes(term) ||
-      p["Category"].toLowerCase().includes(term) ||
-      p["City"].toLowerCase().includes(term)
-  );
-  displayProfiles(filtered);
-});
-
-// ✅ Initial load
-fetchProfiles(activeCategory);
-</script>
-
+    loadProfiles("startups");
+  </script>
 </body>
 </html>
