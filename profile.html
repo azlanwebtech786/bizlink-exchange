@@ -6,24 +6,44 @@
   <title>Business Profile</title>
   <style>
     body {
-      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      background: linear-gradient(135deg, #5b21b6, #9333ea);
       color: white;
       font-family: "Poppins", sans-serif;
       text-align: center;
       padding: 50px 20px;
     }
+
     .card {
       max-width: 600px;
       margin: auto;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
       border-radius: 20px;
       padding: 30px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+      color: #fff;
     }
-    h1 { font-size: 28px; margin-bottom: 10px; }
-    p { font-size: 16px; margin: 5px 0; }
-    .error { margin-top: 150px; font-size: 20px; color: #ffdddd; }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 16px;
+      margin: 6px 0;
+    }
+
+    a {
+      color: #ffd6ff;
+      text-decoration: underline;
+    }
+
+    .error {
+      margin-top: 150px;
+      font-size: 20px;
+      color: #ffdddd;
+    }
   </style>
 </head>
 <body>
@@ -33,7 +53,7 @@
     const scriptURL = "https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec";
     const container = document.getElementById("profileContainer");
 
-    // URL से ID निकालो (उदाहरण: startups-2)
+    // 🔍 URL से ID निकालो (उदाहरण: startups-3)
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
 
@@ -47,15 +67,18 @@
         .then((data) => {
           if (data.status === "success") {
             const p = data.profile;
+
             container.innerHTML = `
               <div class="card">
-                <h1>${p.Name || "Unnamed"}</h1>
-                <p><b>Role:</b> ${p.Role || "-"}</p>
-                <p><b>Email:</b> ${p.Email || "-"}</p>
-                <p><b>Category:</b> ${p.Category || "-"}</p>
-                <p><b>Description:</b> ${p.Description || "-"}</p>
-                <p><b>City:</b> ${p.City || "-"}</p>
-                <p><b>Portfolio Link:</b> <a href="${p.Portfolio_Link}" target="_blank" style="color:#fff;">View</a></p>
+                <h1>${p["Business Name"] || "Unnamed Business"}</h1>
+                <p><b>Owner:</b> ${p["Owner Name"] || "-"}</p>
+                <p><b>Role:</b> ${p["Role"] || "-"}</p>
+                <p><b>Email:</b> ${p["Email"] || "-"}</p>
+                <p><b>Category:</b> ${p["Category"] || "-"}</p>
+                <p><b>City:</b> ${p["City"] || "-"}</p>
+                <p><b>Description:</b> ${p["Description"] || "No details provided."}</p>
+                <br />
+                <a href="index.html">← Back to Home</a>
               </div>
             `;
           } else if (data.status === "not_found") {
@@ -66,7 +89,7 @@
         })
         .catch((err) => {
           console.error(err);
-          container.innerHTML = `<div class="error">❌ Error fetching data.</div>`;
+          container.innerHTML = `<div class="error">❌ Error loading profile.</div>`;
         });
     }
   </script>
