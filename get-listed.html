@@ -20,32 +20,47 @@
       <!-- Role Selector -->
       <div>
         <label class="block mb-1 text-sm text-gray-300">Profile Type</label>
-        <select id="role" name="role" required class="w-full p-3 rounded-xl bg-white/20 text-white outline-none">
+        <select id="role" name="role" required
+          class="w-full p-3 rounded-xl bg-purple-500/30 text-white border border-white/20 placeholder-gray-200 outline-none focus:ring-2 focus:ring-pink-400">
           <option value="" disabled selected>Select your role</option>
           <option value="Business">Business / Company</option>
           <option value="Freelancer">Freelancer / Skill Professional</option>
         </select>
       </div>
 
-      <!-- Business Type (only for businesses) -->
+      <!-- Business Type -->
       <div id="businessTypeGroup" class="hidden">
         <label class="block mb-1 text-sm text-gray-300">Business Type</label>
-        <select id="business_type" name="business_type" class="w-full p-3 rounded-xl bg-white/20 text-white outline-none">
+        <select id="business_type" name="business_type"
+          class="w-full p-3 rounded-xl bg-purple-500/30 text-white border border-white/20 placeholder-gray-200 outline-none focus:ring-2 focus:ring-pink-400">
           <option value="" disabled selected>Select business type</option>
-          <option value="Small">Small Business</option>
-          <option value="Startup">New Startup</option>
+          <option value="Small_Business">Small Business</option>
+          <option value="Startups">New Startup</option>
           <option value="Corporate">Corporate Business</option>
         </select>
       </div>
 
-      <input id="business_name" name="business_name" placeholder="Business or Skill Name" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <input id="owner_name" name="owner_name" placeholder="Your Name" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <input id="email" name="email" type="email" placeholder="Email Address" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <input id="category" name="category" placeholder="Category (e.g. Web Design, Marketing...)" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <textarea id="description" name="description" placeholder="Short Description" rows="3" class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"></textarea>
-      <input id="city" name="city" placeholder="City" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <!-- Inputs -->
+      <input id="business_name" name="business_name" placeholder="Business or Skill Name" required
+        class="w-full p-3 rounded-xl bg-purple-500/30 text-white border border-white/20 placeholder-gray-200 outline-none focus:ring-2 focus:ring-pink-400" />
 
-      <button type="submit" id="submitBtn" class="w-full py-3 bg-indigo-500 hover:bg-indigo-600 rounded-xl font-semibold transition">
+      <input id="owner_name" name="owner_name" placeholder="Your Name" required
+        class="w-full p-3 rounded-xl bg-purple-500/30 text-white border border-white/20 placeholder-gray-200 outline-none focus:ring-2 focus:ring-pink-400" />
+
+      <input id="email" name="email" type="email" placeholder="Email Address" required
+        class="w-full p-3 rounded-xl bg-purple-500/30 text-white border border-white/20 placeholder-gray-200 outline-none focus:ring-2 focus:ring-pink-400" />
+
+      <input id="category" name="category" placeholder="Category (e.g. Web Design, Marketing...)" required
+        class="w-full p-3 rounded-xl bg-purple-500/30 text-white border border-white/20 placeholder-gray-200 outline-none focus:ring-2 focus:ring-pink-400" />
+
+      <textarea id="description" name="description" placeholder="Short Description" rows="3"
+        class="w-full p-3 rounded-xl bg-purple-500/30 text-white border border-white/20 placeholder-gray-200 outline-none focus:ring-2 focus:ring-pink-400"></textarea>
+
+      <input id="city" name="city" placeholder="City" required
+        class="w-full p-3 rounded-xl bg-purple-500/30 text-white border border-white/20 placeholder-gray-200 outline-none focus:ring-2 focus:ring-pink-400" />
+
+      <button type="submit" id="submitBtn"
+        class="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-purple-600 hover:to-pink-500 rounded-xl font-semibold shadow-lg transition">
         🚀 Submit Listing
       </button>
     </form>
