@@ -80,7 +80,7 @@
       const [sheetName, rowId] = idParam.split("-");
       
       // ✅ Use doGet parameter to fetch exact record
-      fetch(`${scriptURL}?action=getProfile&sheet=${sheetName}&id=${idParam}`)
+      fetch(`${scriptURL}?id=${idParam}`)
         .then(res => res.json())
         .then(profileData => {
           if (profileData && profileData["Business Name"]) {
