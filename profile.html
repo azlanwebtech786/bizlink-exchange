@@ -31,14 +31,8 @@
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 15px;
-    }
-    p {
-      font-size: 1.1rem;
-      margin: 6px 0;
-    }
+    h1 { font-size: 2rem; margin-bottom: 15px; }
+    p { font-size: 1.1rem; margin: 6px 0; }
     .error {
       color: #ff4d4d;
       font-weight: bold;
@@ -76,7 +70,7 @@
   </div>
 
   <script>
-    // Google Apps Script endpoint
+    // ✅ Correct Google Apps Script endpoint
     const scriptURL = "https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec";
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -84,13 +78,13 @@
 
     if (idParam) {
       const [sheetName, rowId] = idParam.split("-");
-      fetch(`${scriptURL}?sheet=${sheetName}`)
+      
+      // ✅ Use doGet parameter to fetch exact record
+      fetch(`${scriptURL}?action=getProfile&sheet=${sheetName}&id=${idParam}`)
         .then(res => res.json())
-        .then(data => {
-          const profileData = data.find((row, index) => `${sheetName}-${index + 1}` === idParam);
-
-          if (profileData) {
-            document.getElementById("businessName").textContent = profileData["Business Name"] || "N/A";
+        .then(profileData => {
+          if (profileData && profileData["Business Name"]) {
+            document.getElementById("businessName").textContent = profileData["Business Name"];
             document.getElementById("ownerName").textContent = profileData["Owner Name"] || "N/A";
             document.getElementById("email").textContent = profileData["Email"] || "N/A";
             document.getElementById("category").textContent = profileData["Category"] || "N/A";
