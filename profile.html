@@ -3,94 +3,114 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Business Profile</title>
+  <title>BizLink Exchange - Profile</title>
   <style>
     body {
-      background: linear-gradient(135deg, #5b21b6, #9333ea);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
       color: white;
-      font-family: "Poppins", sans-serif;
       text-align: center;
-      padding: 50px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
-
-    .card {
-      max-width: 600px;
-      margin: auto;
-      background: rgba(255, 255, 255, 0.15);
+    .container {
+      background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(12px);
       border-radius: 20px;
       padding: 30px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
-      color: #fff;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      animation: fadeIn 0.8s ease-in-out;
     }
-
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
+      font-size: 2rem;
+      margin-bottom: 15px;
     }
-
     p {
-      font-size: 16px;
+      font-size: 1.1rem;
       margin: 6px 0;
     }
-
-    a {
-      color: #ffd6ff;
-      text-decoration: underline;
-    }
-
     .error {
-      margin-top: 150px;
-      font-size: 20px;
-      color: #ffdddd;
+      color: #ff4d4d;
+      font-weight: bold;
+      margin-top: 20px;
+      display: none;
+    }
+    .loader {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-left-color: #fff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
+
 <body>
-  <div id="profileContainer">Loading...</div>
+  <div class="container">
+    <div id="loading" class="loader"></div>
+    <div id="profile" style="display:none;">
+      <h1 id="businessName">Loading...</h1>
+      <p><strong>Owner:</strong> <span id="ownerName"></span></p>
+      <p><strong>Email:</strong> <span id="email"></span></p>
+      <p><strong>Category:</strong> <span id="category"></span></p>
+      <p><strong>Description:</strong> <span id="description"></span></p>
+      <p><strong>City:</strong> <span id="city"></span></p>
+    </div>
+    <div class="error">❌ Error fetching data.</div>
+  </div>
 
   <script>
+    // Google Apps Script endpoint
     const scriptURL = "https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec";
-    const container = document.getElementById("profileContainer");
 
-    // 🔍 URL से ID निकालो (उदाहरण: startups-3)
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
+    const urlParams = new URLSearchParams(window.location.search);
+    const idParam = urlParams.get("id");
 
-    if (!id) {
-      container.innerHTML = `<div class="error">❌ Invalid Profile ID.</div>`;
-    } else {
-      const [sheetName, rowId] = id.split("-");
+    if (idParam) {
+      const [sheetName, rowId] = idParam.split("-");
+      fetch(`${scriptURL}?sheet=${sheetName}`)
+        .then(res => res.json())
+        .then(data => {
+          const profileData = data.find((row, index) => `${sheetName}-${index + 1}` === idParam);
 
-      fetch(`${scriptURL}?sheet=${sheetName}&id=${rowId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status === "success") {
-            const p = data.profile;
+          if (profileData) {
+            document.getElementById("businessName").textContent = profileData["Business Name"] || "N/A";
+            document.getElementById("ownerName").textContent = profileData["Owner Name"] || "N/A";
+            document.getElementById("email").textContent = profileData["Email"] || "N/A";
+            document.getElementById("category").textContent = profileData["Category"] || "N/A";
+            document.getElementById("description").textContent = profileData["Description"] || "N/A";
+            document.getElementById("city").textContent = profileData["City"] || "N/A";
 
-            container.innerHTML = `
-              <div class="card">
-                <h1>${p["Business Name"] || "Unnamed Business"}</h1>
-                <p><b>Owner:</b> ${p["Owner Name"] || "-"}</p>
-                <p><b>Role:</b> ${p["Role"] || "-"}</p>
-                <p><b>Email:</b> ${p["Email"] || "-"}</p>
-                <p><b>Category:</b> ${p["Category"] || "-"}</p>
-                <p><b>City:</b> ${p["City"] || "-"}</p>
-                <p><b>Description:</b> ${p["Description"] || "No details provided."}</p>
-                <br />
-                <a href="index.html">← Back to Home</a>
-              </div>
-            `;
-          } else if (data.status === "not_found") {
-            container.innerHTML = `<div class="error">⚠️ Profile not found.</div>`;
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("profile").style.display = "block";
           } else {
-            container.innerHTML = `<div class="error">❌ Error fetching data.</div>`;
+            showError();
           }
         })
-        .catch((err) => {
-          console.error(err);
-          container.innerHTML = `<div class="error">❌ Error loading profile.</div>`;
-        });
+        .catch(() => showError());
+    } else {
+      showError();
+    }
+
+    function showError() {
+      document.getElementById("loading").style.display = "none";
+      document.querySelector(".error").style.display = "block";
     }
   </script>
 </body>
