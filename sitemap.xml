@@ -5,7 +5,11 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://azlanwebtech786.github.io/bizlink-exchange/get-listed.html</loc>
+    <loc>https://azlanwebtech786.github.io/bizlink-exchange/about.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://azlanwebtech786.github.io/bizlink-exchange/contact.html</loc>
     <priority>0.8</priority>
   </url>
 </urlset>
