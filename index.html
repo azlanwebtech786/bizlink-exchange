@@ -1,10 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- ✅ Basic SEO Setup -->
   <meta charset="UTF-8" />
- <title>BizLink Exchange | Freelance Marketplace & Business Network</title>
-<meta name="description" content="BizLink Exchange connects freelancers, startups, and small businesses to grow together. Get listed and find trusted partners today!">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- ✅ Page Title (Main Keyword + Brand) -->
+  <title>BizLink Exchange | Freelance Marketplace & Business Network in India</title>
+
+  <!-- ✅ Meta Description -->
+  <meta name="description" content="Join BizLink Exchange – a freelance marketplace where startups, small businesses, and freelancers connect, collaborate, and grow together. Get listed today!">
+
+  <!-- ✅ Keywords (Optional, but still useful for context) -->
+  <meta name="keywords" content="freelancer marketplace, business network, hire freelancers, startups India, small business platform, BizLink Exchange">
+
+  <!-- ✅ Open Graph (For social media sharing) -->
+  <meta property="og:title" content="BizLink Exchange | Freelance Marketplace & Business Network" />
+  <meta property="og:description" content="Find freelancers, startups, and small businesses in one platform. Grow together with BizLink Exchange." />
+  <meta property="og:image" content="https://yourdomain.com/thumbnail.jpg" />
+  <meta property="og:url" content="https://yourdomain.com" />
+  <meta property="og:type" content="website" />
+
+  <!-- ✅ Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <!-- ✅ Schema Markup (Google Rich Results) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "BizLink Exchange",
+    "url": "https://yourdomain.com",
+    "description": "Freelance marketplace & business network for startups, freelancers, and small businesses.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://yourdomain.com/search?query={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- ✅ Styles -->
   <style>
     body {
       margin: 0;
@@ -58,6 +94,12 @@
       padding: 8px 15px;
       border-radius: 20px;
       cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .category-buttons button:hover {
+      background: white;
+      color: #6a11cb;
     }
 
     .category-buttons button.active {
@@ -86,6 +128,7 @@
 
     .card h3 {
       margin: 0;
+      font-size: 1.3rem;
     }
 
     .card p {
@@ -106,34 +149,51 @@
       padding: 20px;
       color: #ddd;
       font-size: 0.9rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      margin-top: 40px;
     }
   </style>
 </head>
+
 <body>
-  <h1>BizLink Exchange</h1>
-  <p>Connect Skills. Build Business. Grow Together 🚀</p>
-  <a href="get-listed.html" class="btn">+ Get Listed</a>
+  <!-- ✅ Header Section -->
+  <header>
+    <h1>BizLink Exchange</h1>
+    <p>Connect Skills. Build Business. Grow Together 🚀</p>
+    <a href="get-listed.html" class="btn" title="Get your business listed on BizLink Exchange">+ Get Listed</a>
+  </header>
 
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search business, category, or city..." />
-  </div>
+  <!-- ✅ Search Section -->
+  <section aria-label="Search Businesses">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search business, category, or city..." aria-label="Search" />
+    </div>
 
-  <div class="category-buttons">
-    <button class="active" onclick="loadProfiles('startups')">Startups</button>
-    <button onclick="loadProfiles('small_business')">Small Business</button>
-    <button onclick="loadProfiles('corporate')">Corporate</button>
-    <button onclick="loadProfiles('freelancers')">Freelancers</button>
-  </div>
+    <div class="category-buttons">
+      <button class="active" onclick="loadProfiles('startups')">Startups</button>
+      <button onclick="loadProfiles('small_business')">Small Business</button>
+      <button onclick="loadProfiles('corporate')">Corporate</button>
+      <button onclick="loadProfiles('freelancers')">Freelancers</button>
+    </div>
+  </section>
 
-  <div id="profiles" class="profiles">Loading...</div>
+  <!-- ✅ Business Profiles Section -->
+  <main>
+    <section id="profiles" class="profiles" aria-label="Business Profiles">Loading...</section>
+  </main>
 
-  <footer>© 2025 BizLink Exchange. All Rights Reserved.</footer>
+  <!-- ✅ Footer -->
+  <footer>
+    <p>© 2025 BizLink Exchange. All Rights Reserved.</p>
+    <p><a href="about.html" style="color:#fff; text-decoration:underline;">About</a> | 
+       <a href="contact.html" style="color:#fff; text-decoration:underline;">Contact</a></p>
+  </footer>
 
+  <!-- ✅ Script -->
   <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec";
     const profilesDiv = document.getElementById("profiles");
     const searchInput = document.getElementById("searchInput");
-
     let allProfiles = [];
     let activeSheet = "startups";
 
@@ -164,7 +224,7 @@
         <div class="card">
           <h3>${p["Business Name"] || "Unnamed"}</h3>
           <p>📍 ${p["City"] || "-"}</p>
-          <p>${p["Description"] || "No description"}</p>
+          <p>${p["Description"] || "No description available"}</p>
           <button class="view-btn" onclick="window.open('${p.ProfileLink}', '_blank')">View Profile</button>
         </div>
       `).join("");
