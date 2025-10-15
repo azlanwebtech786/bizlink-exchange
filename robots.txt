@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://azlanwebtech786.github.io/bizlink-exchange/sitemap.xml
