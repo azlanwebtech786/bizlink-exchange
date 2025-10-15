@@ -2,197 +2,248 @@
 <html lang="en">
 <head>
   <meta name="google-site-verification" content="GBKwckk6Rv-B-vidv23MEaY7SX9abgfVHWhraAvC3JI" />
-  <!-- ✅ Basic SEO Setup -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- ✅ Page Title (Main Keyword + Brand) -->
   <title>BizLink Exchange | Freelance Marketplace & Business Network in India</title>
-
-  <!-- ✅ Meta Description -->
   <meta name="description" content="Join BizLink Exchange – a freelance marketplace where startups, small businesses, and freelancers connect, collaborate, and grow together. Get listed today!">
-
-  <!-- ✅ Keywords (Optional, but still useful for context) -->
   <meta name="keywords" content="freelancer marketplace, business network, hire freelancers, startups India, small business platform, BizLink Exchange">
-
-  <!-- ✅ Open Graph (For social media sharing) -->
-  <meta property="og:title" content="BizLink Exchange | Freelance Marketplace & Business Network" />
-  <meta property="og:description" content="Find freelancers, startups, and small businesses in one platform. Grow together with BizLink Exchange." />
-  <meta property="og:image" content="https://yourdomain.com/thumbnail.jpg" />
-  <meta property="og:url" content="https://yourdomain.com" />
-  <meta property="og:type" content="website" />
-
-  <!-- ✅ Favicon -->
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-  <!-- ✅ Schema Markup (Google Rich Results) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "BizLink Exchange",
-    "url": "https://azlanwebtech786.github.io/bizlink-exchange/",
-    "logo": "https://azlanwebtech786.github.io/bizlink-exchange/assets/logo.png",
-    "sameAs": ["https://github.com/azlanwebtech786"],
-    "description": "Freelance marketplace & business network for startups, freelancers, and small businesses.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://yourdomain.com/search?query={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
-
-  <!-- ✅ Styles -->
   <style>
-    body {
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    * {
       margin: 0;
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      color: white;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(180deg, #7F00FF, #1E1E2F);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 🌟 Hero Section */
+    header {
       text-align: center;
+      padding: 80px 20px 60px;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     }
 
-    h1 {
-      margin-top: 80px;
-      font-size: 2.5rem;
+    header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ffffff, #b8e0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    p {
-      font-size: 1.1rem;
+    header p {
+      font-size: 1.2rem;
+      margin-top: 10px;
+      color: #f1f1f1;
     }
 
     .btn {
       display: inline-block;
-      background: white;
-      color: #6a11cb;
-      padding: 10px 25px;
-      border-radius: 30px;
-      font-weight: bold;
+      margin-top: 25px;
+      background: linear-gradient(90deg, #ff6a00, #ee0979);
+      color: #fff;
+      padding: 14px 40px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1.1rem;
       text-decoration: none;
-      margin: 15px 0;
+      box-shadow: 0 0 20px rgba(255, 106, 0, 0.5);
+      transition: all 0.3s ease;
     }
 
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 106, 0, 0.7);
+    }
+
+    /* 🔍 Search Section */
     .search-bar {
-      margin: 20px auto;
-      max-width: 500px;
+      max-width: 600px;
+      margin: 40px auto 20px;
       display: flex;
-      background: white;
-      border-radius: 30px;
-      overflow: hidden;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50px;
+      padding: 10px 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
     }
 
     .search-bar input {
       flex: 1;
+      background: transparent;
       border: none;
-      padding: 10px 15px;
+      color: white;
+      font-size: 1rem;
       outline: none;
+      padding: 10px;
+    }
+
+    .search-bar input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* 🔘 Category Buttons */
+    .category-buttons {
+      text-align: center;
+      margin-top: 25px;
     }
 
     .category-buttons button {
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.15);
       border: none;
       color: white;
-      margin: 5px;
-      padding: 8px 15px;
-      border-radius: 20px;
+      margin: 8px;
+      padding: 10px 22px;
+      border-radius: 25px;
       cursor: pointer;
-      transition: 0.3s;
+      font-weight: 500;
+      transition: all 0.3s ease;
     }
 
     .category-buttons button:hover {
-      background: white;
-      color: #6a11cb;
+      background: linear-gradient(90deg, #ff6a00, #ee0979);
+      color: #fff;
+      transform: translateY(-3px);
     }
 
     .category-buttons button.active {
-      background: white;
-      color: #6a11cb;
-      font-weight: bold;
+      background: linear-gradient(90deg, #ff6a00, #ee0979);
+      color: #fff;
+      font-weight: 600;
     }
 
+    /* 🧩 Profiles Section */
     .profiles {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 40px;
-      max-width: 1000px;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 25px;
+      padding: 60px 40px;
+      max-width: 1200px;
       margin: auto;
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.12);
       border-radius: 20px;
-      padding: 20px;
-      text-align: left;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      padding: 25px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
     }
 
     .card h3 {
-      margin: 0;
       font-size: 1.3rem;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .card p {
-      color: #f0f0f0;
+      font-size: 0.95rem;
+      color: #e2e2e2;
+      margin-bottom: 10px;
     }
 
     .view-btn {
-      background: white;
-      color: #6a11cb;
+      display: inline-block;
+      background: linear-gradient(90deg, #ff6a00, #ee0979);
+      color: #fff;
       border: none;
-      padding: 7px 15px;
-      border-radius: 20px;
+      padding: 8px 18px;
+      border-radius: 25px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 600;
+      transition: 0.3s;
     }
 
+    .view-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* ⚡ Footer */
     footer {
-      padding: 20px;
-      color: #ddd;
+      padding: 25px;
+      text-align: center;
+      color: #bbb;
       font-size: 0.9rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      margin-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 50px;
+    }
+
+    footer a {
+      color: #fff;
+      text-decoration: underline;
+      margin: 0 5px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+      .btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 
 <body>
-  <!-- ✅ Header Section -->
+  <!-- 🌟 Header -->
   <header>
     <h1>BizLink Exchange</h1>
-    <p>Connect Skills. Build Business. Grow Together 🚀</p>
-    <a href="get-listed.html" class="btn" title="Get your business listed on BizLink Exchange">+ Get Listed</a>
+    <p>Connect. Collaborate. Create Opportunities. 🚀</p>
+    <a href="get-listed.html" class="btn">+ Get Listed Your Business</a>
   </header>
 
-  <!-- ✅ Search Section -->
+  <!-- 🔍 Search Section -->
   <section aria-label="Search Businesses">
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search business, category, or city..." aria-label="Search" />
+      <input type="text" id="searchInput" placeholder="🔎 Search business, category, or city..." aria-label="Search" />
     </div>
 
     <div class="category-buttons">
-      <button class="active" onclick="loadProfiles('startups')">Startups</button>
-      <button onclick="loadProfiles('small_business')">Small Business</button>
-      <button onclick="loadProfiles('corporate')">Corporate</button>
-      <button onclick="loadProfiles('freelancers')">Freelancers</button>
+      <button class="active" onclick="loadProfiles('startups', event)">Startups</button>
+      <button onclick="loadProfiles('small_business', event)">Small Business</button>
+      <button onclick="loadProfiles('corporate', event)">Corporate</button>
+      <button onclick="loadProfiles('freelancers', event)">Freelancers</button>
     </div>
   </section>
 
-  <!-- ✅ Business Profiles Section -->
+  <!-- 🧩 Business Profiles -->
   <main>
     <section id="profiles" class="profiles" aria-label="Business Profiles">Loading...</section>
   </main>
 
-  <!-- ✅ Footer -->
+  <!-- ⚡ Footer -->
   <footer>
     <p>© 2025 BizLink Exchange. All Rights Reserved.</p>
-    <p><a href="about.html" style="color:#fff; text-decoration:underline;">About</a> | 
-       <a href="contact.html" style="color:#fff; text-decoration:underline;">Contact</a></p>
+    <p>
+      <a href="about.html">About</a> |
+      <a href="contact.html">Contact</a>
+    </p>
   </footer>
 
-  <!-- ✅ Script -->
+  <!-- 🧠 Script -->
   <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec";
     const profilesDiv = document.getElementById("profiles");
@@ -200,10 +251,10 @@
     let allProfiles = [];
     let activeSheet = "startups";
 
-    async function loadProfiles(sheet = "startups") {
+    async function loadProfiles(sheet = "startups", event) {
       activeSheet = sheet;
       document.querySelectorAll(".category-buttons button").forEach(btn => btn.classList.remove("active"));
-      event.target.classList.add("active");
+      if (event) event.target.classList.add("active");
 
       profilesDiv.innerHTML = "Loading...";
       try {
