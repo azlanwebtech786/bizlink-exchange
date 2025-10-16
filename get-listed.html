@@ -6,109 +6,80 @@
   <title>Get Listed | BizLink Exchange</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="min-h-screen bg-gradient-to-r from-blue-600 via-teal-600 to-green-600 flex items-center justify-center p-6">
+  <div class="max-w-3xl w-full bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-10 text-white">
+    <h1 class="text-4xl font-extrabold text-center mb-2 tracking-tight">List Your Profile</h1>
+    <p class="text-center mb-10 text-gray-200">Join the BizLink Exchange and grow your professional identity.</p>
 
-<body class="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center p-6">
-
-  <div class="max-w-2xl w-full bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 text-white">
-    <h1 class="text-3xl font-bold text-center mb-4">🚀 List Yourself on BizLink Exchange</h1>
-    <p class="text-center mb-8 text-gray-200">
-      Create your professional profile — whether you’re a <span class="font-semibold text-white">freelancer</span> or a <span class="font-semibold text-white">business</span>.
-    </p>
-
-    <form id="bizForm" class="space-y-4">
-
-      <!-- Role Selector -->
-      <div>
+    <form id="bizForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="md:col-span-2">
         <label class="block mb-1 text-sm text-gray-300">Profile Type</label>
-        <select id="role" name="role" required class="w-full p-3 rounded-xl bg-white/20 text-white outline-none">
+        <select id="role" name="role" required class="w-full p-3 rounded-xl bg-white/30 text-white outline-none">
           <option value="" disabled selected>Select your role</option>
           <option value="Business">Business / Company</option>
           <option value="Freelancer">Freelancer / Skill Professional</option>
         </select>
       </div>
 
-      <!-- Business Type (only for businesses) -->
-      <div id="businessTypeGroup" class="hidden">
+      <div id="businessTypeGroup" class="hidden md:col-span-2">
         <label class="block mb-1 text-sm text-gray-300">Business Type</label>
-        <select id="business_type" name="business_type" class="w-full p-3 rounded-xl bg-white/20 text-white outline-none">
+        <select id="business_type" name="business_type" class="w-full p-3 rounded-xl bg-white/30 text-white outline-none">
           <option value="" disabled selected>Select business type</option>
           <option value="Small">Small Business</option>
-          <option value="Startup">New Startup</option>
-          <option value="Corporate">Corporate Business</option>
+          <option value="Startup">Startup</option>
+          <option value="Corporate">Corporate</option>
         </select>
       </div>
 
-      <input id="business_name" name="business_name" placeholder="Business or Skill Name" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <input id="owner_name" name="owner_name" placeholder="Your Name" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <input id="email" name="email" type="email" placeholder="Email Address" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <input id="category" name="category" placeholder="Category (e.g. Web Design, Marketing...)" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
-      <textarea id="description" name="description" placeholder="Short Description" rows="3" class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"></textarea>
-      <input id="city" name="city" placeholder="City" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none" />
+      <input id="business_name" name="business_name" placeholder="Business / Skill Name" required class="p-3 rounded-xl bg-white/30 text-white placeholder-gray-300 outline-none" />
+      <input id="owner_name" name="owner_name" placeholder="Your Name" required class="p-3 rounded-xl bg-white/30 text-white placeholder-gray-300 outline-none" />
+      <input id="email" name="email" type="email" placeholder="Email" required class="p-3 rounded-xl bg-white/30 text-white placeholder-gray-300 outline-none" />
+      <input id="category" name="category" placeholder="Category (e.g. Web Design)" required class="p-3 rounded-xl bg-white/30 text-white placeholder-gray-300 outline-none" />
+      <textarea id="description" name="description" placeholder="Short Description" rows="3" class="md:col-span-2 p-3 rounded-xl bg-white/30 text-white placeholder-gray-300 outline-none"></textarea>
+      <input id="city" name="city" placeholder="City" required class="md:col-span-2 p-3 rounded-xl bg-white/30 text-white placeholder-gray-300 outline-none" />
 
-      <button type="submit" id="submitBtn" class="w-full py-3 bg-indigo-500 hover:bg-indigo-600 rounded-xl font-semibold transition">
-        🚀 Submit Listing
+      <button type="submit" id="submitBtn" class="md:col-span-2 py-3 bg-teal-500 hover:bg-teal-600 rounded-xl font-semibold transition-all duration-300">
+        Submit & Generate Profile 🚀
       </button>
     </form>
   </div>
 
-  <script>
-    const form = document.getElementById("bizForm");
-    const btn = document.getElementById("submitBtn");
-    const roleSelect = document.getElementById("role");
-    const businessTypeGroup = document.getElementById("businessTypeGroup");
+<script>
+const form = document.getElementById('bizForm');
+const btn = document.getElementById('submitBtn');
+const role = document.getElementById('role');
+const bizTypeGroup = document.getElementById('businessTypeGroup');
 
-    // Show/hide Business Type dropdown based on Role
-    roleSelect.addEventListener("change", () => {
-      if (roleSelect.value === "Business") {
-        businessTypeGroup.classList.remove("hidden");
-      } else {
-        businessTypeGroup.classList.add("hidden");
-      }
+role.addEventListener('change', () => {
+  if (role.value === 'Business') bizTypeGroup.classList.remove('hidden');
+  else bizTypeGroup.classList.add('hidden');
+});
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  btn.disabled = true;
+  btn.innerText = 'Processing...';
+  const profileType = document.getElementById('role').value;
+  const bizType = document.getElementById('business_type').value;
+  const sheetName = bizType ? bizType.toLowerCase() : profileType.toLowerCase();
+  const newId = Date.now().toString().slice(-5);
+  const profileLink = `https://azlanwebtech786.github.io/bizlink-exchange/profile.html?id=${sheetName}-${newId}`;
+  const formData = new FormData(form);
+  formData.append('profileLink', profileLink);
+  try {
+    const res = await fetch('https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec', {
+      method: 'POST',
+      body: formData
     });
-
-    // Form Submission
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      btn.disabled = true;
-      btn.innerText = "⏳ Submitting...";
-
-      // 🟩 Portfolio Link बनाने का Logic
-      const profileType = document.getElementById("role").value;
-      const businessType = document.getElementById("business_type").value;
-
-      const sheetName = businessType
-        ? businessType.toLowerCase().replace(/\s+/g, "_")
-        : profileType.toLowerCase().replace(/\s+/g, "_");
-
-      const newId = Date.now().toString().slice(-5); // Unique ID
-      const profileLink = `https://azlanwebtech786.github.io/bizlink-exchange/profile.html?id=${sheetName}-${newId}`;
-
-      // अब इस लिंक को formData में जोड़ दो
-      const formData = new FormData(form);
-      formData.append("profileLink", profileLink);
-
-      try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec", {
-          method: "POST",
-          body: formData,
-        });
-
-        const data = await response.json();
-
-        if (data.result === "success") {
-          alert("✅ Listed Successfully! Opening your portfolio...");
-          window.location.href = profileLink;
-        } else {
-          alert("⚠️ " + data.message);
-        }
-      } catch (err) {
-        alert("❌ Error: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "🚀 Submit Listing";
-      }
-    });
-  </script>
-
+    const data = await res.json();
+    if (data.result === 'success') {
+      alert('✅ Successfully Listed! Redirecting...');
+      window.location.href = profileLink;
+    } else alert('⚠️ ' + data.message);
+  } catch(e){alert('❌ Error: ' + e.message);} finally {
+    btn.disabled = false; btn.innerText = 'Submit & Generate Profile 🚀';
+  }
+});
+</script>
 </body>
 </html>
