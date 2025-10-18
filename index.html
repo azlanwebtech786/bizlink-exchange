@@ -1,258 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="google-site-verification" content="GBKwckk6Rv-B-vidv23MEaY7SX9abgfVHWhraAvC3JI" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizLink Exchange | Freelance Marketplace & Business Network in India</title>
-  <meta name="description" content="Join BizLink Exchange – a freelance marketplace where startups, small businesses, and freelancers connect, collaborate, and grow together. Get listed today!">
-  <meta name="keywords" content="freelancer marketplace, business network, hire freelancers, startups India, small business platform, BizLink Exchange">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-
+  <title>BizLink Exchange | Freelance Marketplace & Business Network</title>
+  <meta name="description" content="Connect startups, small businesses & freelancers. Get listed and grow your business.">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(180deg, #000000, #3a0000);
-      background-size: 400% 400%;
-      animation: pulseBackground 10s ease-in-out infinite;
-      color: #fff;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    @keyframes pulseBackground {
-      0% { background: linear-gradient(180deg, #000000, #3a0000); }
-      25% { background: linear-gradient(180deg, #1a0000, #5c0000); }
-      50% { background: linear-gradient(180deg, #3a0000, #000000); }
-      75% { background: linear-gradient(180deg, #5c0000, #1a0000); }
-      100% { background: linear-gradient(180deg, #000000, #3a0000); }
-    }
-
-    /* 🌟 Hero Section */
-    header {
-      text-align: center;
-      padding: 80px 20px 60px;
-      background: linear-gradient(135deg, #8B0000, #000000);
-      border-bottom-left-radius: 40px;
-      border-bottom-right-radius: 40px;
-      box-shadow: 0 8px 30px rgba(255, 0, 0, 0.4);
-    }
-
-    header h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      background: linear-gradient(90deg, #ffffff, #ffcccc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    header p {
-      font-size: 1.2rem;
-      margin-top: 10px;
-      color: #f5f5f5;
-    }
-
-    .btn {
-      display: inline-block;
-      margin-top: 25px;
-      background: linear-gradient(90deg, #ff0000, #b30000);
-      color: #fff;
-      padding: 14px 40px;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      text-decoration: none;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-      transition: all 0.3s ease;
-    }
-
-    .btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
-    }
-
-    /* 🔍 Search Section */
-    .search-bar {
-      max-width: 600px;
-      margin: 40px auto 20px;
-      display: flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50px;
-      padding: 10px 20px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
-    }
-
-    .search-bar input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 1rem;
-      outline: none;
-      padding: 10px;
-    }
-
-    .search-bar input::placeholder {
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    /* 🔘 Category Buttons */
-    .category-buttons {
-      text-align: center;
-      margin-top: 25px;
-    }
-
-    .category-buttons button {
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: white;
-      margin: 8px;
-      padding: 10px 22px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    .category-buttons button:hover {
-      background: linear-gradient(90deg, #ff0000, #b30000);
-      color: #fff;
-      transform: translateY(-3px);
-    }
-
-    .category-buttons button.active {
-      background: linear-gradient(90deg, #ff0000, #b30000);
-      color: #fff;
-      font-weight: 600;
-    }
-
-    /* 🧩 Profiles Section */
-    .profiles {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-      gap: 25px;
-      padding: 60px 40px;
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      padding: 25px;
-      backdrop-filter: blur(15px);
-      box-shadow: 0 0 25px rgba(255, 0, 0, 0.15);
-      transition: all 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.25);
-    }
-
-    .card h3 {
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, #ff0000, #ff6666);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .card p {
-      font-size: 0.95rem;
-      color: #e2e2e2;
-      margin-bottom: 10px;
-    }
-
-    .view-btn {
-      display: inline-block;
-      background: linear-gradient(90deg, #ff0000, #b30000);
-      color: #fff;
-      border: none;
-      padding: 8px 18px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-
-    .view-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-    }
-
-    /* ⚡ Footer */
-    footer {
-      padding: 25px;
-      text-align: center;
-      color: #ccc;
-      font-size: 0.9rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      margin-top: 50px;
-      background: #000;
-    }
-
-    footer a {
-      color: #ff4d4d;
-      text-decoration: underline;
-      margin: 0 5px;
-    }
-
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 2.2rem;
-      }
-      .btn {
-        padding: 12px 30px;
-        font-size: 1rem;
-      }
-    }
+    body { font-family: 'Poppins', sans-serif; }
+    .blood-red { background: #b30000; } /* Custom blood red */
+    .blood-gradient { background: linear-gradient(90deg, #b30000, #ff1a1a); }
+    .hero-bg { background: linear-gradient(to right, #0d0d0d, #1a1a1a); }
   </style>
 </head>
+<body class="bg-white text-gray-900">
 
-<body>
-  <!-- 🌟 Header -->
-  <header>
-    <h1>BizLink Exchange</h1>
-    <p>Freelance Marketplace & Grow Business. 🚀</p>
-    <p>No Any Charges | Full Freedom Access | Skilled & Verified Profile's | Secure & Instant Payment</p>
-    <a href="get-listed.html" class="btn">+ Get Listed Your Business</a>
+  <!-- 🌟 Header / Navbar -->
+  <header class="flex justify-between items-center px-8 py-4 shadow-md sticky top-0 bg-white z-50">
+    <h1 class="text-2xl font-bold text-black">BizLink <span class="text-red-700">Exchange</span></h1>
+    <nav class="space-x-6 hidden md:flex">
+      <a href="#" class="hover:text-red-700 transition">Home</a>
+      <a href="#" class="hover:text-red-700 transition">About</a>
+      <a href="#" class="hover:text-red-700 transition">Contact</a>
+    </nav>
+    <a href="get-listed.html" class="blood-gradient text-white px-5 py-2 rounded-full font-semibold shadow-md hover:scale-105 transform transition">
+      + Get Listed Your Business
+    </a>
   </header>
 
-  <!-- 🔍 Search Section -->
-  <section aria-label="Search Businesses">
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="🔎 Search business, category, or city..." aria-label="Search" />
+  <!-- 🦸 Hero Section -->
+  <section class="hero-bg text-white text-center py-24 px-6">
+    <h2 class="text-4xl md:text-5xl font-bold mb-4">Connect. Collaborate. Grow. 🚀</h2>
+    <p class="text-gray-300 max-w-2xl mx-auto mb-8">
+      Join India’s fastest-growing business network — where startups, freelancers, and small businesses come together to build success.
+    </p>
+    <a href="get-listed.html" class="blood-gradient text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:scale-105 transform transition">
+      Get Started Free
+    </a>
+  </section>
+
+  <!-- 🔍 Search + Categories -->
+  <section class="max-w-4xl mx-auto mt-12 px-4">
+    <div class="flex items-center border border-gray-300 rounded-full px-4 py-3 shadow-sm">
+      <input type="text" id="searchInput" placeholder="🔎 Search business, category, or city..." class="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-500">
     </div>
 
-    <div class="category-buttons">
-      <button class="active" onclick="loadProfiles('startups', event)">Startups</button>
-      <button onclick="loadProfiles('small_business', event)">Small Business</button>
-      <button onclick="loadProfiles('corporate', event)">Corporate</button>
-      <button onclick="loadProfiles('freelancers', event)">Freelancers</button>
+    <div class="flex flex-wrap justify-center mt-6 gap-3">
+      <button class="category-btn bg-red-700 text-white px-5 py-2 rounded-full shadow hover:bg-red-800 transition" onclick="loadProfiles('startups', event)">Startups</button>
+      <button class="category-btn bg-gray-100 text-gray-800 px-5 py-2 rounded-full hover:bg-red-700 hover:text-white transition" onclick="loadProfiles('small_business', event)">Small Business</button>
+      <button class="category-btn bg-gray-100 text-gray-800 px-5 py-2 rounded-full hover:bg-red-700 hover:text-white transition" onclick="loadProfiles('corporate', event)">Corporate</button>
+      <button class="category-btn bg-gray-100 text-gray-800 px-5 py-2 rounded-full hover:bg-red-700 hover:text-white transition" onclick="loadProfiles('freelancers', event)">Freelancers</button>
     </div>
   </section>
 
-  <!-- 🧩 Business Profiles -->
-  <main>
-    <section id="profiles" class="profiles" aria-label="Business Profiles">Loading...</section>
+  <!-- 🧩 Profiles Section -->
+  <main class="max-w-6xl mx-auto grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4 py-16" id="profiles">
+    <div class="text-center col-span-full text-gray-500">Loading profiles...</div>
   </main>
 
   <!-- ⚡ Footer -->
-  <footer>
+  <footer class="bg-black text-gray-400 text-center py-6 mt-16">
     <p>© 2025 BizLink Exchange. All Rights Reserved.</p>
-    <p>
-      <a href="about.html">About</a> |
-      <a href="contact.html">Contact</a>
+    <p class="mt-2">
+      <a href="#" class="hover:text-white">About</a> |
+      <a href="#" class="hover:text-white">Contact</a>
     </p>
   </footer>
 
@@ -266,33 +78,39 @@
 
     async function loadProfiles(sheet = "startups", event) {
       activeSheet = sheet;
-      document.querySelectorAll(".category-buttons button").forEach(btn => btn.classList.remove("active"));
-      if (event) event.target.classList.add("active");
+      document.querySelectorAll(".category-btn").forEach(btn => {
+        btn.classList.remove("bg-red-700", "text-white");
+        btn.classList.add("bg-gray-100", "text-gray-800");
+      });
+      if (event) {
+        event.target.classList.remove("bg-gray-100", "text-gray-800");
+        event.target.classList.add("bg-red-700", "text-white");
+      }
 
-      profilesDiv.innerHTML = "Loading...";
+      profilesDiv.innerHTML = `<div class='text-center text-gray-500 col-span-full'>Loading...</div>`;
       try {
         const res = await fetch(`${scriptURL}?sheet=${sheet}`);
         const data = await res.json();
-
         if (data && data.length > 0) {
           allProfiles = data;
           renderProfiles(data);
         } else {
-          profilesDiv.innerHTML = "<p>No profiles found.</p>";
+          profilesDiv.innerHTML = `<div class='text-center text-gray-500 col-span-full'>No profiles found.</div>`;
         }
       } catch (err) {
-        console.error(err);
-        profilesDiv.innerHTML = "<p>Error loading profiles.</p>";
+        profilesDiv.innerHTML = `<div class='text-center text-red-600 col-span-full'>Error loading profiles.</div>`;
       }
     }
 
     function renderProfiles(list) {
       profilesDiv.innerHTML = list.map(p => `
-        <div class="card">
-          <h3>${p["Business Name"] || "Unnamed"}</h3>
-          <p>📍 ${p["City"] || "-"}</p>
-          <p>${p["Description"] || "No description available"}</p>
-          <button class="view-btn" onclick="window.open('${p.ProfileLink}', '_blank')">View Profile</button>
+        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow hover:shadow-lg hover:border-red-500 transition">
+          <h3 class="text-xl font-semibold text-black mb-2">${p["Business Name"] || "Unnamed"}</h3>
+          <p class="text-gray-600 mb-1">📍 ${p["City"] || "-"}</p>
+          <p class="text-gray-500 text-sm mb-3">${p["Description"] || "No description available"}</p>
+          <button onclick="window.open('${p.ProfileLink}', '_blank')" class="blood-gradient text-white px-4 py-2 rounded-full font-medium hover:scale-105 transform transition">
+            View Profile
+          </button>
         </div>
       `).join("");
     }
