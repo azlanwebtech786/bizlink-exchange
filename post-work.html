@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizLink Exchange | Freelance Marketplace & Business Network</title>
+  <meta name="description" content="Connect startups, small businesses & freelancers. Get listed and grow your business.">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .blood-red { background: #b30000; }
+    .blood-gradient { background: linear-gradient(90deg, #b30000, #ff1a1a); }
+    .hero-bg { background: linear-gradient(to right, #0d0d0d, #1a1a1a); }
+  </style>
+</head>
+<body class="bg-white text-gray-900">
+
+  <!-- 🌟 Header / Navbar -->
+  <header class="flex justify-between items-center px-8 py-4 shadow-md sticky top-0 bg-white z-50">
+    <h1 class="text-2xl font-bold text-black">BizLink <span class="text-red-700">Exchange</span></h1>
+    <nav class="space-x-6 hidden md:flex">
+      <a href="#" class="hover:text-red-700 transition">Home</a>
+      <a href="#" class="hover:text-red-700 transition">About</a>
+      <a href="#" class="hover:text-red-700 transition">Contact</a>
+      <a href="post-work.html" class="hover:text-red-700 font-semibold transition">Post a Work</a>
+    </nav>
+    <a href="get-listed.html" class="blood-gradient text-white px-5 py-2 rounded-full font-semibold shadow-md hover:scale-105 transform transition">
+      + Get Listed Your Business
+    </a>
+  </header>
+
+  <!-- 🦸 Hero Section -->
+  <section class="hero-bg text-white text-center py-24 px-6">
+    <h2 class="text-4xl md:text-5xl font-bold mb-4">Connect. Collaborate. Grow. 🚀</h2>
+    <p class="text-gray-300 max-w-2xl mx-auto mb-8">
+      Join India’s fastest-growing business network — where startups, freelancers, and small businesses come together to build success.
+    </p>
+    <a href="get-listed.html" class="blood-gradient text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:scale-105 transform transition">
+      Get Started Free
+    </a>
+  </section>
+
+  <!-- 🔍 Search + Categories -->
+  <section class="max-w-4xl mx-auto mt-12 px-4">
+    <div class="flex items-center border border-gray-300 rounded-full px-4 py-3 shadow-sm">
+      <input type="text" id="searchInput" placeholder="🔎 Search business, category, or city..." class="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-500">
+    </div>
+
+    <div class="flex flex-wrap justify-center mt-6 gap-3">
+      <button class="category-btn bg-red-700 text-white px-5 py-2 rounded-full shadow hover:bg-red-800 transition" onclick="loadProfiles('startups', event)">Startups</button>
+      <button class="category-btn bg-gray-100 text-gray-800 px-5 py-2 rounded-full hover:bg-red-700 hover:text-white transition" onclick="loadProfiles('small_business', event)">Small Business</button>
+      <button class="category-btn bg-gray-100 text-gray-800 px-5 py-2 rounded-full hover:bg-red-700 hover:text-white transition" onclick="loadProfiles('corporate', event)">Corporate</button>
+      <button class="category-btn bg-gray-100 text-gray-800 px-5 py-2 rounded-full hover:bg-red-700 hover:text-white transition" onclick="loadProfiles('freelancers', event)">Freelancers</button>
+    </div>
+  </section>
+
+  <!-- 🧩 Profiles Section -->
+  <main class="max-w-6xl mx-auto grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4 py-16" id="profiles">
+    <div class="text-center col-span-full text-gray-500">Loading profiles...</div>
+  </main>
+
+  <!-- 🔥 Live Works Section -->
+  <section class="max-w-6xl mx-auto px-4 py-12">
+    <h2 class="text-3xl font-bold mb-6">Latest Work Posts</h2>
+    <div id="worksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="col-span-full text-gray-500 text-center">Loading works...</div>
+    </div>
+  </section>
+
+  <!-- 🔔 Toast Alert -->
+  <div id="toast" class="fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded shadow-lg hidden z-50">
+    New work posted!
+  </div>
+
+  <!-- ⚡ Footer -->
+  <footer class="bg-black text-gray-400 text-center py-6 mt-16">
+    <p>© 2025 BizLink Exchange. All Rights Reserved.</p>
+    <p class="mt-2">
+      <a href="#" class="hover:text-white">About</a> |
+      <a href="#" class="hover:text-white">Contact</a>
+    </p>
+  </footer>
+
+  <!-- 🧠 Script -->
+  <script>
+    // Existing Profiles Script
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec";
+    const profilesDiv = document.getElementById("profiles");
+    const searchInput = document.getElementById("searchInput");
+    let allProfiles = [];
+    let activeSheet = "startups";
+
+    async function loadProfiles(sheet = "startups", event) {
+      activeSheet = sheet;
+      document.querySelectorAll(".category-btn").forEach(btn => {
+        btn.classList.remove("bg-red-700", "text-white");
+        btn.classList.add("bg-gray-100", "text-gray-800");
+      });
+      if (event) {
+        event.target.classList.remove("bg-gray-100", "text-gray-800");
+        event.target.classList.add("bg-red-700", "text-white");
+      }
+
+      profilesDiv.innerHTML = `<div class='text-center text-gray-500 col-span-full'>Loading...</div>`;
+      try {
+        const res = await fetch(`${scriptURL}?sheet=${sheet}`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          allProfiles = data;
+          renderProfiles(data);
+        } else {
+          profilesDiv.innerHTML = `<div class='text-center text-gray-500 col-span-full'>No profiles found.</div>`;
+        }
+      } catch (err) {
+        profilesDiv.innerHTML = `<div class='text-center text-red-600 col-span-full'>Error loading profiles.</div>`;
+      }
+    }
+
+    function renderProfiles(list) {
+      profilesDiv.innerHTML = list.map(p => `
+        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow hover:shadow-lg hover:border-red-500 transition">
+          <h3 class="text-xl font-semibold text-black mb-2">${p["Business Name"] || "Unnamed"}</h3>
+          <p class="text-gray-600 mb-1">📍 ${p["City"] || "-"}</p>
+          <p class="text-gray-500 text-sm mb-3">${p["Description"] || "No description available"}</p>
+          <button onclick="window.open('${p.ProfileLink}', '_blank')" class="blood-gradient text-white px-4 py-2 rounded-full font-medium hover:scale-105 transform transition">
+            View Profile
+          </button>
+        </div>
+      `).join("");
+    }
+
+    searchInput.addEventListener("input", (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtered = allProfiles.filter(p =>
+        (p["Business Name"] || "").toLowerCase().includes(term) ||
+        (p["Category"] || "").toLowerCase().includes(term) ||
+        (p["City"] || "").toLowerCase().includes(term)
+      );
+      renderProfiles(filtered);
+    });
+
+    loadProfiles("startups");
+
+    // 🔥 New Works Section Script
+    const worksSheetURL = 'https://script.google.com/macros/s/YOUR_WORKS_SCRIPT_ID/exec'; // Replace with your Works Sheet Apps Script
+    const worksContainer = document.getElementById('worksContainer');
+    let latestWorkTime = null;
+
+    async function fetchWorks() {
+      try {
+        const res = await fetch(worksSheetURL);
+        const data = await res.json();
+        worksContainer.innerHTML = '';
+
+        data.forEach(work => {
+          const workTime = new Date(work.PostedOn).getTime();
+          if (!latestWorkTime || workTime > latestWorkTime) {
+            if (latestWorkTime) showToast();
+            latestWorkTime = workTime;
+          }
+
+          const card = document.createElement('div');
+          card.className = "bg-white p-5 rounded-xl shadow hover:shadow-lg transition";
+          card.innerHTML = `
+            <h3 class="font-bold text-lg mb-2">${work.Title}</h3>
+            <p class="text-gray-700 mb-1">${work.Description}</p>
+            <p class="text-gray-500 text-sm mb-1">Budget: $${work.Budget} | ${work.Category} | ${work.City}</p>
+            <p class="text-gray-400 text-sm">${new Date(work.PostedOn).toLocaleString()}</p>
+          `;
+          worksContainer.prepend(card);
+        });
+      } catch (err) {
+        worksContainer.innerHTML = `<div class='text-center text-red-600 col-span-full'>Error loading works.</div>`;
+        console.error(err);
+      }
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+
+    fetchWorks();
+    setInterval(fetchWorks, 30000);
+  </script>
+</body>
+</html>
