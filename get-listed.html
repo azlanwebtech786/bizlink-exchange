@@ -46,35 +46,53 @@
   </div>
 
 <script>
-const form = document.getElementById('bizForm');
-const btn = document.getElementById('submitBtn');
-const role = document.getElementById('role');
-const bizTypeGroup = document.getElementById('businessTypeGroup');
+    // ❗ IMPORTANT: Yahan apna naya wala URL paste karein
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuy4PrxgO9tH5XgbcCoa4yr0EWP6hIsr4vDNswp_-JnGUL8OqrVLXTFGXs0_m0Od582g/exec"; 
 
-role.addEventListener('change', ()=>{
-  if (role.value === 'Business') bizTypeGroup.classList.remove('hidden');
-  else bizTypeGroup.classList.add('hidden');
-});
+    const form = document.getElementById('bizForm');
+    const btn = document.getElementById('submitBtn');
+    const role = document.getElementById('role');
+    const bizTypeGroup = document.getElementById('businessTypeGroup');
 
-form.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  btn.disabled = true;
-  btn.innerText = 'Submitting...';
-  const profileType = document.getElementById('role').value;
-  const bizType = document.getElementById('business_type').value;
-  const sheetName = bizType ? bizType.toLowerCase() : profileType.toLowerCase();
-  const newId = Date.now().toString().slice(-5);
-  const profileLink = `https://azlanwebtech786.github.io/bizlink-exchange/profile.html?id=${sheetName}-${newId}`;
-  const formData = new FormData(form);
-  formData.append('profileLink', profileLink);
-  try {
-    const res = await fetch('https://script.google.com/macros/s/AKfycbzuy4PrxgO9tH5XgbcCoa4yr0EWP6hIsr4vDNswp_-JnGUL8OqrVLXTFGXs0_m0Od582g/exec', {method:'POST', body:formData});
-    const data = await res.json();
-    if (data.result === 'success') { alert('✅ Listing Successful!'); window.location.href = profileLink; }
-    else alert('⚠️ ' + data.message);
-  } catch(e){ alert('❌ Error: ' + e.message); }
-  finally { btn.disabled = false; btn.innerText = 'Submit Listing'; }
-});
+    // Shows/hides the business type dropdown
+    role.addEventListener('change', () => {
+        if (role.value === 'Business') {
+            bizTypeGroup.classList.remove('hidden');
+        } else {
+            bizTypeGroup.classList.add('hidden');
+        }
+    });
+
+    // Handles form submission
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.innerText = 'Submitting...';
+
+        const formData = new FormData(form);
+        
+        try {
+            const res = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            
+            // This is the corrected check
+            if (data.success) { 
+                alert('✅ Listing Successful!');
+                form.reset(); // Form reset kar dega
+            } else {
+                // Show the error message from the script
+                alert('⚠️ ' + data.message); 
+            }
+        } catch (err) {
+            alert('❌ An error occurred: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Submit Listing';
+        }
+    });
 </script>
 </body>
 </html>
