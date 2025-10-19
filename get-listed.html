@@ -68,17 +68,19 @@
         btn.disabled = true;
         btn.innerText = 'Submitting...';
 
-        // ✅ FIXED: Link banane wala logic wapas add kar diya hai
+        // ✅ FIXED: Link banane ka logic theek kar diya hai
         const profileType = document.getElementById('role').value;
         const bizType = document.getElementById('business_type').value;
-        // Determine the sheet name for the URL
-        const sheetNameForLink = (bizType ? bizType : profileType).toLowerCase();
+        
+        // Determine the correct sheet name for the link
+        let type = (bizType ? bizType : profileType).toLowerCase();
+        const sheetNameForLink = (type === 'small') ? 'small_business' : type;
+        
         // Create a unique ID and the profile link
         const newId = Date.now().toString().slice(-5);
         const profileLink = `https://azlanwebtech786.github.io/bizlink-exchange/profile.html?id=${sheetNameForLink}-${newId}`;
         
         const formData = new FormData(form);
-        // Add the new profile link to the form data before sending
         formData.append('profileLink', profileLink);
         
         try {
