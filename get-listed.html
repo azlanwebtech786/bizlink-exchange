@@ -68,7 +68,7 @@ form.addEventListener('submit', async (e)=>{
   const formData = new FormData(form);
   formData.append('profileLink', profileLink);
   try {
-    const res = await fetch('https://script.google.com/macros/s/AKfycbxIeAIhIagyHXO-h-dyUjxm0ifPwHj-QNIkgN8VRKPPvPyBG1OjjAc1sJ8_1_A2r2PT6A/exec', {method:'POST', body:formData});
+    const res = await fetch('https://script.google.com/macros/s/AKfycbz9x2PnN_e-0z7VGGtGsBLAFfOyRgFK7cdP8Qq-G7s1_vgfX94-bnjpBghimJqgYogHhw/exec', {method:'POST', body:formData});
     const data = await res.json();
     if (data.result === 'success') { alert('✅ Listing Successful!'); window.location.href = profileLink; }
     else alert('⚠️ ' + data.message);
