@@ -39,7 +39,7 @@
 
 <script>
     // ✅ Aapka naya aur sahi URL yahan hai
-    const sheetURL = "https://script.google.com/macros/s/AKfycbwGXkeRjYClqMNZYzthiv2Bwcv1x6KiiWeGF4NOL1UMctqQ-7CwqNxdJLUTnSsQqXTW0A/exec"; // Replace with your new URL
+    const sheetURL = "https://script.google.com/macros/s/AKfycbwGXkeRjYClqMNZYzthiv2Bwcv1x6KiiWeGF4NOL1UMctqQ-7CwqNxdJLUTnSsQqXTW0A/exec"; // Replace with your final, working URL
 
     const form = document.getElementById('postWorkForm');
     const status = document.getElementById('status');
@@ -48,25 +48,20 @@
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Button ko disable karke text badal do
         submitBtn.disabled = true;
         submitBtn.innerText = 'Submitting...';
-        status.textContent = ''; // Purana status clear karo
+        status.textContent = ''; 
 
+        // Data ko FormData ke roop mein bhejeinge, JSON mein nahi
         const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value;
-        });
-        data.PostedOn = new Date().toISOString();
+        formData.append('PostedOn', new Date().toISOString()); // Timestamp add karo
 
         try {
+            // Fetch request ab FormData use karega
             const res = await fetch(sheetURL, {
                 method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                body: formData 
+                // JSON headers ki ab zaroorat nahi hai
             });
 
             const result = await res.json();
@@ -85,13 +80,11 @@
             status.textContent = "❌ Error posting work. Check console for details.";
             console.error(err);
         } finally {
-            // Button ko wapas theek kar do
             submitBtn.disabled = false;
             submitBtn.innerText = 'Submit';
         }
     });
 </script>
-
 
 </body>
 </html>
