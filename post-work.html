@@ -40,7 +40,7 @@
 <script>
   const form = document.getElementById('postWorkForm');
   const status = document.getElementById('status');
-  const sheetURL = 'https://script.google.com/macros/s/AKfycbzf7ovaH9cctMCJfsS8nPTS4wg7qI2ONQHq1LwFTVtCg4qaBec0zROb35XdPpzaXb42PQ/exec'; // replace if new deployment
+  const sheetURL = 'https://script.google.com/macros/s/AKfycbz9x2PnN_e-0z7VGGtGsBLAFfOyRgFK7cdP8Qq-G7s1_vgfX94-bnjpBghimJqgYogHhw/exec'; // replace if needed
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -56,26 +56,32 @@
         headers: { 'Content-Type': 'application/json' }
       });
 
-      // 👇 Ye line add ki gayi hai (debug ke liye)
-      console.log(await res.text()); // response text check karega
-      // 👆 ye line hume batayegi script kya return kar raha hai
+      // 👇 Pehle raw response text lo
+      const responseText = await res.text();
+      console.log("Response from script:", responseText);
 
-      // response ko dobara parse karne ke liye
-      const result = await res.json();
-      
+      // 👇 Ab JSON parse karne ki koshish karo (safe way)
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch {
+        result = { success: false, error: "Invalid JSON response" };
+      }
+
       if (result.success) {
-        status.textContent = "Work posted successfully!";
+        status.textContent = "✅ Work posted successfully!";
         form.reset();
       } else {
-        status.textContent = "Failed to post work. Try again.";
+        status.textContent = "⚠️ Failed to post work. Try again.";
       }
 
     } catch (err) {
       console.error(err);
-      status.textContent = "Error posting work.";
+      status.textContent = "❌ Error posting work.";
     }
   });
 </script>
+
 
 
 </body>
