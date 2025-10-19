@@ -38,50 +38,59 @@
   </div>
 
 <script>
-  const form = document.getElementById('postWorkForm');
-  const status = document.getElementById('status');
-  const sheetURL = 'https://script.google.com/macros/s/AKfycbzuy4PrxgO9tH5XgbcCoa4yr0EWP6hIsr4vDNswp_-JnGUL8OqrVLXTFGXs0_m0Od582g/exec'; // replace if needed
+    // ✅ Aapka naya aur sahi URL yahan hai
+    const sheetURL = "https://script.google.com/macros/s/AKfycbzuy4PrxgO9tH5XgbcCoa4yr0EWP6hIsr4vDNswp_-JnGUL8OqrVLXTFGXs0_m0Od582g/exec"; // Replace with your new URL
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(form);
-    const data = {};
-    formData.forEach((value, key) => data[key] = value);
-    data.PostedOn = new Date().toISOString();
+    const form = document.getElementById('postWorkForm');
+    const status = document.getElementById('status');
+    const submitBtn = form.querySelector('button[type="submit"]');
 
-    try {
-      const res = await fetch(sheetURL, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-      });
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-      // 👇 Pehle raw response text lo
-      const responseText = await res.text();
-      console.log("Response from script:", responseText);
+        // Button ko disable karke text badal do
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Submitting...';
+        status.textContent = ''; // Purana status clear karo
 
-      // 👇 Ab JSON parse karne ki koshish karo (safe way)
-      let result;
-      try {
-        result = JSON.parse(responseText);
-      } catch {
-        result = { success: false, error: "Invalid JSON response" };
-      }
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+        data.PostedOn = new Date().toISOString();
 
-      if (result.success) {
-        status.textContent = "✅ Work posted successfully!";
-        form.reset();
-      } else {
-        status.textContent = "⚠️ Failed to post work. Try again.";
-      }
+        try {
+            const res = await fetch(sheetURL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
 
-    } catch (err) {
-      console.error(err);
-      status.textContent = "❌ Error posting work.";
-    }
-  });
+            const result = await res.json();
+
+            if (result.success) {
+                status.style.color = 'green';
+                status.textContent = "✅ Work posted successfully!";
+                form.reset();
+            } else {
+                status.style.color = 'red';
+                status.textContent = "⚠️ Failed to post work: " + result.message;
+            }
+
+        } catch (err) {
+            status.style.color = 'red';
+            status.textContent = "❌ Error posting work. Check console for details.";
+            console.error(err);
+        } finally {
+            // Button ko wapas theek kar do
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Submit';
+        }
+    });
 </script>
-
 
 
 </body>
