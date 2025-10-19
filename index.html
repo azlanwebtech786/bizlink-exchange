@@ -65,79 +65,102 @@
   </footer>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwGXkeRjYClqMNZYzthiv2Bwcv1x6KiiWeGF4NOL1UMctqQ-7CwqNxdJLUTnSsQqXTW0A/exec";
-    
-    // Profiles (Existing)
-    const profilesDiv = document.getElementById("profiles");
-    let allProfiles = [];
-    async function loadProfiles() {
-      try {
-        const res = await fetch(`${scriptURL}?sheet=startups`);
-        const data = await res.json();
-        if(data && data.length > 0){
-          allProfiles = data;
-          renderProfiles(data);
-        } else {
-          profilesDiv.innerHTML = "<div class='text-center text-gray-500 col-span-full'>No profiles found.</div>";
+    // Make sure this is your final, working URL
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwGXkeRjYClqMNZYzthiv2Bwcv1x6KiiWeGF4NOL1UMctqQ-7CwqNxdJLUTnSsQqXTW0A/exec";
+    
+    // Profiles Section
+    const profilesDiv = document.getElementById("profiles");
+
+    // ✅ FIXED: This function now loads profiles from all relevant sheets
+    async function loadProfiles() {
+      try {
+        // Add all your profile sheet names here
+        const profileSheets = ['startups', 'Freelancer', 'small_business', 'corporate'];
+        
+        // Fetch data from all sheets at the same time
+        const fetchPromises = profileSheets.map(sheet =>
+          fetch(`${scriptURL}?sheet=${sheet}`).then(res => res.json())
+        );
+
+        // Wait for all fetches to complete
+        const allProfileArrays = await Promise.all(fetchPromises);
+        
+        // Combine all the separate arrays into one big array
+        const combinedProfiles = [].concat(...allProfileArrays.filter(Array.isArray));
+
+        if (combinedProfiles && combinedProfiles.length > 0) {
+          renderProfiles(combinedProfiles);
+        } else {
+          profilesDiv.innerHTML = "<div class='text-center text-gray-500 col-span-full'>No profiles found.</div>";
+        }
+      } catch (err) {
+        profilesDiv.innerHTML = "<div class='text-center text-red-600 col-span-full'>Error loading profiles.</div>";
+        console.error("Error fetching profiles:", err);
+      }
+    }
+
+    // This function remains unchanged
+    function renderProfiles(list){
+      profilesDiv.innerHTML = list.map(p => `
+        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow hover:shadow-lg hover:border-red-500 transition">
+          <h3 class="text-xl font-semibold text-black mb-2">${p["Business Name"] || "Unnamed"}</h3>
+          <p class="text-gray-600 mb-1">📍 ${p["City"] || "-"}</p>
+          <p class="text-gray-500 text-sm mb-3">${p["Description"] || "No description available"}</p>
+          <button onclick="window.open('${p.ProfileLink}', '_blank')" class="blood-gradient text-white px-4 py-2 rounded-full font-medium hover:scale-105 transform transition">
+            View Profile
+          </button>
+        </div>
+      `).join("");
+    }
+
+    // Works Section (This part remains unchanged)
+    const worksContainer = document.getElementById('worksContainer');
+    let latestWorkTime = null;
+
+    async function fetchWorks(){
+      try{
+        const res = await fetch(`${scriptURL}?sheet=works`);
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+            worksContainer.innerHTML = "<div class='text-center text-gray-500 col-span-full'>No works found.</div>";
+            return;
         }
-      } catch(err) {
-        profilesDiv.innerHTML = "<div class='text-center text-red-600 col-span-full'>Error loading profiles.</div>";
-      }
-    }
+        worksContainer.innerHTML = '';
+        data.forEach(work => {
+          const workTime = new Date(work.PostedOn).getTime();
+          if(!latestWorkTime || workTime > latestWorkTime){
+            if(latestWorkTime) showToast();
+            latestWorkTime = workTime;
+          }
+          const card = document.createElement('div');
+          card.className = "bg-white p-5 rounded-xl shadow hover:shadow-lg transition";
+          card.innerHTML = `
+            <h3 class="font-bold text-lg mb-2">${work.Title}</h3>
+            <p class="text-gray-700 mb-1">${work.Description}</p>
+            <p class="text-gray-500 text-sm mb-1">Budget: $${work.Budget} | ${work.Category} | ${work.City}</p>
+            <p class="text-gray-400 text-sm">${new Date(work.PostedOn).toLocaleString()}</p>
+          `;
+          worksContainer.prepend(card);
+        });
+        if (data.length === 0) {
+            worksContainer.innerHTML = "<div class='text-center text-gray-500 col-span-full'>No works found.</div>";
+        }
+      } catch(err){
+        worksContainer.innerHTML = "<div class='text-center text-red-600 col-span-full'>Error loading works.</div>";
+      }
+    }
 
-    function renderProfiles(list){
-      profilesDiv.innerHTML = list.map(p => `
-        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow hover:shadow-lg hover:border-red-500 transition">
-          <h3 class="text-xl font-semibold text-black mb-2">${p["Business Name"] || "Unnamed"}</h3>
-          <p class="text-gray-600 mb-1">📍 ${p["City"] || "-"}</p>
-          <p class="text-gray-500 text-sm mb-3">${p["Description"] || "No description available"}</p>
-          <button onclick="window.open('${p.ProfileLink}', '_blank')" class="blood-gradient text-white px-4 py-2 rounded-full font-medium hover:scale-105 transform transition">
-            View Profile
-          </button>
-        </div>
-      `).join("");
-    }
+    function showToast(){
+      const toast = document.getElementById('toast');
+      toast.classList.remove('hidden');
+      setTimeout(()=>toast.classList.add('hidden'),3000);
+    }
 
-    loadProfiles();
-
-    // 🔥 Works Section
-    const worksContainer = document.getElementById('worksContainer');
-    let latestWorkTime = null;
-
-    async function fetchWorks(){
-      try{
-        const res = await fetch(`${scriptURL}?sheet=works`);
-        const data = await res.json();
-        worksContainer.innerHTML = '';
-        data.forEach(work => {
-          const workTime = new Date(work.PostedOn).getTime();
-          if(!latestWorkTime || workTime > latestWorkTime){
-            if(latestWorkTime) showToast();
-            latestWorkTime = workTime;
-          }
-          const card = document.createElement('div');
-          card.className = "bg-white p-5 rounded-xl shadow hover:shadow-lg transition";
-          card.innerHTML = `
-            <h3 class="font-bold text-lg mb-2">${work.Title}</h3>
-            <p class="text-gray-700 mb-1">${work.Description}</p>
-            <p class="text-gray-500 text-sm mb-1">Budget: $${work.Budget} | ${work.Category} | ${work.City}</p>
-            <p class="text-gray-400 text-sm">${new Date(work.PostedOn).toLocaleString()}</p>
-          `;
-          worksContainer.prepend(card);
-        });
-      } catch(err){
-        worksContainer.innerHTML = "<div class='text-center text-red-600 col-span-full'>Error loading works.</div>";
-      }
-    }
-
-    function showToast(){
-      const toast = document.getElementById('toast');
-      toast.classList.remove('hidden');
-      setTimeout(()=>toast.classList.add('hidden'),3000);
-    }
-
-    fetchWorks();
-    setInterval(fetchWorks,30000);
+    // Start loading both sections when the page loads
+    loadProfiles();
+    fetchWorks();
+    setInterval(fetchWorks, 30000);
+  </script>
   </script>
 </body>
 </html>
