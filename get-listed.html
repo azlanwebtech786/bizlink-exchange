@@ -45,7 +45,7 @@
   </div>
 
 <script>
-    // ❗ IMPORTANT: Yahan apna naya wala URL paste karein
+    // ❗ IMPORTANT: Yahan apna final, working URL paste karein
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGXkeRjYClqMNZYzthiv2Bwcv1x6KiiWeGF4NOL1UMctqQ-7CwqNxdJLUTnSsQqXTW0A/exec"; 
 
     const form = document.getElementById('bizForm');
@@ -68,7 +68,18 @@
         btn.disabled = true;
         btn.innerText = 'Submitting...';
 
+        // ✅ FIXED: Link banane wala logic wapas add kar diya hai
+        const profileType = document.getElementById('role').value;
+        const bizType = document.getElementById('business_type').value;
+        // Determine the sheet name for the URL
+        const sheetNameForLink = (bizType ? bizType : profileType).toLowerCase();
+        // Create a unique ID and the profile link
+        const newId = Date.now().toString().slice(-5);
+        const profileLink = `https://azlanwebtech786.github.io/bizlink-exchange/profile.html?id=${sheetNameForLink}-${newId}`;
+        
         const formData = new FormData(form);
+        // Add the new profile link to the form data before sending
+        formData.append('profileLink', profileLink);
         
         try {
             const res = await fetch(SCRIPT_URL, {
@@ -77,12 +88,10 @@
             });
             const data = await res.json();
             
-            // This is the corrected check
             if (data.success) { 
-                alert('✅ Listing Successful!');
-                form.reset(); // Form reset kar dega
+                alert('✅ Listing Successful! Your profile link is: ' + profileLink);
+                form.reset(); 
             } else {
-                // Show the error message from the script
                 alert('⚠️ ' + data.message); 
             }
         } catch (err) {
