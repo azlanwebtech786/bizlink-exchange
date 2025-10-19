@@ -37,37 +37,46 @@
     <p id="status" class="mt-4 font-semibold text-green-600"></p>
   </div>
 
-  <script>
-    const form = document.getElementById('postWorkForm');
-    const status = document.getElementById('status');
-    const sheetURL = 'https://script.google.com/macros/s/AKfycbz9x2PnN_e-0z7VGGtGsBLAFfOyRgFK7cdP8Qq-G7s1_vgfX94-bnjpBghimJqgYogHhw/exec';
+<script>
+  const form = document.getElementById('postWorkForm');
+  const status = document.getElementById('status');
+  const sheetURL = 'https://script.google.com/macros/s/AKfycbzf7ovaH9cctMCJfsS8nPTS4wg7qI2ONQHq1LwFTVtCg4qaBec0zROb35XdPpzaXb42PQ/exec'; // replace if new deployment
 
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const formData = new FormData(form);
-      const data = {};
-      formData.forEach((value,key)=>data[key]=value);
-      data.PostedOn = new Date().toISOString();
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => data[key] = value);
+    data.PostedOn = new Date().toISOString();
 
-      try{
-        const res = await fetch(sheetURL,{
-          method:'POST',
-          body: JSON.stringify(data),
-          headers:{ 'Content-Type': 'application/json' }
-        });
-        const result = await res.json();
-        if(result.success){
-          status.textContent = "Work posted successfully!";
-          form.reset();
-        } else {
-          status.textContent = "Failed to post work. Try again.";
-        }
-      } catch(err){
-        console.error(err);
-        status.textContent = "Error posting work.";
+    try {
+      const res = await fetch(sheetURL, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      // 👇 Ye line add ki gayi hai (debug ke liye)
+      console.log(await res.text()); // response text check karega
+      // 👆 ye line hume batayegi script kya return kar raha hai
+
+      // response ko dobara parse karne ke liye
+      const result = await res.json();
+      
+      if (result.success) {
+        status.textContent = "Work posted successfully!";
+        form.reset();
+      } else {
+        status.textContent = "Failed to post work. Try again.";
       }
-    });
-  </script>
+
+    } catch (err) {
+      console.error(err);
+      status.textContent = "Error posting work.";
+    }
+  });
+</script>
+
 
 </body>
 </html>
