@@ -45,15 +45,14 @@
   </div>
 
 <script>
-    // ❗ IMPORTANT: Yahan apna final, working URL paste karein
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbVGHIc6R1GrRmzZNoBiD-FUF7Hab2WU3h_tJ0L2Un9AqeqFtAodvMvWHpYd45fvQGLA/exec"; 
+    // ❗ Yahan apna final URL daalein
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDcdGUImzUjWN60lBT4j0oJMfNbQ2tI8X9JrhPn5_wYbq9BY-YXOGA-v2lTyHaLYieBA/exec"; 
 
     const form = document.getElementById('bizForm');
     const btn = document.getElementById('submitBtn');
     const role = document.getElementById('role');
     const bizTypeGroup = document.getElementById('businessTypeGroup');
 
-    // Shows/hides the business type dropdown
     role.addEventListener('change', () => {
         if (role.value === 'Business') {
             bizTypeGroup.classList.remove('hidden');
@@ -62,21 +61,17 @@
         }
     });
 
-    // Handles form submission
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         btn.disabled = true;
         btn.innerText = 'Submitting...';
 
-        // ✅ FIXED: Link banane ka logic theek kar diya hai
         const profileType = document.getElementById('role').value;
         const bizType = document.getElementById('business_type').value;
         
-        // Determine the correct sheet name for the link
         let type = (bizType ? bizType : profileType).toLowerCase();
         const sheetNameForLink = (type === 'small') ? 'small_business' : type;
         
-        // Create a unique ID and the profile link
         const newId = Date.now().toString().slice(-5);
         const profileLink = `https://azlanwebtech786.github.io/bizlink-exchange/profile.html?id=${sheetNameForLink}-${newId}`;
         
@@ -84,17 +79,14 @@
         formData.append('profileLink', profileLink);
         
         try {
-            const res = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: formData
-            });
+            const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
             const data = await res.json();
             
             if (data.success) { 
                 alert('✅ Listing Successful! Your profile link is: ' + profileLink);
                 form.reset(); 
             } else {
-                alert('⚠️ ' + data.message); 
+                alert('⚠️ Error: ' + data.message); 
             }
         } catch (err) {
             alert('❌ An error occurred: ' + err.message);
