@@ -1,111 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizLink Exchange - Profile</title>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-      color: white;
-      text-align: center;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 30px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-      animation: fadeIn 0.8s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    h1 { font-size: 2rem; margin-bottom: 15px; }
-    p { font-size: 1.1rem; margin: 6px 0; }
-    .error {
-      color: #ff4d4d;
-      font-weight: bold;
-      margin-top: 20px;
-      display: none;
-    }
-    .loader {
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      border-left-color: #fff;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
 </head>
+<body class="min-h-screen flex items-center justify-center p-4 text-white">
 
-<body>
-  <div class="container">
-    <div id="loading" class="loader"></div>
-    <div id="profile" style="display:none;">
-      <h1 id="businessName">Loading...</h1>
-      <p><strong>Owner:</strong> <span id="ownerName"></span></p>
-      <p><strong>Email:</strong> <span id="email"></span></p>
-      <p><strong>Category:</strong> <span id="category"></span></p>
-      <p><strong>Description:</strong> <span id="description"></span></p>
-      <p><strong>City:</strong> <span id="city"></span></p>
+    <div id="profileCard" class="w-full max-w-lg p-8 rounded-2xl glass-card shadow-lg text-center hidden">
+        <h1 id="businessName" class="text-4xl font-bold mb-2"></h1>
+        <p id="ownerName" class="text-lg text-gray-200 mb-4"></p>
+        <div class="text-left space-y-3">
+            <p><strong>Email:</strong> <span id="email"></span></p>
+            <p><strong>Category:</strong> <span id="category" class="bg-white/20 px-2 py-1 rounded"></span></p>
+            <p><strong>City:</strong> <span id="city"></span></p>
+            <p><strong>Description:</strong> <span id="description"></span></p>
+        </div>
     </div>
-    <div class="error">❌ Error fetching data.</div>
-  </div>
 
-  <script>
-    // ✅ Correct Google Apps Script endpoint
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwGXkeRjYClqMNZYzthiv2Bwcv1x6KiiWeGF4NOL1UMctqQ-7CwqNxdJLUTnSsQqXTW0A/exec";
+    <div id="loadingState" class="text-2xl font-semibold">
+        Loading Profile...
+    </div>
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const idParam = urlParams.get("id");
+    <div id="errorState" class="text-2xl font-semibold bg-red-500/50 p-4 rounded-lg hidden">
+        ❌ Error fetching data.
+    </div>
 
-    if (idParam) {
-      const [sheetName, rowId] = idParam.split("-");
-      
-      // ✅ Use doGet parameter to fetch exact record
-      fetch(`${scriptURL}?id=${idParam}`)
-        .then(res => res.json())
-        .then(profileData => {
-          if (profileData && profileData["Business Name"]) {
-            document.getElementById("businessName").textContent = profileData["Business Name"];
-            document.getElementById("ownerName").textContent = profileData["Owner Name"] || "N/A";
-            document.getElementById("email").textContent = profileData["Email"] || "N/A";
-            document.getElementById("category").textContent = profileData["Category"] || "N/A";
-            document.getElementById("description").textContent = profileData["Description"] || "N/A";
-            document.getElementById("city").textContent = profileData["City"] || "N/A";
+<script>
+    // ❗ IMPORTANT: Yahan apna final, working URL paste karein
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbVGHIc6R1GrRmzZNoBiD-FUF7Hab2WU3h_tJ0L2Un9AqeqFtAodvMvWHpYd45fvQGLA/exec";
 
-            document.getElementById("loading").style.display = "none";
-            document.getElementById("profile").style.display = "block";
-          } else {
-            showError();
-          }
-        })
-        .catch(() => showError());
-    } else {
-      showError();
+    const profileCard = document.getElementById('profileCard');
+    const loadingState = document.getElementById('loadingState');
+    const errorState = document.getElementById('errorState');
+
+    // Function to get data from Google Sheet
+    async function getProfileData() {
+        try {
+            // Get the ID from the page URL (e.g., ?id=small-56885)
+            const urlParams = new URLSearchParams(window.location.search);
+            const profileId = urlParams.get('id');
+
+            if (!profileId) {
+                throw new Error("Profile ID not found in URL.");
+            }
+
+            // Fetch the specific profile data using the ID
+            const response = await fetch(`${SCRIPT_URL}?id=${profileId}`);
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                // Populate the card with the fetched data
+                document.getElementById('businessName').textContent = data.profile['Business Name'] || 'N/A';
+                document.getElementById('ownerName').textContent = `by ${data.profile['Owner Name'] || 'N/A'}`;
+                document.getElementById('email').textContent = data.profile['Email'] || 'N/A';
+                document.getElementById('category').textContent = data.profile['Category'] || 'N/A';
+                document.getElementById('city').textContent = data.profile['City'] || 'N/A';
+                document.getElementById('description').textContent = data.profile['Description'] || 'N/A';
+                
+                // Show the profile card and hide loading
+                loadingState.classList.add('hidden');
+                profileCard.classList.remove('hidden');
+            } else {
+                throw new Error(data.message || "Profile not found.");
+            }
+        } catch (error) {
+            console.error(error);
+            loadingState.classList.add('hidden');
+            errorState.classList.remove('hidden');
+        }
     }
 
-    function showError() {
-      document.getElementById("loading").style.display = "none";
-      document.querySelector(".error").style.display = "block";
-    }
-  </script>
+    // Run the function when the page loads
+    window.addEventListener('load', getProfileData);
+</script>
 </body>
 </html>
