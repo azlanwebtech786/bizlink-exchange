@@ -9,62 +9,77 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background-color: #0b0d1e; /* ✅ New Dark background */
-            color: #e0e0e0; 
-        }
-        .bg-gradient-hero {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-        }
-        .card-bg {
-            background-color: #1a1e3a; /* ✅ New Darker card background */
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .input-dark {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-        }
-        .input-dark::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        .button-gradient {
-            background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
-        }
-        .category-button {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #e0e0e0;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .category-button.active {
-            background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
-            border-color: transparent;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #0b0d1e; color: #e0e0e0; }
+        .bg-gradient-hero { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); }
+        .card-bg { background-color: #1a1e3a; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .input-dark { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; }
+        .input-dark::placeholder { color: rgba(255, 255, 255, 0.6); }
+        .button-gradient { background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%); }
+        .category-button { background-color: rgba(255, 255, 255, 0.1); color: #e0e0e0; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .category-button.active { background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%); border-color: transparent; }
+        .tab-button { color: #9ca3af; border-bottom: 2px solid transparent; }
+        .tab-button.active { color: #a855f7; border-bottom-color: #a855f7; font-weight: 600; }
         .text-purple { color: #a855f7; }
-        .text-pink { color: #ec4899; }
         .border-purple-hover:hover { border-color: #a855f7; }
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="text-gray-200">
 
-    <header class="flex justify-between items-center px-8 py-4 sticky top-0 bg-opacity-90 bg-[#0b0d1e] z-50 shadow-lg">
-        <h1 class="text-2xl font-bold text-white">BizLink <span class="text-purple">Exchange</span></h1>
-        <nav class="space-x-6 hidden md:flex items-center">
-            <a href="index.html" class="hover:text-purple transition text-white">Home</a>
-            <a href="#" class="hover:text-purple transition text-white">Events</a> <a href="post-work.html" class="hover:text-purple font-semibold transition text-white">Post a Work</a>
-            <a href="get-listed.html" class="hover:text-purple transition text-white">Get Listed</a>
-            
-            <a id="loginLink" href="login.html" class="button-gradient text-white px-4 py-2 rounded-md font-medium hover:opacity-90">Login</a>
-            <a id="signupLink" href="signup.html" class="bg-gray-700 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-600">Sign Up</a>
-            
-            <button id="logoutButton" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700">
-                Logout
-            </button>
-        </nav>
+    <header class="sticky top-0 bg-opacity-90 bg-[#0b0d1e] z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                     <h1 class="text-2xl font-bold text-white">BizLink <span class="text-purple">Exchange</span></h1>
+                </div>
+
+                <nav class="hidden md:flex space-x-6 items-center">
+                    <a href="index.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="#" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Events</a>
+                    <a href="post-work.html" class="hover:text-purple font-semibold transition text-white px-3 py-2 rounded-md text-sm font-medium">Post a Work</a>
+                    <a href="get-listed.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Get Listed</a>
+
+                    <a id="loginLinkDesktop" href="login.html" class="button-gradient text-white px-4 py-2 rounded-md font-medium hover:opacity-90 text-sm">Login</a>
+                    <a id="signupLinkDesktop" href="signup.html" class="bg-gray-700 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-600 text-sm">Sign Up</a>
+                    <button id="logoutButtonDesktop" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 text-sm">
+                        Logout
+                    </button>
+                </nav>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                         <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="#" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Events</a>
+                <a href="post-work.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Post a Work</a>
+                <a href="get-listed.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Get Listed</a>
+            </div>
+            <div class="pt-4 pb-3 border-t border-gray-700 px-2 sm:px-3">
+                 <a id="loginLinkMobile" href="login.html" class="block w-full text-left button-gradient text-white px-3 py-2 rounded-md font-medium hover:opacity-90 mb-2">Login</a>
+                 <a id="signupLinkMobile" href="signup.html" class="block w-full text-left bg-gray-700 text-white px-3 py-2 rounded-md font-medium hover:bg-gray-600 mb-2">Sign Up</a>
+                 <button id="logoutButtonMobile" class="hidden w-full text-left bg-red-600 text-white px-3 py-2 rounded-md font-medium hover:bg-red-700">
+                     Logout
+                 </button>
+            </div>
+        </div>
     </header>
 
-    <section class="bg-gradient-hero text-white text-center py-24 px-6 relative overflow-hidden">
+    <section class="bg-gradient-hero text-white text-center py-20 px-6 relative overflow-hidden">
         <div class="relative z-10">
             <h2 class="text-4xl md:text-5xl font-bold mb-4">BizLink Exchange</h2>
             <p class="text-gray-200 max-w-2xl mx-auto mb-8">
@@ -72,27 +87,52 @@
             </p>
             <div class="max-w-xl mx-auto flex flex-col items-center">
                 <div class="w-full relative mb-4">
-                    <input type="text" placeholder="Search business or category..."
+                    <input type="text" id="searchInput" placeholder="Search business or category..."
                            class="w-full p-3 pl-10 rounded-full input-dark focus:outline-none focus:ring-2 focus:ring-purple-500 text-base">
                     <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <div class="flex flex-wrap justify-center gap-3">
-                    <button class="category-button px-5 py-2 rounded-full text-sm font-medium active">All</button>
-                    <button class="category-button px-5 py-2 rounded-full text-sm font-medium">Tech</button>
-                    <button class="category-button px-5 py-2 rounded-full text-sm font-medium">Food</button>
-                    <button class="category-button px-5 py-2 rounded-full text-sm font-medium">Design</button>
-                    <button class="category-button px-5 py-2 rounded-full text-sm font-medium">Marketing</button>
-                    <button class="category-button px-5 py-2 rounded-full text-sm font-medium">Services</button>
+                <div class="flex flex-wrap justify-center gap-3" id="categoryFilters">
+                    <button data-category="All" class="category-button px-5 py-2 rounded-full text-sm font-medium active">All</button>
+                    <button data-category="Development/IT" class="category-button px-5 py-2 rounded-full text-sm font-medium">Development/IT</button>
+                    <button data-category="Design/Creative" class="category-button px-5 py-2 rounded-full text-sm font-medium">Design/Creative</button>
+                    <button data-category="Sales/Marketing" class="category-button px-5 py-2 rounded-full text-sm font-medium">Sales/Marketing</button>
+                    <button data-category="SEO" class="category-button px-5 py-2 rounded-full text-sm font-medium">SEO</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <main class="max-w-6xl mx-auto grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4 py-16" id="profiles">
-        <div class="text-center col-span-full text-gray-400">Loading profiles...</div>
-    </main>
+    <section class="max-w-6xl mx-auto px-4 py-8">
+         <div class="border-b border-gray-700 mb-6">
+            <nav class="-mb-px flex space-x-8 overflow-x-auto no-scrollbar" aria-label="Tabs" id="profileTabs">
+                <button data-target="allProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm active">All Profiles</button>
+                <button data-target="startupProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Startups</button>
+                <button data-target="smallBusinessProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Small Business</button>
+                <button data-target="corporateProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Corporate</button>
+                <button data-target="freelancerProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Freelancers</button>
+            </nav>
+        </div>
+
+        <div id="profileContainer">
+             <div id="allProfiles" class="profile-tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="text-center col-span-full text-gray-400">Loading all profiles...</div>
+            </div>
+             <div id="startupProfiles" class="profile-tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
+                <div class="text-center col-span-full text-gray-400">Loading startups...</div>
+            </div>
+             <div id="smallBusinessProfiles" class="profile-tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
+                 <div class="text-center col-span-full text-gray-400">Loading small businesses...</div>
+             </div>
+             <div id="corporateProfiles" class="profile-tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
+                 <div class="text-center col-span-full text-gray-400">Loading corporate profiles...</div>
+             </div>
+             <div id="freelancerProfiles" class="profile-tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
+                 <div class="text-center col-span-full text-gray-400">Loading freelancers...</div>
+             </div>
+        </div>
+    </section>
 
     <section class="max-w-6xl mx-auto px-4 py-12">
         <h2 class="text-3xl font-bold mb-6 text-white">Latest Work Posts</h2>
@@ -115,35 +155,77 @@
 
     <script>
         // ❗ YAHAN APNA SABSE NAYA GOOGLE SCRIPT URL DAALEIN
-        const scriptURL = "https://script.google.com/macros/s/AKfycbxcKVMV9nEVK3jHxK5MOFPbf1VPnpQEAxu6wfYF-b7U-lLR6oGyrjh4khj6IR625IJx3w/exec";
+        const scriptURL = "YAHAN-APNA-SABSE-NAYA-GOOGLE-SCRIPT-URL-DAALEIN";
         
-        // Profiles Section
-        const profilesDiv = document.getElementById("profiles");
+        // Store all profiles data globally
+        let allProfilesData = [];
+        let startupProfilesData = [];
+        let smallBusinessProfilesData = [];
+        let corporateProfilesData = [];
+        let freelancerProfilesData = [];
 
+        // ✅ FIXED: Loads data for each tab separately
         async function loadProfiles() {
-            try {
-                const profileSheets = ['Startup', 'Freelancer', 'small_business', 'corporate'];
-                const fetchPromises = profileSheets.map(sheet =>
-                    fetch(`${scriptURL}?sheet=${sheet}`).then(res => res.json())
-                );
-                const allProfileArrays = await Promise.all(fetchPromises);
-                const combinedProfiles = [].concat(...allProfileArrays.filter(Array.isArray));
+            const profileSheets = ['Startup', 'small_business', 'corporate', 'Freelancer'];
+            const targets = { // Map sheet names to data variables and div IDs
+                'Startup': { dataVar: 'startupProfilesData', divId: 'startupProfiles' },
+                'small_business': { dataVar: 'smallBusinessProfilesData', divId: 'smallBusinessProfiles' },
+                'corporate': { dataVar: 'corporateProfilesData', divId: 'corporateProfiles' },
+                'Freelancer': { dataVar: 'freelancerProfilesData', divId: 'freelancerProfiles' }
+            };
+            const allPromises = [];
 
-                if (combinedProfiles && combinedProfiles.length > 0) {
-                    renderProfiles(combinedProfiles);
-                } else {
-                    profilesDiv.innerHTML = "<div class='text-center text-gray-400 col-span-full'>No profiles found.</div>";
-                }
-            } catch (err) {
-                profilesDiv.innerHTML = "<div class='text-center text-red-500 col-span-full'>Error loading profiles.</div>";
-                console.error("Error fetching profiles:", err);
-            }
+            profileSheets.forEach(sheet => {
+                const promise = fetch(`${scriptURL}?sheet=${sheet}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (Array.isArray(data)) {
+                            window[targets[sheet].dataVar] = data; // Assign data to global variable (e.g., window.startupProfilesData = data)
+                            renderProfiles(data, targets[sheet].divId); // Render in specific tab div
+                            return data; // Return data for combining later
+                        } else {
+                             // Handle case where sheet might be empty or error
+                            const targetDiv = document.getElementById(targets[sheet].divId);
+                            if(targetDiv) targetDiv.innerHTML = `<div class='text-center text-gray-400 col-span-full'>No profiles found in ${sheet}.</div>`;
+                            return []; // Return empty array
+                        }
+                    })
+                    .catch(err => {
+                        console.error(`Error fetching ${sheet}:`, err);
+                        const targetDiv = document.getElementById(targets[sheet].divId);
+                        if(targetDiv) targetDiv.innerHTML = `<div class='text-center text-red-500 col-span-full'>Error loading ${sheet}.</div>`;
+                        return []; // Return empty array on error
+                    });
+                allPromises.push(promise);
+            });
+
+            // Wait for all fetches to complete
+            Promise.all(allPromises).then(allDataArrays => {
+                allProfilesData = [].concat(...allDataArrays); // Combine all data for the 'All Profiles' tab
+                renderProfiles(allProfilesData, 'allProfiles'); // Render combined data in the 'allProfiles' div
+            }).catch(err => {
+                 console.error("Error loading all profiles:", err);
+                 const allDiv = document.getElementById('allProfiles');
+                 if(allDiv) allDiv.innerHTML = `<div class='text-center text-red-500 col-span-full'>Error loading all profiles.</div>`;
+            });
         }
 
-        // ✅ FIXED: Profile card ko naye design se update kar diya hai
-        function renderProfiles(list){
-            profilesDiv.innerHTML = list.map(p => `
-                <div class="card-bg rounded-xl p-5 shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1">
+        // ✅ FIXED: Renders profiles into a specific container
+        function renderProfiles(list, containerId){
+            const container = document.getElementById(containerId);
+            if (!container) return; // Exit if container not found
+
+            if (!list || list.length === 0) {
+                 container.innerHTML = `<div class='text-center text-gray-400 col-span-full'>No profiles found.</div>`;
+                 return;
+            }
+
+            container.innerHTML = list.map(p => `
+                <div class="card-bg rounded-xl p-5 shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1 profile-card"
+                     data-category="${p.Category || 'General'}"
+                     data-name="${p["Business Name"] || ''}"
+                     data-description="${p.Description || ''}"
+                     data-city="${p.City || ''}">
                     <span class="text-xs font-semibold px-2 py-1 rounded-full bg-blue-600 text-white mb-2 inline-block">${p.Category || 'General'}</span>
                     <h3 class="text-xl font-semibold text-white mt-2 mb-2">${p["Business Name"] || "Unnamed"}</h3>
                     <p class="text-gray-300 text-sm mb-1 flex items-center">
@@ -158,11 +240,10 @@
             `).join("");
         }
 
-        // Works Section
+        // Works Section (Unchanged logic, just updated error/no data messages)
         const worksContainer = document.getElementById('worksContainer');
         let latestWorkTime = null;
 
-        // ✅ FIXED: Work card ko naye design se update kar diya hai
         async function fetchWorks(){
             try{
                 const res = await fetch(`${scriptURL}?sheet=works`);
@@ -204,9 +285,91 @@
         }
 
         // Start loading both sections when the page loads
-        loadProfiles();
+        loadProfiles(); // Loads all profile types into respective divs
         fetchWorks();
         setInterval(fetchWorks, 30000);
+
+        // --- ✅ NEW: Tab Switching Logic ---
+        const profileTabsContainer = document.getElementById('profileTabs');
+        const profileTabContents = document.querySelectorAll('.profile-tab-content');
+
+        profileTabsContainer.addEventListener('click', (event) => {
+            if (event.target.tagName === 'BUTTON') {
+                const targetId = event.target.getAttribute('data-target');
+
+                // Update active tab button style
+                profileTabsContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+
+                // Show the target content, hide others
+                profileTabContents.forEach(content => {
+                    if (content.id === targetId) {
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.add('hidden');
+                    }
+                });
+                // Re-apply filters after switching tab
+                applyFilters();
+            }
+        });
+
+        // --- ✅ NEW: Search and Category Filter Logic ---
+        const searchInput = document.getElementById('searchInput');
+        const categoryFiltersContainer = document.getElementById('categoryFilters');
+        let currentCategoryFilter = 'All'; // Keep track of the selected category
+
+        // Function to apply both search and category filters
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activeTabContent = document.querySelector('.profile-tab-content:not(.hidden)'); // Find the currently visible tab content
+            if (!activeTabContent) return;
+
+            const profileCards = activeTabContent.querySelectorAll('.profile-card');
+
+            profileCards.forEach(card => {
+                 // Check category filter
+                const cardCategory = card.getAttribute('data-category');
+                const categoryMatch = (currentCategoryFilter === 'All' || cardCategory.toLowerCase().includes(currentCategoryFilter.toLowerCase()));
+
+                 // Check search term filter (search in name, description, city, category)
+                const cardName = card.getAttribute('data-name').toLowerCase();
+                const cardDescription = card.getAttribute('data-description').toLowerCase();
+                const cardCity = card.getAttribute('data-city').toLowerCase();
+                const searchMatch = (
+                    searchTerm === '' ||
+                    cardName.includes(searchTerm) ||
+                    cardDescription.includes(searchTerm) ||
+                    cardCity.includes(searchTerm) ||
+                    cardCategory.toLowerCase().includes(searchTerm)
+                );
+
+                // Show card only if both filters match
+                if (categoryMatch && searchMatch) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        // Event listener for search input
+        searchInput.addEventListener('input', applyFilters);
+
+        // Event listener for category filter buttons
+        categoryFiltersContainer.addEventListener('click', (event) => {
+            if (event.target.tagName === 'BUTTON') {
+                currentCategoryFilter = event.target.getAttribute('data-category');
+
+                // Update active button style
+                categoryFiltersContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+
+                // Apply filters
+                applyFilters();
+            }
+        });
+
     </script>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -226,38 +389,67 @@
 
         // Firebase ko initialize karein
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(); 
+        const auth = firebase.auth();
 
-        // Header ke buttons ko select karein
-        const loginLink = document.getElementById('loginLink');
-        const signupLink = document.getElementById('signupLink');
-        const logoutButton = document.getElementById('logoutButton');
+        // Header ke buttons ko select karein (Desktop + Mobile)
+        const loginLinkDesktop = document.getElementById('loginLinkDesktop');
+        const signupLinkDesktop = document.getElementById('signupLinkDesktop');
+        const logoutButtonDesktop = document.getElementById('logoutButtonDesktop');
+        const loginLinkMobile = document.getElementById('loginLinkMobile');
+        const signupLinkMobile = document.getElementById('signupLinkMobile');
+        const logoutButtonMobile = document.getElementById('logoutButtonMobile');
 
         // Check karein ki user login hai ya nahi
         auth.onAuthStateChanged((user) => {
             if (user) {
                 // User login hai!
-                loginLink.classList.add('hidden');    // Login ko chupao
-                signupLink.classList.add('hidden');   // Sign Up ko chupao
-                logoutButton.classList.remove('hidden'); // Logout ko dikhao
+                loginLinkDesktop?.classList.add('hidden'); // Use optional chaining just in case
+                signupLinkDesktop?.classList.add('hidden');
+                logoutButtonDesktop?.classList.remove('hidden');
+                loginLinkMobile?.classList.add('hidden');
+                signupLinkMobile?.classList.add('hidden');
+                logoutButtonMobile?.classList.remove('hidden');
             } else {
                 // User login nahi hai!
-                loginLink.classList.remove('hidden'); // Login ko dikhao
-                signupLink.classList.remove('hidden'); // Sign Up ko dikhao
-                logoutButton.classList.add('hidden');  // Logout ko chupao
+                loginLinkDesktop?.classList.remove('hidden');
+                signupLinkDesktop?.classList.remove('hidden');
+                logoutButtonDesktop?.classList.add('hidden');
+                loginLinkMobile?.classList.remove('hidden');
+                signupLinkMobile?.classList.remove('hidden');
+                logoutButtonMobile?.classList.add('hidden');
             }
         });
 
         // Logout button par click karne par...
-        logoutButton.addEventListener('click', () => {
+        function handleLogout() {
             auth.signOut().then(() => {
-                // Logout successful
                 alert("You have been logged out.");
-                window.location.href = 'index.html'; // Page ko refresh karo
+                window.location.href = 'index.html';
             }).catch((error) => {
                 console.error("Logout Error:", error);
             });
-        });
+        }
+        // Attach listener only if buttons exist
+        logoutButtonDesktop?.addEventListener('click', handleLogout);
+        logoutButtonMobile?.addEventListener('click', handleLogout);
+
+    </script>
+
+    <script>
+        const menuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (menuButton && mobileMenu) { // Check if elements exist
+            const hamburgerIcon = menuButton.querySelector('svg:not(.hidden)');
+            const closeIcon = menuButton.querySelector('svg.hidden');
+
+            menuButton.addEventListener('click', () => {
+                const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+                menuButton.setAttribute('aria-expanded', !isExpanded);
+                mobileMenu.classList.toggle('hidden');
+                hamburgerIcon?.classList.toggle('hidden'); // Use optional chaining
+                closeIcon?.classList.toggle('hidden');
+            });
+        }
     </script>
 
 </body>
