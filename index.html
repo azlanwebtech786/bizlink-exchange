@@ -122,7 +122,7 @@
 
         async function loadProfiles() {
             try {
-                const profileSheets = ['startups', 'Freelancer', 'small_business', 'corporate'];
+                const profileSheets = ['Startup', 'Freelancer', 'small_business', 'corporate'];
                 const fetchPromises = profileSheets.map(sheet =>
                     fetch(`${scriptURL}?sheet=${sheet}`).then(res => res.json())
                 );
