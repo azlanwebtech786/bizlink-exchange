@@ -1,91 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta name="google-site-verification" content="GBKwckk6Rv-B-vidv23MEaY7SX9abgfVHWhraAvC3JI"/>
+   <meta name="google-site-verification" content="GBKwckk6Rv-B-vidv23MEaY7SX9abgfVHWhraAvC3JI"/>
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizLink Exchange | Freelance Marketplace & Business Network</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Poppins', sans-serif; }
-    .blood-gradient { background: linear-gradient(90deg, #b30000, #ff1a1a); }
-    .hero-bg { background: linear-gradient(to right, #0d0d0d, #1a1a1a); }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizLink Exchange | Freelance Marketplace & Business Network</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .blood-gradient { background: linear-gradient(90deg, #b30000, #ff1a1a); }
+    .hero-bg { background: linear-gradient(to right, #0d0d0d, #1a1a1a); }
+  </style>
 </head>
 <body class="bg-white text-gray-900">
 
-  <!-- Navbar -->
-  <header class="flex justify-between items-center px-8 py-4 shadow-md sticky top-0 bg-white z-50">
-    <h1 class="text-2xl font-bold text-black">BizLink <span class="text-red-700">Exchange</span></h1>
-    <nav class="space-x-6 hidden md:flex">
-      <a href="index.html" class="hover:text-red-700 transition">Home</a>
-      <a href="post-work.html" class="hover:text-red-700 font-semibold transition">Post a Work</a>
-      <a href="get-listed.html" class="hover:text-red-700 transition">Get Listed</a>
-    </nav>
-  </header>
+    <header class="flex justify-between items-center px-8 py-4 shadow-md sticky top-0 bg-white z-50">
+    <h1 class="text-2xl font-bold text-black">BizLink <span class="text-red-700">Exchange</span></h1>
+    <nav class="space-x-6 hidden md:flex items-center">
+      <a href="index.html" class="hover:text-red-700 transition">Home</a>
+      <a href="post-work.html" class="hover:text-red-700 font-semibold transition">Post a Work</a>
+      <a href="get-listed.html" class="hover:text-red-700 transition">Get Listed</a>
+      
+            <a id="loginLink" href="login.html" class="bg-gray-200 px-4 py-2 rounded-md font-medium">Login</a>
+      <a id="signupLink" href="signup.html" class="blood-gradient text-white px-4 py-2 rounded-md font-medium">Sign Up</a>
+      
+            <button id="logoutButton" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium">
+          Logout
+      </button>
+    </nav>
+  </header>
 
-  <!-- Hero Section -->
-  <section class="hero-bg text-white text-center py-24 px-6">
-    <h2 class="text-4xl md:text-5xl font-bold mb-4">Connect. Collaborate. Grow. 🚀</h2>
-    <p class="text-gray-300 max-w-2xl mx-auto mb-8">
-      Join India’s fastest-growing business network — where startups, freelancers, and small businesses come together to build success.
-    </p>
-    <a href="get-listed.html" class="blood-gradient text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:scale-105 transform transition">
-      Get Started Free
-    </a>
-  </section>
+    <section class="hero-bg text-white text-center py-24 px-6">
+    <h2 class="text-4xl md:text-5xl font-bold mb-4">Connect. Collaborate. Grow. 🚀</h2>
+    <p class="text-gray-300 max-w-2xl mx-auto mb-8">
+      Join India’s fastest-growing business network — where startups, freelancers, and small businesses come together to build success.
+    </p>
+    <a href="get-listed.html" class="blood-gradient text-white px-8 py-3 rounded-full font-semibold text-lg shadow-lg hover:scale-105 transform transition">
+      Get Started Free
+    </a>
+  </section>
 
-  <!-- Profiles Section (Existing) -->
-  <main class="max-w-6xl mx-auto grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4 py-16" id="profiles">
-    <div class="text-center col-span-full text-gray-500">Loading profiles...</div>
-  </main>
+    <main class="max-w-6xl mx-auto grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4 py-16" id="profiles">
+    <div class="text-center col-span-full text-gray-500">Loading profiles...</div>
+  </main>
 
-  <!-- 🔥 Live Works Section -->
-  <section class="max-w-6xl mx-auto px-4 py-12">
-    <h2 class="text-3xl font-bold mb-6">Latest Work Posts</h2>
-    <div id="worksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="col-span-full text-gray-500 text-center">Loading works...</div>
-    </div>
-  </section>
+    <section class="max-w-6xl mx-auto px-4 py-12">
+    <h2 class="text-3xl font-bold mb-6">Latest Work Posts</h2>
+    <div id="worksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="col-span-full text-gray-500 text-center">Loading works...</div>
+    </div>
+  </section>
 
-  <!-- Toast Alert -->
-  <div id="toast" class="fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded shadow-lg hidden z-50">
-    New work posted!
-  </div>
+    <div id="toast" class="fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded shadow-lg hidden z-50">
+    New work posted!
+  </div>
 
-  <!-- Footer -->
-  <footer class="bg-black text-gray-400 text-center py-6 mt-16">
-    <p>© 2025 BizLink Exchange. All Rights Reserved.</p>
-    <p class="mt-2">
-      <a href="#" class="hover:text-white">About</a> |
-      <a href="#" class="hover:text-white">Contact</a>
-    </p>
-  </footer>
+    <footer class="bg-black text-gray-400 text-center py-6 mt-16">
+    <p>© 2025 BizLink Exchange. All Rights Reserved.</p>
+    <p class="mt-2">
+      <a href="#" class="hover:text-white">About</a> |
+      <a href="#" class="hover:text-white">Contact</a>
+    </p>
+  </footer>
 
-  <script>
-    // Make sure this is your final, working URL
+        <script>
+    // ❗ YAHAN APNA SABSE NAYA GOOGLE SCRIPT URL DAALEIN
     const scriptURL = "https://script.google.com/macros/s/AKfycbxcKVMV9nEVK3jHxK5MOFPbf1VPnpQEAxu6wfYF-b7U-lLR6oGyrjh4khj6IR625IJx3w/exec";
     
     // Profiles Section
     const profilesDiv = document.getElementById("profiles");
 
-    // ✅ FIXED: This function now loads profiles from all relevant sheets
     async function loadProfiles() {
       try {
-        // Add all your profile sheet names here
         const profileSheets = ['startups', 'Freelancer', 'small_business', 'corporate'];
-        
-        // Fetch data from all sheets at the same time
         const fetchPromises = profileSheets.map(sheet =>
           fetch(`${scriptURL}?sheet=${sheet}`).then(res => res.json())
         );
-
-        // Wait for all fetches to complete
         const allProfileArrays = await Promise.all(fetchPromises);
-        
-        // Combine all the separate arrays into one big array
         const combinedProfiles = [].concat(...allProfileArrays.filter(Array.isArray));
 
         if (combinedProfiles && combinedProfiles.length > 0) {
@@ -99,21 +92,20 @@
       }
     }
 
-    // This function remains unchanged
     function renderProfiles(list){
       profilesDiv.innerHTML = list.map(p => `
         <div class="bg-white border border-gray-200 rounded-xl p-5 shadow hover:shadow-lg hover:border-red-500 transition">
           <h3 class="text-xl font-semibold text-black mb-2">${p["Business Name"] || "Unnamed"}</h3>
           <p class="text-gray-600 mb-1">📍 ${p["City"] || "-"}</p>
           <p class="text-gray-500 text-sm mb-3">${p["Description"] || "No description available"}</p>
-          <button onclick="window.open('${p.ProfileLink}', '_blank')" class="blood-gradient text-white px-4 py-2 rounded-full font-medium hover:scale-105 transform transition">
+        tton onclick="window.open('${p.ProfileLink}', '_blank')" class="blood-gradient text-white px-4 py-2 rounded-full font-medium hover:scale-105 transform transition">
             View Profile
           </button>
         </div>
       `).join("");
     }
 
-    // Works Section (This part remains unchanged)
+    // Works Section
     const worksContainer = document.getElementById('worksContainer');
     let latestWorkTime = null;
 
@@ -121,10 +113,10 @@
       try{
         const res = await fetch(`${scriptURL}?sheet=works`);
         const data = await res.json();
-        if (!Array.isArray(data)) {
-            worksContainer.innerHTML = "<div class='text-center text-gray-500 col-span-full'>No works found.</div>";
-            return;
-        }
+        if (!Array.isArray(data)) {
+            worksContainer.innerHTML = "<div class='text-center text-gray-500 col-span-full'>No works found.</div>";
+            return;
+        }
         worksContainer.innerHTML = '';
         data.forEach(work => {
           const workTime = new Date(work.PostedOn).getTime();
@@ -136,15 +128,15 @@
           card.className = "bg-white p-5 rounded-xl shadow hover:shadow-lg transition";
           card.innerHTML = `
             <h3 class="font-bold text-lg mb-2">${work.Title}</h3>
-            <p class="text-gray-700 mb-1">${work.Description}</p>
+_           <p class="text-gray-700 mb-1">${work.Description}</p>
             <p class="text-gray-500 text-sm mb-1">Budget: $${work.Budget} | ${work.Category} | ${work.City}</p>
             <p class="text-gray-400 text-sm">${new Date(work.PostedOn).toLocaleString()}</p>
           `;
           worksContainer.prepend(card);
         });
-        if (data.length === 0) {
-            worksContainer.innerHTML = "<div class='text-center text-gray-500 col-span-full'>No works found.</div>";
-        }
+        if (data.length === 0) {
+            worksContainer.innerHTML = "<div class='text-center text-gray-500 col-span-full'>No works found.</div>";
+        }
       } catch(err){
         worksContainer.innerHTML = "<div class='text-center text-red-600 col-span-full'>Error loading works.</div>";
       }
@@ -156,11 +148,63 @@
       setTimeout(()=>toast.classList.add('hidden'),3000);
     }
 
-    // Start loading both sections when the page loads
+    // Start loading both sections when the page loads
     loadProfiles();
     fetchWorks();
     setInterval(fetchWorks, 30000);
   </script>
-  </script>
+
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+  <script>
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+  authDomain: "bizlink-exchange.firebaseapp.com",
+  projectId: "bizlink-exchange",
+  storageBucket: "bizlink-exchange.firebasestorage.app",
+  messagingSenderId: "116213651971",
+  appId: "1:116213651971:web:fff60961af0c4da3448c36",
+  measurementId: "G-VQ3JM82D1N"
+};
+
+    // 2. Firebase ko initialize karein
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth(); 
+
+    // 3. Header ke buttons ko select karein
+    const loginLink = document.getElementById('loginLink');
+    const signupLink = document.getElementById('signupLink');
+    const logoutButton = document.getElementById('logoutButton');
+
+    // 4. Check karein ki user login hai ya nahi
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            // User login hai!
+            loginLink.classList.add('hidden');    // Login ko chupao
+            signupLink.classList.add('hidden');   // Sign Up ko chupao
+            logoutButton.classList.remove('hidden'); // Logout ko dikhao
+        } else {
+            // User login nahi hai!
+            loginLink.classList.remove('hidden'); // Login ko dikhao
+            signupLink.classList.remove('hidden'); // Sign Up ko dikhao
+            logoutButton.classList.add('hidden');  // Logout ko chupao
+        }
+    });
+
+    // 5. Logout button par click karne par...
+    logoutButton.addEventListener('click', () => {
+        auth.signOut().then(() => {
+-----------------
+            // Logout successful
+            alert("You have been logged out.");
+            window.location.href = 'index.html'; // Page ko refresh karo
+        }).catch((error) => {
+            console.error("Logout Error:", error);
+        });
+    });
+  </script>
+
 </body>
 </html>
