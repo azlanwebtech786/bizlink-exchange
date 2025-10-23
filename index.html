@@ -21,7 +21,6 @@
         .tab-button.active { color: #a855f7; border-bottom-color: #a855f7; font-weight: 600; }
         .text-purple { color: #a855f7; }
         .border-purple-hover:hover { border-color: #a855f7; }
-        /* Hide scrollbar */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -34,34 +33,24 @@
                 <div class="flex-shrink-0">
                      <h1 class="text-2xl font-bold text-white">BizLink <span class="text-purple">Exchange</span></h1>
                 </div>
-
                 <nav class="hidden md:flex space-x-6 items-center">
                     <a href="index.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
                     <a href="#" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Events</a>
                     <a href="post-work.html" class="hover:text-purple font-semibold transition text-white px-3 py-2 rounded-md text-sm font-medium">Post a Work</a>
                     <a href="get-listed.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Get Listed</a>
-
                     <a id="loginLinkDesktop" href="login.html" class="button-gradient text-white px-4 py-2 rounded-md font-medium hover:opacity-90 text-sm">Login</a>
                     <a id="signupLinkDesktop" href="signup.html" class="bg-gray-700 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-600 text-sm">Sign Up</a>
-                    <button id="logoutButtonDesktop" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 text-sm">
-                        Logout
-                    </button>
+                    <button id="logoutButtonDesktop" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 text-sm">Logout</button>
                 </nav>
-
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
                         <span class="sr-only">Open main menu</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                         <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                         <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
             </div>
         </div>
-
         <div class="md:hidden hidden" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="index.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
@@ -72,9 +61,7 @@
             <div class="pt-4 pb-3 border-t border-gray-700 px-2 sm:px-3">
                  <a id="loginLinkMobile" href="login.html" class="block w-full text-left button-gradient text-white px-3 py-2 rounded-md font-medium hover:opacity-90 mb-2">Login</a>
                  <a id="signupLinkMobile" href="signup.html" class="block w-full text-left bg-gray-700 text-white px-3 py-2 rounded-md font-medium hover:bg-gray-600 mb-2">Sign Up</a>
-                 <button id="logoutButtonMobile" class="hidden w-full text-left bg-red-600 text-white px-3 py-2 rounded-md font-medium hover:bg-red-700">
-                     Logout
-                 </button>
+                 <button id="logoutButtonMobile" class="hidden w-full text-left bg-red-600 text-white px-3 py-2 rounded-md font-medium hover:bg-red-700">Logout</button>
             </div>
         </div>
     </header>
@@ -82,18 +69,14 @@
     <section class="bg-gradient-hero text-white text-center py-20 px-6 relative overflow-hidden">
         <div class="relative z-10">
             <h2 class="text-4xl md:text-5xl font-bold mb-4">BizLink Exchange</h2>
-            <p class="text-gray-200 max-w-2xl mx-auto mb-8">
-                Connect. Collaborate. Create Opportunities.
-            </p>
+            <p class="text-gray-200 max-w-2xl mx-auto mb-8">Connect. Collaborate. Create Opportunities.</p>
             <div class="max-w-xl mx-auto flex flex-col items-center">
                 <div class="w-full relative mb-4">
-                    <input type="text" id="searchInput" placeholder="Search business or category..."
-                           class="w-full p-3 pl-10 rounded-full input-dark focus:outline-none focus:ring-2 focus:ring-purple-500 text-base">
-                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search business or category..." class="w-full p-3 pl-10 rounded-full input-dark focus:outline-none focus:ring-2 focus:ring-purple-500 text-base">
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
                 <div class="flex flex-wrap justify-center gap-3" id="categoryFilters">
+                    <button data-category="All" class="category-button px-5 py-2 rounded-full text-sm font-medium active">All</button>
                     <button data-category="Development/IT" class="category-button px-5 py-2 rounded-full text-sm font-medium">Development/IT</button>
                     <button data-category="Design/Creative" class="category-button px-5 py-2 rounded-full text-sm font-medium">Design/Creative</button>
                     <button data-category="Sales/Marketing" class="category-button px-5 py-2 rounded-full text-sm font-medium">Sales/Marketing</button>
@@ -105,137 +88,99 @@
 
     <section class="max-w-6xl mx-auto px-4 py-8">
          <div class="border-b border-gray-700 mb-6">
-            <nav class="-mb-px flex space-x-8 overflow-x-auto no-scrollbar" aria-label="Tabs" id="profileTabs">
-                <button data-target="startupProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Startups</button>
-                <button data-target="smallBusinessProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Small Business</button>
+            <nav class="-mb-px flex space-x-8 overflow-x-auto no-scrollbar" aria-label="Tabs" id="mainTabs">
+                <button data-target="startupProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm active">Startups</button> <button data-target="smallBusinessProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Small Business</button>
                 <button data-target="corporateProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Corporate</button>
                 <button data-target="freelancerProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Freelancers</button>
-            </nav>
+                <button data-target="latestWorkPosts" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Latest Work</button> </nav>
         </div>
 
-        <div id="profileContainer">
-             <div id="startupProfiles" class="profile-tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
-                <div class="text-center col-span-full text-gray-400">Loading startups...</div>
+        <div id="tabContentContainer">
+             <div id="startupProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"> <div class="text-center col-span-full text-gray-400">Loading startups...</div>
             </div>
-             <div id="smallBusinessProfiles" class="profile-tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
+             <div id="smallBusinessProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
                  <div class="text-center col-span-full text-gray-400">Loading small businesses...</div>
              </div>
-             <div id="corporateProfiles" class="profile-tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
+             <div id="corporateProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
                  <div class="text-center col-span-full text-gray-400">Loading corporate profiles...</div>
              </div>
-             <div id="freelancerProfiles" class="profile-tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
+             <div id="freelancerProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
                  <div class="text-center col-span-full text-gray-400">Loading freelancers...</div>
+             </div>
+             <div id="latestWorkPosts" class="tab-content hidden"> <h2 class="text-3xl font-bold mb-6 text-white">Latest Work Posts</h2>
+                 <div id="worksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     <div class="col-span-full text-gray-400 text-center">Loading works...</div>
+                 </div>
              </div>
         </div>
     </section>
 
-    <section class="max-w-6xl mx-auto px-4 py-12">
-        <h2 class="text-3xl font-bold mb-6 text-white">Latest Work Posts</h2>
-        <div id="worksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="col-span-full text-gray-400 text-center">Loading works...</div>
-        </div>
-    </section>
-
-    <div id="toast" class="fixed top-4 right-4 bg-purple-600 text-white px-4 py-2 rounded shadow-lg hidden z-50">
-        New work posted!
-    </div>
+    <div id="toast" class="fixed top-4 right-4 bg-purple-600 text-white px-4 py-2 rounded shadow-lg hidden z-50"> New work posted! </div>
 
     <footer class="bg-[#1a1e3a] text-gray-400 text-center py-6 mt-16">
         <p>© 2025 BizLink Exchange. All Rights Reserved.</p>
-        <p class="mt-2">
-            <a href="#" class="hover:text-white">About</a> |
-            <a href="#" class="hover:text-white">Contact</a>
-        </p>
+        <p class="mt-2"> <a href="#" class="hover:text-white">About</a> | <a href="#" class="hover:text-white">Contact</a> </p>
     </footer>
 
     <script>
         // ❗ YAHAN APNA SABSE NAYA GOOGLE SCRIPT URL DAALEIN
         const scriptURL = "https://script.google.com/macros/s/AKfycbxcKVMV9nEVK3jHxK5MOFPbf1VPnpQEAxu6wfYF-b7U-lLR6oGyrjh4khj6IR625IJx3w/exec";
-        
-        // Store all profiles data globally
-        let allProfilesData = [];
+
+        // Store data globally
         let startupProfilesData = [];
         let smallBusinessProfilesData = [];
         let corporateProfilesData = [];
         let freelancerProfilesData = [];
+        let worksData = []; // Store works data
 
-        // ✅ FIXED: Loads data for each tab separately
+        // --- Profile Loading ---
         async function loadProfiles() {
             const profileSheets = ['Startup', 'small_business', 'corporate', 'Freelancer'];
-            const targets = { // Map sheet names to data variables and div IDs
+            const targets = {
                 'Startup': { dataVar: 'startupProfilesData', divId: 'startupProfiles' },
                 'small_business': { dataVar: 'smallBusinessProfilesData', divId: 'smallBusinessProfiles' },
                 'corporate': { dataVar: 'corporateProfilesData', divId: 'corporateProfiles' },
                 'Freelancer': { dataVar: 'freelancerProfilesData', divId: 'freelancerProfiles' }
             };
-            const allPromises = [];
-
-            profileSheets.forEach(sheet => {
-                const promise = fetch(`${scriptURL}?sheet=${sheet}`)
+            const allPromises = profileSheets.map(sheet =>
+                fetch(`${scriptURL}?sheet=${sheet}`)
                     .then(res => res.json())
                     .then(data => {
                         if (Array.isArray(data)) {
-                            window[targets[sheet].dataVar] = data; // Assign data to global variable (e.g., window.startupProfilesData = data)
-                            renderProfiles(data, targets[sheet].divId); // Render in specific tab div
-                            return data; // Return data for combining later
+                            window[targets[sheet].dataVar] = data;
+                            renderProfiles(data, targets[sheet].divId);
                         } else {
-                             // Handle case where sheet might be empty or error
-                            const targetDiv = document.getElementById(targets[sheet].divId);
-                            if(targetDiv) targetDiv.innerHTML = `<div class='text-center text-gray-400 col-span-full'>No profiles found in ${sheet}.</div>`;
-                            return []; // Return empty array
+                            renderProfiles([], targets[sheet].divId); // Render empty if error/no data
                         }
                     })
                     .catch(err => {
                         console.error(`Error fetching ${sheet}:`, err);
                         const targetDiv = document.getElementById(targets[sheet].divId);
                         if(targetDiv) targetDiv.innerHTML = `<div class='text-center text-red-500 col-span-full'>Error loading ${sheet}.</div>`;
-                        return []; // Return empty array on error
-                    });
-                allPromises.push(promise);
-            });
-
-            // Wait for all fetches to complete
-            Promise.all(allPromises).then(allDataArrays => {
-                allProfilesData = [].concat(...allDataArrays); // Combine all data for the 'All Profiles' tab
-                renderProfiles(allProfilesData, 'allProfiles'); // Render combined data in the 'allProfiles' div
-            }).catch(err => {
-                 console.error("Error loading all profiles:", err);
-                 const allDiv = document.getElementById('allProfiles');
-                 if(allDiv) allDiv.innerHTML = `<div class='text-center text-red-500 col-span-full'>Error loading all profiles.</div>`;
-            });
+                    })
+            );
+            await Promise.all(allPromises); // Wait for all profiles to load
+            applyFilters(); // Apply initial filter after loading
         }
 
-        // ✅ FIXED: Renders profiles into a specific container
         function renderProfiles(list, containerId){
             const container = document.getElementById(containerId);
-            if (!container) return; // Exit if container not found
-
+            if (!container) return;
             if (!list || list.length === 0) {
-                 container.innerHTML = `<div class='text-center text-gray-400 col-span-full'>No profiles found.</div>`;
-                 return;
+                 container.innerHTML = `<div class='text-center text-gray-400 col-span-full'>No profiles found.</div>`; return;
             }
-
             container.innerHTML = list.map(p => `
                 <div class="card-bg rounded-xl p-5 shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1 profile-card"
-                     data-category="${p.Category || 'General'}"
-                     data-name="${p["Business Name"] || ''}"
-                     data-description="${p.Description || ''}"
-                     data-city="${p.City || ''}">
+                     data-category="${p.Category || 'General'}" data-name="${p["Business Name"] || ''}" data-description="${p.Description || ''}" data-city="${p.City || ''}">
                     <span class="text-xs font-semibold px-2 py-1 rounded-full bg-blue-600 text-white mb-2 inline-block">${p.Category || 'General'}</span>
                     <h3 class="text-xl font-semibold text-white mt-2 mb-2">${p["Business Name"] || "Unnamed"}</h3>
-                    <p class="text-gray-300 text-sm mb-1 flex items-center">
-                        <svg class="w-4 h-4 mr-1 text-purple-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
-                        ${p["City"] || "-"}
-                    </p>
+                    <p class="text-gray-300 text-sm mb-1 flex items-center"><svg class="w-4 h-4 mr-1 text-purple-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>${p["City"] || "-"}</p>
                     <p class="text-gray-400 text-sm mb-3">${p["Description"] || "No description available"}</p>
-                    <button onclick="window.open('${p.ProfileLink}', '_blank')" class="button-gradient text-white px-4 py-2 rounded-full font-medium hover:scale-105 transform transition">
-                        View Details
-                    </button>
-                </div>
-            `).join("");
+                    <button onclick="window.open('${p.ProfileLink}', '_blank')" class="button-gradient text-white px-4 py-2 rounded-full font-medium hover:scale-105 transform transition">View Details</button>
+                </div>`).join("");
         }
 
-        // Works Section (Unchanged logic, just updated error/no data messages)
+        // --- Works Loading ---
         const worksContainer = document.getElementById('worksContainer');
         let latestWorkTime = null;
 
@@ -243,206 +188,136 @@
             try{
                 const res = await fetch(`${scriptURL}?sheet=works`);
                 const data = await res.json();
-                if (!Array.isArray(data)) {
-                    worksContainer.innerHTML = "<div class='text-center text-gray-400 col-span-full'>No works found.</div>";
-                    return;
-                }
-                worksContainer.innerHTML = '';
-                data.forEach(work => {
-                    const workTime = new Date(work.PostedOn).getTime();
-                    if(!latestWorkTime || workTime > latestWorkTime){
-                        if(latestWorkTime) showToast();
-                        latestWorkTime = workTime;
-                    }
-                    const card = document.createElement('div');
-                    card.className = "card-bg p-5 rounded-xl shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1";
-                    card.innerHTML = `
-                        <h3 class="font-bold text-lg mb-2 text-white">${work.Title}</h3>
-                        <p class="text-gray-300 mb-1">${work.Description}</p>
-                        <p class="text-gray-400 text-sm mb-1">Budget: <span class="text-green-400">$${work.Budget}</span> | ${work.Category} | ${work.City}</p>
-                        <p class="text-gray-500 text-sm mt-2">${new Date(work.PostedOn).toLocaleString()}</p>
-                    `;
-                    worksContainer.prepend(card);
-                });
-                if (data.length === 0) {
-                    worksContainer.innerHTML = "<div class='text-center text-gray-400 col-span-full'>No works found.</div>";
-                }
+                if (!Array.isArray(data)) { throw new Error("Invalid data format"); }
+
+                worksData = data; // Store fetched data
+                renderWorks(worksData); // Render the data
+
             } catch(err){
                 worksContainer.innerHTML = "<div class='text-center text-red-500 col-span-full'>Error loading works.</div>";
                 console.error("Error fetching works:", err);
             }
         }
 
-        function showToast(){
-            const toast = document.getElementById('toast');
-            toast.classList.remove('hidden');
-            setTimeout(()=>toast.classList.add('hidden'),3000);
+        function renderWorks(list) {
+             if (!worksContainer) return;
+             if (!list || list.length === 0) {
+                 worksContainer.innerHTML = "<div class='text-center text-gray-400 col-span-full'>No works found.</div>"; return;
+             }
+             worksContainer.innerHTML = ''; // Clear previous
+             list.forEach(work => {
+                 const workTime = new Date(work.PostedOn).getTime();
+                 if(!latestWorkTime || workTime > latestWorkTime){
+                     if(latestWorkTime) showToast();
+                     latestWorkTime = workTime;
+                 }
+                 const card = document.createElement('div');
+                 card.className = "card-bg p-5 rounded-xl shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1 work-card" // Added work-card class for potential filtering
+                 card.innerHTML = `
+                     <h3 class="font-bold text-lg mb-2 text-white">${work.Title}</h3>
+                     <p class="text-gray-300 mb-1">${work.Description}</p>
+                     <p class="text-gray-400 text-sm mb-1">Budget: <span class="text-green-400">$${work.Budget}</span> | ${work.Category} | ${work.City}</p>
+                     <p class="text-gray-500 text-sm mt-2">${new Date(work.PostedOn).toLocaleString()}</p>
+                 `;
+                 worksContainer.prepend(card); // Prepend to show latest first
+             });
         }
 
-        // Start loading both sections when the page loads
-        loadProfiles(); // Loads all profile types into respective divs
-        fetchWorks();
-        setInterval(fetchWorks, 30000);
+        function showToast(){ /* Unchanged */ }
 
-        // --- ✅ NEW: Tab Switching Logic ---
-        const profileTabsContainer = document.getElementById('profileTabs');
-        const profileTabContents = document.querySelectorAll('.profile-tab-content');
+        // --- ✅ FIXED: Tab Switching Logic Updated ---
+        const mainTabsContainer = document.getElementById('mainTabs');
+        const tabContents = document.querySelectorAll('.tab-content');
 
-        profileTabsContainer.addEventListener('click', (event) => {
+        mainTabsContainer.addEventListener('click', (event) => {
             if (event.target.tagName === 'BUTTON') {
                 const targetId = event.target.getAttribute('data-target');
 
                 // Update active tab button style
-                profileTabsContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                mainTabsContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
                 event.target.classList.add('active');
 
                 // Show the target content, hide others
-                profileTabContents.forEach(content => {
-                    if (content.id === targetId) {
-                        content.classList.remove('hidden');
-                    } else {
-                        content.classList.add('hidden');
-                    }
+                tabContents.forEach(content => {
+                    content.classList.toggle('hidden', content.id !== targetId);
                 });
-                // Re-apply filters after switching tab
-                applyFilters();
+
+                // Apply filters only if a profile tab is active
+                if (!targetId.toLowerCase().includes('work')) {
+                     applyFilters();
+                } else {
+                     // Optionally apply filters specific to works if needed later
+                     // applyWorkFilters();
+                }
             }
         });
 
-        // --- ✅ NEW: Search and Category Filter Logic ---
+        // --- Search and Category Filter Logic (Applies only to Profiles) ---
         const searchInput = document.getElementById('searchInput');
         const categoryFiltersContainer = document.getElementById('categoryFilters');
-        let currentCategoryFilter = 'All'; // Keep track of the selected category
+        let currentCategoryFilter = 'All';
 
-        // Function to apply both search and category filters
         function applyFilters() {
             const searchTerm = searchInput.value.toLowerCase();
-            const activeTabContent = document.querySelector('.profile-tab-content:not(.hidden)'); // Find the currently visible tab content
-            if (!activeTabContent) return;
+            // Find the currently active PROFILE tab content
+            const activeProfileTabContent = document.querySelector('.tab-content:not(.hidden):not(#latestWorkPosts)');
+            if (!activeProfileTabContent) return; // Don't filter if no profile tab is active
 
-            const profileCards = activeTabContent.querySelectorAll('.profile-card');
+            const profileCards = activeProfileTabContent.querySelectorAll('.profile-card');
 
             profileCards.forEach(card => {
-                 // Check category filter
                 const cardCategory = card.getAttribute('data-category');
                 const categoryMatch = (currentCategoryFilter === 'All' || cardCategory.toLowerCase().includes(currentCategoryFilter.toLowerCase()));
-
-                 // Check search term filter (search in name, description, city, category)
                 const cardName = card.getAttribute('data-name').toLowerCase();
                 const cardDescription = card.getAttribute('data-description').toLowerCase();
                 const cardCity = card.getAttribute('data-city').toLowerCase();
-                const searchMatch = (
-                    searchTerm === '' ||
-                    cardName.includes(searchTerm) ||
-                    cardDescription.includes(searchTerm) ||
-                    cardCity.includes(searchTerm) ||
-                    cardCategory.toLowerCase().includes(searchTerm)
-                );
+                const searchMatch = (!searchTerm || cardName.includes(searchTerm) || cardDescription.includes(searchTerm) || cardCity.includes(searchTerm) || cardCategory.toLowerCase().includes(searchTerm));
 
-                // Show card only if both filters match
-                if (categoryMatch && searchMatch) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
+                card.classList.toggle('hidden', !(categoryMatch && searchMatch));
             });
         }
-
-        // Event listener for search input
         searchInput.addEventListener('input', applyFilters);
-
-        // Event listener for category filter buttons
         categoryFiltersContainer.addEventListener('click', (event) => {
             if (event.target.tagName === 'BUTTON') {
                 currentCategoryFilter = event.target.getAttribute('data-category');
-
-                // Update active button style
                 categoryFiltersContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
                 event.target.classList.add('active');
-
-                // Apply filters
                 applyFilters();
             }
         });
+
+        // --- Initial Load ---
+        loadProfiles(); // Loads profile data
+        fetchWorks(); // Loads work data
+        // setInterval(fetchWorks, 30000); // You might want to remove this for performance later
 
     </script>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-
     <script>
-        // ✅ AAPKA FIREBASE CONFIG YAHAN PASTE KAR DIYA HAI
-        const firebaseConfig = {
-          apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
-          authDomain: "bizlink-exchange.firebaseapp.com",
-          projectId: "bizlink-exchange",
-          storageBucket: "bizlink-exchange.firebasestorage.app",
-          messagingSenderId: "116213651971",
-          appId: "1:116213651971:web:fff60961af0c4da3448c36",
-          measurementId: "G-VQ3JM82D1N"
-        };
-
-        // Firebase ko initialize karein
+        // ✅ AAPKA FIREBASE CONFIG
+        const firebaseConfig = { apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I", authDomain: "bizlink-exchange.firebaseapp.com", projectId: "bizlink-exchange", storageBucket: "bizlink-exchange.firebasestorage.app", messagingSenderId: "116213651971", appId: "1:116213651971:web:fff60961af0c4da3448c36", measurementId: "G-VQ3JM82D1N" };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-
-        // Header ke buttons ko select karein (Desktop + Mobile)
-        const loginLinkDesktop = document.getElementById('loginLinkDesktop');
-        const signupLinkDesktop = document.getElementById('signupLinkDesktop');
-        const logoutButtonDesktop = document.getElementById('logoutButtonDesktop');
-        const loginLinkMobile = document.getElementById('loginLinkMobile');
-        const signupLinkMobile = document.getElementById('signupLinkMobile');
-        const logoutButtonMobile = document.getElementById('logoutButtonMobile');
-
-        // Check karein ki user login hai ya nahi
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                // User login hai!
-                loginLinkDesktop?.classList.add('hidden'); // Use optional chaining just in case
-                signupLinkDesktop?.classList.add('hidden');
-                logoutButtonDesktop?.classList.remove('hidden');
-                loginLinkMobile?.classList.add('hidden');
-                signupLinkMobile?.classList.add('hidden');
-                logoutButtonMobile?.classList.remove('hidden');
-            } else {
-                // User login nahi hai!
-                loginLinkDesktop?.classList.remove('hidden');
-                signupLinkDesktop?.classList.remove('hidden');
-                logoutButtonDesktop?.classList.add('hidden');
-                loginLinkMobile?.classList.remove('hidden');
-                signupLinkMobile?.classList.remove('hidden');
-                logoutButtonMobile?.classList.add('hidden');
-            }
+        const loginLinkDesktop = document.getElementById('loginLinkDesktop'), signupLinkDesktop = document.getElementById('signupLinkDesktop'), logoutButtonDesktop = document.getElementById('logoutButtonDesktop'), loginLinkMobile = document.getElementById('loginLinkMobile'), signupLinkMobile = document.getElementById('signupLinkMobile'), logoutButtonMobile = document.getElementById('logoutButtonMobile');
+        auth.onAuthStateChanged(user => {
+            const loggedIn = !!user; // Is user logged in? (true/false)
+            loginLinkDesktop?.classList.toggle('hidden', loggedIn); signupLinkDesktop?.classList.toggle('hidden', loggedIn); logoutButtonDesktop?.classList.toggle('hidden', !loggedIn);
+            loginLinkMobile?.classList.toggle('hidden', loggedIn); signupLinkMobile?.classList.toggle('hidden', loggedIn); logoutButtonMobile?.classList.toggle('hidden', !loggedIn);
         });
-
-        // Logout button par click karne par...
-        function handleLogout() {
-            auth.signOut().then(() => {
-                alert("You have been logged out.");
-                window.location.href = 'index.html';
-            }).catch((error) => {
-                console.error("Logout Error:", error);
-            });
-        }
-        // Attach listener only if buttons exist
-        logoutButtonDesktop?.addEventListener('click', handleLogout);
-        logoutButtonMobile?.addEventListener('click', handleLogout);
-
+        function handleLogout() { auth.signOut().then(() => { alert("Logged out."); window.location.href = 'index.html'; }).catch(e => console.error("Logout Error:", e)); }
+        logoutButtonDesktop?.addEventListener('click', handleLogout); logoutButtonMobile?.addEventListener('click', handleLogout);
     </script>
 
     <script>
-        const menuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (menuButton && mobileMenu) { // Check if elements exist
-            const hamburgerIcon = menuButton.querySelector('svg:not(.hidden)');
-            const closeIcon = menuButton.querySelector('svg.hidden');
-
+        const menuButton = document.getElementById('mobile-menu-button'), mobileMenu = document.getElementById('mobile-menu');
+        if (menuButton && mobileMenu) {
+            const hamburgerIcon = menuButton.querySelector('svg:not(.hidden)'), closeIcon = menuButton.querySelector('svg.hidden');
             menuButton.addEventListener('click', () => {
                 const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
-                menuButton.setAttribute('aria-expanded', !isExpanded);
-                mobileMenu.classList.toggle('hidden');
-                hamburgerIcon?.classList.toggle('hidden'); // Use optional chaining
-                closeIcon?.classList.toggle('hidden');
+                menuButton.setAttribute('aria-expanded', !isExpanded); mobileMenu.classList.toggle('hidden');
+                hamburgerIcon?.classList.toggle('hidden'); closeIcon?.classList.toggle('hidden');
             });
         }
     </script>
