@@ -183,6 +183,10 @@
     const worksContainer = document.getElementById('worksContainer');
     let latestWorkTime = null;
 
+   // Works Section
+    const worksContainer = document.getElementById('worksContainer');
+    let latestWorkTime = null;
+
     // ✅ FINAL FIXED: Work post display matches sheet columns
     async function fetchWorks(){
         try{
@@ -219,7 +223,7 @@
             worksContainer.innerHTML = "<div class='text-center text-red-500 col-span-full'>Error loading works.</div>";
             console.error("Error fetching works:", err);
         }
-    }       
+    }
 
         function renderWorks(list) {
              if (!worksContainer) return;
