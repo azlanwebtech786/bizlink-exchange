@@ -1,352 +1,498 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="GBKwckk6Rv-B-vidv23MEaY7SX9abgfVHWhraAvC3JI"/>
+  <meta name="google-site-verification" content="GBKwckk6Rv-B-vidv23MEaY7SX9abgfVHWhraAvC3JI"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizLink Exchange | Freelance Marketplace + 10X Grow Lab</title>
 
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BizLink Exchange | Freelance Marketplace & Business Network</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #0b0d1e; color: #e0e0e0; }
-        .bg-gradient-hero { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); }
-        .card-bg { background-color: #1a1e3a; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .input-dark { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; }
-        .input-dark::placeholder { color: rgba(255, 255, 255, 0.6); }
-        .button-gradient { background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%); }
-        .category-button { background-color: rgba(255, 255, 255, 0.1); color: #e0e0e0; border: 1px solid rgba(255, 255, 255, 0.2); }
-        .category-button.active { background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%); border-color: transparent; }
-        .tab-button { color: #9ca3af; border-bottom: 2px solid transparent; }
-        .tab-button.active { color: #a855f7; border-bottom-color: #a855f7; font-weight: 600; }
-        .text-purple { color: #a855f7; }
-        .border-purple-hover:hover { border-color: #a855f7; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
+  <!-- Tailwind & Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Basic SEO -->
+  <meta name="description" content="BizLink Exchange – India’s hybrid Freelance Marketplace + 10X Grow Lab. Field + Digital model to 10X local businesses with daily content, hyperlocal ads, and retention systems." />
+  <meta name="keywords" content="BizLink, freelance marketplace, business growth, 10X growth, local business marketing, reels, hyperlocal ads" />
+
+  <style>
+    body{font-family:'Poppins',sans-serif;background:#0b0d1e;color:#e0e0e0}
+    .bg-gradient-hero{background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%)}
+    .card-bg{background:#1a1e3a;border:1px solid rgba(255,255,255,.1)}
+    .input-dark{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff}
+    .input-dark::placeholder{color:rgba(255,255,255,.6)}
+    .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
+    .category-button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2)}
+    .category-button.active{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%);border-color:transparent}
+    .tab-button{color:#9ca3af;border-bottom:2px solid transparent}
+    .tab-button.active{color:#a855f7;border-bottom-color:#a855f7;font-weight:600}
+    .text-purple{color:#a855f7}
+    .border-purple-hover:hover{border-color:#a855f7}
+    .no-scrollbar::-webkit-scrollbar{display:none}
+    .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+    .badge{font-size:.7rem}
+    .section{padding-top:3rem;padding-bottom:3rem}
+    .divider{height:1px;background:rgba(255,255,255,.08)}
+  </style>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "name":"BizLink Exchange",
+    "url":"https://your-domain.example/",
+    "description":"Freelance Marketplace + 10X Grow Lab for local businesses.",
+    "sameAs":["https://instagram.com/mrkwellnessofficial"],
+    "logo":"/logo.png"
+  }
+  </script>
 </head>
 <body class="text-gray-200">
 
-    <header class="sticky top-0 bg-opacity-90 bg-[#0b0d1e] z-50 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex-shrink-0">
-                     <h1 class="text-2xl font-bold text-white">BizLink <span class="text-purple">Exchange</span></h1>
-                </div>
-                <nav class="hidden md:flex space-x-6 items-center">
-                    <a href="index.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                    <a href="#" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Events</a>
-                    <a href="post-work.html" class="hover:text-purple font-semibold transition text-white px-3 py-2 rounded-md text-sm font-medium">Post a Work</a>
-                    <a href="get-listed.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Get Listed</a>
-                    <a id="loginLinkDesktop" href="login.html" class="button-gradient text-white px-4 py-2 rounded-md font-medium hover:opacity-90 text-sm">Login</a>
-                    <a id="signupLinkDesktop" href="signup.html" class="bg-gray-700 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-600 text-sm">Sign Up</a>
-                    <button id="logoutButtonDesktop" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 text-sm">Logout</button>
-                </nav>
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
-                        <span class="sr-only">Open main menu</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-                         <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                </div>
-            </div>
+  <!-- Header -->
+  <header class="sticky top-0 bg-opacity-90 bg-[#0b0d1e] z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex-shrink-0">
+          <h1 class="text-2xl font-bold text-white">BizLink <span class="text-purple">Exchange</span></h1>
         </div>
-        <div class="md:hidden hidden" id="mobile-menu">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="index.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
-                <a href="#" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Events</a>
-                <a href="post-work.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Post a Work</a>
-                <a href="get-listed.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Get Listed</a>
-            </div>
-            <div class="pt-4 pb-3 border-t border-gray-700 px-2 sm:px-3">
-                 <a id="loginLinkMobile" href="login.html" class="block w-full text-left button-gradient text-white px-3 py-2 rounded-md font-medium hover:opacity-90 mb-2">Login</a>
-                 <a id="signupLinkMobile" href="signup.html" class="block w-full text-left bg-gray-700 text-white px-3 py-2 rounded-md font-medium hover:bg-gray-600 mb-2">Sign Up</a>
-                 <button id="logoutButtonMobile" class="hidden w-full text-left bg-red-600 text-white px-3 py-2 rounded-md font-medium hover:bg-red-700">Logout</button>
-            </div>
+        <nav class="hidden md:flex space-x-6 items-center">
+          <a href="#home" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+          <a href="#growlab" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">10X Grow Lab</a>
+          <a href="#pricing" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Pricing</a>
+          <a href="post-work.html" class="hover:text-purple font-semibold transition text-white px-3 py-2 rounded-md text-sm font-medium">Post a Work</a>
+          <a href="get-listed.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Get Listed</a>
+          <a id="loginLinkDesktop" href="login.html" class="button-gradient text-white px-4 py-2 rounded-md font-medium hover:opacity-90 text-sm">Login</a>
+          <a id="signupLinkDesktop" href="signup.html" class="bg-gray-700 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-600 text-sm">Sign Up</a>
+          <button id="logoutButtonDesktop" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 text-sm">Logout</button>
+        </nav>
+        <div class="md:hidden flex items-center">
+          <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+            <span class="sr-only">Open main menu</span>
+            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
         </div>
-    </header>
+      </div>
+    </div>
+    <div class="md:hidden hidden" id="mobile-menu">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="#home" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+        <a href="#growlab" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">10X Grow Lab</a>
+        <a href="#pricing" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Pricing</a>
+        <a href="post-work.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Post a Work</a>
+        <a href="get-listed.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Get Listed</a>
+      </div>
+      <div class="pt-4 pb-3 border-t border-gray-700 px-2 sm:px-3">
+        <a id="loginLinkMobile" href="login.html" class="block w-full text-left button-gradient text-white px-3 py-2 rounded-md font-medium hover:opacity-90 mb-2">Login</a>
+        <a id="signupLinkMobile" href="signup.html" class="block w-full text-left bg-gray-700 text-white px-3 py-2 rounded-md font-medium hover:bg-gray-600 mb-2">Sign Up</a>
+        <button id="logoutButtonMobile" class="hidden w-full text-left bg-red-600 text-white px-3 py-2 rounded-md font-medium hover:bg-red-700">Logout</button>
+      </div>
+    </div>
+  </header>
 
-    <section class="bg-gradient-hero text-white text-center py-20 px-6 relative overflow-hidden">
-        <div class="relative z-10">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4">BizLink Exchange</h2>
-            <p class="text-gray-200 max-w-2xl mx-auto mb-8">Connect. Collaborate. Grow Your Business.</p>
-            <div class="max-w-xl mx-auto flex flex-col items-center">
-                <div class="w-full relative mb-4">
-                    <input type="text" id="searchInput" placeholder="Search business or category..." class="w-full p-3 pl-10 rounded-full input-dark focus:outline-none focus:ring-2 focus:ring-purple-500 text-base">
-                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-                <div class="flex flex-wrap justify-center gap-3" id="categoryFilters">
-                    <button data-category="Development/IT" class="category-button px-5 py-2 rounded-full text-sm font-medium">Development/IT</button>
-                    <button data-category="Design/Creative" class="category-button px-5 py-2 rounded-full text-sm font-medium">Design/Creative</button>
-                    <button data-category="Sales/Marketing" class="category-button px-5 py-2 rounded-full text-sm font-medium">Sales/Marketing</button>
-                    <button data-category="SEO" class="category-button px-5 py-2 rounded-full text-sm font-medium">SEO</button>
-                </div>
-            </div>
+  <!-- HERO -->
+  <section id="home" class="bg-gradient-hero text-white text-center py-20 px-6 relative overflow-hidden">
+    <div class="relative z-10 max-w-4xl mx-auto">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">UrbanClap for Business × Fiverr × Growth Academy</h2>
+      <p class="text-gray-100 max-w-2xl mx-auto mb-6">Field + Digital hybrid model to 10X local businesses: Daily content, 3km hyperlocal ads, lead funnels, retention systems.</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <button id="btnDemo" class="button-gradient px-6 py-3 rounded-full font-semibold">₹999 • 3‑Day Demo (Refundable)</button>
+        <a href="#pricing" class="px-6 py-3 rounded-full font-semibold border border-white hover:bg-white hover:text-black transition">30‑Day Trial Plans</a>
+      </div>
+
+      <!-- Search + filters (for marketplace) -->
+      <div class="mt-10 max-w-xl mx-auto">
+        <div class="w-full relative mb-4">
+          <input type="text" id="searchInput" placeholder="Search business or category..." class="w-full p-3 pl-10 rounded-full input-dark focus:outline-none focus:ring-2 focus:ring-purple-500 text-base">
+          <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
-    </section>
-
-    <section class="max-w-6xl mx-auto px-4 py-8">
-         <div class="border-b border-gray-700 mb-6">
-            <nav class="-mb-px flex space-x-8 overflow-x-auto no-scrollbar" aria-label="Tabs" id="mainTabs">
-                <button data-target="startupProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm active">Startups</button> <button data-target="smallBusinessProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Small Business</button>
-                <button data-target="corporateProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Corporate</button>
-                <button data-target="freelancerProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Freelancers</button>
-                <button data-target="latestWorkPosts" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Latest Work</button> </nav>
+        <div class="flex flex-wrap justify-center gap-3" id="categoryFilters">
+          <button data-category="Development/IT" class="category-button px-5 py-2 rounded-full text-sm font-medium">Development/IT</button>
+          <button data-category="Design/Creative" class="category-button px-5 py-2 rounded-full text-sm font-medium">Design/Creative</button>
+          <button data-category="Sales/Marketing" class="category-button px-5 py-2 rounded-full text-sm font-medium">Sales/Marketing</button>
+          <button data-category="SEO" class="category-button px-5 py-2 rounded-full text-sm font-medium">SEO</button>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <div id="tabContentContainer">
-             <div id="startupProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"> <div class="text-center col-span-full text-gray-400">Loading startups...</div>
-            </div>
-             <div id="smallBusinessProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
-                 <div class="text-center col-span-full text-gray-400">Loading small businesses...</div>
-             </div>
-             <div id="corporateProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
-                 <div class="text-center col-span-full text-gray-400">Loading corporate profiles...</div>
-             </div>
-             <div id="freelancerProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
-                 <div class="text-center col-span-full text-gray-400">Loading freelancers...</div>
-             </div>
-             <div id="latestWorkPosts" class="tab-content hidden"> <h2 class="text-3xl font-bold mb-6 text-white">Latest Work Posts</h2>
-                 <div id="worksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                     <div class="col-span-full text-gray-400 text-center">Loading works...</div>
-                 </div>
-             </div>
+  <!-- Tabs: marketplace & works -->
+  <section class="max-w-6xl mx-auto px-4 section">
+    <div class="border-b border-gray-700 mb-6">
+      <nav class="-mb-px flex space-x-8 overflow-x-auto no-scrollbar" aria-label="Tabs" id="mainTabs">
+        <button data-target="startupProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm active">Startups</button>
+        <button data-target="smallBusinessProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Small Business</button>
+        <button data-target="corporateProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Corporate</button>
+        <button data-target="freelancerProfiles" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Freelancers</button>
+        <button data-target="latestWorkPosts" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Latest Work</button>
+      </nav>
+    </div>
+
+    <div id="tabContentContainer">
+      <div id="startupProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="text-center col-span-full text-gray-400">Loading startups...</div>
+      </div>
+      <div id="smallBusinessProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
+        <div class="text-center col-span-full text-gray-400">Loading small businesses...</div>
+      </div>
+      <div id="corporateProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
+        <div class="text-center col-span-full text-gray-400">Loading corporate profiles...</div>
+      </div>
+      <div id="freelancerProfiles" class="tab-content grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 hidden">
+        <div class="text-center col-span-full text-gray-400">Loading freelancers...</div>
+      </div>
+      <div id="latestWorkPosts" class="tab-content hidden">
+        <h2 class="text-3xl font-bold mb-6 text-white">Latest Work Posts</h2>
+        <div id="worksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="col-span-full text-gray-400 text-center">Loading works...</div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <div id="toast" class="fixed top-4 right-4 bg-purple-600 text-white px-4 py-2 rounded shadow-lg hidden z-50"> New work posted! </div>
+  <!-- Divider -->
+  <div class="divider max-w-6xl mx-auto"></div>
 
-    <footer class="bg-[#1a1e3a] text-gray-400 text-center py-6 mt-16">
-        <p>© 2025 BizLink Exchange. All Rights Reserved.</p>
-        <p class="mt-2"> <a href="#" class="hover:text-white">About</a> | <a href="#" class="hover:text-white">Contact</a> </p>
-    </footer>
+  <!-- 10X Grow Lab Section / USP -->
+  <section id="growlab" class="max-w-6xl mx-auto px-4 section">
+    <h3 class="text-3xl md:text-4xl font-bold mb-6">10X Grow Lab – USP</h3>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="card-bg rounded-xl p-6">
+        <span class="badge inline-block bg-blue-600 px-2 py-1 rounded text-white">Hybrid</span>
+        <h4 class="text-xl font-semibold mt-2">Field + Digital Model</h4>
+        <p class="text-gray-300 text-sm mt-2">On-ground audit + online execution. Salon/Restaurant/Gym – sab ke liye practical growth.</p>
+      </div>
+      <div class="card-bg rounded-xl p-6">
+        <span class="badge inline-block bg-green-600 px-2 py-1 rounded text-white">Daily</span>
+        <h4 class="text-xl font-semibold mt-2">Daily Content Engine</h4>
+        <p class="text-gray-300 text-sm mt-2">30 posts + 8 reels/month. Consistency = visibility = enquiries.</p>
+      </div>
+      <div class="card-bg rounded-xl p-6">
+        <span class="badge inline-block bg-pink-600 px-2 py-1 rounded text-white">Hyperlocal</span>
+        <h4 class="text-xl font-semibold mt-2">3 km Targeting</h4>
+        <p class="text-gray-300 text-sm mt-2">Nearby audience only. Real footfall & store calls.</p>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6 mt-6">
+      <div class="card-bg rounded-xl p-6">
+        <span class="badge inline-block bg-yellow-600 px-2 py-1 rounded text-white">Trial</span>
+        <h4 class="text-xl font-semibold mt-2">30‑Day Trial + ₹999 Demo</h4>
+        <p class="text-gray-300 text-sm mt-2">Risk‑controlled entry. Serious clients only. Refundable demo option.</p>
+      </div>
+      <div class="card-bg rounded-xl p-6">
+        <span class="badge inline-block bg-purple-600 px-2 py-1 rounded text-white">Automation</span>
+        <h4 class="text-xl font-semibold mt-2">Lead Funnel + CRM</h4>
+        <p class="text-gray-300 text-sm mt-2">WhatsApp automation, chatbot, follow‑ups that close deals.</p>
+      </div>
+      <div class="card-bg rounded-xl p-6">
+        <span class="badge inline-block bg-red-600 px-2 py-1 rounded text-white">Retention</span>
+        <h4 class="text-xl font-semibold mt-2">Reviews & Reactivation</h4>
+        <p class="text-gray-300 text-sm mt-2">Review boost, loyalty & reactivation campaigns to retain customers.</p>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        
-        const scriptURL = "https://script.google.com/macros/s/AKfycbxVAjCB6WjXW6j3a8mWKi4ECUui_KTz3YoFkPgNVYuI9Om8ar1rhNNBi3BdZqjJMjYwwg/exec";
+  <!-- Process -->
+  <section class="max-w-6xl mx-auto px-4 section">
+    <h3 class="text-3xl md:text-4xl font-bold mb-6">Execution Timeline (First 7–10 Days)</h3>
+    <div class="grid md:grid-cols-4 gap-6">
+      <div class="card-bg rounded-xl p-5"><h4 class="font-semibold">Day 1–2</h4><p class="text-sm text-gray-300">Business audit, ICP, competitors, assets collection</p></div>
+      <div class="card-bg rounded-xl p-5"><h4 class="font-semibold">Day 3–5</h4><p class="text-sm text-gray-300">Brand kit, Google profile, landing page, content plan</p></div>
+      <div class="card-bg rounded-xl p-5"><h4 class="font-semibold">Day 6–7</h4><p class="text-sm text-gray-300">30 posts + 8 reels creation, lead funnel & automation</p></div>
+      <div class="card-bg rounded-xl p-5"><h4 class="font-semibold">Week 2</h4><p class="text-sm text-gray-300">Local ads launch, weekly optimization, report</p></div>
+    </div>
+  </section>
 
-        // Store data globally
-        let startupProfilesData = [];
-        let smallBusinessProfilesData = [];
-        let corporateProfilesData = [];
-        let freelancerProfilesData = [];
-        let worksData = []; // Store works data
+  <!-- Pricing -->
+  <section id="pricing" class="max-w-6xl mx-auto px-4 section">
+    <h3 class="text-3xl md:text-4xl font-bold mb-6">Pricing Plans</h3>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="card-bg rounded-2xl p-6 border border-gray-700">
+        <h4 class="text-xl font-bold mb-1">Basic</h4>
+        <p class="text-gray-400 mb-3">Starter visibility pack</p>
+        <p class="text-3xl font-extrabold mb-4">₹9,999<span class="text-sm font-medium">/month</span></p>
+        <ul class="text-sm space-y-2 text-gray-300">
+          <li>• 12 posts + 2 reels</li>
+          <li>• Google profile optimization</li>
+          <li>• Simple lead form funnel</li>
+          <li>• Monthly report</li>
+        </ul>
+        <button class="mt-5 w-full button-gradient py-2 rounded-lg font-semibold open-lead-modal" data-plan="Basic">Start Basic</button>
+      </div>
+      <div class="card-bg rounded-2xl p-6 border-2 border-purple-500">
+        <span class="badge bg-purple-600 px-2 py-1 rounded">Most Popular</span>
+        <h4 class="text-xl font-bold mb-1 mt-2">Standard</h4>
+        <p class="text-gray-400 mb-3">Balanced growth pack</p>
+        <p class="text-3xl font-extrabold mb-4">₹14,999<span class="text-sm font-medium">/month</span></p>
+        <ul class="text-sm space-y-2 text-gray-300">
+          <li>• 30 posts + 8 reels</li>
+          <li>• 3km local ads launch</li>
+          <li>• Lead funnel + WhatsApp automation</li>
+          <li>• Weekly optimization + report</li>
+        </ul>
+        <button class="mt-5 w-full button-gradient py-2 rounded-lg font-semibold open-lead-modal" data-plan="Standard">Choose Standard</button>
+      </div>
+      <div class="card-bg rounded-2xl p-6 border border-gray-700">
+        <h4 class="text-xl font-bold mb-1">Premium 10X</h4>
+        <p class="text-gray-400 mb-3">Aggressive scaling</p>
+        <p class="text-3xl font-extrabold mb-4">₹24,999<span class="text-sm font-medium">/month</span></p>
+        <ul class="text-sm space-y-2 text-gray-300">
+          <li>• 45 posts + 12 reels</li>
+          <li>• Ads + Retargeting + A/B tests</li>
+          <li>• CRM + chatbot + review boost</li>
+          <li>• Dedicated Growth Officer</li>
+        </ul>
+        <button class="mt-5 w-full button-gradient py-2 rounded-lg font-semibold open-lead-modal" data-plan="Premium 10X">Go Premium</button>
+      </div>
+    </div>
+  </section>
 
-        // --- Profile Loading ---
-        async function loadProfiles() {
-            const profileSheets = ['Startup', 'small_business', 'corporate', 'Freelancer'];
-            const targets = {
-                'Startup': { dataVar: 'startupProfilesData', divId: 'startupProfiles' },
-                'small_business': { dataVar: 'smallBusinessProfilesData', divId: 'smallBusinessProfiles' },
-                'corporate': { dataVar: 'corporateProfilesData', divId: 'corporateProfiles' },
-                'Freelancer': { dataVar: 'freelancerProfilesData', divId: 'freelancerProfiles' }
-            };
-            const allPromises = profileSheets.map(sheet =>
-                fetch(`${scriptURL}?sheet=${sheet}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (Array.isArray(data)) {
-                            window[targets[sheet].dataVar] = data;
-                            renderProfiles(data, targets[sheet].divId);
-                        } else {
-                            renderProfiles([], targets[sheet].divId); // Render empty if error/no data
-                        }
-                    })
-                    .catch(err => {
-                        console.error(`Error fetching ${sheet}:`, err);
-                        const targetDiv = document.getElementById(targets[sheet].divId);
-                        if(targetDiv) targetDiv.innerHTML = `<div class='text-center text-red-500 col-span-full'>Error loading ${sheet}.</div>`;
-                    })
-            );
-            await Promise.all(allPromises); // Wait for all profiles to load
-            applyFilters(); // Apply initial filter after loading
-        }
+  <div id="toast" class="fixed top-4 right-4 bg-purple-600 text-white px-4 py-2 rounded shadow-lg hidden z-50">New work posted!</div>
 
-        function renderProfiles(list, containerId){
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            if (!list || list.length === 0) {
-                 container.innerHTML = `<div class='text-center text-gray-400 col-span-full'>No profiles found.</div>`; return;
-            }
-            container.innerHTML = list.map(p => `
-                <div class="card-bg rounded-xl p-5 shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1 profile-card"
-                     data-category="${p.Category || 'General'}" data-name="${p["Business Name"] || ''}" data-description="${p.Description || ''}" data-city="${p.City || ''}">
-                    <span class="text-xs font-semibold px-2 py-1 rounded-full bg-blue-600 text-white mb-2 inline-block">${p.Category || 'General'}</span>
-                    <h3 class="text-xl font-semibold text-white mt-2 mb-2">${p["Business Name"] || "Unnamed"}</h3>
-                    <p class="text-gray-300 text-sm mb-1 flex items-center"><svg class="w-4 h-4 mr-1 text-purple-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>${p["City"] || "-"}</p>
-                    <p class="text-gray-400 text-sm mb-3">${p["Description"] || "No description available"}</p>
-                    <button onclick="window.open('${p.ProfileLink}', '_blank')" class="button-gradient text-white px-4 py-2 rounded-full font-medium hover:scale-105 transform transition">View Details</button>
-                </div>`).join("");
-        }
+  <!-- Lead Modal -->
+  <div id="leadModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+    <div class="card-bg rounded-2xl p-6 w-full max-w-lg relative">
+      <button id="closeLeadModal" class="absolute top-3 right-3 text-gray-300 hover:text-white">✕</button>
+      <h3 class="text-2xl font-bold mb-4">Get Started</h3>
+      <form id="leadForm" class="space-y-3">
+        <div class="grid md:grid-cols-2 gap-3">
+          <input name="name" required placeholder="Your Name" class="input-dark p-3 rounded" />
+          <input name="phone" required placeholder="Phone" class="input-dark p-3 rounded" />
+        </div>
+        <input name="business" required placeholder="Business Name" class="input-dark p-3 rounded w-full" />
+        <div class="grid md:grid-cols-2 gap-3">
+          <input name="city" required placeholder="City" class="input-dark p-3 rounded" />
+          <select name="plan" id="planSelect" class="input-dark p-3 rounded">
+            <option>Standard</option>
+            <option>Basic</option>
+            <option>Premium 10X</option>
+            <option>₹999 Demo (Refundable)</option>
+          </select>
+        </div>
+        <textarea name="notes" placeholder="Anything specific?" class="input-dark p-3 rounded w-full" rows="3"></textarea>
+        <button type="submit" class="button-gradient px-6 py-3 rounded font-semibold">Submit</button>
+      </form>
+      <p id="leadStatus" class="text-sm text-gray-300 mt-3 hidden">Submitting…</p>
+    </div>
+  </div>
 
-// Works Section
-    const worksContainer = document.getElementById('worksContainer');
-    let latestWorkTime = null;
+  <footer class="bg-[#1a1e3a] text-gray-400 text-center py-6 mt-16">
+    <p>© 2025 BizLink Exchange. All Rights Reserved.</p>
+    <p class="mt-2"><a href="#growlab" class="hover:text-white">10X Grow Lab</a> | <a href="#pricing" class="hover:text-white">Pricing</a></p>
+  </footer>
 
-   // Works Section
-    const worksContainer = document.getElementById('worksContainer');
-    let latestWorkTime = null;
+  <!-- Data + Auth Scripts -->
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxVAjCB6WjXW6j3a8mWKi4ECUui_KTz3YoFkPgNVYuI9Om8ar1rhNNBi3BdZqjJMjYwwg/exec";
+    // Stored datasets
+    let startupProfilesData = [], smallBusinessProfilesData = [], corporateProfilesData = [], freelancerProfilesData = [], worksData = [];
 
-    // ✅ FINAL FIXED: Work post display matches sheet columns
-    async function fetchWorks(){
-        try{
-            const res = await fetch(`${scriptURL}?sheet=works`); // scriptURL variable pehle se define hona chahiye
-            const data = await res.json();
-            if (!Array.isArray(data)) {
-                worksContainer.innerHTML = "<div class='text-center text-gray-400 col-span-full'>No works found.</div>";
-                return;
-            }
-            worksContainer.innerHTML = '';
-            data.forEach(work => {
-                const workTime = new Date(work.PostedOn).getTime();
-                if(!latestWorkTime || workTime > latestWorkTime){
-                    if(latestWorkTime) showToast(); // showToast function pehle se define hona chahiye
-                    latestWorkTime = workTime;
-                }
-                const card = document.createElement('div');
-                card.className = "card-bg p-5 rounded-xl shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1 work-card";
-                
-                // ✅ THIS IS THE CORRECT ORDER matching your sheet:
-                // PostedOn, Description, Budget, Category, City, Title
-                card.innerHTML = `
-                    <h3 class="font-bold text-lg mb-2 text-white">${work.Title || 'No Title'}</h3>
-                    <p class="text-gray-300 mb-1">${work.Description || 'No Description'}</p>
-                    <p class="text-gray-400 text-sm mb-1">Budget: <span class="text-green-400">$${work.Budget || 'N/A'}</span> | ${work.Category || 'N/A'} | ${work.City || 'N/A'}</p>
-                    <p class="text-gray-500 text-sm mt-2">${new Date(work.PostedOn).toLocaleString()}</p>
-                `;
-                worksContainer.prepend(card);
-            });
-            if (data.length === 0) {
-                worksContainer.innerHTML = "<div class='text-center text-gray-400 col-span-full'>No works found.</div>";
-            }
-        } catch(err){
-            worksContainer.innerHTML = "<div class='text-center text-red-500 col-span-full'>Error loading works.</div>";
-            console.error("Error fetching works:", err);
-        }
+    // Profiles
+    async function loadProfiles(){
+      const profileSheets=['Startup','small_business','corporate','Freelancer'];
+      const targets={
+        'Startup':{dataVar:'startupProfilesData',divId:'startupProfiles'},
+        'small_business':{dataVar:'smallBusinessProfilesData',divId:'smallBusinessProfiles'},
+        'corporate':{dataVar:'corporateProfilesData',divId:'corporateProfiles'},
+        'Freelancer':{dataVar:'freelancerProfilesData',divId:'freelancerProfiles'}
+      };
+      await Promise.all(profileSheets.map(sheet=>
+        fetch(`${scriptURL}?sheet=${sheet}`).then(r=>r.json()).then(data=>{
+          const arr=Array.isArray(data)?data:[];
+          window[targets[sheet].dataVar]=arr;
+          renderProfiles(arr,targets[sheet].divId);
+        }).catch((err)=>{
+          console.error(`Error fetching ${sheet} profiles:`, err);
+          const div=document.getElementById(targets[sheet].divId);
+          if(div) div.innerHTML=`<div class='text-center text-red-500 col-span-full'>Error loading ${sheet}.</div>`;
+        })
+      ));
+      applyFilters();
     }
 
-        function renderWorks(list) {
-             if (!worksContainer) return;
-             if (!list || list.length === 0) {
-                 worksContainer.innerHTML = "<div class='text-center text-gray-400 col-span-full'>No works found.</div>"; return;
-             }
-             worksContainer.innerHTML = ''; // Clear previous
-             list.forEach(work => {
-                 const workTime = new Date(work.PostedOn).getTime();
-                 if(!latestWorkTime || workTime > latestWorkTime){
-                     if(latestWorkTime) showToast();
-                     latestWorkTime = workTime;
-                 }
-                 const card = document.createElement('div');
-                 card.className = "card-bg p-5 rounded-xl shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1 work-card" // Added work-card class for potential filtering
-                 card.innerHTML = `
-                     <h3 class="font-bold text-lg mb-2 text-white">${work.Title}</h3>
-                     <p class="text-gray-300 mb-1">${work.Description}</p>
-                     <p class="text-gray-400 text-sm mb-1">Budget: <span class="text-green-400">$${work.Budget}</span> | ${work.Category} | ${work.City}</p>
-                     <p class="text-gray-500 text-sm mt-2">${new Date(work.PostedOn).toLocaleString()}</p>
-                 `;
-                 worksContainer.prepend(card); // Prepend to show latest first
-             });
+    function renderProfiles(list,containerId){
+      const container=document.getElementById(containerId);
+      if(!container) return;
+      if(!list||!list.length){container.innerHTML="<div class='text-center text-gray-400 col-span-full'>No profiles found.</div>";return}
+      container.innerHTML=list.map(p=>`
+        <div class="card-bg rounded-xl p-5 shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1 profile-card"
+             data-category="${p.Category||'General'}" data-name="${p['Business Name']||''}" data-description="${p.Description||''}" data-city="${p.City||''}">
+          <span class="text-xs font-semibold px-2 py-1 rounded-full bg-blue-600 text-white mb-2 inline-block">${p.Category||'General'}</span>
+          <h3 class="text-xl font-semibold text-white mt-2 mb-2">${p['Business Name']||'Unnamed'}</h3>
+          <p class="text-gray-300 text-sm mb-1 flex items-center"><svg class="w-4 h-4 mr-1 text-purple-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>${p['City']||'-'}</p>
+          <p class="text-gray-400 text-sm mb-3">${p['Description']||'No description available'}</p>
+          ${p.ProfileLink?`<a href='${p.ProfileLink}' target='_blank' class='button-gradient inline-block text-white px-4 py-2 rounded-full font-medium hover:scale-105 transform transition'>View Details</a>`:''}
+        </div>`).join("");
+    }
+
+    // Works
+    const worksContainer=document.getElementById('worksContainer');
+    let latestWorkTime=null;
+    async function fetchWorks(){
+      if(!worksContainer){
+        console.error('worksContainer element not found');
+        return;
+      }
+      try{
+        const res=await fetch(`${scriptURL}?sheet=works`);
+        if(!res.ok){
+          console.error('fetchWorks HTTP error:', res.status, res.statusText);
+          worksContainer.innerHTML="<div class='text-center text-red-500 col-span-full'>Error loading works (HTTP error).</div>";
+          return;
         }
-
-        function showToast(){ /* Unchanged */ }
-
-        // --- ✅ FIXED: Tab Switching Logic Updated ---
-        const mainTabsContainer = document.getElementById('mainTabs');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        mainTabsContainer.addEventListener('click', (event) => {
-            if (event.target.tagName === 'BUTTON') {
-                const targetId = event.target.getAttribute('data-target');
-
-                // Update active tab button style
-                mainTabsContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-                event.target.classList.add('active');
-
-                // Show the target content, hide others
-                tabContents.forEach(content => {
-                    content.classList.toggle('hidden', content.id !== targetId);
-                });
-
-                // Apply filters only if a profile tab is active
-                if (!targetId.toLowerCase().includes('work')) {
-                     applyFilters();
-                } else {
-                     // Optionally apply filters specific to works if needed later
-                     // applyWorkFilters();
-                }
-            }
-        });
-
-        // --- Search and Category Filter Logic (Applies only to Profiles) ---
-        const searchInput = document.getElementById('searchInput');
-        const categoryFiltersContainer = document.getElementById('categoryFilters');
-        let currentCategoryFilter = 'All';
-
-        function applyFilters() {
-            const searchTerm = searchInput.value.toLowerCase();
-            // Find the currently active PROFILE tab content
-            const activeProfileTabContent = document.querySelector('.tab-content:not(.hidden):not(#latestWorkPosts)');
-            if (!activeProfileTabContent) return; // Don't filter if no profile tab is active
-
-            const profileCards = activeProfileTabContent.querySelectorAll('.profile-card');
-
-            profileCards.forEach(card => {
-                const cardCategory = card.getAttribute('data-category');
-                const categoryMatch = (currentCategoryFilter === 'All' || cardCategory.toLowerCase().includes(currentCategoryFilter.toLowerCase()));
-                const cardName = card.getAttribute('data-name').toLowerCase();
-                const cardDescription = card.getAttribute('data-description').toLowerCase();
-                const cardCity = card.getAttribute('data-city').toLowerCase();
-                const searchMatch = (!searchTerm || cardName.includes(searchTerm) || cardDescription.includes(searchTerm) || cardCity.includes(searchTerm) || cardCategory.toLowerCase().includes(searchTerm));
-
-                card.classList.toggle('hidden', !(categoryMatch && searchMatch));
-            });
+        const rawText = await res.text();
+        let data;
+        try {
+          data = JSON.parse(rawText);
+        } catch(parseErr) {
+          console.error('fetchWorks: response is not valid JSON. Raw response:', rawText);
+          worksContainer.innerHTML="<div class='text-center text-red-500 col-span-full'>Works data format error. Check Apps Script JSON output.</div>";
+          return;
         }
-        searchInput.addEventListener('input', applyFilters);
-        categoryFiltersContainer.addEventListener('click', (event) => {
-            if (event.target.tagName === 'BUTTON') {
-                currentCategoryFilter = event.target.getAttribute('data-category');
-                categoryFiltersContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-                event.target.classList.add('active');
-                applyFilters();
-            }
-        });
-
-        // --- Initial Load ---
-        loadProfiles(); // Loads profile data
-        fetchWorks(); // Loads work data
-        // setInterval(fetchWorks, 30000); // You might want to remove this for performance later
-
-    </script>
-
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script>
-        // ✅ AAPKA FIREBASE CONFIG
-        const firebaseConfig = { apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I", authDomain: "bizlink-exchange.firebaseapp.com", projectId: "bizlink-exchange", storageBucket: "bizlink-exchange.firebasestorage.app", messagingSenderId: "116213651971", appId: "1:116213651971:web:fff60961af0c4da3448c36", measurementId: "G-VQ3JM82D1N" };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const loginLinkDesktop = document.getElementById('loginLinkDesktop'), signupLinkDesktop = document.getElementById('signupLinkDesktop'), logoutButtonDesktop = document.getElementById('logoutButtonDesktop'), loginLinkMobile = document.getElementById('loginLinkMobile'), signupLinkMobile = document.getElementById('signupLinkMobile'), logoutButtonMobile = document.getElementById('logoutButtonMobile');
-        auth.onAuthStateChanged(user => {
-            const loggedIn = !!user; // Is user logged in? (true/false)
-            loginLinkDesktop?.classList.toggle('hidden', loggedIn); signupLinkDesktop?.classList.toggle('hidden', loggedIn); logoutButtonDesktop?.classList.toggle('hidden', !loggedIn);
-            loginLinkMobile?.classList.toggle('hidden', loggedIn); signupLinkMobile?.classList.toggle('hidden', loggedIn); logoutButtonMobile?.classList.toggle('hidden', !loggedIn);
-        });
-        function handleLogout() { auth.signOut().then(() => { alert("Logged out."); window.location.href = 'index.html'; }).catch(e => console.error("Logout Error:", e)); }
-        logoutButtonDesktop?.addEventListener('click', handleLogout); logoutButtonMobile?.addEventListener('click', handleLogout);
-    </script>
-
-    <script>
-        const menuButton = document.getElementById('mobile-menu-button'), mobileMenu = document.getElementById('mobile-menu');
-        if (menuButton && mobileMenu) {
-            const hamburgerIcon = menuButton.querySelector('svg:not(.hidden)'), closeIcon = menuButton.querySelector('svg.hidden');
-            menuButton.addEventListener('click', () => {
-                const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
-                menuButton.setAttribute('aria-expanded', !isExpanded); mobileMenu.classList.toggle('hidden');
-                hamburgerIcon?.classList.toggle('hidden'); closeIcon?.classList.toggle('hidden');
-            });
+        if(!Array.isArray(data)){
+          console.error('fetchWorks: data is not an array:', data);
+          worksContainer.innerHTML="<div class='text-center text-gray-400 col-span-full'>No works found.</div>";
+          return;
         }
-    </script>
+        worksData = data; // keep a copy
+        worksContainer.innerHTML='';
+        if(!data.length){
+          worksContainer.innerHTML="<div class='text-center text-gray-400 col-span-full'>No works found.</div>";
+          return;
+        }
+        data.forEach(work=>{
+          const posted = work.PostedOn ? new Date(work.PostedOn) : null;
+          const workTime = posted && !isNaN(posted.getTime()) ? posted.getTime() : null;
+          if(workTime && (!latestWorkTime || workTime>latestWorkTime)){
+            if(latestWorkTime) showToast();
+            latestWorkTime=workTime;
+          }
+          const card=document.createElement('div');
+          card.className="card-bg p-5 rounded-xl shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1 work-card";
+          card.innerHTML=`
+            <h3 class="font-bold text-lg mb-2 text-white">${work.Title||'No Title'}</h3>
+            <p class="text-gray-300 mb-1">${work.Description||'No Description'}</p>
+            <p class="text-gray-400 text-sm mb-1">Budget: <span class="text-green-400">₹${work.Budget||'N/A'}</span> | ${work.Category||'N/A'} | ${work.City||'N/A'}</p>
+            <p class="text-gray-500 text-sm mt-2">${workTime ? posted.toLocaleString() : ''}</p>`;
+          worksContainer.prepend(card);
+        });
+      }catch(e){
+        console.error('Error fetching works:', e);
+        worksContainer.innerHTML="<div class='text-center text-red-500 col-span-full'>Error loading works.</div>";
+      }
+    }
 
+    function showToast(){
+      const t=document.getElementById('toast');
+      if(!t) return;
+      t.classList.remove('hidden');
+      setTimeout(()=>t.classList.add('hidden'),3000);
+    }
+
+    // Tabs
+    const mainTabsContainer=document.getElementById('mainTabs');
+    const tabContents=document.querySelectorAll('.tab-content');
+    mainTabsContainer.addEventListener('click',(e)=>{
+      if(e.target.tagName!=="BUTTON") return;
+      const targetId=e.target.getAttribute('data-target');
+      mainTabsContainer.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+      e.target.classList.add('active');
+      tabContents.forEach(c=>c.classList.toggle('hidden',c.id!==targetId));
+      if(!targetId.toLowerCase().includes('work')){ applyFilters(); }
+    });
+
+    // Search + filter (profiles only)
+    const searchInput=document.getElementById('searchInput');
+    const categoryFiltersContainer=document.getElementById('categoryFilters');
+    let currentCategoryFilter='All';
+    function applyFilters(){
+      const searchTerm=(searchInput.value||'').toLowerCase();
+      const activeProfileTabContent=document.querySelector('.tab-content:not(.hidden):not(#latestWorkPosts)');
+      if(!activeProfileTabContent) return;
+      const cards=activeProfileTabContent.querySelectorAll('.profile-card');
+      cards.forEach(card=>{
+        const cat=(card.getAttribute('data-category')||'').toLowerCase();
+        const name=(card.getAttribute('data-name')||'').toLowerCase();
+        const desc=(card.getAttribute('data-description')||'').toLowerCase();
+        const city=(card.getAttribute('data-city')||'').toLowerCase();
+        const categoryMatch=(currentCategoryFilter==='All'||cat.includes(currentCategoryFilter.toLowerCase()));
+        const searchMatch=!searchTerm||name.includes(searchTerm)||desc.includes(searchTerm)||city.includes(searchTerm)||cat.includes(searchTerm);
+        card.classList.toggle('hidden',!(categoryMatch&&searchMatch));
+      });
+    }
+    searchInput.addEventListener('input',applyFilters);
+    categoryFiltersContainer.addEventListener('click',(e)=>{
+      if(e.target.tagName!=="BUTTON") return;
+      currentCategoryFilter=e.target.getAttribute('data-category');
+      categoryFiltersContainer.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+      e.target.classList.add('active');
+      applyFilters();
+    });
+
+    // Initial
+    loadProfiles();
+    fetchWorks();
+    // (Optional) Polling disabled for now
+    // setInterval(fetchWorks,30000);
+  </script>
+
+  <!-- Firebase Auth -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig={ apiKey:"AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I", authDomain:"bizlink-exchange.firebaseapp.com", projectId:"bizlink-exchange", storageBucket:"bizlink-exchange.firebasestorage.app", messagingSenderId:"116213651971", appId:"1:116213651971:web:fff60961af0c4da3448c36", measurementId:"G-VQ3JM82D1N" };
+    firebase.initializeApp(firebaseConfig);
+    const auth=firebase.auth();
+    const loginLinkDesktop=document.getElementById('loginLinkDesktop'), signupLinkDesktop=document.getElementById('signupLinkDesktop'), logoutButtonDesktop=document.getElementById('logoutButtonDesktop'), loginLinkMobile=document.getElementById('loginLinkMobile'), signupLinkMobile=document.getElementById('signupLinkMobile'), logoutButtonMobile=document.getElementById('logoutButtonMobile');
+    auth.onAuthStateChanged(user=>{
+      const loggedIn=!!user;
+      loginLinkDesktop?.classList.toggle('hidden',loggedIn); signupLinkDesktop?.classList.toggle('hidden',loggedIn); logoutButtonDesktop?.classList.toggle('hidden',!loggedIn);
+      loginLinkMobile?.classList.toggle('hidden',loggedIn); signupLinkMobile?.classList.toggle('hidden',loggedIn); logoutButtonMobile?.classList.toggle('hidden',!loggedIn);
+    });
+    function handleLogout(){ auth.signOut().then(()=>{ alert("Logged out."); location.href='index.html'; }).catch(e=>console.error('Logout Error:',e)); }
+    logoutButtonDesktop?.addEventListener('click',handleLogout); logoutButtonMobile?.addEventListener('click',handleLogout);
+  </script>
+
+  <!-- Mobile menu + Lead modal JS -->
+  <script>
+    // Mobile menu
+    const menuButton=document.getElementById('mobile-menu-button'), mobileMenu=document.getElementById('mobile-menu');
+    if(menuButton&&mobileMenu){
+      const icons=menuButton.querySelectorAll('svg');
+      menuButton.addEventListener('click',()=>{
+        const expanded=menuButton.getAttribute('aria-expanded')==='true';
+        menuButton.setAttribute('aria-expanded',!expanded);
+        mobileMenu.classList.toggle('hidden');
+        icons.forEach(i=>i.classList.toggle('hidden'));
+      });
+    }
+
+    // Lead modal open/close
+    const btnDemo=document.getElementById('btnDemo');
+    const leadModal=document.getElementById('leadModal');
+    const closeLeadModal=document.getElementById('closeLeadModal');
+    const planSelect=document.getElementById('planSelect');
+    document.querySelectorAll('.open-lead-modal').forEach(btn=>{
+      btn.addEventListener('click',()=>{ planSelect.value=btn.dataset.plan; leadModal.classList.remove('hidden'); });
+    });
+    btnDemo?.addEventListener('click',()=>{ planSelect.value='₹999 Demo (Refundable)'; leadModal.classList.remove('hidden'); });
+    closeLeadModal?.addEventListener('click',()=>leadModal.classList.add('hidden'));
+
+    // Lead form submit → Google Sheet (sheet: leads)
+    const leadForm=document.getElementById('leadForm');
+    const leadStatus=document.getElementById('leadStatus');
+    leadForm.addEventListener('submit',async(e)=>{
+      e.preventDefault();
+      leadStatus.classList.remove('hidden');
+      const fd=new FormData(leadForm);
+      fd.append('sheet','leads');
+      try{
+        const res=await fetch(scriptURL,{method:'POST',body:fd});
+        if(res.ok){ leadStatus.textContent='Thanks! Our Growth Officer will call you in 24–48 hrs.'; leadForm.reset(); setTimeout(()=>leadModal.classList.add('hidden'),1200); }
+        else{ leadStatus.textContent='Submission failed. Try again.'; }
+      }catch(err){ leadStatus.textContent='Network error. Try again.'; }
+    });
+  </script>
 </body>
 </html>
