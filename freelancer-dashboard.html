@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizLink | Freelancer Dashboard</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #0b0d1e; color: #e0e0e0; }
+    .card-bg { background-color: #1a1e3a; border: 1px solid rgba(255, 255, 255, 0.1); }
+    .button-gradient { background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%); }
+    .input-dark { background-color: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; }
+    .input-dark::placeholder { color: rgba(255, 255, 255, 0.6); }
+    .tab-button { color: #9ca3af; border-bottom: 2px solid transparent; }
+    .tab-button.active { color: #a855f7; border-bottom-color: #a855f7; font-weight: 600; }
+  </style>
+</head>
+<body class="text-gray-200">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 bg-opacity-90 bg-[#0b0d1e] z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex-shrink-0">
+          <a href="index.html" class="text-2xl font-bold text-white">
+            BizLink <span class="text-purple-400">Exchange</span>
+          </a>
+        </div>
+        <nav class="hidden md:flex space-x-6 items-center">
+          <a href="index.html" class="hover:text-purple-400 transition text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+          <span id="freelancerEmail" class="text-xs text-gray-300 bg-gray-800 px-3 py-1 rounded-full"></span>
+          <button id="logoutButtonDesktop" class="bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 text-sm">Logout</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="max-w-6xl mx-auto px-4 py-8">
+
+    <h1 class="text-3xl md:text-4xl font-bold mb-2">Freelancer Dashboard</h1>
+    <p class="text-gray-400 mb-6 text-sm">
+      Yahan se aap <span class="text-purple-400">work accept</span> karoge, 
+      <span class="text-purple-400">files submit</span> karoge aur 
+      <span class="text-purple-400">payment status</span> dekhoge.
+    </p>
+
+    <!-- TABS -->
+    <div class="border-b border-gray-700 mb-6">
+      <nav class="-mb-px flex space-x-8 overflow-x-auto no-scrollbar" aria-label="Tabs" id="dashboardTabs">
+        <button data-target="availableWorks" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm active">
+          Available Works
+        </button>
+        <button data-target="myJobs" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+          My Jobs
+        </button>
+        <button data-target="payments" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+          Payment Status
+        </button>
+      </nav>
+    </div>
+
+    <!-- TAB CONTENTS -->
+    <section id="availableWorks" class="tab-content grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div class="col-span-full text-center text-gray-400" id="availableWorksMessage">Loading works...</div>
+    </section>
+
+    <section id="myJobs" class="tab-content hidden grid gap-6 grid-cols-1 md:grid-cols-2">
+      <div class="col-span-full text-center text-gray-400" id="myJobsMessage">Loading your jobs...</div>
+    </section>
+
+    <section id="payments" class="tab-content hidden">
+      <div class="card-bg rounded-xl p-5 mb-4">
+        <h2 class="text-xl font-semibold mb-3">Payment Summary</h2>
+        <p class="text-sm text-gray-300 mb-1">Total Jobs Completed: <span id="payCompleted" class="text-green-400 font-semibold">0</span></p>
+        <p class="text-sm text-gray-300 mb-1">Total Earnings: <span id="payEarnings" class="text-green-400 font-semibold">₹0</span></p>
+        <p class="text-sm text-gray-300 mb-1">Pending Clearance: <span id="payPending" class="text-yellow-400 font-semibold">₹0</span></p>
+      </div>
+      <div id="paymentList" class="grid gap-4 md:grid-cols-2"></div>
+    </section>
+
+  </main>
+
+  <!-- TOAST -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-purple-600 text-white px-4 py-2 rounded shadow-lg hidden z-50 text-sm">
+    Updated successfully!
+  </div>
+
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+  <script>
+    // ====== CONFIG ======
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxVAjCB6WjXW6j3a8mWKi4ECUui_KTz3YoFkPgNVYuI9Om8ar1rhNNBi3BdZqjJMjYwwg/exec";
+
+    // Google Sheet design (aapko banani hogi):
+    // 1) Sheet name: works  (already use ho rahi)
+    //    Columns: ID, Title, Description, Budget, Category, City, PostedOn, Status
+    //             Status: "Open" / "Assigned" / "Completed"
+    //
+    // 2) Sheet name: freelancer_jobs
+    //    Columns: JobID, WorkID, FreelancerEmail, Title, Status, SubmitLink, Notes, Amount, PaidStatus
+    //             Status: "Accepted" / "Submitted" / "Completed"
+    //             PaidStatus: "Pending" / "Cleared"
+
+    // ====== FIREBASE INIT ======
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+      authDomain: "bizlink-exchange.firebaseapp.com",
+      projectId: "bizlink-exchange",
+      storageBucket: "bizlink-exchange.firebasestorage.app",
+      messagingSenderId: "116213651971",
+      appId: "1:116213651971:web:fff60961af0c4da3448c36",
+      measurementId: "G-VQ3JM82D1N"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    let currentUserEmail = null;
+
+    const logoutButtonDesktop = document.getElementById('logoutButtonDesktop');
+    const freelancerEmailBadge = document.getElementById('freelancerEmail');
+
+    logoutButtonDesktop.addEventListener('click', () => {
+      auth.signOut().then(() => {
+        alert("Logged out.");
+        window.location.href = "login.html";
+      }).catch(e => console.error("Logout Error:", e));
+    });
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        // Not logged in → redirect to login
+        window.location.href = "login.html";
+        return;
+      }
+      currentUserEmail = user.email;
+      freelancerEmailBadge.textContent = currentUserEmail;
+      // Load data
+      loadAvailableWorks();
+      loadMyJobs();
+      loadPayments();
+    });
+
+    // ====== TABS LOGIC ======
+    const tabsNav = document.getElementById('dashboardTabs');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabsNav.addEventListener('click', (e) => {
+      if (e.target.tagName !== "BUTTON") return;
+      const targetId = e.target.getAttribute('data-target');
+
+      tabsNav.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+      e.target.classList.add('active');
+
+      tabContents.forEach(sec => {
+        sec.classList.toggle('hidden', sec.id !== targetId);
+      });
+    });
+
+    // ====== TOAST ======
+    function showToast(message = "Updated successfully!") {
+      const t = document.getElementById('toast');
+      t.textContent = message;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 2500);
+    }
+
+    // ====== AVAILABLE WORKS ======
+    const availableWorksContainer = document.getElementById('availableWorks');
+    const availableMessage = document.getElementById('availableWorksMessage');
+
+    async function loadAvailableWorks() {
+      availableMessage.textContent = "Loading works...";
+      try {
+        const res = await fetch(`${scriptURL}?sheet=works`);
+        const text = await res.text();
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          console.error("Works JSON parse error:", text);
+          availableWorksContainer.innerHTML = "<div class='col-span-full text-red-500 text-center'>Works data format error. Check Apps Script.</div>";
+          return;
+        }
+
+        if (!Array.isArray(data) || !data.length) {
+          availableWorksContainer.innerHTML = "<div class='col-span-full text-gray-400 text-center'>No available works right now.</div>";
+          return;
+        }
+
+        // Filter only OPEN works
+        const openWorks = data.filter(w => (w.Status || "Open").toLowerCase() === "open");
+
+        if (!openWorks.length) {
+          availableWorksContainer.innerHTML = "<div class='col-span-full text-gray-400 text-center'>No open works. Check later.</div>";
+          return;
+        }
+
+        availableWorksContainer.innerHTML = "";
+        openWorks.forEach(w => {
+          const card = document.createElement('div');
+          card.className = "card-bg rounded-xl p-5 shadow-lg";
+
+          card.innerHTML = `
+            <h3 class="text-lg font-semibold mb-1 text-white">${w.Title || "No Title"}</h3>
+            <p class="text-sm text-gray-300 mb-1">${w.Description || ""}</p>
+            <p class="text-xs text-gray-400 mb-1">
+              Budget: <span class="text-green-400 font-semibold">₹${w.Budget || "N/A"}</span> • 
+              ${w.Category || "General"} • ${w.City || "-"}
+            </p>
+            <p class="text-xs text-gray-500 mb-3">
+              Posted: ${w.PostedOn ? new Date(w.PostedOn).toLocaleString() : "-"}
+            </p>
+            <button 
+              class="button-gradient px-4 py-2 rounded-lg text-sm font-semibold accept-work-btn"
+              data-work-id="${w.ID || ""}"
+              data-title="${(w.Title || "").replace(/"/g, '&quot;')}"
+              data-amount="${w.Budget || ""}">
+              Accept Work
+            </button>
+          `;
+          availableWorksContainer.appendChild(card);
+        });
+
+        // Attach accept handlers
+        document.querySelectorAll(".accept-work-btn").forEach(btn => {
+          btn.addEventListener('click', () => {
+            const workId = btn.getAttribute('data-work-id');
+            const title = btn.getAttribute('data-title');
+            const amount = btn.getAttribute('data-amount');
+            if (!workId) {
+              alert("Work ID missing. Please ensure 'ID' column exists in 'works' sheet.");
+              return;
+            }
+            acceptWork(workId, title, amount);
+          });
+        });
+
+      } catch (err) {
+        console.error("Error loading works:", err);
+        availableWorksContainer.innerHTML = "<div class='col-span-full text-red-500 text-center'>Error loading works.</div>";
+      }
+    }
+
+    async function acceptWork(workId, title, amount) {
+      if (!currentUserEmail) {
+        alert("Login required.");
+        return;
+      }
+
+      if (!confirm(`Ye work accept karein?\n\n${title}\nBudget: ₹${amount || "N/A"}`)) return;
+
+      const fd = new FormData();
+      fd.append("sheet", "freelancer_jobs");
+      fd.append("action", "accept");
+      fd.append("WorkID", workId);
+      fd.append("FreelancerEmail", currentUserEmail);
+      fd.append("Title", title);
+      fd.append("Amount", amount || "");
+
+      try {
+        const res = await fetch(scriptURL, { method: "POST", body: fd });
+        if (res.ok) {
+          showToast("Work accepted!");
+          loadAvailableWorks();
+          loadMyJobs();
+        } else {
+          alert("Failed to accept work.");
+        }
+      } catch (err) {
+        console.error("Accept work error:", err);
+        alert("Network error while accepting work.");
+      }
+    }
+
+    // ====== MY JOBS ======
+    const myJobsContainer = document.getElementById('myJobs');
+    const myJobsMessage = document.getElementById('myJobsMessage');
+
+    async function loadMyJobs() {
+      if (!currentUserEmail) return;
+
+      myJobsMessage.textContent = "Loading your jobs...";
+
+      try {
+        const res = await fetch(`${scriptURL}?sheet=freelancer_jobs&email=${encodeURIComponent(currentUserEmail)}`);
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          console.error("freelancer_jobs JSON error:", text);
+          myJobsContainer.innerHTML = "<div class='col-span-full text-red-500 text-center'>Jobs data format error.</div>";
+          return;
+        }
+
+        if (!Array.isArray(data) || !data.length) {
+          myJobsContainer.innerHTML = "<div class='col-span-full text-gray-400 text-center'>No jobs assigned yet.</div>";
+          return;
+        }
+
+        myJobsContainer.innerHTML = "";
+        data.forEach(job => {
+          const card = document.createElement('div');
+          card.className = "card-bg rounded-xl p-5 shadow-lg";
+
+          const jobId = job.JobID || "";
+          const status = job.Status || "Accepted";
+
+          card.innerHTML = `
+            <h3 class="text-lg font-semibold mb-1 text-white">${job.Title || "Untitled Job"}</h3>
+            <p class="text-xs text-gray-400 mb-1">
+              Status: <span class="font-semibold ${status === "Completed" ? "text-green-400" : status === "Submitted" ? "text-yellow-300" : "text-blue-300"}">${status}</span>
+            </p>
+            <p class="text-xs text-gray-400 mb-3">
+              Amount: <span class="text-green-400 font-semibold">₹${job.Amount || "N/A"}</span>
+            </p>
+
+            <label class="block text-xs text-gray-300 mb-1">Submission Link (Drive / WeTransfer / etc.)</label>
+            <input 
+              type="text" 
+              class="input-dark w-full p-2 rounded text-sm mb-2 submit-link-input" 
+              placeholder="https://..."
+              data-job-id="${jobId}"
+              value="${job.SubmitLink || ""}"
+            />
+
+            <label class="block text-xs text-gray-300 mb-1">Notes / Description</label>
+            <textarea 
+              rows="2"
+              class="input-dark w-full p-2 rounded text-sm mb-3 submit-notes-input"
+              data-job-id="${jobId}"
+              placeholder="Short notes for client...">${job.Notes || ""}</textarea>
+
+            <button 
+              class="button-gradient px-4 py-2 rounded-lg text-sm font-semibold submit-work-btn"
+              data-job-id="${jobId}">
+              Submit Work
+            </button>
+          `;
+
+          myJobsContainer.appendChild(card);
+        });
+
+        document.querySelectorAll(".submit-work-btn").forEach(btn => {
+          btn.addEventListener('click', () => {
+            const jobId = btn.getAttribute('data-job-id');
+            const linkInput = document.querySelector(`.submit-link-input[data-job-id="${jobId}"]`);
+            const notesInput = document.querySelector(`.submit-notes-input[data-job-id="${jobId}"]`);
+            submitWork(jobId, linkInput.value, notesInput.value);
+          });
+        });
+
+      } catch (err) {
+        console.error("Error loading my jobs:", err);
+        myJobsContainer.innerHTML = "<div class='col-span-full text-red-500 text-center'>Error loading jobs.</div>";
+      }
+    }
+
+    async function submitWork(jobId, link, notes) {
+      if (!jobId) {
+        alert("JobID missing.");
+        return;
+      }
+      if (!link) {
+        alert("Please paste your submission link.");
+        return;
+      }
+
+      const fd = new FormData();
+      fd.append("sheet", "freelancer_jobs");
+      fd.append("action", "submit");
+      fd.append("JobID", jobId);
+      fd.append("SubmitLink", link);
+      fd.append("Notes", notes || "");
+
+      try {
+        const res = await fetch(scriptURL, { method: "POST", body: fd });
+        if (res.ok) {
+          showToast("Work submitted!");
+          loadMyJobs();
+          loadPayments();
+        } else {
+          alert("Submit failed.");
+        }
+      } catch (err) {
+        console.error("Submit work error:", err);
+        alert("Network error while submitting work.");
+      }
+    }
+
+    // ====== PAYMENTS ======
+    const payCompleted = document.getElementById('payCompleted');
+    const payEarnings = document.getElementById('payEarnings');
+    const payPending = document.getElementById('payPending');
+    const paymentList = document.getElementById('paymentList');
+
+    async function loadPayments() {
+      if (!currentUserEmail) return;
+
+      try {
+        const res = await fetch(`${scriptURL}?sheet=freelancer_jobs&email=${encodeURIComponent(currentUserEmail)}`);
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          console.error("Payment JSON error:", text);
+          return;
+        }
+
+        if (!Array.isArray(data) || !data.length) {
+          paymentList.innerHTML = "<div class='text-gray-400 text-sm'>No payment records yet.</div>";
+          payCompleted.textContent = "0";
+          payEarnings.textContent = "₹0";
+          payPending.textContent = "₹0";
+          return;
+        }
+
+        let completedCount = 0;
+        let totalEarned = 0;
+        let totalPending = 0;
+
+        paymentList.innerHTML = "";
+
+        data.forEach(job => {
+          const amount = Number(job.Amount || 0) || 0;
+          const paidStatus = (job.PaidStatus || "Pending").toLowerCase();
+          const status = job.Status || "Accepted";
+
+          if (status.toLowerCase() === "completed") {
+            completedCount++;
+          }
+
+          if (paidStatus === "cleared") {
+            totalEarned += amount;
+          } else {
+            totalPending += amount;
+          }
+
+          const card = document.createElement('div');
+          card.className = "card-bg rounded-xl p-4";
+
+          card.innerHTML = `
+            <h4 class="text-sm font-semibold mb-1 text-white">${job.Title || "Unnamed Job"}</h4>
+            <p class="text-xs text-gray-300 mb-1">Amount: <span class="text-green-400 font-semibold">₹${amount}</span></p>
+            <p class="text-xs text-gray-300 mb-1">Job Status: <span class="font-semibold">${status}</span></p>
+            <p class="text-xs text-gray-300 mb-1">
+              Payment: 
+              <span class="font-semibold ${paidStatus === "cleared" ? "text-green-400":"text-yellow-300"}">
+                ${job.PaidStatus || "Pending"}
+              </span>
+            </p>
+          `;
+          paymentList.appendChild(card);
+        });
+
+        payCompleted.textContent = completedCount;
+        payEarnings.textContent = "₹" + totalEarned;
+        payPending.textContent = "₹" + totalPending;
+
+      } catch (err) {
+        console.error("Payment load error:", err);
+      }
+    }
+
+  </script>
+
+</body>
+</html>
