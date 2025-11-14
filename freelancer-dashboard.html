@@ -1,136 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Freelancer Dashboard | BizLink Exchange</title>
-
-  <!-- Tailwind + Font -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
   <style>
-    body{font-family:'Poppins',sans-serif;background:#0b0d1e;color:#e0e0e0}
-    .card-bg{background:#1a1e3a;border:1px solid rgba(255,255,255,.1)}
-    .input-dark{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff}
-    .input-dark::placeholder{color:rgba(255,255,255,.6)}
-    .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
-    .border-purple-hover:hover{border-color:#a855f7}
-    .badge{font-size:.7rem}
+    body { font-family: 'Poppins', sans-serif; background-color: #0b0d1e; color: #e0e0e0; }
+    .card-bg { background-color: #1a1e3a; border: 1px solid rgba(255,255,255,0.1); }
+    .button-gradient { background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%); }
+    .border-purple-hover:hover { border-color: #a855f7; }
   </style>
 </head>
-<body class="text-gray-200">
+<body class="min-h-screen">
 
-  <!-- SIMPLE HEADER (same brand) -->
-  <header class="sticky top-0 bg-opacity-90 bg-[#0b0d1e] z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex-shrink-0">
-          <a href="index.html" class="flex items-center space-x-1">
-            <span class="text-2xl font-bold text-white">BizLink</span>
-            <span class="text-2xl font-bold text-purple-400">Exchange</span>
-          </a>
-        </div>
-        <nav class="hidden md:flex space-x-6 items-center text-sm">
-          <a href="index.html" class="hover:text-purple-400">Home</a>
-          <a href="freelancer-dashboard.html" class="text-purple-400 font-semibold">Freelancer Dashboard</a>
-          <a href="post-work.html" class="hover:text-purple-400">Post a Work</a>
-          <button id="logoutBtn" class="bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 text-sm hidden">
-            Logout
-          </button>
-        </nav>
+  <!-- Simple header -->
+  <header class="bg-[#0b0d1e] border-b border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-white">
+        BizLink <span class="text-purple-400">Freelancer Dashboard</span>
+      </h1>
+      <div class="space-x-3">
+        <a href="index.html" class="text-sm px-3 py-2 rounded-md border border-gray-600 text-gray-200 hover:bg-gray-700">
+          ← Back to Home
+        </a>
+        <button id="logoutBtn" class="text-sm px-3 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 hidden">
+          Logout
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
-  <main class="max-w-6xl mx-auto px-4 py-8">
-    <!-- TOP BAR -->
-    <section class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-      <div>
-        <h1 class="text-3xl md:text-4xl font-bold text-white">Freelancer Dashboard</h1>
-        <p class="text-gray-400 text-sm mt-1">
-          Accept works, submit files and track your payments.
-        </p>
+  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Top summary -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="card-bg rounded-xl p-4">
+        <p class="text-sm text-gray-400">Pending Works</p>
+        <p id="pendingCount" class="text-2xl font-bold mt-1">0</p>
       </div>
-      <div class="text-right">
-        <p id="freelancerEmail" class="text-sm text-gray-300"></p>
-        <p id="authWarning" class="text-xs text-red-400 mt-1 hidden">
-          Not logged in. Redirecting to login...
-        </p>
+      <div class="card-bg rounded-xl p-4">
+        <p class="text-sm text-gray-400">In Progress</p>
+        <p id="inProgressCount" class="text-2xl font-bold mt-1">0</p>
+      </div>
+      <div class="card-bg rounded-xl p-4">
+        <p class="text-sm text-gray-400">Completed</p>
+        <p id="completedCount" class="text-2xl font-bold mt-1">0</p>
       </div>
     </section>
 
-    <!-- TABS -->
-    <section class="mb-4 border-b border-gray-700">
-      <nav class="-mb-px flex space-x-6" id="dashTabs">
-        <button data-target="tabAvailable" class="py-2 px-1 border-b-2 border-purple-500 text-purple-400 text-sm font-semibold">
-          Available Works
-        </button>
-        <button data-target="tabMyWorks" class="py-2 px-1 border-b-2 border-transparent text-gray-400 text-sm">
-          My Accepted Works
-        </button>
-        <button data-target="tabPayments" class="py-2 px-1 border-b-2 border-transparent text-gray-400 text-sm">
-          Payments
-        </button>
-      </nav>
+    <!-- Work list -->
+    <section class="card-bg rounded-xl p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold text-white">Assigned Works</h2>
+        <span class="text-xs text-gray-400">Demo data (later Google Sheet / Firebase se connect karenge)</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-900">
+            <tr>
+              <th class="px-3 py-2 text-left">Title</th>
+              <th class="px-3 py-2 text-left">Client</th>
+              <th class="px-3 py-2 text-left">Budget</th>
+              <th class="px-3 py-2 text-left">Status</th>
+              <th class="px-3 py-2 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="workTableBody">
+            <!-- JS se rows aayengi -->
+          </tbody>
+        </table>
+      </div>
     </section>
 
-    <!-- AVAILABLE WORKS -->
-    <section id="tabAvailable" class="tab-panel">
-      <h2 class="text-xl font-semibold mb-3">Available Works</h2>
-      <p class="text-gray-400 text-sm mb-4">
-        Ye list woh projects hai jo abhi kisi freelancer ne accept nahi kiye. Aap directly yahan se “Accept” kar sakte ho.
-      </p>
-      <div id="availableContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div class="col-span-full text-center text-gray-400 text-sm">
-          Loading works...
+    <!-- Submit work modal (simple) -->
+    <section class="card-bg rounded-xl p-5">
+      <h2 class="text-lg font-semibold mb-3">Submit Files (Demo Form)</h2>
+      <form id="submitForm" class="space-y-3">
+        <div class="grid md:grid-cols-2 gap-3">
+          <input id="workIdInput" type="text" placeholder="Work ID" class="w-full px-3 py-2 rounded-md bg-gray-900 border border-gray-700 text-sm" required>
+          <input id="fileLinkInput" type="text" placeholder="File link (Google Drive / WeTransfer)" class="w-full px-3 py-2 rounded-md bg-gray-900 border border-gray-700 text-sm" required>
         </div>
-      </div>
+        <textarea id="noteInput" rows="3" placeholder="Notes for client (optional)" class="w-full px-3 py-2 rounded-md bg-gray-900 border border-gray-700 text-sm"></textarea>
+        <button type="submit" class="button-gradient px-4 py-2 rounded-md text-sm font-semibold">
+          Submit Work (Demo)
+        </button>
+        <p id="submitStatus" class="text-xs text-gray-400 mt-2"></p>
+      </form>
     </section>
 
-    <!-- MY ACCEPTED WORKS -->
-    <section id="tabMyWorks" class="tab-panel hidden">
-      <h2 class="text-xl font-semibold mb-3">My Accepted Works</h2>
-      <p class="text-gray-400 text-sm mb-4">
-        Yahan sirf woh kaam dikhenge jo aapne accept kiye hain. Yahi se aap files submit kar sakte ho.
-      </p>
-      <div id="myWorksContainer" class="space-y-4">
-        <div class="text-center text-gray-400 text-sm">
-          Loading your works...
-        </div>
-      </div>
-    </section>
-
-    <!-- PAYMENTS -->
-    <section id="tabPayments" class="tab-panel hidden">
-      <h2 class="text-xl font-semibold mb-3">Payment Status</h2>
-      <p class="text-gray-400 text-sm mb-4">
-        Har work ke against aapko payment ka status dikhega – Pending / Under Review / Paid.
-      </p>
-      <div id="paymentsContainer" class="space-y-3">
-        <div class="text-center text-gray-400 text-sm">
-          Loading payments...
-        </div>
-      </div>
-    </section>
   </main>
 
-  <!-- Toast -->
-  <div id="toast" class="fixed bottom-4 right-4 bg-purple-600 text-white px-4 py-2 rounded shadow-lg hidden">
-    Action completed
-  </div>
-
-  <!-- Firebase -->
+  <!-- Firebase (optional if you want auth check) -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-
-  <!-- MAIN SCRIPT -->
   <script>
-    // SAME scriptURL jo index.html me use ho raha hai
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxVAjCB6WjXW6j3a8mWKi4ECUui_KTz3YoFkPgNVYuI9Om8ar1rhNNBi3BdZqjJMjYwwg/exec";
-
-    // 🔹 YOUR FIREBASE CONFIG (same as index.html)
+    // SAME config jo index.html me hai
     const firebaseConfig = {
       apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
       authDomain: "bizlink-exchange.firebaseapp.com",
@@ -143,320 +110,116 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    let currentUserEmail = null;
+    const logoutBtn = document.getElementById('logoutBtn');
 
-    const emailLabel = document.getElementById("freelancerEmail");
-    const authWarning = document.getElementById("authWarning");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    const availableContainer = document.getElementById("availableContainer");
-    const myWorksContainer = document.getElementById("myWorksContainer");
-    const paymentsContainer = document.getElementById("paymentsContainer");
-
-    // AUTH STATE
     auth.onAuthStateChanged(user => {
-      if (!user) {
-        authWarning.classList.remove("hidden");
-        emailLabel.textContent = "";
-        setTimeout(() => { window.location.href = "login.html"; }, 1500);
-        return;
+      if (user) {
+        logoutBtn.classList.remove('hidden');
+      } else {
+        // Agar login nahi hai to index pe bhej do
+        // window.location.href = "login.html";  // agar strict chahiye to uncomment karo
       }
-      currentUserEmail = user.email;
-      emailLabel.textContent = "Logged in as: " + currentUserEmail;
-      logoutBtn.classList.remove("hidden");
-
-      // Load data after login
-      loadAvailableWorks();
-      loadMyWorksAndPayments();
     });
 
-    logoutBtn.addEventListener("click", () => {
+    logoutBtn.addEventListener('click', () => {
       auth.signOut().then(() => {
-        window.location.href = "login.html";
-      });
-    });
-
-    // TOAST HELPER
-    function showToast(message) {
-      const t = document.getElementById("toast");
-      t.textContent = message || "Action completed";
-      t.classList.remove("hidden");
-      setTimeout(() => t.classList.add("hidden"), 2500);
-    }
-
-    // 1) AVAILABLE WORKS (sheet = works)
-    async function loadAvailableWorks() {
-      try {
-        const res = await fetch(`${scriptURL}?sheet=works`);
-        const text = await res.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (e) {
-          console.error("Available works JSON error:", text);
-          availableContainer.innerHTML = "<div class='col-span-full text-center text-red-500 text-sm'>Data format error from works sheet.</div>";
-          return;
-        }
-
-        if (!Array.isArray(data) || !data.length) {
-          availableContainer.innerHTML = "<div class='col-span-full text-center text-gray-400 text-sm'>No open works right now.</div>";
-          return;
-        }
-
-        availableContainer.innerHTML = "";
-        data.forEach(work => {
-          // yahan hum assume kar rahe hain ki sheet me ye columns hai:
-          // Title, Description, Budget, Category, City, PostedOn, AssignedTo (optional)
-          if (work.AssignedTo && work.AssignedTo.trim() !== "") {
-            // already taken, skip in Available list
-            return;
-          }
-
-          const card = document.createElement("div");
-          card.className = "card-bg rounded-xl p-5 shadow-lg hover:shadow-xl border-purple-hover transition transform hover:-translate-y-1";
-
-          const posted = work.PostedOn ? new Date(work.PostedOn) : null;
-
-          card.innerHTML = `
-            <span class="badge inline-block bg-blue-600 text-white px-2 py-1 rounded mb-2">
-              ${work.Category || "General"}
-            </span>
-            <h3 class="text-lg font-semibold text-white mb-1">${work.Title || "No Title"}</h3>
-            <p class="text-sm text-gray-300 mb-2">${work.Description || "No description"}</p>
-            <p class="text-xs text-gray-400 mb-1">
-              Budget: <span class="text-green-400">₹${work.Budget || "N/A"}</span>
-            </p>
-            <p class="text-xs text-gray-500 mb-3">
-              ${work.City || ""} ${posted ? "• " + posted.toLocaleString() : ""}
-            </p>
-            <button class="button-gradient text-white px-4 py-2 rounded-md text-sm font-semibold w-full">
-              Accept Work
-            </button>
-          `;
-
-          const btn = card.querySelector("button");
-          btn.addEventListener("click", () => {
-            if (!currentUserEmail) {
-              alert("Please login again.");
-              return;
-            }
-            acceptWork(work);
-          });
-
-          availableContainer.appendChild(card);
-        });
-
-        if (!availableContainer.hasChildNodes()) {
-          availableContainer.innerHTML = "<div class='col-span-full text-center text-gray-400 text-sm'>All works are already assigned.</div>";
-        }
-      } catch (err) {
-        console.error("Error loading available works:", err);
-        availableContainer.innerHTML = "<div class='col-span-full text-center text-red-500 text-sm'>Error loading works.</div>";
-      }
-    }
-
-    // ACCEPT WORK
-    async function acceptWork(work) {
-      if (!currentUserEmail) return;
-
-      if (!confirm("Ye work accept karna hai?")) return;
-
-      const fd = new FormData();
-      fd.append("sheet", "freelancer_works");  // aapko Apps Script side pe ye sheet handle karni hogi
-      fd.append("action", "accept");
-      fd.append("Title", work.Title || "");
-      fd.append("Description", work.Description || "");
-      fd.append("Budget", work.Budget || "");
-      fd.append("Category", work.Category || "");
-      fd.append("City", work.City || "");
-      fd.append("PostedOn", work.PostedOn || "");
-      fd.append("FreelancerEmail", currentUserEmail);
-      fd.append("Status", "Accepted");
-
-      try {
-        const res = await fetch(scriptURL, { method: "POST", body: fd });
-        if (!res.ok) {
-          alert("Failed to accept work (HTTP error).");
-          return;
-        }
-        showToast("Work accepted!");
-        // reload lists
-        loadAvailableWorks();
-        loadMyWorksAndPayments();
-      } catch (err) {
-        console.error("Accept work error:", err);
-        alert("Network error while accepting work.");
-      }
-    }
-
-    // 2) MY WORKS + PAYMENTS (sheet = freelancer_works / freelancer_payments)
-    async function loadMyWorksAndPayments() {
-      if (!currentUserEmail) return;
-
-      // MY WORKS
-      try {
-        const res = await fetch(`${scriptURL}?sheet=freelancer_works&email=${encodeURIComponent(currentUserEmail)}`);
-        const txt = await res.text();
-        let data;
-        try {
-          data = JSON.parse(txt);
-        } catch (e) {
-          console.error("My works JSON error:", txt);
-          myWorksContainer.innerHTML = "<div class='text-center text-red-500 text-sm'>Data format error from freelancer_works sheet.</div>";
-          gotoPaymentsFallback();
-          return;
-        }
-
-        if (!Array.isArray(data) || !data.length) {
-          myWorksContainer.innerHTML = "<div class='text-center text-gray-400 text-sm'>No accepted works yet.</div>";
-        } else {
-          myWorksContainer.innerHTML = "";
-          data.forEach(row => {
-            const box = document.createElement("div");
-            box.className = "card-bg rounded-xl p-5 border border-gray-700";
-
-            const posted = row.PostedOn ? new Date(row.PostedOn) : null;
-
-            box.innerHTML = `
-              <div class="flex justify-between items-start mb-2">
-                <div>
-                  <h3 class="text-lg font-semibold text-white">${row.Title || "No Title"}</h3>
-                  <p class="text-xs text-gray-400">
-                    Budget: <span class="text-green-400">₹${row.Budget || "N/A"}</span> • Status: <span class="text-yellow-300">${row.Status || "Accepted"}</span>
-                  </p>
-                  <p class="text-xs text-gray-500 mt-1">${row.City || ""} ${posted ? "• " + posted.toLocaleString() : ""}</p>
-                </div>
-              </div>
-              <p class="text-sm text-gray-300 mb-3">${row.Description || ""}</p>
-
-              <div class="mt-3 border-t border-gray-700 pt-3">
-                <p class="text-xs text-gray-400 mb-1">Submit your work (Drive link / zip link):</p>
-                <input type="url" class="input-dark w-full p-2 rounded mb-2 text-sm" placeholder="https://drive.google.com/your-file-link" />
-                <textarea class="input-dark w-full p-2 rounded mb-2 text-sm" rows="2" placeholder="Any notes for client (optional)"></textarea>
-                <button class="button-gradient w-full py-2 rounded text-sm font-semibold">Submit Files</button>
-              </div>
-            `;
-
-            const urlInput = box.querySelector("input[type='url']");
-            const notesArea = box.querySelector("textarea");
-            const submitBtn = box.querySelector("button");
-
-            submitBtn.addEventListener("click", () => {
-              const link = urlInput.value.trim();
-              const notes = notesArea.value.trim();
-              if (!link) {
-                alert("Please add a valid file link.");
-                return;
-              }
-              submitWorkFiles(row, link, notes);
-            });
-
-            myWorksContainer.appendChild(box);
-          });
-        }
-      } catch (err) {
-        console.error("Error loading my works:", err);
-        myWorksContainer.innerHTML = "<div class='text-center text-red-500 text-sm'>Error loading your works.</div>";
-      }
-
-      // PAYMENTS
-      try {
-        const res2 = await fetch(`${scriptURL}?sheet=freelancer_payments&email=${encodeURIComponent(currentUserEmail)}`);
-        const txt2 = await res2.text();
-        let data2;
-        try {
-          data2 = JSON.parse(txt2);
-        } catch (e) {
-          console.error("Payments JSON error:", txt2);
-          paymentsContainer.innerHTML = "<div class='text-center text-red-500 text-sm'>Data format error from freelancer_payments sheet.</div>";
-          return;
-        }
-
-        if (!Array.isArray(data2) || !data2.length) {
-          paymentsContainer.innerHTML = "<div class='text-center text-gray-400 text-sm'>No payments recorded yet.</div>";
-        } else {
-          paymentsContainer.innerHTML = "";
-          data2.forEach(row => {
-            const line = document.createElement("div");
-            line.className = "card-bg rounded-xl p-4 flex justify-between items-center border border-gray-700";
-            line.innerHTML = `
-              <div>
-                <p class="text-sm text-white font-semibold">${row.Title || "Work"}</p>
-                <p class="text-xs text-gray-400">Amount: <span class="text-green-400">₹${row.Amount || "N/A"}</span></p>
-              </div>
-              <div class="text-right">
-                <p class="text-xs">
-                  Status:
-                  <span class="${
-                    row.Status === "Paid"
-                      ? "text-green-400"
-                      : row.Status === "Under Review"
-                      ? "text-yellow-300"
-                      : "text-red-400"
-                  } font-semibold">
-                    ${row.Status || "Pending"}
-                  </span>
-                </p>
-                <p class="text-[11px] text-gray-500 mt-1">${row.UpdatedOn || ""}</p>
-              </div>
-            `;
-            paymentsContainer.appendChild(line);
-          });
-        }
-      } catch (err) {
-        console.error("Error loading payments:", err);
-        paymentsContainer.innerHTML = "<div class='text-center text-red-500 text-sm'>Error loading payment info.</div>";
-      }
-    }
-
-    function gotoPaymentsFallback() {
-      paymentsContainer.innerHTML = "<div class='text-center text-gray-400 text-sm'>Payment info will appear once works are accepted.</div>";
-    }
-
-    // SUBMIT WORK FILES
-    async function submitWorkFiles(row, link, notes) {
-      const fd = new FormData();
-      fd.append("sheet", "freelancer_submissions"); // Apps Script me handle karna hoga
-      fd.append("action", "submit");
-      fd.append("Title", row.Title || "");
-      fd.append("FreelancerEmail", currentUserEmail || "");
-      fd.append("FileLink", link);
-      fd.append("Notes", notes || "");
-      fd.append("SubmittedOn", new Date().toISOString());
-
-      try {
-        const res = await fetch(scriptURL, { method: "POST", body: fd });
-        if (!res.ok) {
-          alert("Failed to submit files (HTTP error).");
-          return;
-        }
-        showToast("Files submitted!");
-      } catch (err) {
-        console.error("Submit files error:", err);
-        alert("Network error while submitting files.");
-      }
-    }
-
-    // SIMPLE TAB SWITCHING
-    const dashTabs = document.getElementById("dashTabs");
-    const tabPanels = document.querySelectorAll(".tab-panel");
-
-    dashTabs.addEventListener("click", (e) => {
-      if (e.target.tagName !== "BUTTON") return;
-      const targetId = e.target.getAttribute("data-target");
-
-      dashTabs.querySelectorAll("button").forEach(btn => {
-        btn.classList.remove("border-purple-500", "text-purple-400", "font-semibold");
-        btn.classList.add("border-transparent", "text-gray-400");
-      });
-
-      e.target.classList.remove("border-transparent", "text-gray-400");
-      e.target.classList.add("border-purple-500", "text-purple-400", "font-semibold");
-
-      tabPanels.forEach(panel => {
-        panel.classList.toggle("hidden", panel.id !== targetId);
+        alert("Logged out");
+        window.location.href = "index.html";
       });
     });
   </script>
+
+  <!-- Dashboard demo logic -->
+  <script>
+    // Demo works data (baad me yahi structure Google Sheet / Firestore se aayega)
+    const works = [
+      { id: 'W101', title: 'Salon Instagram Reels Pack', client: 'Glow Salon Jaipur', budget: '₹3,000', status: 'Pending' },
+      { id: 'W102', title: 'Restaurant Menu Photoshoot Edit', client: 'Spice Hub', budget: '₹4,500', status: 'In Progress' },
+      { id: 'W103', title: 'Gym Branding Posts (15)', client: 'IronFit Gym', budget: '₹5,000', status: 'Completed' }
+    ];
+
+    const workTableBody = document.getElementById('workTableBody');
+    const pendingCount = document.getElementById('pendingCount');
+    const inProgressCount = document.getElementById('inProgressCount');
+    const completedCount = document.getElementById('completedCount');
+
+    function renderWorks() {
+      workTableBody.innerHTML = "";
+      let p = 0, ip = 0, c = 0;
+
+      works.forEach(work => {
+        if (work.status === 'Pending') p++;
+        if (work.status === 'In Progress') ip++;
+        if (work.status === 'Completed') c++;
+
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-gray-800";
+        tr.innerHTML = `
+          <td class="px-3 py-2">${work.title}<div class="text-xs text-gray-400">${work.id}</div></td>
+          <td class="px-3 py-2">${work.client}</td>
+          <td class="px-3 py-2">${work.budget}</td>
+          <td class="px-3 py-2">${work.status}</td>
+          <td class="px-3 py-2 space-x-2">
+            <button class="text-xs px-2 py-1 rounded-md border border-gray-600 hover:bg-gray-700" data-action="accept" data-id="${work.id}">
+              Accept
+            </button>
+            <button class="text-xs px-2 py-1 rounded-md border border-gray-600 hover:bg-gray-700" data-action="fill" data-id="${work.id}">
+              Fill Submit Form
+            </button>
+          </td>
+        `;
+        workTableBody.appendChild(tr);
+      });
+
+      pendingCount.textContent = p;
+      inProgressCount.textContent = ip;
+      completedCount.textContent = c;
+    }
+
+    // Action buttons
+    workTableBody.addEventListener('click', (e) => {
+      const btn = e.target;
+      const action = btn.getAttribute('data-action');
+      const id = btn.getAttribute('data-id');
+      if (!action || !id) return;
+
+      const work = works.find(w => w.id === id);
+      if (!work) return;
+
+      if (action === 'accept') {
+        if (work.status === 'Pending') {
+          work.status = 'In Progress';
+          renderWorks();
+        }
+      }
+
+      if (action === 'fill') {
+        document.getElementById('workIdInput').value = id;
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }
+    });
+
+    // Submit form demo
+    const submitForm = document.getElementById('submitForm');
+    const submitStatus = document.getElementById('submitStatus');
+
+    submitForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const workId = document.getElementById('workIdInput').value.trim();
+      const link = document.getElementById('fileLinkInput').value.trim();
+
+      if (!workId || !link) {
+        submitStatus.textContent = "Please enter Work ID and file link.";
+        return;
+      }
+
+      submitStatus.textContent = "Demo: Work submitted locally (later this will go to Google Sheet / Database).";
+      submitForm.reset();
+    });
+
+    // Initial render
+    renderWorks();
+  </script>
+
 </body>
 </html>
