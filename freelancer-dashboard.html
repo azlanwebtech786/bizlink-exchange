@@ -1,103 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Freelancer Dashboard | BizLink Exchange</title>
+
+  <!-- Tailwind & Fonts -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: 'Poppins', sans-serif; background-color: #0b0d1e; color: #e0e0e0; }
-    .card-bg { background-color: #1a1e3a; border: 1px solid rgba(255,255,255,0.1); }
-    .button-gradient { background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%); }
-    .border-purple-hover:hover { border-color: #a855f7; }
+    body{font-family:'Poppins',sans-serif;background:#0b0d1e;color:#e0e0e0}
+    .card-bg{background:#1a1e3a;border:1px solid rgba(255,255,255,.1)}
+    .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
+    .tab-button{color:#9ca3af;border-bottom:2px solid transparent}
+    .tab-button.active{color:#a855f7;border-bottom-color:#a855f7;font-weight:600}
+    .input-dark{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff}
+    .input-dark::placeholder{color:rgba(255,255,255,.6)}
+    .section{padding-top:2rem;padding-bottom:2rem}
   </style>
 </head>
-<body class="min-h-screen">
+<body class="text-gray-200">
 
-  <!-- Simple header -->
-  <header class="bg-[#0b0d1e] border-b border-gray-800">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <h1 class="text-xl font-bold text-white">
-        BizLink <span class="text-purple-400">Freelancer Dashboard</span>
+  <!-- Header -->
+  <header class="sticky top-0 bg-[#0b0d1e] z-40 shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-xl md:text-2xl font-bold text-white">
+        BizLink <span class="text-purple-400">Freelancer Panel</span>
       </h1>
-      <div class="space-x-3">
-        <a href="index.html" class="text-sm px-3 py-2 rounded-md border border-gray-600 text-gray-200 hover:bg-gray-700">
-          ← Back to Home
-        </a>
-        <button id="logoutBtn" class="text-sm px-3 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 hidden">
+      <div class="flex items-center gap-3">
+        <span id="freelancerEmail" class="text-sm text-gray-300 hidden"></span>
+        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-semibold">
           Logout
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+  <main class="max-w-6xl mx-auto px-4 section">
+    <!-- Tabs -->
+    <nav class="-mb-px flex space-x-6 overflow-x-auto no-scrollbar border-b border-gray-700 mb-6" id="dashTabs">
+      <button data-target="tabAvailable" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 text-sm active">
+        Available Work
+      </button>
+      <button data-target="tabMyWork" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 text-sm">
+        My Active Work
+      </button>
+      <button data-target="tabPayments" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 text-sm">
+        Payments & History
+      </button>
+    </nav>
 
-    <!-- Top summary -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="card-bg rounded-xl p-4">
-        <p class="text-sm text-gray-400">Pending Works</p>
-        <p id="pendingCount" class="text-2xl font-bold mt-1">0</p>
-      </div>
-      <div class="card-bg rounded-xl p-4">
-        <p class="text-sm text-gray-400">In Progress</p>
-        <p id="inProgressCount" class="text-2xl font-bold mt-1">0</p>
-      </div>
-      <div class="card-bg rounded-xl p-4">
-        <p class="text-sm text-gray-400">Completed</p>
-        <p id="completedCount" class="text-2xl font-bold mt-1">0</p>
-      </div>
-    </section>
-
-    <!-- Work list -->
-    <section class="card-bg rounded-xl p-5">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-lg font-semibold text-white">Assigned Works</h2>
-        <span class="text-xs text-gray-400">Demo data (later Google Sheet / Firebase se connect karenge)</span>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-          <thead class="bg-gray-900">
-            <tr>
-              <th class="px-3 py-2 text-left">Title</th>
-              <th class="px-3 py-2 text-left">Client</th>
-              <th class="px-3 py-2 text-left">Budget</th>
-              <th class="px-3 py-2 text-left">Status</th>
-              <th class="px-3 py-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="workTableBody">
-            <!-- JS se rows aayengi -->
-          </tbody>
-        </table>
+    <!-- AVAILABLE WORK -->
+    <section id="tabAvailable" class="tab-pane">
+      <h2 class="text-2xl font-semibold mb-4">Available Work</h2>
+      <p class="text-sm text-gray-400 mb-3">
+        Ye sab open works hai. <span class="text-purple-300">“Accept Work”</span> pe click karke apne naam par lock kar sakte ho.
+      </p>
+      <div id="availableWorks" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="col-span-full text-center text-gray-400">Loading available work...</div>
       </div>
     </section>
 
-    <!-- Submit work modal (simple) -->
-    <section class="card-bg rounded-xl p-5">
-      <h2 class="text-lg font-semibold mb-3">Submit Files (Demo Form)</h2>
-      <form id="submitForm" class="space-y-3">
-        <div class="grid md:grid-cols-2 gap-3">
-          <input id="workIdInput" type="text" placeholder="Work ID" class="w-full px-3 py-2 rounded-md bg-gray-900 border border-gray-700 text-sm" required>
-          <input id="fileLinkInput" type="text" placeholder="File link (Google Drive / WeTransfer)" class="w-full px-3 py-2 rounded-md bg-gray-900 border border-gray-700 text-sm" required>
-        </div>
-        <textarea id="noteInput" rows="3" placeholder="Notes for client (optional)" class="w-full px-3 py-2 rounded-md bg-gray-900 border border-gray-700 text-sm"></textarea>
-        <button type="submit" class="button-gradient px-4 py-2 rounded-md text-sm font-semibold">
-          Submit Work (Demo)
-        </button>
-        <p id="submitStatus" class="text-xs text-gray-400 mt-2"></p>
-      </form>
+    <!-- MY WORK -->
+    <section id="tabMyWork" class="tab-pane hidden">
+      <h2 class="text-2xl font-semibold mb-4">My Active Work</h2>
+      <p class="text-sm text-gray-400 mb-3">
+        Yahan sirf woh projects aayenge jo <span class="text-green-400">tumne accept kiye</span>.
+        Har project ke niche “Submit Files / Links” ka form hoga.
+      </p>
+      <div id="myWorks" class="space-y-4">
+        <div class="text-center text-gray-400">Loading your work...</div>
+      </div>
     </section>
 
+    <!-- PAYMENTS -->
+    <section id="tabPayments" class="tab-pane hidden">
+      <h2 class="text-2xl font-semibold mb-4">Payments & History</h2>
+      <p class="text-sm text-gray-400 mb-3">
+        Ye section sirf <span class="text-yellow-300">read-only</span> hai. Data Google Sheet / Apps Script se aayega.
+      </p>
+      <div id="paymentList" class="space-y-3">
+        <div class="text-center text-gray-400">Loading payment history...</div>
+      </div>
+    </section>
   </main>
 
-  <!-- Firebase (optional if you want auth check) -->
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg hidden z-50 text-sm">
+    Action done!
+  </div>
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
   <script>
-    // SAME config jo index.html me hai
+    // SAME CONFIG as index.html
     const firebaseConfig = {
       apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
       authDomain: "bizlink-exchange.firebaseapp.com",
@@ -109,117 +108,306 @@
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+  </script>
 
-    const logoutBtn = document.getElementById('logoutBtn');
+  <!-- Dashboard Logic -->
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxVAjCB6WjXW6j3a8mWKi4ECUui_KTz3YoFkPgNVYuI9Om8ar1rhNNBi3BdZqjJMjYwwg/exec";
 
+    const availableContainer = document.getElementById('availableWorks');
+    const myWorksContainer   = document.getElementById('myWorks');
+    const paymentContainer   = document.getElementById('paymentList');
+    const toastEl            = document.getElementById('toast');
+    const emailSpan          = document.getElementById('freelancerEmail');
+    const logoutBtn          = document.getElementById('logoutBtn');
+
+    let currentUserEmail = null;
+
+    // ✅ AUTH GUARD
     auth.onAuthStateChanged(user => {
-      if (user) {
-        logoutBtn.classList.remove('hidden');
+      if (!user) {
+        // Not logged in → redirect to login
+        window.location.href = "login.html";
       } else {
-        // Agar login nahi hai to index pe bhej do
-        // window.location.href = "login.html";  // agar strict chahiye to uncomment karo
+        currentUserEmail = user.email;
+        emailSpan.textContent = currentUserEmail;
+        emailSpan.classList.remove('hidden');
+        loadAllData();
       }
     });
 
     logoutBtn.addEventListener('click', () => {
       auth.signOut().then(() => {
-        alert("Logged out");
-        window.location.href = "index.html";
+        window.location.href = "login.html";
+      }).catch(e => console.error("Logout error:", e));
+    });
+
+    // ✅ TABS
+    const dashTabs = document.getElementById('dashTabs');
+    const panes = document.querySelectorAll('.tab-pane');
+
+    dashTabs.addEventListener('click', (e) => {
+      if (e.target.tagName !== "BUTTON") return;
+      const targetId = e.target.getAttribute('data-target');
+
+      dashTabs.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+      e.target.classList.add('active');
+
+      panes.forEach(p => {
+        p.classList.toggle('hidden', p.id !== targetId);
       });
     });
-  </script>
 
-  <!-- Dashboard demo logic -->
-  <script>
-    // Demo works data (baad me yahi structure Google Sheet / Firestore se aayega)
-    const works = [
-      { id: 'W101', title: 'Salon Instagram Reels Pack', client: 'Glow Salon Jaipur', budget: '₹3,000', status: 'Pending' },
-      { id: 'W102', title: 'Restaurant Menu Photoshoot Edit', client: 'Spice Hub', budget: '₹4,500', status: 'In Progress' },
-      { id: 'W103', title: 'Gym Branding Posts (15)', client: 'IronFit Gym', budget: '₹5,000', status: 'Completed' }
-    ];
-
-    const workTableBody = document.getElementById('workTableBody');
-    const pendingCount = document.getElementById('pendingCount');
-    const inProgressCount = document.getElementById('inProgressCount');
-    const completedCount = document.getElementById('completedCount');
-
-    function renderWorks() {
-      workTableBody.innerHTML = "";
-      let p = 0, ip = 0, c = 0;
-
-      works.forEach(work => {
-        if (work.status === 'Pending') p++;
-        if (work.status === 'In Progress') ip++;
-        if (work.status === 'Completed') c++;
-
-        const tr = document.createElement('tr');
-        tr.className = "border-b border-gray-800";
-        tr.innerHTML = `
-          <td class="px-3 py-2">${work.title}<div class="text-xs text-gray-400">${work.id}</div></td>
-          <td class="px-3 py-2">${work.client}</td>
-          <td class="px-3 py-2">${work.budget}</td>
-          <td class="px-3 py-2">${work.status}</td>
-          <td class="px-3 py-2 space-x-2">
-            <button class="text-xs px-2 py-1 rounded-md border border-gray-600 hover:bg-gray-700" data-action="accept" data-id="${work.id}">
-              Accept
-            </button>
-            <button class="text-xs px-2 py-1 rounded-md border border-gray-600 hover:bg-gray-700" data-action="fill" data-id="${work.id}">
-              Fill Submit Form
-            </button>
-          </td>
-        `;
-        workTableBody.appendChild(tr);
-      });
-
-      pendingCount.textContent = p;
-      inProgressCount.textContent = ip;
-      completedCount.textContent = c;
+    // ✅ Toast helper
+    function showToast(msg = "Action done!") {
+      toastEl.textContent = msg;
+      toastEl.classList.remove('hidden');
+      setTimeout(() => toastEl.classList.add('hidden'), 2500);
     }
 
-    // Action buttons
-    workTableBody.addEventListener('click', (e) => {
-      const btn = e.target;
-      const action = btn.getAttribute('data-action');
-      const id = btn.getAttribute('data-id');
-      if (!action || !id) return;
+    // =========================
+    // 1) AVAILABLE WORK LOADER
+    // =========================
+    async function loadAvailableWork() {
+      availableContainer.innerHTML = "<div class='col-span-full text-center text-gray-400'>Loading available work...</div>";
+      try {
+        const res = await fetch(`${scriptURL}?sheet=works`);
+        const data = await res.json(); // yahan tumhara Apps Script array return karega
 
-      const work = works.find(w => w.id === id);
-      if (!work) return;
-
-      if (action === 'accept') {
-        if (work.status === 'Pending') {
-          work.status = 'In Progress';
-          renderWorks();
+        if (!Array.isArray(data) || !data.length) {
+          availableContainer.innerHTML = "<div class='col-span-full text-center text-gray-400'>No open work right now.</div>";
+          return;
         }
+
+        availableContainer.innerHTML = "";
+        data.forEach(work => {
+          // BACKEND RULE (You set in Google Sheet):
+          // Status column = 'Open' / 'Assigned' / 'Completed'
+          if (work.Status && work.Status.toLowerCase() !== "open") return;
+
+          const card = document.createElement('div');
+          card.className = "card-bg rounded-xl p-4 flex flex-col justify-between";
+
+          card.innerHTML = `
+            <div>
+              <h3 class="text-lg font-semibold mb-1">${work.Title || "No Title"}</h3>
+              <p class="text-sm text-gray-300 mb-2">${work.Description || ""}</p>
+              <p class="text-xs text-gray-400 mb-1">
+                Budget: <span class="text-green-400">₹${work.Budget || "N/A"}</span>
+              </p>
+              <p class="text-xs text-gray-400 mb-1">
+                Category: ${work.Category || "N/A"} • City: ${work.City || "N/A"}
+              </p>
+              <p class="text-[11px] text-gray-500">
+                Posted: ${work.PostedOn ? new Date(work.PostedOn).toLocaleString() : ""}
+              </p>
+            </div>
+            <button class="mt-3 button-gradient w-full py-2 rounded-md text-sm font-semibold accept-btn">
+              Accept Work
+            </button>
+          `;
+
+          const btn = card.querySelector('.accept-btn');
+          btn.addEventListener('click', () => acceptWork(work));
+
+          availableContainer.appendChild(card);
+        });
+
+        if (!availableContainer.children.length) {
+          availableContainer.innerHTML = "<div class='col-span-full text-center text-gray-400'>No open work right now.</div>";
+        }
+
+      } catch (err) {
+        console.error("loadAvailableWork error:", err);
+        availableContainer.innerHTML = "<div class='col-span-full text-center text-red-500'>Error loading work list.</div>";
       }
+    }
 
-      if (action === 'fill') {
-        document.getElementById('workIdInput').value = id;
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    // =========================
+    // 2) ACCEPT WORK
+    // =========================
+    async function acceptWork(work) {
+      if (!currentUserEmail) return;
+
+      // Tum Apps Script side pe 'freelancer_actions' ya 'work_actions' sheet banaoge.
+      // Columns example:
+      // Timestamp | Action | WorkID | WorkTitle | FreelancerEmail | Status
+
+      const fd = new FormData();
+      fd.append('sheet', 'work_actions');
+      fd.append('Action', 'accept');
+      fd.append('WorkID', work.ID || work.WorkID || "");   // tum apne sheet me jo ID rakhoge, yahan match karna
+      fd.append('WorkTitle', work.Title || "");
+      fd.append('FreelancerEmail', currentUserEmail);
+      fd.append('Status', 'Assigned');
+
+      try {
+        const res = await fetch(scriptURL, { method: 'POST', body: fd });
+        if (res.ok) {
+          showToast("Work accepted!");
+          // Refresh both lists
+          loadAvailableWork();
+          loadMyWork();
+        } else {
+          showToast("Failed to accept. Try again.");
+        }
+      } catch (err) {
+        console.error("acceptWork error:", err);
+        showToast("Network error.");
       }
-    });
+    }
 
-    // Submit form demo
-    const submitForm = document.getElementById('submitForm');
-    const submitStatus = document.getElementById('submitStatus');
+    // =========================
+    // 3) MY WORK (accepted)
+    // =========================
+    async function loadMyWork() {
+      myWorksContainer.innerHTML = "<div class='text-center text-gray-400'>Loading your work...</div>";
+      if (!currentUserEmail) return;
 
-    submitForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const workId = document.getElementById('workIdInput').value.trim();
-      const link = document.getElementById('fileLinkInput').value.trim();
+      try {
+        // ⚠️ BACKEND requirement:
+        // Apps Script me ek endpoint banao jo freelancer email ke basis pe filter kare.
+        // Example: ?sheet=myWorks&email=...
+        const res = await fetch(`${scriptURL}?sheet=myWorks&email=${encodeURIComponent(currentUserEmail)}`);
+        const data = await res.json();
 
-      if (!workId || !link) {
-        submitStatus.textContent = "Please enter Work ID and file link.";
+        if (!Array.isArray(data) || !data.length) {
+          myWorksContainer.innerHTML = "<div class='text-center text-gray-400'>No active projects yet.</div>";
+          return;
+        }
+
+        myWorksContainer.innerHTML = "";
+        data.forEach(work => {
+          const card = document.createElement('div');
+          card.className = "card-bg rounded-xl p-4";
+
+          const workId = work.WorkID || work.ID || "";
+
+          card.innerHTML = `
+            <div class="mb-3">
+              <h3 class="text-lg font-semibold mb-1">${work.Title || "No Title"}</h3>
+              <p class="text-sm text-gray-300 mb-1">${work.Description || ""}</p>
+              <p class="text-xs text-gray-400 mb-1">
+                Budget: <span class="text-green-400">₹${work.Budget || "N/A"}</span> • Status: ${work.Status || "Assigned"}
+              </p>
+              <p class="text-[11px] text-gray-500 mb-1">
+                Deadline: ${work.Deadline || "Not set"}
+              </p>
+            </div>
+
+            <form class="submit-form space-y-2 mt-3 border-t border-gray-700 pt-3">
+              <p class="text-xs text-gray-400">Submit files / links (Google Drive, Figma, Docs etc.)</p>
+              <input type="text" name="fileLinks" required placeholder="Paste links here"
+                     class="input-dark w-full p-2 rounded text-sm" />
+              <textarea name="notes" rows="2" placeholder="Notes for client / reviewer (optional)"
+                        class="input-dark w-full p-2 rounded text-sm"></textarea>
+              <button type="submit" class="button-gradient w-full py-2 rounded-md text-sm font-semibold">
+                Submit for Review
+              </button>
+            </form>
+          `;
+
+          const form = card.querySelector('.submit-form');
+          form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fileLinks = form.fileLinks.value.trim();
+            const notes = form.notes.value.trim();
+            submitWorkFiles(workId, work.Title || "", fileLinks, notes, form);
+          });
+
+          myWorksContainer.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error("loadMyWork error:", err);
+        myWorksContainer.innerHTML = "<div class='text-center text-red-500'>Error loading your work.</div>";
+      }
+    }
+
+    // =========================
+    // 4) SUBMIT FILES
+    // =========================
+    async function submitWorkFiles(workId, title, links, notes, formEl) {
+      if (!workId) {
+        showToast("Work ID missing. Backend mapping required.");
         return;
       }
 
-      submitStatus.textContent = "Demo: Work submitted locally (later this will go to Google Sheet / Database).";
-      submitForm.reset();
-    });
+      const fd = new FormData();
+      fd.append('sheet', 'work_submissions');
+      fd.append('WorkID', workId);
+      fd.append('WorkTitle', title);
+      fd.append('FreelancerEmail', currentUserEmail || "");
+      fd.append('Links', links);
+      fd.append('Notes', notes);
+      fd.append('Status', 'Submitted');
 
-    // Initial render
-    renderWorks();
+      try {
+        const res = await fetch(scriptURL, { method: 'POST', body: fd });
+        if (res.ok) {
+          showToast("Submitted for review.");
+          formEl.reset();
+        } else {
+          showToast("Submit failed. Try again.");
+        }
+      } catch (err) {
+        console.error("submitWorkFiles error:", err);
+        showToast("Network error.");
+      }
+    }
+
+    // =========================
+    // 5) PAYMENTS HISTORY
+    // =========================
+    async function loadPayments() {
+      paymentContainer.innerHTML = "<div class='text-center text-gray-400'>Loading payment history...</div>";
+      if (!currentUserEmail) return;
+
+      try {
+        // BACKEND: Google Sheet me 'payments' sheet rakho
+        // Columns: Date | WorkTitle | Amount | Status | TxnID | FreelancerEmail
+        const res = await fetch(`${scriptURL}?sheet=payments&email=${encodeURIComponent(currentUserEmail)}`);
+        const data = await res.json();
+
+        if (!Array.isArray(data) || !data.length) {
+          paymentContainer.innerHTML = "<div class='text-center text-gray-400'>No payments recorded yet.</div>";
+          return;
+        }
+
+        paymentContainer.innerHTML = "";
+        data.forEach(pay => {
+          const row = document.createElement('div');
+          row.className = "card-bg rounded-lg p-3 flex justify-between items-center text-sm";
+
+          row.innerHTML = `
+            <div>
+              <p class="font-semibold">${pay.WorkTitle || "Project"}</p>
+              <p class="text-xs text-gray-400">
+                ${pay.Date || ""} • ${pay.Status || "Pending"} • ${pay.TxnID ? ("Txn: " + pay.TxnID) : ""}
+              </p>
+            </div>
+            <div class="text-right">
+              <p class="text-green-400 font-bold">₹${pay.Amount || "0"}</p>
+            </div>
+          `;
+
+          paymentContainer.appendChild(row);
+        });
+
+      } catch (err) {
+        console.error("loadPayments error:", err);
+        paymentContainer.innerHTML = "<div class='text-center text-red-500'>Error loading payments.</div>";
+      }
+    }
+
+    // =========================
+    // 6) MASTER LOADER
+    // =========================
+    function loadAllData() {
+      loadAvailableWork();
+      loadMyWork();
+      loadPayments();
+    }
   </script>
-
 </body>
 </html>
