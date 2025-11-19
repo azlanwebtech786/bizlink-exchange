@@ -1,490 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Freelancer Dashboard | BizLink Exchange</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Tailwind & Fonts -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Poppins', sans-serif; background:#0b0d1e; color:#e5e7eb; }
-    .card-bg { background:#1a1e3a; border:1px solid rgba(255,255,255,.12); }
+    body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
+    .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.4)}
+    .pill{background:rgba(148,163,184,.15);border-radius:999px}
     .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
     .tab-button{color:#9ca3af;border-bottom:2px solid transparent}
     .tab-button.active{color:#a855f7;border-bottom-color:#a855f7;font-weight:600}
-    .status-badge{font-size:.75rem;padding:.15rem .55rem;border-radius:999px}
+    .status-pill{font-size:.7rem;padding:.18rem .55rem;border-radius:999px}
+    .status-pending{background:rgba(234,179,8,.12);color:#facc15}
+    .status-accepted{background:rgba(34,197,94,.12);color:#4ade80}
+    .status-completed{background:rgba(59,130,246,.12);color:#60a5fa}
+    .msg-bubble{max-width:85%;padding:.55rem .75rem;border-radius:.9rem;font-size:.85rem}
+    .msg-freelancer{background:#4c1d95;border-bottom-right-radius:0}
+    .msg-owner{background:#111827;border:1px solid rgba(75,85,99,.8);border-bottom-left-radius:0}
+    .no-scrollbar::-webkit-scrollbar{display:none}
+    .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
   </style>
 </head>
 <body class="min-h-screen">
 
-  <!-- Header -->
-  <header class="sticky top-0 bg-[#020617] bg-opacity-95 z-40 border-b border-gray-800">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <h1 class="text-xl md:text-2xl font-bold text-white">
-        BizLink <span class="text-purple-400">Freelancer</span> Dashboard
-      </h1>
-      <div class="flex items-center gap-3">
-        <span id="freelancerEmail" class="text-xs md:text-sm text-gray-300"></span>
-        <button id="logoutBtn" class="px-3 py-1.5 rounded-md bg-red-600 text-xs md:text-sm text-white hover:bg-red-700">
-          Logout
-        </button>
+  <!-- HEADER -->
+  <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1">
+          ← Back to Home
+        </a>
+        <h1 class="text-lg sm:text-xl font-semibold text-white">
+          Freelancer <span class="text-purple-400">Dashboard</span>
+        </h1>
+      </div>
+      <div class="flex items-center gap-3 text-xs sm:text-sm">
+        <div class="hidden sm:flex items-center gap-2 pill px-3 py-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Logged in as <span id="userEmailLabel" class="font-medium text-slate-100">Freelancer</span></span>
+        </div>
+        <select id="roleSelect" class="bg-slate-900 border border-slate-700 text-xs px-2 py-1 rounded text-slate-200">
+          <option value="Freelancer">View as: Freelancer</option>
+          <option value="Owner">View as: Owner (Demo)</option>
+        </select>
       </div>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 py-6">
+  <!-- MAIN LAYOUT -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)] gap-6">
+    <!-- LEFT: WORK LIST -->
+    <section aria-label="Works">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-semibold text-white">Your Works</h2>
+          <p class="text-xs text-slate-400">Pending, accepted, completed – sab ek jagah.</p>
+        </div>
+        <div class="hidden sm:flex gap-2 text-[11px]">
+          <span class="status-pill status-pending">Pending</span>
+          <span class="status-pill status-accepted">Accepted</span>
+          <span class="status-pill status-completed">Completed</span>
+        </div>
+      </div>
 
-    <!-- Tabs -->
-    <div class="border-b border-gray-700 mb-6">
-      <nav class="-mb-px flex space-x-6 overflow-x-auto" id="dashTabs">
-        <button data-target="tabAvailable" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 text-sm active">
-          Available Work
-        </button>
-        <button data-target="tabMyWork" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 text-sm">
-          My Work
-        </button>
-        <button data-target="tabHistory" class="tab-button whitespace-nowrap py-3 px-1 border-b-2 text-sm">
-          History
-        </button>
+      <!-- TABS -->
+      <nav class="border-b border-slate-800 mb-3 flex gap-4 text-sm" id="workTabs">
+        <button data-status="Pending" class="tab-button active py-2">Pending</button>
+        <button data-status="Accepted" class="tab-button py-2">Accepted</button>
+        <button data-status="Completed" class="tab-button py-2">History</button>
       </nav>
-    </div>
 
-    <!-- Toast -->
-    <div id="toast" class="hidden fixed top-4 right-4 bg-emerald-600 text-white text-sm px-4 py-2 rounded-md shadow-lg z-50">
-      Updated successfully
-    </div>
-
-    <!-- Available Work -->
-    <section id="tabAvailable" class="tab-pane">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg md:text-xl font-semibold text-white">Available Work</h2>
-        <span class="text-xs text-gray-400">Pulled from: works sheet</span>
-      </div>
-      <div id="availableContainer" class="grid gap-4 md:grid-cols-2">
-        <div class="col-span-full text-center text-gray-400 text-sm" id="availableLoading">
-          Loading available work...
-        </div>
+      <!-- WORK LIST -->
+      <div id="workList" class="space-y-3 max-h-[70vh] overflow-y-auto no-scrollbar pr-1">
+        <!-- JS will render cards here -->
+        <div class="text-center text-slate-400 text-sm py-8">Loading works...</div>
       </div>
     </section>
 
-    <!-- My Work -->
-    <section id="tabMyWork" class="tab-pane hidden">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg md:text-xl font-semibold text-white">My Active Work</h2>
-        <span class="text-xs text-gray-400">Accepted but not completed</span>
-      </div>
-      <div id="myWorkContainer" class="grid gap-4 md:grid-cols-2">
-        <div class="col-span-full text-center text-gray-400 text-sm" id="myWorkLoading">
-          No accepted work yet.
+    <!-- RIGHT: CHAT PANEL -->
+    <section aria-label="Chat" class="card-bg rounded-2xl p-4 sm:p-5 flex flex-col min-h-[320px] max-h-[80vh]">
+      <!-- When no work selected -->
+      <div id="chatEmptyState" class="flex-1 flex flex-col items-center justify-center text-center text-slate-400 text-sm">
+        <div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center mb-3">
+          💬
         </div>
+        <p class="font-medium text-slate-200 mb-1">Select a work to start chatting</p>
+        <p class="text-xs text-slate-500 max-w-xs">
+          “Open Chat” pe click karo kisi bhi work card par. Yahi se files bhejo, doubt clear karo, status track karo.
+        </p>
       </div>
-    </section>
 
-    <!-- History -->
-    <section id="tabHistory" class="tab-pane hidden">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg md:text-xl font-semibold text-white">History & Payments</h2>
-        <span class="text-xs text-gray-400">Completed work from history sheet</span>
-      </div>
-      <div id="historyContainer" class="grid gap-4 md:grid-cols-2">
-        <div class="col-span-full text-center text-gray-400 text-sm" id="historyLoading">
-          Loading history...
+      <!-- Active chat -->
+      <div id="chatPanel" class="hidden h-full flex flex-col">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+          <div>
+            <p class="text-[11px] text-slate-400 uppercase tracking-widest">Chat for</p>
+            <h3 id="chatWorkTitle" class="text-sm sm:text-base font-semibold text-white truncate max-w-[220px] sm:max-w-[280px]">
+              -
+            </h3>
+            <p id="chatWorkMeta" class="text-[11px] text-slate-400 mt-0.5"></p>
+          </div>
+          <button id="closeChatButton" class="text-xs text-slate-400 hover:text-slate-100 px-2 py-1 rounded pill bg-slate-900">
+            Close
+          </button>
         </div>
+
+        <!-- Messages -->
+        <div id="chatMessages"
+             class="flex-1 overflow-y-auto no-scrollbar space-y-2 pr-1 text-xs sm:text-[13px]">
+          <!-- JS will push bubbles here -->
+        </div>
+
+        <!-- Composer -->
+        <form id="chatForm" class="mt-3 border-t border-slate-800 pt-3 flex items-end gap-2">
+          <textarea id="chatInput"
+                    rows="1"
+                    placeholder="Type your message…"
+                    class="flex-1 text-xs sm:text-sm resize-none rounded-lg bg-slate-900 border border-slate-700 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 px-3 py-2 text-slate-100"></textarea>
+          <button type="submit"
+                  class="button-gradient px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-white hover:opacity-90">
+            Send
+          </button>
+        </form>
+
+        <p class="text-[11px] text-slate-500 mt-2">
+          Role: <span id="chatRoleLabel" class="font-medium text-purple-300">Freelancer</span>  
+          <span class="text-slate-600">| Messages abhi local demo hai. Baad me Apps Script + Sheet se real-time sync hoga.</span>
+        </p>
       </div>
     </section>
   </main>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <!-- Simple Toast -->
+  <div id="toast"
+       class="fixed bottom-4 right-4 bg-slate-900 border border-slate-700 text-xs text-slate-100 px-4 py-2 rounded-lg shadow-lg hidden">
+  </div>
 
+  <!-- DATA + LOGIC -->
   <script>
-    // SAME config as index.html
-    const firebaseConfig = {
-      apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
-      authDomain: "bizlink-exchange.firebaseapp.com",
-      projectId: "bizlink-exchange",
-      storageBucket: "bizlink-exchange.firebasestorage.app",
-      messagingSenderId: "116213651971",
-      appId: "1:116213651971:web:fff60961af0c4da3448c36",
-      measurementId: "G-VQ3JM82D1N"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-  </script>
+    // ✅ SAME Apps Script URL jo index.html me use kar rahe ho
+    const scriptURL =
+      "https://script.google.com/macros/s/AKfycbxVAjCB6WjXW6j3a8mWKi4ECUui_KTz3YoFkPgNVYuI9Om8ar1rhNNBi3BdZqjJMjYwwg/exec";
 
-  <!-- Dashboard Logic -->
-  <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxVAjCB6WjXW6j3a8mWKi4ECUui_KTz3YoFkPgNVYuI9Om8ar1rhNNBi3BdZqjJMjYwwg/exec";
+    // In-memory list of works (fetched from Sheet)
+    let allWorks = [];  // {id,title,budget,city,category,status}
+    let activeStatusFilter = "Pending";
+    let activeWorkId = null;
+    let currentRole = "Freelancer"; // OR "Owner"
 
-    let currentUser = null;
-    let availableWorks = [];
-    let myWorks = [];
-    let historyWorks = [];
+    const workListEl = document.getElementById("workList");
+    const workTabsEl = document.getElementById("workTabs");
 
-    const freelancerEmailSpan = document.getElementById('freelancerEmail');
-    const logoutBtn = document.getElementById('logoutBtn');
+    const chatEmptyStateEl = document.getElementById("chatEmptyState");
+    const chatPanelEl = document.getElementById("chatPanel");
+    const chatWorkTitleEl = document.getElementById("chatWorkTitle");
+    const chatWorkMetaEl = document.getElementById("chatWorkMeta");
+    const chatMessagesEl = document.getElementById("chatMessages");
+    const chatFormEl = document.getElementById("chatForm");
+    const chatInputEl = document.getElementById("chatInput");
+    const chatRoleLabelEl = document.getElementById("chatRoleLabel");
+    const closeChatButton = document.getElementById("closeChatButton");
+    const roleSelect = document.getElementById("roleSelect");
+    const toastEl = document.getElementById("toast");
 
-    const availableContainer = document.getElementById('availableContainer');
-    const availableLoading = document.getElementById('availableLoading');
-
-    const myWorkContainer = document.getElementById('myWorkContainer');
-    const myWorkLoading = document.getElementById('myWorkLoading');
-
-    const historyContainer = document.getElementById('historyContainer');
-    const historyLoading = document.getElementById('historyLoading');
-
-    const toast = document.getElementById('toast');
-
-    function showToast(message = "Updated successfully") {
-      toast.textContent = message;
-      toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 2500);
+    // 🔹 TOAST helper
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.remove("hidden");
+      setTimeout(() => toastEl.classList.add("hidden"), 2500);
     }
 
-    // 🔐 Auth check
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "login.html";
-        return;
-      }
-      currentUser = user;
-      freelancerEmailSpan.textContent = user.email || "";
+    // 🔹 Fetch works for this freelancer
+    async function loadFreelancerWorks() {
+      workListEl.innerHTML =
+        "<div class='text-center text-slate-400 text-sm py-8'>Loading works...</div>";
 
-      loadAvailableWorks();
-      loadMyWorks();
-      loadHistory();
-    });
-
-    logoutBtn.addEventListener('click', () => {
-      auth.signOut().then(() => {
-        window.location.href = "login.html";
-      }).catch(err => console.error("Logout error:", err));
-    });
-
-    // 📌 Tabs
-    const dashTabs = document.getElementById('dashTabs');
-    const tabPanes = document.querySelectorAll('.tab-pane');
-
-    dashTabs.addEventListener('click', (e) => {
-      if (e.target.tagName !== 'BUTTON') return;
-      const targetId = e.target.getAttribute('data-target');
-
-      dashTabs.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-      e.target.classList.add('active');
-
-      tabPanes.forEach(pane => {
-        pane.classList.toggle('hidden', pane.id !== targetId);
-      });
-    });
-
-    // 🟣 1. Load Available Work (sheet: works)
-    async function loadAvailableWorks() {
       try {
-        const res = await fetch(`${scriptURL}?sheet=works`);
-        const text = await res.text();
+        // NOTE: Agar tumne alag sheet banayi hai (e.g. FreelancerWorks) to yaha `sheet` ka naam change kar dena
+        const res = await fetch(`${scriptURL}?sheet=freelancer_works`);
+        const raw = await res.text();
         let data;
         try {
-          data = JSON.parse(text);
+          data = JSON.parse(raw);
         } catch (err) {
-          console.error("Available works JSON parse error:", text);
-          availableLoading.textContent = "Error: Works data format issue.";
+          console.error("Works JSON parse error:", raw);
+          workListEl.innerHTML =
+            "<div class='text-center text-red-400 text-sm py-6'>Works data format error. Please check Apps Script JSON.</div>";
           return;
         }
 
         if (!Array.isArray(data) || !data.length) {
-          availableLoading.textContent = "No work available right now.";
+          allWorks = [];
+          workListEl.innerHTML =
+            "<div class='text-center text-slate-400 text-sm py-6'>No works assigned yet.</div>";
           return;
         }
 
-        availableWorks = data;
-        renderAvailable();
-      } catch (err) {
-        console.error("Error loading works:", err);
-        availableLoading.textContent = "Error loading works.";
+        // Normalize rows -> objects
+        allWorks = data.map((row, index) => ({
+          id: row.WorkId || row.ID || `W${index + 1}`,
+          title: row.Title || "Untitled Work",
+          budget: row.Budget || "N/A",
+          city: row.City || "",
+          category: row.Category || "",
+          status: row.Status || "Pending",  // Pending / Accepted / Completed
+          clientName: row.ClientName || row.Owner || "",
+        }));
+
+        renderWorkList();
+      } catch (e) {
+        console.error("Error fetching freelancer works:", e);
+        workListEl.innerHTML =
+          "<div class='text-center text-red-400 text-sm py-6'>Error loading works. Please check Apps Script or network.</div>";
       }
     }
 
-    function renderAvailable() {
-      availableContainer.innerHTML = "";
-      if (!availableWorks.length) {
-        availableContainer.innerHTML = `<div class="col-span-full text-center text-gray-400 text-sm">No work available.</div>`;
+    // 🔹 Render work cards according to activeStatusFilter
+    function renderWorkList() {
+      const filtered = allWorks.filter(w => (w.status || "Pending") === activeStatusFilter);
+
+      if (!filtered.length) {
+        workListEl.innerHTML =
+          "<div class='text-center text-slate-400 text-sm py-6'>No " +
+          activeStatusFilter.toLowerCase() +
+          " works.</div>";
         return;
       }
 
-      availableWorks.forEach((work, index) => {
-        const card = document.createElement('div');
-        card.className = "card-bg rounded-xl p-4 flex flex-col justify-between";
+      workListEl.innerHTML = "";
+      filtered.forEach(work => {
+        const card = document.createElement("div");
+        card.className =
+          "card-bg rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 shadow-sm";
 
-        const title = work.Title || "No Title";
-        const desc = work.Description || "No description";
-        const budget = work.Budget || "N/A";
-        const cat = work.Category || "General";
-        const city = work.City || "-";
-        const posted = work.PostedOn ? new Date(work.PostedOn).toLocaleString() : "";
+        const statusClass =
+          work.status === "Accepted"
+            ? "status-accepted"
+            : work.status === "Completed"
+            ? "status-completed"
+            : "status-pending";
 
         card.innerHTML = `
-          <div>
-            <div class="flex justify-between items-start mb-1">
-              <h3 class="text-white font-semibold text-base">${title}</h3>
-              <span class="status-badge bg-sky-700 text-white">${cat}</span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-semibold text-sm sm:text-base text-white truncate">${work.title}</h3>
+              <span class="status-pill ${statusClass}">${work.status}</span>
             </div>
-            <p class="text-xs text-gray-400 mb-2">City: ${city}</p>
-            <p class="text-sm text-gray-300 mb-3 line-clamp-3">${desc}</p>
-            <p class="text-sm text-gray-200 mb-1">Budget: <span class="text-emerald-400 font-semibold">₹${budget}</span></p>
-            <p class="text-xs text-gray-500">Posted: ${posted}</p>
+            <p class="text-[11px] text-slate-400 mb-1">
+              ${work.category || "General"} • ${work.city || "Unknown"}
+            </p>
+            <p class="text-xs text-slate-300">
+              Budget: <span class="text-emerald-400 font-semibold">₹${work.budget}</span>
+            </p>
+            ${work.clientName ? `<p class="text-[11px] text-slate-500 mt-1">Client: ${work.clientName}</p>` : ""}
           </div>
-          <div class="mt-3 flex justify-end">
-            <button class="button-gradient px-4 py-1.5 rounded-md text-sm font-semibold"
-                    data-index="${index}">
-              Accept Work
+          <div class="flex flex-row sm:flex-col gap-2 justify-end sm:items-end">
+            ${
+              work.status === "Pending"
+                ? `<button class="text-xs px-3 py-1.5 rounded-lg bg-amber-500/90 hover:bg-amber-500 text-black font-medium"
+                           data-action="accept" data-id="${work.id}">
+                     Accept
+                   </button>`
+                : ""
+            }
+            ${
+              work.status === "Accepted"
+                ? `<button class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/90 hover:bg-emerald-500 text-black font-medium"
+                           data-action="submit" data-id="${work.id}">
+                     Submit Work
+                   </button>`
+                : ""
+            }
+            <button class="text-xs px-3 py-1.5 rounded-lg border border-slate-600 hover:border-purple-500 text-slate-100"
+                    data-action="chat" data-id="${work.id}">
+              Open Chat
             </button>
           </div>
         `;
-        const btn = card.querySelector('button');
-        btn.addEventListener('click', () => acceptWork(index));
-        availableContainer.appendChild(card);
+
+        workListEl.appendChild(card);
       });
     }
 
-    // ✅ Accept Work → POST to Apps Script (sheet: freelancer_accept)
-    async function acceptWork(idx) {
-      if (!currentUser) return;
-      const work = availableWorks[idx];
+    // 🔹 Handle tab switching (Pending / Accepted / Completed)
+    workTabsEl.addEventListener("click", (e) => {
+      if (e.target.tagName !== "BUTTON") return;
+      const status = e.target.getAttribute("data-status");
+      if (!status) return;
+
+      activeStatusFilter = status;
+      workTabsEl.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
+      e.target.classList.add("active");
+      renderWorkList();
+    });
+
+    // 🔹 Handle work card actions
+    workListEl.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+      const id = btn.getAttribute("data-id");
+      const action = btn.getAttribute("data-action");
+
+      if (action === "accept") {
+        handleAcceptWork(id);
+      } else if (action === "submit") {
+        handleSubmitWork(id);
+      } else if (action === "chat") {
+        openChatForWork(id);
+      }
+    });
+
+    // 🔹 Accept work (front-end only demo)
+    function handleAcceptWork(id) {
+      const work = allWorks.find(w => w.id === id);
+      if (!work) return;
+      work.status = "Accepted";
+      showToast("Work accepted (front-end only). Backend update TODO.");
+      renderWorkList();
+
+      // TODO: Apps Script backend:
+      // fetch(scriptURL, { method:'POST', body: JSON form / FormData with action='acceptWork', workId:id })
+    }
+
+    // 🔹 Submit work (front-end only demo)
+    function handleSubmitWork(id) {
+      const url = prompt("Paste delivery link (Google Drive, Figma, Zip, etc.):");
+      if (!url) return;
+      showToast("Work submitted (demo). Backend integration pending.");
+      const work = allWorks.find(w => w.id === id);
+      if (work) work.status = "Completed";
+      renderWorkList();
+
+      // TODO: Apps Script backend for saving delivery URL + status = Completed
+    }
+
+    // ---------- CHAT LOGIC (local demo storage) ----------
+
+    function openChatForWork(id) {
+      const work = allWorks.find(w => w.id === id);
       if (!work) return;
 
-      const fd = new FormData();
-      fd.append('sheet', 'freelancer_accept');       // 👈 Apps Script me ye sheet handle karo
-      fd.append('title', work.Title || '');
-      fd.append('description', work.Description || '');
-      fd.append('budget', work.Budget || '');
-      fd.append('category', work.Category || '');
-      fd.append('city', work.City || '');
-      fd.append('postedOn', work.PostedOn || '');
-      fd.append('freelancerUid', currentUser.uid);
-      fd.append('freelancerEmail', currentUser.email || '');
-      fd.append('status', 'Accepted');
-      fd.append('acceptedAt', new Date().toISOString());
+      activeWorkId = id;
 
-      try {
-        const res = await fetch(scriptURL, { method: 'POST', body: fd });
-        if (!res.ok) {
-          console.error("Accept work HTTP error:", res.status, res.statusText);
-          showToast("Server error while accepting.");
-          return;
-        }
-        // Frontend side: move work into My Work
-        myWorks.push({
-          ...work,
-          Status: 'Accepted',
-          FreelancerEmail: currentUser.email || ''
-        });
-        renderMyWorks();
-        showToast("Work accepted.");
-      } catch (err) {
-        console.error("Accept work error:", err);
-        showToast("Network error while accepting.");
-      }
+      chatWorkTitleEl.textContent = work.title;
+      chatWorkMetaEl.textContent =
+        `${work.city || "Unknown"} • Budget: ₹${work.budget} • Status: ${work.status}`;
+
+      chatEmptyStateEl.classList.add("hidden");
+      chatPanelEl.classList.remove("hidden");
+
+      loadChatMessagesForWork(id);
     }
 
-    // 🟣 2. Load My Works (sheet: freelancer_accept)
-    async function loadMyWorks() {
-      try {
-        const res = await fetch(`${scriptURL}?sheet=freelancer_accept`);
-        const text = await res.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          console.error("My works JSON parse error:", text);
-          myWorkLoading.textContent = "Error: My work data format.";
-          return;
-        }
+    closeChatButton.addEventListener("click", () => {
+      activeWorkId = null;
+      chatPanelEl.classList.add("hidden");
+      chatEmptyStateEl.classList.remove("hidden");
+    });
 
-        if (!Array.isArray(data)) {
-          myWorkLoading.textContent = "No active work.";
-          return;
-        }
-
-        // Filter only for current freelancer
-        myWorks = data.filter(row =>
-          row.FreelancerEmail === (currentUser?.email || row.freelancerEmail)
-        );
-
-        renderMyWorks();
-      } catch (err) {
-        console.error("Error loading my works:", err);
-        myWorkLoading.textContent = "Error loading my work.";
-      }
+    // 🔹 LocalStorage key for each work chat
+    function chatStorageKey(id) {
+      return `bizlink_chat_${id}`;
     }
 
-    function renderMyWorks() {
-      myWorkContainer.innerHTML = "";
-      if (!myWorks.length) {
-        myWorkContainer.innerHTML = `<div class="col-span-full text-center text-gray-400 text-sm">No active work. Accept a project from Available Work tab.</div>`;
+    function loadChatMessagesForWork(id) {
+      const key = chatStorageKey(id);
+      let msgs = [];
+      try {
+        const raw = localStorage.getItem(key);
+        msgs = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        console.error("Chat parse error:", e);
+      }
+      renderChatMessages(msgs);
+    }
+
+    function renderChatMessages(messages) {
+      chatMessagesEl.innerHTML = "";
+      if (!messages.length) {
+        chatMessagesEl.innerHTML =
+          "<p class='text-center text-slate-500 text-xs mt-4'>No messages yet. Start the conversation.</p>";
         return;
       }
 
-      myWorks.forEach((work, index) => {
-        const status = work.Status || 'Accepted';
-        const statusColor =
-          status === 'Submitted' ? 'bg-yellow-600' :
-          status === 'Completed' ? 'bg-emerald-600' :
-          'bg-blue-600';
+      messages.forEach(msg => {
+        const row = document.createElement("div");
+        row.className = "flex " +
+          (msg.sender === "Freelancer" ? "justify-end" : "justify-start");
 
-        const card = document.createElement('div');
-        card.className = "card-bg rounded-xl p-4 flex flex-col gap-3";
+        const bubble = document.createElement("div");
+        bubble.className =
+          "msg-bubble " +
+          (msg.sender === "Freelancer" ? "msg-freelancer text-slate-50" : "msg-owner text-slate-100");
 
-        card.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <h3 class="text-white font-semibold text-base">${work.Title || 'No Title'}</h3>
-              <p class="text-xs text-gray-400 mt-1">${work.Category || 'General'} • ₹${work.Budget || 'N/A'}</p>
-            </div>
-            <span class="status-badge ${statusColor} text-white">${status}</span>
+        const time = new Date(msg.timestamp || Date.now());
+        bubble.innerHTML = `
+          <div class="flex items-center justify-between gap-2 mb-0.5">
+            <span class="text-[10px] uppercase tracking-wide text-slate-300">
+              ${msg.sender === "Freelancer" ? "You (Freelancer)" : "Owner"}
+            </span>
+            <span class="text-[9px] text-slate-400">
+              ${time.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}
+            </span>
           </div>
-          <p class="text-sm text-gray-300">${work.Description || ''}</p>
-          <p class="text-xs text-gray-400">City: ${work.City || '-'}</p>
-
-          <div class="mt-2 border-t border-gray-700 pt-3">
-            <label class="block text-xs text-gray-300 mb-1">Delivery link (Drive, Figma, Zip etc.)</label>
-            <input type="text" class="w-full text-sm px-3 py-2 rounded-md bg-gray-900 border border-gray-700 text-gray-100"
-                   placeholder="https://..." id="deliveryLink_${index}">
-            <label class="block text-xs text-gray-300 mt-2 mb-1">Note / Update</label>
-            <textarea rows="2" class="w-full text-sm px-3 py-2 rounded-md bg-gray-900 border border-gray-700 text-gray-100"
-                      placeholder="Short update for client" id="deliveryNote_${index}"></textarea>
-
-            <div class="mt-3 flex justify-end gap-2">
-              <button class="px-3 py-1.5 rounded-md text-xs bg-gray-700 text-gray-100 hover:bg-gray-600"
-                      data-index="${index}" data-type="chat">
-                Chat (coming soon)
-              </button>
-              <button class="button-gradient px-4 py-1.5 rounded-md text-xs font-semibold"
-                      data-index="${index}" data-type="submit">
-                Submit Work
-              </button>
-            </div>
-          </div>
+          <div class="text-[11px] leading-snug">${msg.text}</div>
         `;
 
-        const submitBtn = card.querySelector('button[data-type="submit"]');
-        submitBtn.addEventListener('click', () => submitWork(index));
-
-        myWorkContainer.appendChild(card);
+        row.appendChild(bubble);
+        chatMessagesEl.appendChild(row);
       });
+
+      // Scroll bottom
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
     }
 
-    // ✅ Submit Work → POST to Apps Script (sheet: freelancer_submit)
-    async function submitWork(idx) {
-      if (!currentUser) return;
-      const work = myWorks[idx];
-      if (!work) return;
-
-      const linkInput = document.getElementById(`deliveryLink_${idx}`);
-      const noteInput = document.getElementById(`deliveryNote_${idx}`);
-
-      const deliveryLink = (linkInput?.value || "").trim();
-      const deliveryNote = (noteInput?.value || "").trim();
-
-      if (!deliveryLink) {
-        alert("Please add a delivery link first.");
+    // 🔹 Send chat message (local demo)
+    chatFormEl.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!activeWorkId) {
+        showToast("Select a work first.");
         return;
       }
+      const text = chatInputEl.value.trim();
+      if (!text) return;
 
-      const fd = new FormData();
-      fd.append('sheet', 'freelancer_submit');     // 👈 Apps Script me ye handle karo
-      fd.append('title', work.Title || '');
-      fd.append('postedOn', work.PostedOn || '');
-      fd.append('freelancerUid', currentUser.uid);
-      fd.append('freelancerEmail', currentUser.email || '');
-      fd.append('deliveryLink', deliveryLink);
-      fd.append('deliveryNote', deliveryNote);
-      fd.append('status', 'Submitted');
-      fd.append('submittedAt', new Date().toISOString());
-
+      const key = chatStorageKey(activeWorkId);
+      let msgs = [];
       try {
-        const res = await fetch(scriptURL, { method: 'POST', body: fd });
-        if (!res.ok) {
-          console.error("Submit work HTTP error:", res.status, res.statusText);
-          showToast("Server error while submitting.");
-          return;
-        }
-        // Frontend: update status locally
-        myWorks[idx].Status = 'Submitted';
-        renderMyWorks();
-        showToast("Work submitted.");
-      } catch (err) {
-        console.error("Submit work error:", err);
-        showToast("Network error while submitting.");
-      }
-    }
+        const raw = localStorage.getItem(key);
+        msgs = raw ? JSON.parse(raw) : [];
+      } catch (e2) {}
 
-    // 🟣 3. History (sheet: freelancer_history)
-    async function loadHistory() {
-      try {
-        const res = await fetch(`${scriptURL}?sheet=freelancer_history`);
-        const text = await res.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          console.error("History JSON parse error:", text);
-          historyLoading.textContent = "Error: history data format.";
-          return;
-        }
+      const message = {
+        text,
+        sender: currentRole, // "Freelancer" OR "Owner"
+        timestamp: new Date().toISOString(),
+      };
+      msgs.push(message);
+      localStorage.setItem(key, JSON.stringify(msgs));
+      chatInputEl.value = "";
+      renderChatMessages(msgs);
 
-        if (!Array.isArray(data)) {
-          historyLoading.textContent = "No history yet.";
-          return;
-        }
+      // TODO: Backend me send karna:
+      // fetch(scriptURL, { method:'POST', body: formData with action='sendChat', workId, text, senderRole })
+    });
 
-        historyWorks = data.filter(row =>
-          row.FreelancerEmail === (currentUser?.email || row.freelancerEmail)
-        );
-        renderHistory();
-      } catch (err) {
-        console.error("Error loading history:", err);
-        historyLoading.textContent = "Error loading history.";
-      }
-    }
+    // 🔹 Role switch (Freelancer / Owner demo)
+    roleSelect.addEventListener("change", () => {
+      currentRole = roleSelect.value;
+      chatRoleLabelEl.textContent = currentRole;
+      showToast(`Now talking as ${currentRole} (demo mode).`);
+    });
 
-    function renderHistory() {
-      historyContainer.innerHTML = "";
-      if (!historyWorks.length) {
-        historyContainer.innerHTML = `<div class="col-span-full text-center text-gray-400 text-sm">No completed work yet.</div>`;
-        return;
-      }
-
-      historyWorks.forEach(work => {
-        const payStatus = work.PaymentStatus || 'Pending';
-        const payColor =
-          payStatus === 'Paid' ? 'bg-emerald-600' :
-          payStatus === 'Partially Paid' ? 'bg-yellow-600' :
-          'bg-gray-600';
-
-        const card = document.createElement('div');
-        card.className = "card-bg rounded-xl p-4 flex flex-col gap-2";
-
-        card.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <h3 class="text-white font-semibold text-base">${work.Title || 'No Title'}</h3>
-              <p class="text-xs text-gray-400 mt-1">${work.Category || 'General'} • ₹${work.Budget || 'N/A'}</p>
-            </div>
-            <span class="status-badge ${payColor} text-white">${payStatus}</span>
-          </div>
-          <p class="text-sm text-gray-300">${work.Description || ''}</p>
-          <p class="text-xs text-gray-400">Completed on: ${work.CompletedAt ? new Date(work.CompletedAt).toLocaleString() : '-'}</p>
-          <p class="text-xs text-gray-500">Txn / Ref: ${work.PaymentRef || '-'}</p>
-        `;
-
-        historyContainer.appendChild(card);
-      });
-    }
+    // ---------- INIT ----------
+    loadFreelancerWorks();
   </script>
 
+  <!-- (Optional) Firebase Auth – agar future me dashboard ko protect karna ho -->
+  <!--
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script>
+    // same config as index.html
+  </script>
+  -->
 </body>
 </html>
