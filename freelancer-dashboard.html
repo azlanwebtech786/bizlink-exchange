@@ -2,474 +2,435 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>BizLink | Freelancer Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Freelancer Dashboard | BizLink Exchange</title>
 
   <!-- Tailwind & Fonts -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
-    .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.4)}
-    .pill{background:rgba(148,163,184,.15);border-radius:999px}
+    .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
     .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
+    .chip{font-size:.70rem;padding:.15rem .5rem;border-radius:999px}
+    .chip-pending{background:#facc15;color:#1f2937}
+    .chip-accepted{background:#22c55e;color:#022c22}
+    .chip-completed{background:#38bdf8;color:#0f172a}
     .tab-button{color:#9ca3af;border-bottom:2px solid transparent}
     .tab-button.active{color:#a855f7;border-bottom-color:#a855f7;font-weight:600}
-    .status-pill{font-size:.7rem;padding:.18rem .55rem;border-radius:999px}
-    .status-pending{background:rgba(234,179,8,.12);color:#facc15}
-    .status-accepted{background:rgba(34,197,94,.12);color:#4ade80}
-    .status-completed{background:rgba(59,130,246,.12);color:#60a5fa}
-    .msg-bubble{max-width:85%;padding:.55rem .75rem;border-radius:.9rem;font-size:.85rem}
-    .msg-freelancer{background:#4c1d95;border-bottom-right-radius:0}
-    .msg-owner{background:#111827;border:1px solid rgba(75,85,99,.8);border-bottom-left-radius:0}
-    .no-scrollbar::-webkit-scrollbar{display:none}
-    .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+    .scroll-y{max-height:430px;overflow-y:auto}
+    .scroll-y::-webkit-scrollbar{width:6px}
+    .scroll-y::-webkit-scrollbar-thumb{background:#1f2937;border-radius:999px}
   </style>
 </head>
 <body class="min-h-screen">
 
-  <!-- HEADER -->
-  <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
-      <div class="flex items-center gap-2">
-        <a href="index.html" class="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1">
+  <!-- TOP BAR -->
+  <header class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
           ← Back to Home
         </a>
-        <h1 class="text-lg sm:text-xl font-semibold text-white">
-          Freelancer <span class="text-purple-400">Dashboard</span>
+        <h1 class="text-lg sm:text-2xl font-bold text-white">
+          BizLink <span class="text-purple-400">Freelancer Dashboard</span>
         </h1>
       </div>
-      <div class="flex items-center gap-3 text-xs sm:text-sm">
-        <div class="hidden sm:flex items-center gap-2 pill px-3 py-1">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Logged in as <span id="userEmailLabel" class="font-medium text-slate-100">Freelancer</span></span>
-        </div>
-        <select id="roleSelect" class="bg-slate-900 border border-slate-700 text-xs px-2 py-1 rounded text-slate-200">
-          <option value="Freelancer">View as: Freelancer</option>
-          <option value="Owner">View as: Owner (Demo)</option>
-        </select>
+      <div class="flex items-center space-x-3 text-xs sm:text-sm">
+        <span class="hidden sm:inline text-slate-300">Logged in as <span class="font-semibold">Freelancer</span></span>
+        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
+          Logout
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- MAIN LAYOUT -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)] gap-6">
-    <!-- LEFT: WORK LIST -->
-    <section aria-label="Works">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h2 class="text-xl font-semibold text-white">Your Works</h2>
-          <p class="text-xs text-slate-400">Pending, accepted, completed – sab ek jagah.</p>
-        </div>
-        <div class="hidden sm:flex gap-2 text-[11px]">
-          <span class="status-pill status-pending">Pending</span>
-          <span class="status-pill status-accepted">Accepted</span>
-          <span class="status-pill status-completed">Completed</span>
-        </div>
+  <main class="max-w-6xl mx-auto px-4 py-6">
+
+    <!-- STATS -->
+    <section class="grid sm:grid-cols-3 gap-4 mb-6">
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Pending</p>
+        <p id="statPending" class="text-2xl font-bold text-yellow-400">0</p>
       </div>
-
-      <!-- TABS -->
-      <nav class="border-b border-slate-800 mb-3 flex gap-4 text-sm" id="workTabs">
-        <button data-status="Pending" class="tab-button active py-2">Pending</button>
-        <button data-status="Accepted" class="tab-button py-2">Accepted</button>
-        <button data-status="Completed" class="tab-button py-2">History</button>
-      </nav>
-
-      <!-- WORK LIST -->
-      <div id="workList" class="space-y-3 max-h-[70vh] overflow-y-auto no-scrollbar pr-1">
-        <!-- JS will render cards here -->
-        <div class="text-center text-slate-400 text-sm py-8">Loading works...</div>
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Accepted / In Progress</p>
+        <p id="statAccepted" class="text-2xl font-bold text-green-400">0</p>
+      </div>
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Completed</p>
+        <p id="statCompleted" class="text-2xl font-bold text-sky-400">0</p>
       </div>
     </section>
 
-    <!-- RIGHT: CHAT PANEL -->
-    <section aria-label="Chat" class="card-bg rounded-2xl p-4 sm:p-5 flex flex-col min-h-[320px] max-h-[80vh]">
-      <!-- When no work selected -->
-      <div id="chatEmptyState" class="flex-1 flex flex-col items-center justify-center text-center text-slate-400 text-sm">
-        <div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center mb-3">
-          💬
-        </div>
-        <p class="font-medium text-slate-200 mb-1">Select a work to start chatting</p>
-        <p class="text-xs text-slate-500 max-w-xs">
-          “Open Chat” pe click karo kisi bhi work card par. Yahi se files bhejo, doubt clear karo, status track karo.
+    <!-- TABS -->
+    <section class="mb-4">
+      <nav class="-mb-px flex space-x-6 overflow-x-auto" id="statusTabs">
+        <button class="tab-button active whitespace-nowrap py-2 text-sm" data-tab="Pending">Pending</button>
+        <button class="tab-button whitespace-nowrap py-2 text-sm" data-tab="Accepted">Accepted</button>
+        <button class="tab-button whitespace-nowrap py-2 text-sm" data-tab="History">History</button>
+      </nav>
+    </section>
+
+    <!-- MAIN LAYOUT -->
+    <section class="grid lg:grid-cols-2 gap-6">
+
+      <!-- LEFT: WORK LIST -->
+      <div class="card-bg rounded-xl p-4">
+        <h2 class="text-sm font-semibold text-slate-200 mb-3">Your Works</h2>
+        <p class="text-xs text-slate-400 mb-4">
+          Pending, accepted, completed – sab ek jagah. Kisi bhi card par
+          <span class="font-semibold text-slate-200">“Open Chat”</span> click karke neeche wale chat panel ko control kar sakte ho.
         </p>
+
+        <div id="workList" class="space-y-3 scroll-y">
+          <!-- JS will inject cards -->
+        </div>
       </div>
 
-      <!-- Active chat -->
-      <div id="chatPanel" class="hidden h-full flex flex-col">
-        <!-- Header -->
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
-          <div>
-            <p class="text-[11px] text-slate-400 uppercase tracking-widest">Chat for</p>
-            <h3 id="chatWorkTitle" class="text-sm sm:text-base font-semibold text-white truncate max-w-[220px] sm:max-w-[280px]">
-              -
-            </h3>
-            <p id="chatWorkMeta" class="text-[11px] text-slate-400 mt-0.5"></p>
+      <!-- RIGHT: CHAT PANEL -->
+      <div class="card-bg rounded-xl p-4 flex flex-col">
+        <div id="chatHeader" class="border-b border-slate-800 pb-3 mb-3">
+          <p class="text-xs text-slate-400">Chat Panel</p>
+          <h2 id="chatTitle" class="text-sm font-semibold text-slate-100 mt-1">
+            Select a work to start chatting
+          </h2>
+          <p id="chatSubtitle" class="text-xs text-slate-400 mt-1">
+            “Open Chat” pe click karo kisi work card par. Yahan se files links bhejo, doubts clear karo, status track karo.
+          </p>
+        </div>
+
+        <div id="chatMessages" class="flex-1 scroll-y space-y-3 text-xs">
+          <!-- Messages go here (JS) -->
+          <div class="h-full flex flex-col items-center justify-center text-center text-slate-500">
+            <div class="mb-2 text-2xl">💬</div>
+            <p>No work selected.</p>
           </div>
-          <button id="closeChatButton" class="text-xs text-slate-400 hover:text-slate-100 px-2 py-1 rounded pill bg-slate-900">
-            Close
-          </button>
         </div>
 
-        <!-- Messages -->
-        <div id="chatMessages"
-             class="flex-1 overflow-y-auto no-scrollbar space-y-2 pr-1 text-xs sm:text-[13px]">
-          <!-- JS will push bubbles here -->
-        </div>
-
-        <!-- Composer -->
-        <form id="chatForm" class="mt-3 border-t border-slate-800 pt-3 flex items-end gap-2">
-          <textarea id="chatInput"
-                    rows="1"
-                    placeholder="Type your message…"
-                    class="flex-1 text-xs sm:text-sm resize-none rounded-lg bg-slate-900 border border-slate-700 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 px-3 py-2 text-slate-100"></textarea>
-          <button type="submit"
-                  class="button-gradient px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-white hover:opacity-90">
+        <form id="chatForm" class="mt-3 flex gap-2 items-center">
+          <input
+            id="chatInput"
+            type="text"
+            placeholder="Type a message… (for now demo only, later Sheet/Apps Script se connect karenge)"
+            class="flex-1 text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <button
+            type="submit"
+            class="button-gradient px-4 py-2 rounded-lg text-xs font-semibold text-white disabled:opacity-50"
+          >
             Send
           </button>
         </form>
-
-        <p class="text-[11px] text-slate-500 mt-2">
-          Role: <span id="chatRoleLabel" class="font-medium text-purple-300">Freelancer</span>  
-          <span class="text-slate-600">| Messages abhi local demo hai. Baad me Apps Script + Sheet se real-time sync hoga.</span>
-        </p>
       </div>
     </section>
   </main>
 
-  <!-- Simple Toast -->
-  <div id="toast"
-       class="fixed bottom-4 right-4 bg-slate-900 border border-slate-700 text-xs text-slate-100 px-4 py-2 rounded-lg shadow-lg hidden">
-  </div>
-
-  <!-- DATA + LOGIC -->
   <script>
-    // ✅ SAME Apps Script URL jo index.html me use kar rahe ho
-    const scriptURL =
-      "https://script.google.com/macros/s/AKfycbxVAjCB6WjXW6j3a8mWKi4ECUui_KTz3YoFkPgNVYuI9Om8ar1rhNNBi3BdZqjJMjYwwg/exec";
+    // -------------------------------
+    // 1. Demo data (later Google Sheet se aayega)
+    // -------------------------------
+    const works = [
+      {
+        id: "W101",
+        title: "Salon Instagram Reels Pack",
+        client: "Glow Salon Jaipur",
+        budget: 3000,
+        status: "Pending", // Pending | Accepted | Completed
+        city: "Jaipur",
+        category: "Design/Creative",
+        postedOn: "2025-11-10 11:06"
+      },
+      {
+        id: "W102",
+        title: "Restaurant Menu Photoshoot",
+        client: "Spice Hub",
+        budget: 4500,
+        status: "Accepted",
+        city: "Jaipur",
+        category: "Photography",
+        postedOn: "2025-11-11 15:22"
+      },
+      {
+        id: "W103",
+        title: "Gym Branding Posts (15)",
+        client: "IronFit Gym",
+        budget: 5000,
+        status: "Completed",
+        city: "Delhi",
+        category: "Social Media",
+        postedOn: "2025-11-05 09:00"
+      }
+    ];
 
-    // In-memory list of works (fetched from Sheet)
-    let allWorks = [];  // {id,title,budget,city,category,status}
-    let activeStatusFilter = "Pending";
-    let activeWorkId = null;
-    let currentRole = "Freelancer"; // OR "Owner"
+    // Simple in-memory chat store – later isko Google Sheet / Firestore se replace karenge
+    const chatStore = {
+      W101: [
+        { from: "client", text: "Hi, reels ke liye reference samples bhej do.", time: "10:05 AM" },
+        { from: "freelancer", text: "Sure, 2–3 options bhej raha hoon abhi.", time: "10:09 AM" }
+      ],
+      W102: [
+        { from: "client", text: "Shoot date final ho gai?", time: "11:20 AM" },
+        { from: "freelancer", text: "Yes sir, Sunday ko 3PM confirm hai.", time: "11:24 AM" }
+      ],
+      W103: [
+        { from: "client", text: "Files receive ho gai, great work 👏", time: "08:15 PM" },
+        { from: "freelancer", text: "Thank you! Agar changes chahiye ho to bata dijiyega.", time: "08:17 PM" }
+      ]
+    };
 
-    const workListEl = document.getElementById("workList");
-    const workTabsEl = document.getElementById("workTabs");
+    // -------------------------------
+    // 2. State
+    // -------------------------------
+    let currentTab = "Pending";
+    let currentWorkId = null;
 
-    const chatEmptyStateEl = document.getElementById("chatEmptyState");
-    const chatPanelEl = document.getElementById("chatPanel");
-    const chatWorkTitleEl = document.getElementById("chatWorkTitle");
-    const chatWorkMetaEl = document.getElementById("chatWorkMeta");
-    const chatMessagesEl = document.getElementById("chatMessages");
-    const chatFormEl = document.getElementById("chatForm");
-    const chatInputEl = document.getElementById("chatInput");
-    const chatRoleLabelEl = document.getElementById("chatRoleLabel");
-    const closeChatButton = document.getElementById("closeChatButton");
-    const roleSelect = document.getElementById("roleSelect");
-    const toastEl = document.getElementById("toast");
-
-    // 🔹 TOAST helper
-    function showToast(msg) {
-      toastEl.textContent = msg;
-      toastEl.classList.remove("hidden");
-      setTimeout(() => toastEl.classList.add("hidden"), 2500);
+    // -------------------------------
+    // 3. Helpers
+    // -------------------------------
+    function formatBudget(num) {
+      if (!num && num !== 0) return "N/A";
+      return "₹" + num.toLocaleString("en-IN");
     }
 
-    // 🔹 Fetch works for this freelancer
-    async function loadFreelancerWorks() {
-      workListEl.innerHTML =
-        "<div class='text-center text-slate-400 text-sm py-8'>Loading works...</div>";
+    function updateStats() {
+      const pending = works.filter(w => w.status === "Pending").length;
+      const accepted = works.filter(w => w.status === "Accepted").length;
+      const completed = works.filter(w => w.status === "Completed").length;
 
-      try {
-        // NOTE: Agar tumne alag sheet banayi hai (e.g. FreelancerWorks) to yaha `sheet` ka naam change kar dena
-        const res = await fetch(`${scriptURL}?sheet=freelancer_works`);
-        const raw = await res.text();
-        let data;
-        try {
-          data = JSON.parse(raw);
-        } catch (err) {
-          console.error("Works JSON parse error:", raw);
-          workListEl.innerHTML =
-            "<div class='text-center text-red-400 text-sm py-6'>Works data format error. Please check Apps Script JSON.</div>";
-          return;
-        }
+      document.getElementById("statPending").textContent = pending;
+      document.getElementById("statAccepted").textContent = accepted;
+      document.getElementById("statCompleted").textContent = completed;
+    }
 
-        if (!Array.isArray(data) || !data.length) {
-          allWorks = [];
-          workListEl.innerHTML =
-            "<div class='text-center text-slate-400 text-sm py-6'>No works assigned yet.</div>";
-          return;
-        }
+    function getWorksForTab(tab) {
+      if (tab === "Pending") return works.filter(w => w.status === "Pending");
+      if (tab === "Accepted") return works.filter(w => w.status === "Accepted");
+      if (tab === "History") return works.filter(w => w.status === "Completed");
+      return works;
+    }
 
-        // Normalize rows -> objects
-        allWorks = data.map((row, index) => ({
-          id: row.WorkId || row.ID || `W${index + 1}`,
-          title: row.Title || "Untitled Work",
-          budget: row.Budget || "N/A",
-          city: row.City || "",
-          category: row.Category || "",
-          status: row.Status || "Pending",  // Pending / Accepted / Completed
-          clientName: row.ClientName || row.Owner || "",
-        }));
+    function statusChip(status) {
+      if (status === "Pending") {
+        return '<span class="chip chip-pending">Pending</span>';
+      } else if (status === "Accepted") {
+        return '<span class="chip chip-accepted">In Progress</span>';
+      } else {
+        return '<span class="chip chip-completed">Completed</span>';
+      }
+    }
+
+    // -------------------------------
+    // 4. Render work list
+    // -------------------------------
+    function renderWorkList() {
+      const container = document.getElementById("workList");
+      const items = getWorksForTab(currentTab);
+
+      if (!items.length) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-xs text-slate-500">
+            <p>No works in <span class="font-semibold">${currentTab}</span> right now.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = items
+        .map(w => {
+          const canAccept = w.status === "Pending";
+          const canComplete = w.status === "Accepted";
+          return `
+            <article class="card-bg rounded-lg p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="text-sm font-semibold text-slate-100">${w.title}</h3>
+                  ${statusChip(w.status)}
+                </div>
+                <p class="text-xs text-slate-400">
+                  <span class="font-semibold text-slate-200">${w.client}</span>
+                  · ${w.city || ""} · ${w.category || ""}
+                </p>
+                <p class="text-xs text-slate-500 mt-1">
+                  Budget: <span class="text-emerald-400 font-semibold">${formatBudget(w.budget)}</span>
+                  · ID: <span class="font-mono text-slate-300">${w.id}</span>
+                </p>
+              </div>
+              <div class="flex flex-col sm:items-end gap-2 text-xs">
+                <div class="flex gap-2">
+                  ${
+                    canAccept
+                      ? `<button data-action="accept" data-id="${w.id}"
+                           class="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
+                           Accept
+                         </button>`
+                      : ""
+                  }
+                  ${
+                    canComplete
+                      ? `<button data-action="complete" data-id="${w.id}"
+                           class="px-3 py-1 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-semibold">
+                           Mark Completed
+                         </button>`
+                      : ""
+                  }
+                  <button data-action="open-chat" data-id="${w.id}"
+                    class="px-3 py-1 rounded-md border border-slate-600 hover:border-purple-500 text-slate-100 font-semibold">
+                    Open Chat
+                  </button>
+                </div>
+                <p class="text-[10px] text-slate-500">
+                  Posted: ${w.postedOn}
+                </p>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+
+    // -------------------------------
+    // 5. Chat rendering
+    // -------------------------------
+    function renderChat(workId) {
+      const work = works.find(w => w.id === workId);
+      const messagesContainer = document.getElementById("chatMessages");
+      const chatTitle = document.getElementById("chatTitle");
+      const chatSubtitle = document.getElementById("chatSubtitle");
+
+      if (!work) {
+        chatTitle.textContent = "Select a work to start chatting";
+        chatSubtitle.textContent = "";
+        messagesContainer.innerHTML = "";
+        return;
+      }
+
+      chatTitle.textContent = work.title;
+      chatSubtitle.textContent = `${work.client} · ${work.city || ""} · ID: ${work.id}`;
+
+      const messages = chatStore[workId] || [];
+
+      if (!messages.length) {
+        messagesContainer.innerHTML = `
+          <div class="py-10 text-center text-xs text-slate-500">
+            No messages yet. Pehla message bhej kar conversation start karo.
+          </div>
+        `;
+        return;
+      }
+
+      messagesContainer.innerHTML = messages
+        .map(m => {
+          const isFreelancer = m.from === "freelancer";
+          const align = isFreelancer ? "items-end" : "items-start";
+          const bubbleClasses = isFreelancer
+            ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
+            : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
+          const metaAlign = isFreelancer ? "text-right" : "text-left";
+          return `
+            <div class="flex ${align}">
+              <div class="max-w-[80%]">
+                <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
+                  ${m.text}
+                </div>
+                <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
+                  ${m.from === "freelancer" ? "You" : "Client"} · ${m.time || ""}
+                </p>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+
+      // Scroll to bottom
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // -------------------------------
+    // 6. Event bindings
+    // -------------------------------
+    // Tabs
+    document.getElementById("statusTabs").addEventListener("click", (e) => {
+      if (e.target.matches("[data-tab]")) {
+        const tab = e.target.getAttribute("data-tab");
+        currentTab = tab;
+
+        // active class toggle
+        document.querySelectorAll("#statusTabs .tab-button").forEach(btn => {
+          btn.classList.toggle("active", btn.getAttribute("data-tab") === tab);
+        });
 
         renderWorkList();
-      } catch (e) {
-        console.error("Error fetching freelancer works:", e);
-        workListEl.innerHTML =
-          "<div class='text-center text-red-400 text-sm py-6'>Error loading works. Please check Apps Script or network.</div>";
       }
-    }
-
-    // 🔹 Render work cards according to activeStatusFilter
-    function renderWorkList() {
-      const filtered = allWorks.filter(w => (w.status || "Pending") === activeStatusFilter);
-
-      if (!filtered.length) {
-        workListEl.innerHTML =
-          "<div class='text-center text-slate-400 text-sm py-6'>No " +
-          activeStatusFilter.toLowerCase() +
-          " works.</div>";
-        return;
-      }
-
-      workListEl.innerHTML = "";
-      filtered.forEach(work => {
-        const card = document.createElement("div");
-        card.className =
-          "card-bg rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 shadow-sm";
-
-        const statusClass =
-          work.status === "Accepted"
-            ? "status-accepted"
-            : work.status === "Completed"
-            ? "status-completed"
-            : "status-pending";
-
-        card.innerHTML = `
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-semibold text-sm sm:text-base text-white truncate">${work.title}</h3>
-              <span class="status-pill ${statusClass}">${work.status}</span>
-            </div>
-            <p class="text-[11px] text-slate-400 mb-1">
-              ${work.category || "General"} • ${work.city || "Unknown"}
-            </p>
-            <p class="text-xs text-slate-300">
-              Budget: <span class="text-emerald-400 font-semibold">₹${work.budget}</span>
-            </p>
-            ${work.clientName ? `<p class="text-[11px] text-slate-500 mt-1">Client: ${work.clientName}</p>` : ""}
-          </div>
-          <div class="flex flex-row sm:flex-col gap-2 justify-end sm:items-end">
-            ${
-              work.status === "Pending"
-                ? `<button class="text-xs px-3 py-1.5 rounded-lg bg-amber-500/90 hover:bg-amber-500 text-black font-medium"
-                           data-action="accept" data-id="${work.id}">
-                     Accept
-                   </button>`
-                : ""
-            }
-            ${
-              work.status === "Accepted"
-                ? `<button class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/90 hover:bg-emerald-500 text-black font-medium"
-                           data-action="submit" data-id="${work.id}">
-                     Submit Work
-                   </button>`
-                : ""
-            }
-            <button class="text-xs px-3 py-1.5 rounded-lg border border-slate-600 hover:border-purple-500 text-slate-100"
-                    data-action="chat" data-id="${work.id}">
-              Open Chat
-            </button>
-          </div>
-        `;
-
-        workListEl.appendChild(card);
-      });
-    }
-
-    // 🔹 Handle tab switching (Pending / Accepted / Completed)
-    workTabsEl.addEventListener("click", (e) => {
-      if (e.target.tagName !== "BUTTON") return;
-      const status = e.target.getAttribute("data-status");
-      if (!status) return;
-
-      activeStatusFilter = status;
-      workTabsEl.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
-      e.target.classList.add("active");
-      renderWorkList();
     });
 
-    // 🔹 Handle work card actions
-    workListEl.addEventListener("click", (e) => {
-      const btn = e.target.closest("button[data-action]");
-      if (!btn) return;
-      const id = btn.getAttribute("data-id");
-      const action = btn.getAttribute("data-action");
+    // Work list delegation (accept, complete, open-chat)
+    document.getElementById("workList").addEventListener("click", (e) => {
+      const action = e.target.getAttribute("data-action");
+      const workId = e.target.getAttribute("data-id");
+      if (!action || !workId) return;
+
+      const work = works.find(w => w.id === workId);
+      if (!work) return;
 
       if (action === "accept") {
-        handleAcceptWork(id);
-      } else if (action === "submit") {
-        handleSubmitWork(id);
-      } else if (action === "chat") {
-        openChatForWork(id);
+        // TODO: Later Apps Script call to update Sheet
+        work.status = "Accepted";
+        updateStats();
+        renderWorkList();
+        if (currentWorkId === workId) renderChat(workId);
+      }
+
+      if (action === "complete") {
+        // TODO: Later Apps Script call to update Sheet
+        work.status = "Completed";
+        updateStats();
+        renderWorkList();
+        if (currentWorkId === workId) renderChat(workId);
+      }
+
+      if (action === "open-chat") {
+        currentWorkId = workId;
+        renderChat(workId);
       }
     });
 
-    // 🔹 Accept work (front-end only demo)
-    function handleAcceptWork(id) {
-      const work = allWorks.find(w => w.id === id);
-      if (!work) return;
-      work.status = "Accepted";
-      showToast("Work accepted (front-end only). Backend update TODO.");
-      renderWorkList();
-
-      // TODO: Apps Script backend:
-      // fetch(scriptURL, { method:'POST', body: JSON form / FormData with action='acceptWork', workId:id })
-    }
-
-    // 🔹 Submit work (front-end only demo)
-    function handleSubmitWork(id) {
-      const url = prompt("Paste delivery link (Google Drive, Figma, Zip, etc.):");
-      if (!url) return;
-      showToast("Work submitted (demo). Backend integration pending.");
-      const work = allWorks.find(w => w.id === id);
-      if (work) work.status = "Completed";
-      renderWorkList();
-
-      // TODO: Apps Script backend for saving delivery URL + status = Completed
-    }
-
-    // ---------- CHAT LOGIC (local demo storage) ----------
-
-    function openChatForWork(id) {
-      const work = allWorks.find(w => w.id === id);
-      if (!work) return;
-
-      activeWorkId = id;
-
-      chatWorkTitleEl.textContent = work.title;
-      chatWorkMetaEl.textContent =
-        `${work.city || "Unknown"} • Budget: ₹${work.budget} • Status: ${work.status}`;
-
-      chatEmptyStateEl.classList.add("hidden");
-      chatPanelEl.classList.remove("hidden");
-
-      loadChatMessagesForWork(id);
-    }
-
-    closeChatButton.addEventListener("click", () => {
-      activeWorkId = null;
-      chatPanelEl.classList.add("hidden");
-      chatEmptyStateEl.classList.remove("hidden");
-    });
-
-    // 🔹 LocalStorage key for each work chat
-    function chatStorageKey(id) {
-      return `bizlink_chat_${id}`;
-    }
-
-    function loadChatMessagesForWork(id) {
-      const key = chatStorageKey(id);
-      let msgs = [];
-      try {
-        const raw = localStorage.getItem(key);
-        msgs = raw ? JSON.parse(raw) : [];
-      } catch (e) {
-        console.error("Chat parse error:", e);
-      }
-      renderChatMessages(msgs);
-    }
-
-    function renderChatMessages(messages) {
-      chatMessagesEl.innerHTML = "";
-      if (!messages.length) {
-        chatMessagesEl.innerHTML =
-          "<p class='text-center text-slate-500 text-xs mt-4'>No messages yet. Start the conversation.</p>";
-        return;
-      }
-
-      messages.forEach(msg => {
-        const row = document.createElement("div");
-        row.className = "flex " +
-          (msg.sender === "Freelancer" ? "justify-end" : "justify-start");
-
-        const bubble = document.createElement("div");
-        bubble.className =
-          "msg-bubble " +
-          (msg.sender === "Freelancer" ? "msg-freelancer text-slate-50" : "msg-owner text-slate-100");
-
-        const time = new Date(msg.timestamp || Date.now());
-        bubble.innerHTML = `
-          <div class="flex items-center justify-between gap-2 mb-0.5">
-            <span class="text-[10px] uppercase tracking-wide text-slate-300">
-              ${msg.sender === "Freelancer" ? "You (Freelancer)" : "Owner"}
-            </span>
-            <span class="text-[9px] text-slate-400">
-              ${time.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}
-            </span>
-          </div>
-          <div class="text-[11px] leading-snug">${msg.text}</div>
-        `;
-
-        row.appendChild(bubble);
-        chatMessagesEl.appendChild(row);
-      });
-
-      // Scroll bottom
-      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-    }
-
-    // 🔹 Send chat message (local demo)
-    chatFormEl.addEventListener("submit", (e) => {
+    // Chat form
+    document.getElementById("chatForm").addEventListener("submit", (e) => {
       e.preventDefault();
-      if (!activeWorkId) {
-        showToast("Select a work first.");
-        return;
-      }
-      const text = chatInputEl.value.trim();
+      const input = document.getElementById("chatInput");
+      const text = input.value.trim();
       if (!text) return;
 
-      const key = chatStorageKey(activeWorkId);
-      let msgs = [];
-      try {
-        const raw = localStorage.getItem(key);
-        msgs = raw ? JSON.parse(raw) : [];
-      } catch (e2) {}
+      if (!currentWorkId) {
+        alert("Pehele koi work select karo (Open Chat button).");
+        return;
+      }
 
-      const message = {
-        text,
-        sender: currentRole, // "Freelancer" OR "Owner"
-        timestamp: new Date().toISOString(),
-      };
-      msgs.push(message);
-      localStorage.setItem(key, JSON.stringify(msgs));
-      chatInputEl.value = "";
-      renderChatMessages(msgs);
+      const now = new Date();
+      const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-      // TODO: Backend me send karna:
-      // fetch(scriptURL, { method:'POST', body: formData with action='sendChat', workId, text, senderRole })
+      if (!chatStore[currentWorkId]) chatStore[currentWorkId] = [];
+      chatStore[currentWorkId].push({ from: "freelancer", text, time });
+
+      // TODO: Later yahi message Google Sheet / backend pe bhi save karenge
+
+      input.value = "";
+      renderChat(currentWorkId);
     });
 
-    // 🔹 Role switch (Freelancer / Owner demo)
-    roleSelect.addEventListener("change", () => {
-      currentRole = roleSelect.value;
-      chatRoleLabelEl.textContent = currentRole;
-      showToast(`Now talking as ${currentRole} (demo mode).`);
+    // Logout (abhi simple; baad me Firebase se connect kar sakte ho)
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      // future: Firebase signOut
+      window.location.href = "login.html";
     });
 
-    // ---------- INIT ----------
-    loadFreelancerWorks();
+    // -------------------------------
+    // 7. Initial render
+    // -------------------------------
+    updateStats();
+    renderWorkList();
   </script>
-
-  <!-- (Optional) Firebase Auth – agar future me dashboard ko protect karna ho -->
-  <!--
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script>
-    // same config as index.html
-  </script>
-  -->
 </body>
 </html>
