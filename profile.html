@@ -1,81 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Details</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-    </style>
-</head>
-<body class="min-h-screen flex items-center justify-center p-4 text-white">
+  <meta charset="UTF-8" />
+  <title>BizLink | Profile Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <div id="profileCard" class="w-full max-w-lg p-8 rounded-2xl glass-card shadow-lg text-center hidden">
-        <h1 id="businessName" class="text-4xl font-bold mb-2"></h1>
-        <p id="ownerName" class="text-lg text-gray-200 mb-4"></p>
-        <div class="text-left space-y-3">
-            <p><strong>Email:</strong> <span id="email"></span></p>
-            <p><strong>Category:</strong> <span id="category" class="bg-white/20 px-2 py-1 rounded"></span></p>
-            <p><strong>City:</strong> <span id="city"></span></p>
-            <p><strong>Description:</strong> <span id="description"></span></p>
-        </div>
-    </div>
+  <!-- Tailwind + Font -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <div id="loadingState" class="text-2xl font-semibold">
-        Loading Profile...
-    </div>
-
-    <div id="errorState" class="text-2xl font-semibold bg-red-500/50 p-4 rounded-lg hidden">
-        ❌ Error fetching data.
-    </div>
-
-<script>
-    // ❗ Yahan apna final URL daalein
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxVAjCB6WjXW6j3a8mWKi4ECUui_KTz3YoFkPgNVYuI9Om8ar1rhNNBi3BdZqjJMjYwwg/exec";
-
-    const profileCard = document.getElementById('profileCard');
-    const loadingState = document.getElementById('loadingState');
-    const errorState = document.getElementById('errorState');
-
-    async function getProfileData() {
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const profileId = urlParams.get('id');
-            if (!profileId) throw new Error("Profile ID not found in URL.");
-
-            const response = await fetch(`${SCRIPT_URL}?id=${profileId}`);
-            if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
-            
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                document.getElementById('businessName').textContent = data.profile['Business Name'] || 'N/A';
-                document.getElementById('ownerName').textContent = `by ${data.profile['Owner Name'] || 'N/A'}`;
-                document.getElementById('email').textContent = data.profile['Email'] || 'N/A';
-                document.getElementById('category').textContent = data.profile['Category'] || 'N/A';
-                document.getElementById('city').textContent = data.profile['City'] || 'N/A';
-                document.getElementById('description').textContent = data.profile['Description'] || 'N/A';
-                
-                loadingState.classList.add('hidden');
-                profileCard.classList.remove('hidden');
-            } else {
-                throw new Error(data.message || "Profile not found.");
-            }
-        } catch (error) {
-            console.error(error);
-            loadingState.classList.add('hidden');
-            errorState.classList.remove('hidden');
-        }
+  <style>
+    body{
+      font-family:'Poppins',sans-serif;
+      min-height:100vh;
+      background:linear-gradient(135deg,#4f46e5 0%,#0f172a 40%,#020617 100%);
+      color:#e5e7eb;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:1.5rem;
     }
-    window.addEventListener('load', getProfileData);
-</script>
+    .card-bg{
+      background:#020617cc;
+      border:1px solid rgba(148,163,184,.4);
+      backdrop-filter:blur(18px);
+    }
+    .badge{
+      font-size:.7rem;
+      padding:.15rem .55rem;
+      border-radius:999px;
+      background:#1d4ed8;
+    }
+    .button-gradient{
+      background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%);
+    }
+  </style>
+</head>
+<body>
+
+  <main class="w-full max-w-2xl">
+    <div class="card-bg rounded-2xl p-6 shadow-2xl">
+      <!-- Top bar -->
+      <div class="flex items-center justify-between mb-4">
+        <a href="index.html" class="text-xs sm:text-sm text-slate-300 hover:text-white flex items-center gap-1">
+          ← Back to Home
+        </a>
+        <h1 class="text-sm sm:text-base font-semibold text-slate-200">
+          BizLink <span class="text-purple-400">Profile</span>
+        </h1>
+      </div>
+
+      <!-- Status area -->
+      <div id="statusBox" class="mb-4 text-center text-sm text-slate-400">
+        Loading profile…
+      </div>
+
+      <!-- Profile content -->
+      <section id="profileContent" class="hidden">
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <p id="profileCategoryBadge" class="badge inline-block mb-2"></p>
+            <h2 id="profileBusinessName" class="text-2xl font-bold text-white mb-1"></h2>
+            <p id="profileOwnerName" class="text-sm text-slate-300"></p>
+          </div>
+          <div class="text-right text-xs text-slate-400">
+            <p id="profileCity"></p>
+            <p id="profileTimestamp" class="mt-1"></p>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h3 class="text-sm font-semibold text-slate-200 mb-1">About</h3>
+          <p id="profileDescription" class="text-sm text-slate-300 leading-relaxed">
+          </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-3 text-sm">
+          <div class="space-y-1">
+            <p class="text-xs uppercase tracking-wide text-slate-400">Role</p>
+            <p id="profileRole" class="text-slate-100 font-medium"></p>
+          </div>
+          <div class="space-y-1">
+            <p class="text-xs uppercase tracking-wide text-slate-400">Category</p>
+            <p id="profileCategory" class="text-slate-100 font-medium"></p>
+          </div>
+          <div class="space-y-1">
+            <p class="text-xs uppercase tracking-wide text-slate-400">Email</p>
+            <a id="profileEmail" href="#" class="text-indigo-300 hover:text-indigo-100 break-all"></a>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-end">
+          <a id="contactBtn" href="#" class="button-gradient text-white px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold">
+            Contact via Email
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // 👉 SAME Apps Script URL jo index.html / get-listed.html me use ho raha hai
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdxI_8j6PVqvQVOWD_DMToPBqmbB6cbVyh4jekk1wjCmu8riPhxuWr2RHSaHGRh71yMQ/exec";
+
+    const statusBox = document.getElementById("statusBox");
+    const profileContent = document.getElementById("profileContent");
+
+    // DOM references
+    const elBusinessName = document.getElementById("profileBusinessName");
+    const elOwnerName    = document.getElementById("profileOwnerName");
+    const elCity         = document.getElementById("profileCity");
+    const elTimestamp    = document.getElementById("profileTimestamp");
+    const elDesc         = document.getElementById("profileDescription");
+    const elRole         = document.getElementById("profileRole");
+    const elCategory     = document.getElementById("profileCategory");
+    const elEmail        = document.getElementById("profileEmail");
+    const elCatBadge     = document.getElementById("profileCategoryBadge");
+    const contactBtn     = document.getElementById("contactBtn");
+
+    (async function init(){
+      // 1) URL se id nikaalo  (example: corporate-95216)
+      const params = new URLSearchParams(window.location.search);
+      const urlId = params.get("id");
+
+      if (!urlId) {
+        showError("Invalid link. Profile ID missing.");
+        return;
+      }
+
+      // 2) sheet name nikaalo (corporate / Startup / small_business / Freelancer)
+      const sheetName = urlId.split("-")[0]; // "corporate"
+      if (!sheetName) {
+        showError("Invalid profile ID.");
+        return;
+      }
+
+      try {
+        // 3) Poora sheet data lao (yeh waise hi call hai jo index.html use karta hai)
+        const res = await fetch(`${SCRIPT_URL}?sheet=${encodeURIComponent(sheetName)}`);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+
+        if (!Array.isArray(data)) {
+          showError("Invalid data format from server.");
+          return;
+        }
+
+        // 4) Us row ko dhoondo jiska ProfileLink me "id=<urlId>" aa raha ho
+        const match = data.find(row => {
+          const link = (row.ProfileLink || row["ProfileLink"] || "").toString();
+          return link.includes(`id=${urlId}`);
+        });
+
+        if (!match) {
+          showError("Profile not found for ID: " + urlId);
+          return;
+        }
+
+        // 5) UI fill karo
+        fillProfile(match);
+      } catch (err) {
+        console.error(err);
+        showError("Error fetching data.");
+      }
+    })();
+
+    function showError(msg){
+      statusBox.textContent = msg;
+      statusBox.className =
+        "mb-4 text-sm text-center text-red-300 bg-red-900/40 border border-red-500/60 px-3 py-2 rounded-lg";
+      profileContent.classList.add("hidden");
+    }
+
+    function fillProfile(p){
+      // Header text hatao
+      statusBox.textContent = "";
+      statusBox.className = "mb-4 text-center text-sm text-slate-400";
+
+      const businessName = p["Business Name"] || "Unnamed";
+      const ownerName    = p["Owner Name"] || p.Owner || "";
+      const email        = p.Email || "";
+      const category     = p.Category || "General";
+      const description  = p.Description || "No description available.";
+      const city         = p.City || "-";
+      const role         = p.Role || "Business";
+      const timestamp    = p.Timestamp || "";
+
+      elBusinessName.textContent = businessName;
+      elOwnerName.textContent    = ownerName ? `Owner: ${ownerName}` : "";
+      elCity.textContent         = city ? `City: ${city}` : "";
+      elTimestamp.textContent    = timestamp ? `Listed on: ${timestamp}` : "";
+
+      elDesc.textContent         = description;
+      elRole.textContent         = role;
+      elCategory.textContent     = category;
+      elEmail.textContent        = email;
+      elEmail.href               = email ? `mailto:${email}` : "#";
+
+      elCatBadge.textContent     = category || "General";
+
+      contactBtn.href = email ? `mailto:${email}` : "#";
+
+      profileContent.classList.remove("hidden");
+    }
+  </script>
 </body>
 </html>
