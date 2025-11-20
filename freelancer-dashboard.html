@@ -38,7 +38,10 @@
         </h1>
       </div>
       <div class="flex items-center space-x-3 text-xs sm:text-sm">
-        <span class="hidden sm:inline text-slate-300">Logged in as <span class="font-semibold">Freelancer</span></span>
+        <span class="hidden sm:inline text-slate-300">
+          Logged in as
+          <span class="font-semibold" id="freelancerEmailLabel">Freelancer</span>
+        </span>
         <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
           Logout
         </button>
@@ -81,7 +84,7 @@
         <h2 class="text-sm font-semibold text-slate-200 mb-3">Your Works</h2>
         <p class="text-xs text-slate-400 mb-4">
           Pending, accepted, completed – sab ek jagah. Kisi bhi card par
-          <span class="font-semibold text-slate-200">“Open Chat”</span> click karke neeche wale chat panel ko control kar sakte ho.
+          <span class="font-semibold text-slate-200">“Open Chat”</span> click karke right side chat panel control kar sakte ho.
         </p>
 
         <div id="workList" class="space-y-3 scroll-y">
@@ -113,7 +116,7 @@
           <input
             id="chatInput"
             type="text"
-            placeholder="Type a message… (for now demo only, later Sheet/Apps Script se connect karenge)"
+            placeholder="Type a message…"
             class="flex-1 text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <button
@@ -128,70 +131,40 @@
   </main>
 
   <script>
-    // -------------------------------
-    // 1. Demo data (later Google Sheet se aayega)
-    // -------------------------------
-    const works = [
-      {
-        id: "W101",
-        title: "Salon Instagram Reels Pack",
-        client: "Glow Salon Jaipur",
-        budget: 3000,
-        status: "Pending", // Pending | Accepted | Completed
-        city: "Jaipur",
-        category: "Design/Creative",
-        postedOn: "2025-11-10 11:06"
-      },
-      {
-        id: "W102",
-        title: "Restaurant Menu Photoshoot",
-        client: "Spice Hub",
-        budget: 4500,
-        status: "Accepted",
-        city: "Jaipur",
-        category: "Photography",
-        postedOn: "2025-11-11 15:22"
-      },
-      {
-        id: "W103",
-        title: "Gym Branding Posts (15)",
-        client: "IronFit Gym",
-        budget: 5000,
-        status: "Completed",
-        city: "Delhi",
-        category: "Social Media",
-        postedOn: "2025-11-05 09:00"
-      }
-    ];
+    // ===========================
+    // 0. CONFIG (YOUR SCRIPT URL)
+    // ===========================
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzdxI_8j6PVqvQVOWD_DMToPBqmbB6cbVyh4jekk1wjCmu8riPhxuWr2RHSaHGRh71yMQ/exec";
 
-    // Simple in-memory chat store – later isko Google Sheet / Firestore se replace karenge
-    const chatStore = {
-      W101: [
-        { from: "client", text: "Hi, reels ke liye reference samples bhej do.", time: "10:05 AM" },
-        { from: "freelancer", text: "Sure, 2–3 options bhej raha hoon abhi.", time: "10:09 AM" }
-      ],
-      W102: [
-        { from: "client", text: "Shoot date final ho gai?", time: "11:20 AM" },
-        { from: "freelancer", text: "Yes sir, Sunday ko 3PM confirm hai.", time: "11:24 AM" }
-      ],
-      W103: [
-        { from: "client", text: "Files receive ho gai, great work 👏", time: "08:15 PM" },
-        { from: "freelancer", text: "Thank you! Agar changes chahiye ho to bata dijiyega.", time: "08:17 PM" }
-      ]
-    };
+    // Freelancer email (simple way – later Firebase se link kar sakte ho)
+    let FREELANCER_EMAIL = localStorage.getItem("freelancerEmail") || "";
 
-    // -------------------------------
-    // 2. State
-    // -------------------------------
+    if (!FREELANCER_EMAIL) {
+      FREELANCER_EMAIL = prompt("Enter your freelancer email (for assignments & chat):") || "";
+      localStorage.setItem("freelancerEmail", FREELANCER_EMAIL);
+    }
+
+    const emailLabelEl = document.getElementById("freelancerEmailLabel");
+    if (emailLabelEl) {
+      emailLabelEl.textContent = FREELANCER_EMAIL || "Freelancer";
+    }
+
+    // ====================================
+    // 1. GLOBAL STATE (NOW REAL, NOT DEMO)
+    // ====================================
+    let works = [];          // Google Sheet: works tab -> list of rows
+    const chatStore = {};    // per workID messages (cached)
     let currentTab = "Pending";
     let currentWorkId = null;
 
-    // -------------------------------
-    // 3. Helpers
-    // -------------------------------
+    // ====================================
+    // 2. HELPERS
+    // ====================================
     function formatBudget(num) {
-      if (!num && num !== 0) return "N/A";
-      return "₹" + num.toLocaleString("en-IN");
+      if (num === undefined || num === null || num === "") return "N/A";
+      const n = Number(num);
+      if (isNaN(n)) return "₹" + num;
+      return "₹" + n.toLocaleString("en-IN");
     }
 
     function updateStats() {
@@ -221,9 +194,87 @@
       }
     }
 
-    // -------------------------------
-    // 4. Render work list
-    // -------------------------------
+    // ====================================
+    // 3. LOAD WORKS FROM GOOGLE SHEET
+    // Sheet: works
+    // Columns:
+    // WorkID, Title, Description, Budget, Category, City,
+    // ClientEmail, Status, AssignedTo, FilesURL, LastUpdate
+    // ====================================
+    async function loadWorks() {
+      const workList = document.getElementById("workList");
+      workList.innerHTML = `
+        <div class="py-8 text-center text-xs text-slate-500">
+          Loading works from server...
+        </div>
+      `;
+
+      try {
+        const res = await fetch(`${scriptURL}?sheet=works`);
+        if (!res.ok) {
+          console.error("loadWorks HTTP error:", res.status, res.statusText);
+          workList.innerHTML = `
+            <div class="py-8 text-center text-xs text-red-500">
+              Error loading works (HTTP error).
+            </div>
+          `;
+          return;
+        }
+
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          console.error("loadWorks JSON parse error. Raw:", text);
+          workList.innerHTML = `
+            <div class="py-8 text-center text-xs text-red-500">
+              Works data format error. Check Apps Script JSON output.
+            </div>
+          `;
+          return;
+        }
+
+        if (!Array.isArray(data)) {
+          console.error("loadWorks: data not array:", data);
+          workList.innerHTML = `
+            <div class="py-8 text-center text-xs text-slate-500">
+              No works found.
+            </div>
+          `;
+          return;
+        }
+
+        // Map sheet rows -> works[]
+        works = data.map(row => ({
+          id: row.WorkID || "",
+          title: row.Title || "Untitled Work",
+          description: row.Description || "",
+          budget: row.Budget,
+          category: row.Category || "",
+          city: row.City || "",
+          client: row.ClientEmail || "Client",
+          status: row.Status || "Pending",
+          assignedTo: row.AssignedTo || "",
+          filesURL: row.FilesURL || "",
+          postedOn: row.LastUpdate || ""
+        }));
+
+        updateStats();
+        renderWorkList();
+      } catch (err) {
+        console.error("loadWorks error:", err);
+        workList.innerHTML = `
+          <div class="py-8 text-center text-xs text-red-500">
+            Error loading works (network error).
+          </div>
+        `;
+      }
+    }
+
+    // ====================================
+    // 4. RENDER WORK LIST
+    // ====================================
     function renderWorkList() {
       const container = document.getElementById("workList");
       const items = getWorksForTab(currentTab);
@@ -281,7 +332,7 @@
                   </button>
                 </div>
                 <p class="text-[10px] text-slate-500">
-                  Posted: ${w.postedOn}
+                  Last Update: ${w.postedOn || "—"}
                 </p>
               </div>
             </article>
@@ -290,9 +341,90 @@
         .join("");
     }
 
-    // -------------------------------
-    // 5. Chat rendering
-    // -------------------------------
+    // ====================================
+    // 5. LOAD CHAT FROM SHEET  (chat_messages)
+    // Sheet: chat_messages
+    // Columns:
+    // WorkID, MessageID, FromRole, FromEmail, Message, CreatedAt
+    // ====================================
+    async function loadChat(workId) {
+      currentWorkId = workId;
+      const messagesContainer = document.getElementById("chatMessages");
+      const chatTitle = document.getElementById("chatTitle");
+      const chatSubtitle = document.getElementById("chatSubtitle");
+      const work = works.find(w => w.id === workId);
+
+      if (work) {
+        chatTitle.textContent = work.title;
+        chatSubtitle.textContent = `${work.client} · ${work.city || ""} · ID: ${work.id}`;
+      } else {
+        chatTitle.textContent = "Chat";
+        chatSubtitle.textContent = `Work ID: ${workId}`;
+      }
+
+      messagesContainer.innerHTML = `
+        <div class="py-6 text-center text-xs text-slate-500">
+          Loading chat...
+        </div>
+      `;
+
+      try {
+        const res = await fetch(`${scriptURL}?sheet=chat_messages&WorkID=${encodeURIComponent(workId)}`);
+        if (!res.ok) {
+          console.error("loadChat HTTP error:", res.status, res.statusText);
+          messagesContainer.innerHTML = `
+            <div class="py-6 text-center text-xs text-red-500">
+              Error loading chat (HTTP error).
+            </div>
+          `;
+          return;
+        }
+
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          console.error("loadChat JSON parse error. Raw:", text);
+          messagesContainer.innerHTML = `
+            <div class="py-6 text-center text-xs text-red-500">
+              Chat data format error. Check Apps Script.
+            </div>
+          `;
+          return;
+        }
+
+        if (!Array.isArray(data)) {
+          messagesContainer.innerHTML = `
+            <div class="py-6 text-center text-xs text-slate-500">
+              No messages yet. Start the conversation.
+            </div>
+          `;
+          chatStore[workId] = [];
+          return;
+        }
+
+        chatStore[workId] = data.map(row => ({
+          fromRole: row.FromRole || "Owner",          // Owner / Freelancer
+          fromEmail: row.FromEmail || "",
+          text: row.Message || "",
+          time: row.CreatedAt || ""
+        }));
+
+        renderChat(workId);
+      } catch (err) {
+        console.error("loadChat error:", err);
+        messagesContainer.innerHTML = `
+          <div class="py-6 text-center text-xs text-red-500">
+            Error loading chat (network error).
+          </div>
+        `;
+      }
+    }
+
+    // ====================================
+    // 6. RENDER CHAT (USING chatStore[workId])
+    // ====================================
     function renderChat(workId) {
       const work = works.find(w => w.id === workId);
       const messagesContainer = document.getElementById("chatMessages");
@@ -322,12 +454,13 @@
 
       messagesContainer.innerHTML = messages
         .map(m => {
-          const isFreelancer = m.from === "freelancer";
+          const isFreelancer = m.fromRole === "Freelancer";
           const align = isFreelancer ? "items-end" : "items-start";
           const bubbleClasses = isFreelancer
             ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
             : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
           const metaAlign = isFreelancer ? "text-right" : "text-left";
+          const who = isFreelancer ? "You" : (m.fromEmail || "Client");
           return `
             <div class="flex ${align}">
               <div class="max-w-[80%]">
@@ -335,7 +468,7 @@
                   ${m.text}
                 </div>
                 <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
-                  ${m.from === "freelancer" ? "You" : "Client"} · ${m.time || ""}
+                  ${who} · ${m.time || ""}
                 </p>
               </div>
             </div>
@@ -343,20 +476,75 @@
         })
         .join("");
 
-      // Scroll to bottom
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    // -------------------------------
-    // 6. Event bindings
-    // -------------------------------
-    // Tabs
+    // ====================================
+    // 7. BACKEND UPDATES (ACCEPT / COMPLETE / HISTORY)
+    // works + freelancer-history sheets
+    // ====================================
+    async function logFreelancerAction(workId, action, fileUrl = "", notes = "", paidStatus = "") {
+      try {
+        const fd = new FormData();
+        fd.append("sheet", "freelancer-history");
+        fd.append("Action", action);
+        fd.append("WorkID", workId);
+        fd.append("FreelancerEmail", FREELANCER_EMAIL || "");
+        fd.append("FileUrl", fileUrl);
+        fd.append("Notes", notes);
+        fd.append("PaidStatus", paidStatus);
+        // Timestamp Apps Script me create kara sakte ho
+        await fetch(scriptURL, { method: "POST", body: fd });
+      } catch (err) {
+        console.error("logFreelancerAction error:", err);
+      }
+    }
+
+    async function updateWorkStatus(workId, newStatus) {
+      const work = works.find(w => w.id === workId);
+      if (!work) return;
+
+      // Optimistic update UI
+      work.status = newStatus;
+      if (newStatus === "Accepted" && FREELANCER_EMAIL) {
+        work.assignedTo = FREELANCER_EMAIL;
+      }
+      work.postedOn = new Date().toISOString();
+
+      updateStats();
+      renderWorkList();
+      if (currentWorkId === workId) renderChat(workId);
+
+      // Send to Apps Script
+      try {
+        const fd = new FormData();
+        fd.append("sheet", "works");
+        fd.append("action", "updateStatus");
+        fd.append("WorkID", workId);
+        fd.append("Status", newStatus);
+        if (FREELANCER_EMAIL) fd.append("AssignedTo", FREELANCER_EMAIL);
+        fd.append("LastUpdate", new Date().toISOString());
+        await fetch(scriptURL, { method: "POST", body: fd });
+
+        // History
+        await logFreelancerAction(workId,
+          newStatus === "Accepted" ? "Accepted" : "Completed"
+        );
+      } catch (err) {
+        console.error("updateWorkStatus error:", err);
+      }
+    }
+
+    // ====================================
+    // 8. EVENT BINDINGS
+    // ====================================
+
+    // Tabs (Pending / Accepted / History)
     document.getElementById("statusTabs").addEventListener("click", (e) => {
       if (e.target.matches("[data-tab]")) {
         const tab = e.target.getAttribute("data-tab");
         currentTab = tab;
 
-        // active class toggle
         document.querySelectorAll("#statusTabs .tab-button").forEach(btn => {
           btn.classList.toggle("active", btn.getAttribute("data-tab") === tab);
         });
@@ -365,39 +553,29 @@
       }
     });
 
-    // Work list delegation (accept, complete, open-chat)
+    // Work list: Accept / Complete / Open Chat
     document.getElementById("workList").addEventListener("click", (e) => {
-      const action = e.target.getAttribute("data-action");
-      const workId = e.target.getAttribute("data-id");
+      const btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+      const action = btn.getAttribute("data-action");
+      const workId = btn.getAttribute("data-id");
       if (!action || !workId) return;
 
-      const work = works.find(w => w.id === workId);
-      if (!work) return;
-
       if (action === "accept") {
-        // TODO: Later Apps Script call to update Sheet
-        work.status = "Accepted";
-        updateStats();
-        renderWorkList();
-        if (currentWorkId === workId) renderChat(workId);
+        updateWorkStatus(workId, "Accepted");
       }
 
       if (action === "complete") {
-        // TODO: Later Apps Script call to update Sheet
-        work.status = "Completed";
-        updateStats();
-        renderWorkList();
-        if (currentWorkId === workId) renderChat(workId);
+        updateWorkStatus(workId, "Completed");
       }
 
       if (action === "open-chat") {
-        currentWorkId = workId;
-        renderChat(workId);
+        loadChat(workId);
       }
     });
 
-    // Chat form
-    document.getElementById("chatForm").addEventListener("submit", (e) => {
+    // Chat form (send message)
+    document.getElementById("chatForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const input = document.getElementById("chatInput");
       const text = input.value.trim();
@@ -409,28 +587,46 @@
       }
 
       const now = new Date();
-      const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      const time = now.toISOString(); // backend ko same format me mil jayega
 
+      // Local store update
       if (!chatStore[currentWorkId]) chatStore[currentWorkId] = [];
-      chatStore[currentWorkId].push({ from: "freelancer", text, time });
+      chatStore[currentWorkId].push({
+        fromRole: "Freelancer",
+        fromEmail: FREELANCER_EMAIL || "",
+        text,
+        time
+      });
 
-      // TODO: Later yahi message Google Sheet / backend pe bhi save karenge
-
-      input.value = "";
       renderChat(currentWorkId);
+      input.value = "";
+
+      // Backend: chat_messages sheet me save
+      try {
+        const fd = new FormData();
+        fd.append("sheet", "chat_messages");
+        fd.append("action", "sendMessage");
+        fd.append("WorkID", currentWorkId);
+        fd.append("FromRole", "Freelancer");
+        fd.append("FromEmail", FREELANCER_EMAIL || "");
+        fd.append("Message", text);
+        fd.append("CreatedAt", time);
+        await fetch(scriptURL, { method: "POST", body: fd });
+      } catch (err) {
+        console.error("chat send error:", err);
+      }
     });
 
-    // Logout (abhi simple; baad me Firebase se connect kar sakte ho)
+    // Logout (simple – future: Firebase signOut)
     document.getElementById("logoutBtn").addEventListener("click", () => {
-      // future: Firebase signOut
       window.location.href = "login.html";
     });
 
-    // -------------------------------
-    // 7. Initial render
-    // -------------------------------
-    updateStats();
-    renderWorkList();
+    // ====================================
+    // 9. INITIAL LOAD
+    // ====================================
+    // First time, load works from Google Sheet
+    loadWorks();
   </script>
 </body>
 </html>
