@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -31,10 +31,10 @@
         .text-purple { color: #a855f7; }
     </style>
 
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script>
-        // ❗ YAHAN APNA FIREBASE CONFIG PASTE KAREIN
         const firebaseConfig = {
           apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
           authDomain: "bizlink-exchange.firebaseapp.com",
@@ -46,16 +46,19 @@
         };
         
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // yahan globally current user email store karenge
+        window.currentUserEmail = "";
 
         // Security Guard Check
-        firebase.auth().onAuthStateChanged((user) => {
+        auth.onAuthStateChanged((user) => {
             if (!user) {
-                // User login nahi hai!
                 alert("You must be logged in to post a work.");
-                // Use login.html to redirect
                 window.location.href = 'login.html'; 
+            } else {
+                window.currentUserEmail = user.email || "";
             }
-            // Agar user login hai, to kuch mat karo, page ko load hone do.
         });
     </script>
 </head>
@@ -89,10 +92,12 @@
                 Submit Work
             </button>
         </form>
-        <p id="status" class="mt-4 font-semibold"></p> </div>
+        <p id="status" class="mt-4 font-semibold"></p>
+    </div>
 
 <script>
-    const sheetURL = "https://script.google.com/macros/s/AKfycbw6KSV0WzdzKxTLVHWamwRldMWHmAydS7SZu_24u0AXGElx9AcEYSGJGwy9VAgG5W3Nlw/exec"; 
+    // wahi Apps Script URL jo index.html / get-listed.html me use ho raha hai
+    const sheetURL = "https://script.google.com/macros/s/AKfycbxQicJPq2Y-WgV78QlLUPDXt_n5jbHzuTohGMklWpyjliimAzBezgtM0wNXPKWS-7WFeg/exec"; 
 
     const form = document.getElementById('postWorkForm');
     const status = document.getElementById('status');
@@ -105,11 +110,16 @@
         status.textContent = ''; 
 
         const formData = new FormData(form);
+
+        // IMPORTANT: works sheet ke liye
+        formData.append('sheet', 'works');
+        formData.append('action', 'addWork');
         formData.append('PostedOn', new Date().toISOString());
 
-        // 🔹 Ye optional hai, but add kar denge:
-        formData.append('action', 'createWork');
-        formData.append('sheet', 'works');
+        // logged-in client email (Firebase se)
+        if (window.currentUserEmail) {
+            formData.append('ClientEmail', window.currentUserEmail);
+        }
 
         try {
             const res = await fetch(sheetURL, {
@@ -121,17 +131,22 @@
             let result;
             try {
                 result = JSON.parse(text);
-            } catch (e) {
-                result = { success: false, message: text };
+            } catch (err) {
+                console.error('POST /works JSON parse error, raw:', text);
+                status.style.color = 'pink';
+                status.textContent = "⚠️ Server response error. Check console.";
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Submit Work';
+                return;
             }
 
-            if (result.success || result.ok) {
+            if (result.success) {
                 status.style.color = 'lightgreen';
                 status.textContent = "✅ Work posted successfully!";
                 form.reset();
             } else {
                 status.style.color = 'pink';
-                status.textContent = "⚠️ Failed to post work: " + (result.message || result.error || 'Unknown error');
+                status.textContent = "⚠️ Failed to post work: " + (result.message || 'Unknown error');
             }
 
         } catch (err) {
@@ -145,32 +160,24 @@
     });
 </script>
 
-
 <script>
-    // Firebase auth object pehle hi head mein initialize ho chuka hai
-    const auth = firebase.auth(); 
-
+    // Firebase auth object already initialized in head
     const loginLink = document.getElementById('loginLink');
     const signupLink = document.getElementById('signupLink');
     const logoutButton = document.getElementById('logoutButton');
 
-    // Check karein ki user login hai ya nahi
     auth.onAuthStateChanged((user) => {
         if (user) {
-            // User login hai!
             loginLink.classList.add('hidden');
             signupLink.classList.add('hidden');
-    
             logoutButton.classList.remove('hidden');
         } else {
-            // User login nahi hai!
             loginLink.classList.remove('hidden');
             signupLink.classList.remove('hidden');
             logoutButton.classList.add('hidden');
         }
     });
 
-    // Logout button par click karne par...
     logoutButton.addEventListener('click', () => {
         auth.signOut().then(() => {
             alert("You have been logged out.");
