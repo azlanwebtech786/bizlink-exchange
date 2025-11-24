@@ -92,7 +92,6 @@
         <p id="status" class="mt-4 font-semibold"></p> </div>
 
 <script>
-    // ❗ YAHAN APNA GOOGLE SCRIPT URL PASTE KAREIN
     const sheetURL = "https://script.google.com/macros/s/AKfycbw6KSV0WzdzKxTLVHWamwRldMWHmAydS7SZu_24u0AXGElx9AcEYSGJGwy9VAgG5W3Nlw/exec"; 
 
     const form = document.getElementById('postWorkForm');
@@ -108,21 +107,31 @@
         const formData = new FormData(form);
         formData.append('PostedOn', new Date().toISOString());
 
+        // 🔹 Ye optional hai, but add kar denge:
+        formData.append('action', 'createWork');
+        formData.append('sheet', 'works');
+
         try {
             const res = await fetch(sheetURL, {
                 method: 'POST',
                 body: formData 
             });
 
-            const result = await res.json();
+            const text = await res.text();
+            let result;
+            try {
+                result = JSON.parse(text);
+            } catch (e) {
+                result = { success: false, message: text };
+            }
 
-            if (result.success) {
+            if (result.success || result.ok) {
                 status.style.color = 'lightgreen';
                 status.textContent = "✅ Work posted successfully!";
                 form.reset();
             } else {
                 status.style.color = 'pink';
-                status.textContent = "⚠️ Failed to post work: " + result.message;
+                status.textContent = "⚠️ Failed to post work: " + (result.message || result.error || 'Unknown error');
             }
 
         } catch (err) {
@@ -135,6 +144,7 @@
         }
     });
 </script>
+
 
 <script>
     // Firebase auth object pehle hi head mein initialize ho chuka hai
