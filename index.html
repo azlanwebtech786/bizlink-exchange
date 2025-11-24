@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta name="google-site-verification" content="GBKwckk6Rv-B-vidv23MEaY7SX9abgfVHWhraAvC3JI"/>
@@ -352,7 +352,7 @@
 
   <!-- Data + Auth Scripts -->
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxQicJPq2Y-WgV78QlLUPDXt_n5jbHzuTohGMklWpyjliimAzBezgtM0wNXPKWS-7WFeg/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbw6KSV0WzdzKxTLVHWamwRldMWHmAydS7SZu_24u0AXGElx9AcEYSGJGwy9VAgG5W3Nlw/exec";
     // Stored datasets
     let startupProfilesData = [], smallBusinessProfilesData = [], corporateProfilesData = [], freelancerProfilesData = [], worksData = [];
 
@@ -522,7 +522,7 @@
     logoutButtonDesktop?.addEventListener('click',handleLogout); logoutButtonMobile?.addEventListener('click',handleLogout);
   </script>
 
-  <!-- Mobile menu + Lead modal JS -->
+  <!-- Mobile menu + Lead modal + PLAN SYSTEM -->
   <script>
     // Mobile menu
     const menuButton=document.getElementById('mobile-menu-button'), mobileMenu=document.getElementById('mobile-menu');
@@ -541,26 +541,107 @@
     const leadModal=document.getElementById('leadModal');
     const closeLeadModal=document.getElementById('closeLeadModal');
     const planSelect=document.getElementById('planSelect');
+
     document.querySelectorAll('.open-lead-modal').forEach(btn=>{
-      btn.addEventListener('click',()=>{ planSelect.value=btn.dataset.plan; leadModal.classList.remove('hidden'); });
+      btn.addEventListener('click',()=>{
+        planSelect.value = btn.dataset.plan || 'Standard';
+        leadModal.classList.remove('hidden');
+      });
     });
-    btnDemo?.addEventListener('click',()=>{ planSelect.value='₹999 Demo (Refundable)'; leadModal.classList.remove('hidden'); });
+    btnDemo?.addEventListener('click',()=>{
+      planSelect.value='₹999 Demo (Refundable)';
+      leadModal.classList.remove('hidden');
+    });
     closeLeadModal?.addEventListener('click',()=>leadModal.classList.add('hidden'));
 
-    // Lead form submit → Google Sheet (sheet: leads)
+    // ---------------- PLAN SYSTEM (front-end) ----------------
+    const PLAN_ORDER = ['Basic','Standard','Premium 10X'];
+
+    function getStoredPlan(){
+      try{
+        return localStorage.getItem('bizlinkPlan') || null;
+      }catch(e){
+        return null;
+      }
+    }
+    function storePlan(plan){
+      if(!plan) return;
+      try{
+        localStorage.setItem('bizlinkPlan', plan);
+      }catch(e){}
+    }
+
+    function updatePlanUI(){
+      const currentPlan = getStoredPlan();
+      if(!currentPlan) return;
+
+      // Fixed badge bottom-left
+      let badge = document.getElementById('fixedPlanBadge');
+      if(!badge){
+        badge = document.createElement('div');
+        badge.id = 'fixedPlanBadge';
+        badge.className = 'fixed bottom-4 left-4 bg-purple-700 text-white text-xs px-3 py-1 rounded-full shadow-lg z-40';
+        document.body.appendChild(badge);
+      }
+      badge.textContent = 'Your Plan: ' + currentPlan;
+
+      // Pricing buttons text / disable current plan
+      document.querySelectorAll('.open-lead-modal').forEach(btn=>{
+        const plan = btn.dataset.plan;
+        if(!plan) return;
+
+        btn.disabled = false;
+        btn.classList.remove('opacity-60','cursor-default');
+
+        if(plan === currentPlan){
+          btn.textContent = 'Current Plan';
+          btn.disabled = true;
+          btn.classList.add('opacity-60','cursor-default');
+          return;
+        }
+
+        const idxCurrent = PLAN_ORDER.indexOf(currentPlan);
+        const idxBtn = PLAN_ORDER.indexOf(plan);
+        if(idxCurrent !== -1 && idxBtn !== -1 && idxBtn > idxCurrent){
+          btn.textContent = 'Upgrade to ' + plan;
+        }else{
+          btn.textContent = 'Choose ' + plan;
+        }
+      });
+    }
+
+    // Lead form submit → Google Sheet (sheet: leads) + plan save
     const leadForm=document.getElementById('leadForm');
     const leadStatus=document.getElementById('leadStatus');
     leadForm.addEventListener('submit',async(e)=>{
       e.preventDefault();
       leadStatus.classList.remove('hidden');
+      leadStatus.textContent = 'Submitting…';
+
+      const chosenPlan = planSelect.value;
       const fd=new FormData(leadForm);
       fd.append('sheet','leads');
+
       try{
         const res=await fetch(scriptURL,{method:'POST',body:fd});
-        if(res.ok){ leadStatus.textContent='Thanks! Our Growth Officer will call you in 24–48 hrs.'; leadForm.reset(); setTimeout(()=>leadModal.classList.add('hidden'),1200); }
-        else{ leadStatus.textContent='Submission failed. Try again.'; }
-      }catch(err){ leadStatus.textContent='Network error. Try again.'; }
+        if(res.ok){
+          leadStatus.textContent='Thanks! Our Growth Officer will call you in 24–48 hrs.';
+          leadForm.reset();
+          leadModal.classList.add('hidden');
+
+          // Plan locally save + UI refresh
+          storePlan(chosenPlan);
+          updatePlanUI();
+        }else{
+          leadStatus.textContent='Submission failed. Try again.';
+        }
+      }catch(err){
+        leadStatus.textContent='Network error. Try again.';
+      }
     });
+
+    // Page load pe agar pehle se plan save hai to show karo
+    updatePlanUI();
   </script>
 </body>
 </html>
