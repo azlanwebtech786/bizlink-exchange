@@ -22,6 +22,7 @@
     .scroll-y{max-height:430px;overflow-y:auto}
     .scroll-y::-webkit-scrollbar{width:6px}
     .scroll-y::-webkit-scrollbar-thumb{background:#1f2937;border-radius:999px}
+    .badge-small{font-size:.7rem}
   </style>
 </head>
 <body class="min-h-screen">
@@ -38,9 +39,8 @@
         </h1>
       </div>
       <div class="flex items-center space-x-3 text-xs sm:text-sm">
-        <span class="hidden sm:inline text-slate-300">
-          Logged in as
-          <span class="font-semibold" id="freelancerEmailLabel">Freelancer</span>
+        <span id="loggedInEmail" class="hidden sm:inline text-slate-300">
+          Logged in as <span class="font-semibold">...</span>
         </span>
         <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
           Logout
@@ -84,7 +84,7 @@
         <h2 class="text-sm font-semibold text-slate-200 mb-3">Your Works</h2>
         <p class="text-xs text-slate-400 mb-4">
           Pending, accepted, completed – sab ek jagah. Kisi bhi card par
-          <span class="font-semibold text-slate-200">“Open Chat”</span> click karke right side chat panel control kar sakte ho.
+          <span class="font-semibold text-slate-200">“Open Chat”</span> click karke right side chat panel control karo.
         </p>
 
         <div id="workList" class="space-y-3 scroll-y">
@@ -100,18 +100,37 @@
             Select a work to start chatting
           </h2>
           <p id="chatSubtitle" class="text-xs text-slate-400 mt-1">
-            “Open Chat” pe click karo kisi work card par. Yahan se files links bhejo, doubts clear karo, status track karo.
+            “Open Chat” pe click karo kisi work card par. Har work ki chat alag store hogi.
           </p>
         </div>
 
         <div id="chatMessages" class="flex-1 scroll-y space-y-3 text-xs">
-          <!-- Messages go here (JS) -->
           <div class="h-full flex flex-col items-center justify-center text-center text-slate-500">
             <div class="mb-2 text-2xl">💬</div>
             <p>No work selected.</p>
           </div>
         </div>
 
+        <!-- FILE URL + NOTES for Complete -->
+        <form id="completeForm" class="mt-3 space-y-2 text-xs">
+          <p class="text-[11px] text-slate-400">
+            Work complete karte waqt optional files ka link / notes yahan se jayenge.
+          </p>
+          <input
+            id="fileUrlInput"
+            type="url"
+            placeholder="File URL (Google Drive / WeTransfer) – optional"
+            class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <textarea
+            id="notesInput"
+            rows="2"
+            placeholder="Notes for client (optional)"
+            class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          ></textarea>
+        </form>
+
+        <!-- CHAT INPUT -->
         <form id="chatForm" class="mt-3 flex gap-2 items-center">
           <input
             id="chatInput"
@@ -130,151 +149,74 @@
     </section>
   </main>
 
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
   <script>
-    // ===========================
-    // 0. CONFIG (YOUR SCRIPT URL)
-    // ===========================
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxQicJPq2Y-WgV78QlLUPDXt_n5jbHzuTohGMklWpyjliimAzBezgtM0wNXPKWS-7WFeg/exec";
+    /************* CONFIG *************/
+    // 👉 YAHAN WALA URL tumhari woh Apps Script deployment hai
+    // jisme actions: listWorksForFreelancer, acceptWork, completeWork,
+    // getChatMessages, sendMessage, etc. defined hain.
+    const API_URL = "https://script.google.com/macros/s/AKfycbw0Ah9b8hn3s8OyArY71_lBju_rS_8CHRRwcHUrIDL5Cnwo11JUQVbXmJZvU24fQMSRmw/exec";
 
-    // Freelancer email (simple way – later Firebase se link kar sakte ho)
-    let FREELANCER_EMAIL = localStorage.getItem("freelancerEmail") || "";
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+      authDomain: "bizlink-exchange.firebaseapp.com",
+      projectId: "bizlink-exchange",
+      storageBucket: "bizlink-exchange.firebasestorage.app",
+      messagingSenderId: "116213651971",
+      appId: "1:116213651971:web:fff60961af0c4da3448c36",
+      measurementId: "G-VQ3JM82D1N"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    if (!FREELANCER_EMAIL) {
-      FREELANCER_EMAIL = prompt("Enter your freelancer email (for assignments & chat):") || "";
-      localStorage.setItem("freelancerEmail", FREELANCER_EMAIL);
-    }
-
-    const emailLabelEl = document.getElementById("freelancerEmailLabel");
-    if (emailLabelEl) {
-      emailLabelEl.textContent = FREELANCER_EMAIL || "Freelancer";
-    }
-
-    // ====================================
-    // 1. GLOBAL STATE (NOW REAL, NOT DEMO)
-    // ====================================
-    let works = [];          // Google Sheet: works tab -> list of rows
-    const chatStore = {};    // per workID messages (cached)
+    /************* STATE *************/
+    let freelancerEmail = null;
     let currentTab = "Pending";
     let currentWorkId = null;
+    let works = [];        // backend se aa raha hai
+    let chatCache = {};    // WorkID -> messages[]
 
-    // ====================================
-    // 2. HELPERS
-    // ====================================
+    /************* HELPERS *************/
     function formatBudget(num) {
-      if (num === undefined || num === null || num === "") return "N/A";
+      if (!num && num !== 0) return "N/A";
       const n = Number(num);
-      if (isNaN(n)) return "₹" + num;
+      if (isNaN(n)) return num;
       return "₹" + n.toLocaleString("en-IN");
     }
 
-    function updateStats() {
-      const pending = works.filter(w => w.status === "Pending").length;
-      const accepted = works.filter(w => w.status === "Accepted").length;
-      const completed = works.filter(w => w.status === "Completed").length;
+    function statusChip(status) {
+      if (status === "Accepted") {
+        return '<span class="chip chip-accepted">In Progress</span>';
+      } else if (status === "Completed") {
+        return '<span class="chip chip-completed">Completed</span>';
+      }
+      return '<span class="chip chip-pending">Pending</span>';
+    }
 
+    function updateStats() {
+      const pending = works.filter(w => w.Status === "Pending").length;
+      const accepted = works.filter(w => w.Status === "Accepted").length;
+      const completed = works.filter(w => w.Status === "Completed").length;
       document.getElementById("statPending").textContent = pending;
       document.getElementById("statAccepted").textContent = accepted;
       document.getElementById("statCompleted").textContent = completed;
     }
 
     function getWorksForTab(tab) {
-      if (tab === "Pending") return works.filter(w => w.status === "Pending");
-      if (tab === "Accepted") return works.filter(w => w.status === "Accepted");
-      if (tab === "History") return works.filter(w => w.status === "Completed");
+      if (tab === "Pending")   return works.filter(w => w.Status === "Pending");
+      if (tab === "Accepted")  return works.filter(w => w.Status === "Accepted");
+      if (tab === "History")   return works.filter(w => w.Status === "Completed");
       return works;
     }
 
-    function statusChip(status) {
-      if (status === "Pending") {
-        return '<span class="chip chip-pending">Pending</span>';
-      } else if (status === "Accepted") {
-        return '<span class="chip chip-accepted">In Progress</span>';
-      } else {
-        return '<span class="chip chip-completed">Completed</span>';
-      }
+    function showToast(msg) {
+      alert(msg); // simple – chaaho to custom toast bana sakte ho
     }
 
-    // ====================================
-    // 3. LOAD WORKS FROM GOOGLE SHEET
-    // Sheet: works
-    // Columns:
-    // WorkID, Title, Description, Budget, Category, City,
-    // ClientEmail, Status, AssignedTo, FilesURL, LastUpdate
-    // ====================================
-    async function loadWorks() {
-      const workList = document.getElementById("workList");
-      workList.innerHTML = `
-        <div class="py-8 text-center text-xs text-slate-500">
-          Loading works from server...
-        </div>
-      `;
-
-      try {
-        const res = await fetch(`${scriptURL}?sheet=works`);
-        if (!res.ok) {
-          console.error("loadWorks HTTP error:", res.status, res.statusText);
-          workList.innerHTML = `
-            <div class="py-8 text-center text-xs text-red-500">
-              Error loading works (HTTP error).
-            </div>
-          `;
-          return;
-        }
-
-        const text = await res.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          console.error("loadWorks JSON parse error. Raw:", text);
-          workList.innerHTML = `
-            <div class="py-8 text-center text-xs text-red-500">
-              Works data format error. Check Apps Script JSON output.
-            </div>
-          `;
-          return;
-        }
-
-        if (!Array.isArray(data)) {
-          console.error("loadWorks: data not array:", data);
-          workList.innerHTML = `
-            <div class="py-8 text-center text-xs text-slate-500">
-              No works found.
-            </div>
-          `;
-          return;
-        }
-
-        // Map sheet rows -> works[]
-        works = data.map(row => ({
-          id: row.WorkID || "",
-          title: row.Title || "Untitled Work",
-          description: row.Description || "",
-          budget: row.Budget,
-          category: row.Category || "",
-          city: row.City || "",
-          client: row.ClientEmail || "Client",
-          status: row.Status || "Pending",
-          assignedTo: row.AssignedTo || "",
-          filesURL: row.FilesURL || "",
-          postedOn: row.LastUpdate || ""
-        }));
-
-        updateStats();
-        renderWorkList();
-      } catch (err) {
-        console.error("loadWorks error:", err);
-        workList.innerHTML = `
-          <div class="py-8 text-center text-xs text-red-500">
-            Error loading works (network error).
-          </div>
-        `;
-      }
-    }
-
-    // ====================================
-    // 4. RENDER WORK LIST
-    // ====================================
+    /************* RENDER – WORK LIST *************/
     function renderWorkList() {
       const container = document.getElementById("workList");
       const items = getWorksForTab(currentTab);
@@ -283,150 +225,60 @@
         container.innerHTML = `
           <div class="py-12 text-center text-xs text-slate-500">
             <p>No works in <span class="font-semibold">${currentTab}</span> right now.</p>
-          </div>
-        `;
+          </div>`;
         return;
       }
 
-      container.innerHTML = items
-        .map(w => {
-          const canAccept = w.status === "Pending";
-          const canComplete = w.status === "Accepted";
-          return `
-            <article class="card-bg rounded-lg p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div class="flex-1">
-                <div class="flex items-center gap-2 mb-1">
-                  <h3 class="text-sm font-semibold text-slate-100">${w.title}</h3>
-                  ${statusChip(w.status)}
-                </div>
-                <p class="text-xs text-slate-400">
-                  <span class="font-semibold text-slate-200">${w.client}</span>
-                  · ${w.city || ""} · ${w.category || ""}
-                </p>
-                <p class="text-xs text-slate-500 mt-1">
-                  Budget: <span class="text-emerald-400 font-semibold">${formatBudget(w.budget)}</span>
-                  · ID: <span class="font-mono text-slate-300">${w.id}</span>
-                </p>
+      container.innerHTML = items.map(w => {
+        const canAccept   = w.Status === "Pending";
+        const canComplete = w.Status === "Accepted";
+        return `
+          <article class="card-bg rounded-lg p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <h3 class="text-sm font-semibold text-slate-100">${w.Title || "No title"}</h3>
+                ${statusChip(w.Status)}
               </div>
-              <div class="flex flex-col sm:items-end gap-2 text-xs">
-                <div class="flex gap-2">
-                  ${
-                    canAccept
-                      ? `<button data-action="accept" data-id="${w.id}"
-                           class="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
-                           Accept
-                         </button>`
-                      : ""
-                  }
-                  ${
-                    canComplete
-                      ? `<button data-action="complete" data-id="${w.id}"
-                           class="px-3 py-1 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-semibold">
-                           Mark Completed
-                         </button>`
-                      : ""
-                  }
-                  <button data-action="open-chat" data-id="${w.id}"
-                    class="px-3 py-1 rounded-md border border-slate-600 hover:border-purple-500 text-slate-100 font-semibold">
-                    Open Chat
-                  </button>
-                </div>
-                <p class="text-[10px] text-slate-500">
-                  Last Update: ${w.postedOn || "—"}
-                </p>
+              <p class="text-xs text-slate-400">
+                <span class="font-semibold text-slate-200">${w.Category || ""}</span>
+                · ${w.City || ""} · Client: ${w.ClientEmail || "N/A"}
+              </p>
+              <p class="text-xs text-slate-500 mt-1">
+                Budget: <span class="text-emerald-400 font-semibold">${formatBudget(w.Budget)}</span>
+                · ID: <span class="font-mono text-slate-300">${w.WorkID}</span>
+              </p>
+            </div>
+            <div class="flex flex-col sm:items-end gap-2 text-xs">
+              <div class="flex gap-2">
+                ${canAccept ? `
+                  <button data-action="accept" data-id="${w.WorkID}"
+                    class="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
+                    Accept
+                  </button>` : ""
+                }
+                ${canComplete ? `
+                  <button data-action="complete" data-id="${w.WorkID}"
+                    class="px-3 py-1 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-semibold">
+                    Mark Completed
+                  </button>` : ""
+                }
+                <button data-action="open-chat" data-id="${w.WorkID}"
+                  class="px-3 py-1 rounded-md border border-slate-600 hover:border-purple-500 text-slate-100 font-semibold">
+                  Open Chat
+                </button>
               </div>
-            </article>
-          `;
-        })
-        .join("");
-    }
-
-    // ====================================
-    // 5. LOAD CHAT FROM SHEET  (chat_messages)
-    // Sheet: chat_messages
-    // Columns:
-    // WorkID, MessageID, FromRole, FromEmail, Message, CreatedAt
-    // ====================================
-    async function loadChat(workId) {
-      currentWorkId = workId;
-      const messagesContainer = document.getElementById("chatMessages");
-      const chatTitle = document.getElementById("chatTitle");
-      const chatSubtitle = document.getElementById("chatSubtitle");
-      const work = works.find(w => w.id === workId);
-
-      if (work) {
-        chatTitle.textContent = work.title;
-        chatSubtitle.textContent = `${work.client} · ${work.city || ""} · ID: ${work.id}`;
-      } else {
-        chatTitle.textContent = "Chat";
-        chatSubtitle.textContent = `Work ID: ${workId}`;
-      }
-
-      messagesContainer.innerHTML = `
-        <div class="py-6 text-center text-xs text-slate-500">
-          Loading chat...
-        </div>
-      `;
-
-      try {
-        const res = await fetch(`${scriptURL}?sheet=chat_messages&WorkID=${encodeURIComponent(workId)}`);
-        if (!res.ok) {
-          console.error("loadChat HTTP error:", res.status, res.statusText);
-          messagesContainer.innerHTML = `
-            <div class="py-6 text-center text-xs text-red-500">
-              Error loading chat (HTTP error).
+              <p class="text-[10px] text-slate-500">
+                Posted: ${w.PostedOn || "-"}
+              </p>
             </div>
-          `;
-          return;
-        }
-
-        const text = await res.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          console.error("loadChat JSON parse error. Raw:", text);
-          messagesContainer.innerHTML = `
-            <div class="py-6 text-center text-xs text-red-500">
-              Chat data format error. Check Apps Script.
-            </div>
-          `;
-          return;
-        }
-
-        if (!Array.isArray(data)) {
-          messagesContainer.innerHTML = `
-            <div class="py-6 text-center text-xs text-slate-500">
-              No messages yet. Start the conversation.
-            </div>
-          `;
-          chatStore[workId] = [];
-          return;
-        }
-
-        chatStore[workId] = data.map(row => ({
-          fromRole: row.FromRole || "Owner",          // Owner / Freelancer
-          fromEmail: row.FromEmail || "",
-          text: row.Message || "",
-          time: row.CreatedAt || ""
-        }));
-
-        renderChat(workId);
-      } catch (err) {
-        console.error("loadChat error:", err);
-        messagesContainer.innerHTML = `
-          <div class="py-6 text-center text-xs text-red-500">
-            Error loading chat (network error).
-          </div>
+          </article>
         `;
-      }
+      }).join("");
     }
 
-    // ====================================
-    // 6. RENDER CHAT (USING chatStore[workId])
-    // ====================================
+    /************* RENDER – CHAT *************/
     function renderChat(workId) {
-      const work = works.find(w => w.id === workId);
+      const work = works.find(w => w.WorkID === workId);
       const messagesContainer = document.getElementById("chatMessages");
       const chatTitle = document.getElementById("chatTitle");
       const chatSubtitle = document.getElementById("chatSubtitle");
@@ -438,108 +290,187 @@
         return;
       }
 
-      chatTitle.textContent = work.title;
-      chatSubtitle.textContent = `${work.client} · ${work.city || ""} · ID: ${work.id}`;
+      chatTitle.textContent = work.Title || "Work chat";
+      chatSubtitle.textContent = `${work.Category || ""} · ${work.City || ""} · ID: ${work.WorkID}`;
 
-      const messages = chatStore[workId] || [];
+      const msgs = chatCache[workId] || [];
 
-      if (!messages.length) {
+      if (!msgs.length) {
         messagesContainer.innerHTML = `
           <div class="py-10 text-center text-xs text-slate-500">
             No messages yet. Pehla message bhej kar conversation start karo.
-          </div>
-        `;
+          </div>`;
         return;
       }
 
-      messagesContainer.innerHTML = messages
-        .map(m => {
-          const isFreelancer = m.fromRole === "Freelancer";
-          const align = isFreelancer ? "items-end" : "items-start";
-          const bubbleClasses = isFreelancer
-            ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
-            : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
-          const metaAlign = isFreelancer ? "text-right" : "text-left";
-          const who = isFreelancer ? "You" : (m.fromEmail || "Client");
-          return `
-            <div class="flex ${align}">
-              <div class="max-w-[80%]">
-                <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
-                  ${m.text}
-                </div>
-                <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
-                  ${who} · ${m.time || ""}
-                </p>
+      messagesContainer.innerHTML = msgs.map(m => {
+        const isFreelancer = (m.FromRole || "").toLowerCase() === "freelancer" ||
+                             (m.FromEmail || "").toLowerCase() === (freelancerEmail || "").toLowerCase();
+        const align = isFreelancer ? "items-end" : "items-start";
+        const bubbleClasses = isFreelancer
+          ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
+          : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
+        const metaAlign = isFreelancer ? "text-right" : "text-left";
+        const who = isFreelancer ? "You" : (m.FromRole || "Client");
+        const timeStr = m.CreatedAt ? new Date(m.CreatedAt).toLocaleString() : "";
+        return `
+          <div class="flex ${align}">
+            <div class="max-w-[80%]">
+              <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
+                ${m.Message}
               </div>
+              <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
+                ${who} · ${timeStr}
+              </p>
             </div>
-          `;
-        })
-        .join("");
+          </div>`;
+      }).join("");
 
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    // ====================================
-    // 7. BACKEND UPDATES (ACCEPT / COMPLETE / HISTORY)
-    // works + freelancer-history sheets
-    // ====================================
-    async function logFreelancerAction(workId, action, fileUrl = "", notes = "", paidStatus = "") {
-      try {
-        const fd = new FormData();
-        fd.append("sheet", "freelancer-history");
-        fd.append("Action", action);
-        fd.append("WorkID", workId);
-        fd.append("FreelancerEmail", FREELANCER_EMAIL || "");
-        fd.append("FileUrl", fileUrl);
-        fd.append("Notes", notes);
-        fd.append("PaidStatus", paidStatus);
-        // Timestamp Apps Script me create kara sakte ho
-        await fetch(scriptURL, { method: "POST", body: fd });
-      } catch (err) {
-        console.error("logFreelancerAction error:", err);
+    /************* API CALLS *************/
+    async function apiGet(paramsObj){
+      const qs = new URLSearchParams(paramsObj).toString();
+      const res = await fetch(`${API_URL}?${qs}`);
+      const data = await res.json();
+      return data;
+    }
+
+    async function apiPost(paramsObj){
+      const body = new URLSearchParams(paramsObj).toString();
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body
+      });
+      const data = await res.json();
+      return data;
+    }
+
+    async function loadWorks(){
+      if (!freelancerEmail) return;
+      try{
+        const data = await apiGet({
+          action: "listWorksForFreelancer",
+          freelancerEmail: freelancerEmail
+        });
+        if (!data.ok){
+          console.error("listWorksForFreelancer error:", data.error);
+          showToast("Error loading works: " + (data.error || ""));
+          return;
+        }
+        works = data.works || [];
+        updateStats();
+        renderWorkList();
+      }catch(err){
+        console.error("loadWorks error:", err);
+        showToast("Network error while loading works.");
       }
     }
 
-    async function updateWorkStatus(workId, newStatus) {
-      const work = works.find(w => w.id === workId);
-      if (!work) return;
-
-      // Optimistic update UI
-      work.status = newStatus;
-      if (newStatus === "Accepted" && FREELANCER_EMAIL) {
-        work.assignedTo = FREELANCER_EMAIL;
-      }
-      work.postedOn = new Date().toISOString();
-
-      updateStats();
-      renderWorkList();
-      if (currentWorkId === workId) renderChat(workId);
-
-      // Send to Apps Script
-      try {
-        const fd = new FormData();
-        fd.append("sheet", "works");
-        fd.append("action", "updateStatus");
-        fd.append("WorkID", workId);
-        fd.append("Status", newStatus);
-        if (FREELANCER_EMAIL) fd.append("AssignedTo", FREELANCER_EMAIL);
-        fd.append("LastUpdate", new Date().toISOString());
-        await fetch(scriptURL, { method: "POST", body: fd });
-
-        // History
-        await logFreelancerAction(workId,
-          newStatus === "Accepted" ? "Accepted" : "Completed"
-        );
-      } catch (err) {
-        console.error("updateWorkStatus error:", err);
+    async function loadChat(workId){
+      try{
+        const data = await apiGet({
+          action: "getChatMessages",
+          WorkID: workId
+        });
+        if (!data.ok){
+          console.error("getChatMessages error:", data.error);
+          chatCache[workId] = [];
+        }else{
+          chatCache[workId] = data.messages || [];
+        }
+        renderChat(workId);
+      }catch(err){
+        console.error("loadChat error:", err);
+        chatCache[workId] = [];
+        renderChat(workId);
       }
     }
 
-    // ====================================
-    // 8. EVENT BINDINGS
-    // ====================================
+    async function acceptWork(workId){
+      try{
+        const data = await apiPost({
+          action: "acceptWork",
+          WorkID: workId,
+          freelancerEmail: freelancerEmail
+        });
+        if (!data.ok){
+          showToast("Accept failed: " + (data.error || ""));
+          return;
+        }
+        showToast("Work accepted.");
+        await loadWorks();
+        if (currentWorkId === workId) renderChat(workId);
+      }catch(err){
+        console.error("acceptWork error:", err);
+        showToast("Network error while accepting work.");
+      }
+    }
 
-    // Tabs (Pending / Accepted / History)
+    async function completeWork(workId){
+      const fileUrl = document.getElementById("fileUrlInput").value.trim();
+      const notes   = document.getElementById("notesInput").value.trim();
+      try{
+        const data = await apiPost({
+          action: "completeWork",
+          WorkID: workId,
+          freelancerEmail: freelancerEmail,
+          fileUrl,
+          notes
+        });
+        if (!data.ok){
+          showToast("Complete failed: " + (data.error || ""));
+          return;
+        }
+        showToast("Work marked as completed.");
+        document.getElementById("fileUrlInput").value = "";
+        document.getElementById("notesInput").value   = "";
+        await loadWorks();
+        if (currentWorkId === workId) renderChat(workId);
+      }catch(err){
+        console.error("completeWork error:", err);
+        showToast("Network error while completing work.");
+      }
+    }
+
+    async function sendChatMessage(text){
+      if (!currentWorkId){
+        alert("Pehele koi work select karo (Open Chat).");
+        return;
+      }
+      try{
+        const data = await apiPost({
+          action: "sendMessage",
+          WorkID: currentWorkId,
+          FromRole: "Freelancer",
+          FromEmail: freelancerEmail,
+          Message: text
+        });
+        if (!data.ok){
+          showToast("Send failed: " + (data.error || ""));
+          return;
+        }
+        // locally add
+        if (!chatCache[currentWorkId]) chatCache[currentWorkId] = [];
+        chatCache[currentWorkId].push({
+          WorkID: currentWorkId,
+          MessageID: data.MessageID,
+          FromRole: "Freelancer",
+          FromEmail: freelancerEmail,
+          Message: text,
+          CreatedAt: data.CreatedAt
+        });
+        renderChat(currentWorkId);
+      }catch(err){
+        console.error("sendChatMessage error:", err);
+        showToast("Network error while sending message.");
+      }
+    }
+
+    /************* EVENT BINDINGS *************/
+    // Tabs
     document.getElementById("statusTabs").addEventListener("click", (e) => {
       if (e.target.matches("[data-tab]")) {
         const tab = e.target.getAttribute("data-tab");
@@ -555,78 +486,54 @@
 
     // Work list: Accept / Complete / Open Chat
     document.getElementById("workList").addEventListener("click", (e) => {
-      const btn = e.target.closest("button[data-action]");
-      if (!btn) return;
-      const action = btn.getAttribute("data-action");
-      const workId = btn.getAttribute("data-id");
+      const action = e.target.getAttribute("data-action");
+      const workId = e.target.getAttribute("data-id");
       if (!action || !workId) return;
 
       if (action === "accept") {
-        updateWorkStatus(workId, "Accepted");
+        acceptWork(workId);
       }
-
       if (action === "complete") {
-        updateWorkStatus(workId, "Completed");
+        completeWork(workId);
       }
-
       if (action === "open-chat") {
-        loadChat(workId);
+        currentWorkId = workId;
+        loadChat(workId);  // har work ki chat alag
       }
     });
 
-    // Chat form (send message)
-    document.getElementById("chatForm").addEventListener("submit", async (e) => {
+    // Chat form
+    document.getElementById("chatForm").addEventListener("submit", (e) => {
       e.preventDefault();
       const input = document.getElementById("chatInput");
       const text = input.value.trim();
       if (!text) return;
+      sendChatMessage(text);
+      input.value = "";
+    });
 
-      if (!currentWorkId) {
-        alert("Pehele koi work select karo (Open Chat button).");
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => {
+        window.location.href = "login.html";
+      }).catch(err => {
+        console.error("Logout error:", err);
+      });
+    });
+
+    /************* AUTH + INITIAL LOAD *************/
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        alert("Please login as freelancer to access dashboard.");
+        window.location.href = "login.html";
         return;
       }
-
-      const now = new Date();
-      const time = now.toISOString(); // backend ko same format me mil jayega
-
-      // Local store update
-      if (!chatStore[currentWorkId]) chatStore[currentWorkId] = [];
-      chatStore[currentWorkId].push({
-        fromRole: "Freelancer",
-        fromEmail: FREELANCER_EMAIL || "",
-        text,
-        time
-      });
-
-      renderChat(currentWorkId);
-      input.value = "";
-
-      // Backend: chat_messages sheet me save
-      try {
-        const fd = new FormData();
-        fd.append("sheet", "chat_messages");
-        fd.append("action", "sendMessage");
-        fd.append("WorkID", currentWorkId);
-        fd.append("FromRole", "Freelancer");
-        fd.append("FromEmail", FREELANCER_EMAIL || "");
-        fd.append("Message", text);
-        fd.append("CreatedAt", time);
-        await fetch(scriptURL, { method: "POST", body: fd });
-      } catch (err) {
-        console.error("chat send error:", err);
-      }
+      freelancerEmail = user.email;
+      const span = document.querySelector("#loggedInEmail span");
+      if (span) span.textContent = freelancerEmail;
+      document.getElementById("loggedInEmail").classList.remove("hidden");
+      loadWorks();
     });
-
-    // Logout (simple – future: Firebase signOut)
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      window.location.href = "login.html";
-    });
-
-    // ====================================
-    // 9. INITIAL LOAD
-    // ====================================
-    // First time, load works from Google Sheet
-    loadWorks();
   </script>
 </body>
 </html>
