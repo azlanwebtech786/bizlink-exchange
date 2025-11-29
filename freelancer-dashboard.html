@@ -13,7 +13,7 @@
     body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
     .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
     .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
-    .chip{font-size:.70rem;padding:.15rem .5rem;border-radius:999px}
+    .chip{font-size:.70rem;padding:.15rem .55rem;border-radius:999px}
     .chip-pending{background:#facc15;color:#1f2937}
     .chip-accepted{background:#22c55e;color:#022c22}
     .chip-completed{background:#38bdf8;color:#0f172a}
@@ -22,8 +22,14 @@
     .scroll-y{max-height:430px;overflow-y:auto}
     .scroll-y::-webkit-scrollbar{width:6px}
     .scroll-y::-webkit-scrollbar-thumb{background:#1f2937;border-radius:999px}
-    .badge-small{font-size:.7rem}
+    .input-dark{background:#020617;border:1px solid #1f2937;color:#e5e7eb}
+    .input-dark::placeholder{color:#6b7280}
+    .badge-sm{font-size:.65rem;padding:.1rem .45rem;border-radius:999px}
   </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 </head>
 <body class="min-h-screen">
 
@@ -39,8 +45,8 @@
         </h1>
       </div>
       <div class="flex items-center space-x-3 text-xs sm:text-sm">
-        <span id="loggedInEmail" class="hidden sm:inline text-slate-300">
-          Logged in as <span class="font-semibold">...</span>
+        <span class="hidden sm:inline text-slate-300">
+          Logged in as <span id="freelancerEmailLabel" class="font-semibold">--</span>
         </span>
         <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
           Logout
@@ -88,7 +94,9 @@
         </p>
 
         <div id="workList" class="space-y-3 scroll-y">
-          <!-- JS will inject cards -->
+          <div class="py-12 text-center text-xs text-slate-500">
+            Loading your works...
+          </div>
         </div>
       </div>
 
@@ -100,10 +108,11 @@
             Select a work to start chatting
           </h2>
           <p id="chatSubtitle" class="text-xs text-slate-400 mt-1">
-            “Open Chat” pe click karo kisi work card par. Har work ki chat alag store hogi.
+            “Open Chat” pe click karo kisi work card par. Har WorkID ka chat alag store hoga.
           </p>
         </div>
 
+        <!-- Chat messages -->
         <div id="chatMessages" class="flex-1 scroll-y space-y-3 text-xs">
           <div class="h-full flex flex-col items-center justify-center text-center text-slate-500">
             <div class="mb-2 text-2xl">💬</div>
@@ -111,32 +120,29 @@
           </div>
         </div>
 
-        <!-- FILE URL + NOTES for Complete -->
-        <form id="completeForm" class="mt-3 space-y-2 text-xs">
-          <p class="text-[11px] text-slate-400">
-            Work complete karte waqt optional files ka link / notes yahan se jayenge.
-          </p>
+        <!-- File URL + Notes (for completion) -->
+        <div class="mt-3 space-y-2">
           <input
             id="fileUrlInput"
-            type="url"
+            type="text"
             placeholder="File URL (Google Drive / WeTransfer) – optional"
-            class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            class="w-full text-xs px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <textarea
             id="notesInput"
             rows="2"
             placeholder="Notes for client (optional)"
-            class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            class="w-full text-xs px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500"
           ></textarea>
-        </form>
+        </div>
 
-        <!-- CHAT INPUT -->
+        <!-- Chat form -->
         <form id="chatForm" class="mt-3 flex gap-2 items-center">
           <input
             id="chatInput"
             type="text"
             placeholder="Type a message…"
-            class="flex-1 text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            class="flex-1 text-xs px-3 py-2 rounded-lg input-dark placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
           <button
             type="submit"
@@ -149,17 +155,14 @@
     </section>
   </main>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-
   <script>
-    /************* CONFIG *************/
-    // 👉 YAHAN WALA URL tumhari woh Apps Script deployment hai
-    // jisme actions: listWorksForFreelancer, acceptWork, completeWork,
-    // getChatMessages, sendMessage, etc. defined hain.
+    /*****************************************
+     *  CONFIG
+     *****************************************/
+    // 👉 YAHAN APNA NEW APPS SCRIPT WEB APP URL DALO
     const API_URL = "https://script.google.com/macros/s/AKfycbw0Ah9b8hn3s8OyArY71_lBju_rS_8CHRRwcHUrIDL5Cnwo11JUQVbXmJZvU24fQMSRmw/exec";
 
+    // Firebase config – same jo baaki pages me use ho raha hai
     const firebaseConfig = {
       apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
       authDomain: "bizlink-exchange.firebaseapp.com",
@@ -172,14 +175,17 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    /************* STATE *************/
-    let freelancerEmail = null;
+    /*****************************************
+     *  STATE
+     *****************************************/
     let currentTab = "Pending";
+    let works = [];              // full list from API
     let currentWorkId = null;
-    let works = [];        // backend se aa raha hai
-    let chatCache = {};    // WorkID -> messages[]
+    let freelancerEmail = null;
 
-    /************* HELPERS *************/
+    /*****************************************
+     *  HELPERS
+     *****************************************/
     function formatBudget(num) {
       if (!num && num !== 0) return "N/A";
       const n = Number(num);
@@ -188,35 +194,35 @@
     }
 
     function statusChip(status) {
-      if (status === "Accepted") {
-        return '<span class="chip chip-accepted">In Progress</span>';
-      } else if (status === "Completed") {
+      if (status === "Pending") {
+        return '<span class="chip chip-pending">Pending</span>';
+      } else if (status === "Accepted") {
+        return '<span class="chip chip-accepted">Accepted</span>';
+      } else {
         return '<span class="chip chip-completed">Completed</span>';
       }
-      return '<span class="chip chip-pending">Pending</span>';
-    }
-
-    function updateStats() {
-      const pending = works.filter(w => w.Status === "Pending").length;
-      const accepted = works.filter(w => w.Status === "Accepted").length;
-      const completed = works.filter(w => w.Status === "Completed").length;
-      document.getElementById("statPending").textContent = pending;
-      document.getElementById("statAccepted").textContent = accepted;
-      document.getElementById("statCompleted").textContent = completed;
     }
 
     function getWorksForTab(tab) {
-      if (tab === "Pending")   return works.filter(w => w.Status === "Pending");
-      if (tab === "Accepted")  return works.filter(w => w.Status === "Accepted");
-      if (tab === "History")   return works.filter(w => w.Status === "Completed");
+      if (tab === "Pending")   return works.filter(w => (w.Status || "").toString() === "Pending");
+      if (tab === "Accepted")  return works.filter(w => (w.Status || "").toString() === "Accepted");
+      if (tab === "History")   return works.filter(w => (w.Status || "").toString() === "Completed");
       return works;
     }
 
-    function showToast(msg) {
-      alert(msg); // simple – chaaho to custom toast bana sakte ho
+    function updateStats() {
+      const pending   = works.filter(w => (w.Status || "").toString() === "Pending").length;
+      const accepted  = works.filter(w => (w.Status || "").toString() === "Accepted").length;
+      const completed = works.filter(w => (w.Status || "").toString() === "Completed").length;
+
+      document.getElementById("statPending").textContent   = pending;
+      document.getElementById("statAccepted").textContent  = accepted;
+      document.getElementById("statCompleted").textContent = completed;
     }
 
-    /************* RENDER – WORK LIST *************/
+    /*****************************************
+     *  RENDER WORK CARDS
+     *****************************************/
     function renderWorkList() {
       const container = document.getElementById("workList");
       const items = getWorksForTab(currentTab);
@@ -224,24 +230,36 @@
       if (!items.length) {
         container.innerHTML = `
           <div class="py-12 text-center text-xs text-slate-500">
-            <p>No works in <span class="font-semibold">${currentTab}</span> right now.</p>
-          </div>`;
+            No works in <span class="font-semibold">${currentTab}</span> right now.
+          </div>
+        `;
         return;
       }
 
       container.innerHTML = items.map(w => {
-        const canAccept   = w.Status === "Pending";
-        const canComplete = w.Status === "Accepted";
+        const status = (w.Status || "").toString();
+        const canAccept   = status === "Pending";
+        const canComplete = status === "Accepted";
+
+        const lastUpdate = w.LastUpdate
+          ? new Date(w.LastUpdate).toLocaleString()
+          : "";
+
         return `
           <article class="card-bg rounded-lg p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1">
-                <h3 class="text-sm font-semibold text-slate-100">${w.Title || "No title"}</h3>
-                ${statusChip(w.Status)}
+                <h3 class="text-sm font-semibold text-slate-100">${w.Title || "Untitled work"}</h3>
+                ${statusChip(status)}
+                ${
+                  w.Category
+                    ? `<span class="badge-sm bg-slate-700 text-slate-200 ml-1">${w.Category}</span>`
+                    : ""
+                }
               </div>
               <p class="text-xs text-slate-400">
-                <span class="font-semibold text-slate-200">${w.Category || ""}</span>
-                · ${w.City || ""} · Client: ${w.ClientEmail || "N/A"}
+                <span class="font-semibold text-slate-200">${w.ClientEmail || "Client"}</span>
+                · ${w.City || ""} 
               </p>
               <p class="text-xs text-slate-500 mt-1">
                 Budget: <span class="text-emerald-400 font-semibold">${formatBudget(w.Budget)}</span>
@@ -250,17 +268,21 @@
             </div>
             <div class="flex flex-col sm:items-end gap-2 text-xs">
               <div class="flex gap-2">
-                ${canAccept ? `
-                  <button data-action="accept" data-id="${w.WorkID}"
-                    class="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
-                    Accept
-                  </button>` : ""
+                ${
+                  canAccept
+                    ? `<button data-action="accept" data-id="${w.WorkID}"
+                         class="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
+                         Accept
+                       </button>`
+                    : ""
                 }
-                ${canComplete ? `
-                  <button data-action="complete" data-id="${w.WorkID}"
-                    class="px-3 py-1 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-semibold">
-                    Mark Completed
-                  </button>` : ""
+                ${
+                  canComplete
+                    ? `<button data-action="complete" data-id="${w.WorkID}"
+                         class="px-3 py-1 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-semibold">
+                         Mark Completed
+                       </button>`
+                    : ""
                 }
                 <button data-action="open-chat" data-id="${w.WorkID}"
                   class="px-3 py-1 rounded-md border border-slate-600 hover:border-purple-500 text-slate-100 font-semibold">
@@ -268,7 +290,7 @@
                 </button>
               </div>
               <p class="text-[10px] text-slate-500">
-                Posted: ${w.PostedOn || "-"}
+                Last Update: ${lastUpdate}
               </p>
             </div>
           </article>
@@ -276,43 +298,31 @@
       }).join("");
     }
 
-    /************* RENDER – CHAT *************/
-    function renderChat(workId) {
-      const work = works.find(w => w.WorkID === workId);
+    /*****************************************
+     *  CHAT RENDERING
+     *****************************************/
+    function renderChatMessages(messages) {
       const messagesContainer = document.getElementById("chatMessages");
-      const chatTitle = document.getElementById("chatTitle");
-      const chatSubtitle = document.getElementById("chatSubtitle");
 
-      if (!work) {
-        chatTitle.textContent = "Select a work to start chatting";
-        chatSubtitle.textContent = "";
-        messagesContainer.innerHTML = "";
-        return;
-      }
-
-      chatTitle.textContent = work.Title || "Work chat";
-      chatSubtitle.textContent = `${work.Category || ""} · ${work.City || ""} · ID: ${work.WorkID}`;
-
-      const msgs = chatCache[workId] || [];
-
-      if (!msgs.length) {
+      if (!messages || !messages.length) {
         messagesContainer.innerHTML = `
           <div class="py-10 text-center text-xs text-slate-500">
             No messages yet. Pehla message bhej kar conversation start karo.
-          </div>`;
+          </div>
+        `;
         return;
       }
 
-      messagesContainer.innerHTML = msgs.map(m => {
-        const isFreelancer = (m.FromRole || "").toLowerCase() === "freelancer" ||
-                             (m.FromEmail || "").toLowerCase() === (freelancerEmail || "").toLowerCase();
+      messagesContainer.innerHTML = messages.map(m => {
+        const isFreelancer = (m.FromRole || "").toString().toLowerCase() === "freelancer";
         const align = isFreelancer ? "items-end" : "items-start";
         const bubbleClasses = isFreelancer
           ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
           : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
         const metaAlign = isFreelancer ? "text-right" : "text-left";
-        const who = isFreelancer ? "You" : (m.FromRole || "Client");
-        const timeStr = m.CreatedAt ? new Date(m.CreatedAt).toLocaleString() : "";
+
+        const ts = m.CreatedAt ? new Date(m.CreatedAt).toLocaleString() : "";
+
         return `
           <div class="flex ${align}">
             <div class="max-w-[80%]">
@@ -320,185 +330,180 @@
                 ${m.Message}
               </div>
               <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
-                ${who} · ${timeStr}
+                ${isFreelancer ? "You" : "Client"} · ${ts}
               </p>
             </div>
-          </div>`;
+          </div>
+        `;
       }).join("");
 
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    /************* API CALLS *************/
-    async function apiGet(paramsObj){
-      const qs = new URLSearchParams(paramsObj).toString();
-      const res = await fetch(`${API_URL}?${qs}`);
-      const data = await res.json();
-      return data;
+    async function loadChatForWork(workId) {
+      if (!workId) return;
+      try {
+        const res = await fetch(`${API_URL}?action=getChatMessages&WorkID=${encodeURIComponent(workId)}`);
+        const data = await res.json();
+        if (!data.ok) {
+          console.error("getChatMessages error:", data.error);
+          renderChatMessages([]);
+          return;
+        }
+        renderChatMessages(data.messages || []);
+      } catch (err) {
+        console.error("getChatMessages fetch error:", err);
+        renderChatMessages([]);
+      }
     }
 
-    async function apiPost(paramsObj){
-      const body = new URLSearchParams(paramsObj).toString();
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body
-      });
-      const data = await res.json();
-      return data;
-    }
+    /*****************************************
+     *  API CALLS
+     *****************************************/
+    async function loadWorksForFreelancer(email) {
+      const workListDiv = document.getElementById("workList");
+      workListDiv.innerHTML = `<div class="py-12 text-center text-xs text-slate-500">Loading your works...</div>`;
+      try {
+        const url = `${API_URL}?action=listWorksForFreelancer&freelancerEmail=${encodeURIComponent(email)}`;
+        const res = await fetch(url);
+        const data = await res.json();
 
-    async function loadWorks(){
-      if (!freelancerEmail) return;
-      try{
-        const data = await apiGet({
-          action: "listWorksForFreelancer",
-          freelancerEmail: freelancerEmail
-        });
-        if (!data.ok){
+        if (!data.ok) {
           console.error("listWorksForFreelancer error:", data.error);
-          showToast("Error loading works: " + (data.error || ""));
+          workListDiv.innerHTML = `<div class="py-12 text-center text-xs text-red-400">Error loading works: ${data.error}</div>`;
           return;
         }
         works = data.works || [];
         updateStats();
         renderWorkList();
-      }catch(err){
-        console.error("loadWorks error:", err);
-        showToast("Network error while loading works.");
+      } catch (err) {
+        console.error("loadWorksForFreelancer fetch error:", err);
+        workListDiv.innerHTML = `<div class="py-12 text-center text-xs text-red-400">Network error loading works.</div>`;
       }
     }
 
-    async function loadChat(workId){
-      try{
-        const data = await apiGet({
-          action: "getChatMessages",
-          WorkID: workId
-        });
-        if (!data.ok){
-          console.error("getChatMessages error:", data.error);
-          chatCache[workId] = [];
-        }else{
-          chatCache[workId] = data.messages || [];
-        }
-        renderChat(workId);
-      }catch(err){
-        console.error("loadChat error:", err);
-        chatCache[workId] = [];
-        renderChat(workId);
-      }
+    async function apiPost(bodyObj) {
+      const form = new URLSearchParams();
+      Object.keys(bodyObj).forEach(k => form.append(k, bodyObj[k]));
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: form.toString()
+      });
+      return res.json();
     }
 
-    async function acceptWork(workId){
-      try{
-        const data = await apiPost({
+    async function handleAccept(workId) {
+      try {
+        const resp = await apiPost({
           action: "acceptWork",
           WorkID: workId,
-          freelancerEmail: freelancerEmail
+          freelancerEmail: freelancerEmail,
+          notes: ""
         });
-        if (!data.ok){
-          showToast("Accept failed: " + (data.error || ""));
+        if (!resp.ok) {
+          alert("Error accepting work: " + resp.error);
           return;
         }
-        showToast("Work accepted.");
-        await loadWorks();
-        if (currentWorkId === workId) renderChat(workId);
-      }catch(err){
+        // Local state bhi update kar do
+        const w = works.find(w => w.WorkID == workId);
+        if (w) w.Status = "Accepted";
+        updateStats();
+        renderWorkList();
+      } catch (err) {
         console.error("acceptWork error:", err);
-        showToast("Network error while accepting work.");
+        alert("Network error while accepting work.");
       }
     }
 
-    async function completeWork(workId){
+    async function handleComplete(workId) {
       const fileUrl = document.getElementById("fileUrlInput").value.trim();
       const notes   = document.getElementById("notesInput").value.trim();
-      try{
-        const data = await apiPost({
+      if (!confirm("Mark this work as COMPLETED?")) return;
+
+      try {
+        const resp = await apiPost({
           action: "completeWork",
           WorkID: workId,
           freelancerEmail: freelancerEmail,
           fileUrl,
           notes
         });
-        if (!data.ok){
-          showToast("Complete failed: " + (data.error || ""));
+        if (!resp.ok) {
+          alert("Error completing work: " + resp.error);
           return;
         }
-        showToast("Work marked as completed.");
-        document.getElementById("fileUrlInput").value = "";
-        document.getElementById("notesInput").value   = "";
-        await loadWorks();
-        if (currentWorkId === workId) renderChat(workId);
-      }catch(err){
+        const w = works.find(w => w.WorkID == workId);
+        if (w) w.Status = "Completed";
+        updateStats();
+        renderWorkList();
+      } catch (err) {
         console.error("completeWork error:", err);
-        showToast("Network error while completing work.");
+        alert("Network error while completing work.");
       }
     }
 
-    async function sendChatMessage(text){
-      if (!currentWorkId){
-        alert("Pehele koi work select karo (Open Chat).");
-        return;
-      }
-      try{
-        const data = await apiPost({
+    async function sendChatMessage(workId, text) {
+      try {
+        const resp = await apiPost({
           action: "sendMessage",
-          WorkID: currentWorkId,
+          WorkID: workId,
           FromRole: "Freelancer",
           FromEmail: freelancerEmail,
           Message: text
         });
-        if (!data.ok){
-          showToast("Send failed: " + (data.error || ""));
+        if (!resp.ok) {
+          alert("Error sending message: " + resp.error);
           return;
         }
-        // locally add
-        if (!chatCache[currentWorkId]) chatCache[currentWorkId] = [];
-        chatCache[currentWorkId].push({
-          WorkID: currentWorkId,
-          MessageID: data.MessageID,
-          FromRole: "Freelancer",
-          FromEmail: freelancerEmail,
-          Message: text,
-          CreatedAt: data.CreatedAt
-        });
-        renderChat(currentWorkId);
-      }catch(err){
-        console.error("sendChatMessage error:", err);
-        showToast("Network error while sending message.");
+        await loadChatForWork(workId); // refresh chat
+      } catch (err) {
+        console.error("sendMessage error:", err);
+        alert("Network error while sending message.");
       }
     }
 
-    /************* EVENT BINDINGS *************/
+    /*****************************************
+     *  EVENT BINDINGS
+     *****************************************/
     // Tabs
     document.getElementById("statusTabs").addEventListener("click", (e) => {
-      if (e.target.matches("[data-tab]")) {
-        const tab = e.target.getAttribute("data-tab");
-        currentTab = tab;
+      if (!e.target.matches("[data-tab]")) return;
+      const tab = e.target.getAttribute("data-tab");
+      currentTab = tab;
 
-        document.querySelectorAll("#statusTabs .tab-button").forEach(btn => {
-          btn.classList.toggle("active", btn.getAttribute("data-tab") === tab);
-        });
+      document.querySelectorAll("#statusTabs .tab-button").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-tab") === tab);
+      });
 
-        renderWorkList();
-      }
+      renderWorkList();
     });
 
-    // Work list: Accept / Complete / Open Chat
+    // Work list delegation (accept, complete, open-chat)
     document.getElementById("workList").addEventListener("click", (e) => {
       const action = e.target.getAttribute("data-action");
       const workId = e.target.getAttribute("data-id");
       if (!action || !workId) return;
 
       if (action === "accept") {
-        acceptWork(workId);
-      }
-      if (action === "complete") {
-        completeWork(workId);
-      }
-      if (action === "open-chat") {
+        handleAccept(workId);
+      } else if (action === "complete") {
+        handleComplete(workId);
+      } else if (action === "open-chat") {
         currentWorkId = workId;
-        loadChat(workId);  // har work ki chat alag
+        const work = works.find(w => w.WorkID == workId);
+        const chatTitle = document.getElementById("chatTitle");
+        const chatSubtitle = document.getElementById("chatSubtitle");
+
+        if (work) {
+          chatTitle.textContent = work.Title || "Work";
+          chatSubtitle.textContent = `${work.ClientEmail || "Client"} · ${work.City || ""} · ID: ${work.WorkID}`;
+        } else {
+          chatTitle.textContent = "Work";
+          chatSubtitle.textContent = `ID: ${workId}`;
+        }
+
+        loadChatForWork(workId);
       }
     });
 
@@ -508,7 +513,13 @@
       const input = document.getElementById("chatInput");
       const text = input.value.trim();
       if (!text) return;
-      sendChatMessage(text);
+
+      if (!currentWorkId) {
+        alert("Pehele koi work select karo (Open Chat button).");
+        return;
+      }
+
+      sendChatMessage(currentWorkId, text);
       input.value = "";
     });
 
@@ -521,18 +532,18 @@
       });
     });
 
-    /************* AUTH + INITIAL LOAD *************/
-    auth.onAuthStateChanged((user) => {
+    /*****************************************
+     *  AUTH + INITIAL LOAD
+     *****************************************/
+    auth.onAuthStateChanged(async (user) => {
       if (!user) {
-        alert("Please login as freelancer to access dashboard.");
+        alert("Please login as Freelancer.");
         window.location.href = "login.html";
         return;
       }
-      freelancerEmail = user.email;
-      const span = document.querySelector("#loggedInEmail span");
-      if (span) span.textContent = freelancerEmail;
-      document.getElementById("loggedInEmail").classList.remove("hidden");
-      loadWorks();
+      freelancerEmail = (user.email || "").toLowerCase();
+      document.getElementById("freelancerEmailLabel").textContent = freelancerEmail;
+      await loadWorksForFreelancer(freelancerEmail);
     });
   </script>
 </body>
