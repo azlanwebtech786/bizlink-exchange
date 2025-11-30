@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BizLink | Owner Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind & Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
+    .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
+    .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
+    .chip{font-size:.70rem;padding:.15rem .5rem;border-radius:999px}
+    .chip-pending{background:#facc15;color:#1f2937}
+    .chip-accepted{background:#22c55e;color:#022c22}
+    .chip-completed{background:#38bdf8;color:#0f172a}
+    .tab-button{color:#9ca3af;border-bottom:2px solid transparent}
+    .tab-button.active{color:#a855f7;border-bottom-color:#a855f7;font-weight:600}
+    .scroll-y{max-height:430px;overflow-y:auto}
+    .scroll-y::-webkit-scrollbar{width:6px}
+    .scroll-y::-webkit-scrollbar-thumb{background:#1f2937;border-radius:999px}
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- TOP BAR -->
+  <header class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
+          ← Back to Home
+        </a>
+        <h1 class="text-lg sm:text-2xl font-bold text-white">
+          BizLink <span class="text-purple-400">Owner Dashboard</span>
+        </h1>
+      </div>
+      <div class="flex flex-col items-end space-y-1 text-right">
+        <span id="ownerEmailLabel" class="text-[11px] sm:text-xs text-slate-400">
+          Logged in as: ...
+        </span>
+        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6">
+
+    <!-- STATUS / ERROR BAR -->
+    <div id="statusBar" class="mb-4 text-xs text-slate-400">
+      Loading your works…
+    </div>
+
+    <!-- STATS -->
+    <section class="grid sm:grid-cols-4 gap-4 mb-6">
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Total Works</p>
+        <p id="statTotal" class="text-2xl font-bold text-slate-100">0</p>
+      </div>
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Pending</p>
+        <p id="statPending" class="text-2xl font-bold text-yellow-400">0</p>
+      </div>
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">In Progress</p>
+        <p id="statAccepted" class="text-2xl font-bold text-green-400">0</p>
+      </div>
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Completed</p>
+        <p id="statCompleted" class="text-2xl font-bold text-sky-400">0</p>
+      </div>
+    </section>
+
+    <!-- TABS -->
+    <section class="mb-4">
+      <nav class="-mb-px flex space-x-6 overflow-x-auto" id="statusTabs">
+        <button class="tab-button active whitespace-nowrap py-2 text-sm" data-tab="Active">Active</button>
+        <button class="tab-button whitespace-nowrap py-2 text-sm" data-tab="Completed">Completed</button>
+        <button class="tab-button whitespace-nowrap py-2 text-sm" data-tab="All">All</button>
+      </nav>
+    </section>
+
+    <!-- MAIN LAYOUT -->
+    <section class="grid lg:grid-cols-2 gap-6">
+
+      <!-- LEFT: WORK LIST -->
+      <div class="card-bg rounded-xl p-4">
+        <h2 class="text-sm font-semibold text-slate-200 mb-3">Your Posted Works</h2>
+        <p class="text-xs text-slate-400 mb-4">
+          Yahan sirf wahi works dikhenge jo aapke email se post hue (ClientEmail = aapka email).
+          Kisi card par <span class="font-semibold text-slate-200">“Open Chat”</span> click karke
+          right side wale chat panel ko open kar sakte ho.
+        </p>
+
+        <div id="workList" class="space-y-3 scroll-y">
+          <!-- JS will inject cards -->
+        </div>
+      </div>
+
+      <!-- RIGHT: CHAT PANEL -->
+      <div class="card-bg rounded-xl p-4 flex flex-col">
+        <div id="chatHeader" class="border-b border-slate-800 pb-3 mb-3">
+          <p class="text-xs text-slate-400">Chat Panel (Owner Side)</p>
+          <h2 id="chatTitle" class="text-sm font-semibold text-slate-100 mt-1">
+            Select a work to start chatting
+          </h2>
+          <p id="chatSubtitle" class="text-xs text-slate-400 mt-1">
+            Kisi work card par “Open Chat” pe click karo. Yahan se freelancer se baat karo, file links bhejo,
+            feedback do. Abhi messages browser memory me rahenge (demo). Baad me Apps Script se connect karenge.
+          </p>
+        </div>
+
+        <div id="chatMessages" class="flex-1 scroll-y space-y-3 text-xs">
+          <div class="h-full flex flex-col items-center justify-center text-center text-slate-500">
+            <div class="mb-2 text-2xl">💬</div>
+            <p>No work selected.</p>
+          </div>
+        </div>
+
+        <form id="chatForm" class="mt-3 flex gap-2 items-center">
+          <input
+            id="chatInput"
+            type="text"
+            placeholder="Type a message to your freelancer…"
+            class="flex-1 text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <button
+            type="submit"
+            class="button-gradient px-4 py-2 rounded-lg text-xs font-semibold text-white disabled:opacity-50"
+          >
+            Send
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===========================
+       1) DASHBOARD LOGIC (FRONTEND)
+     =========================== -->
+  <script>
+    // 👉 SAME URL jo aapne last diya
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0Ah9b8hn3s8OyArY71_lBju_rS_8CHRRwcHUrIDL5Cnwo11JUQVbXmJZvU24fQMSRmw/exec";
+
+    let ownerEmail = null;      // Firebase se aayega
+    let allWorks   = [];        // Filtered works for this owner
+    let currentTab = "Active";  // Active | Completed | All
+    let currentWorkId = null;   // Chat ke liye
+
+    // Simple in-memory chat store (Owner side)
+    const chatStore = {}; // { WorkID: [ {from: 'owner'|'freelancer', text, time} ] }
+
+    const statusBar     = document.getElementById("statusBar");
+    const workListDiv   = document.getElementById("workList");
+    const chatMessages  = document.getElementById("chatMessages");
+    const chatTitle     = document.getElementById("chatTitle");
+    const chatSubtitle  = document.getElementById("chatSubtitle");
+    const ownerEmailLabel = document.getElementById("ownerEmailLabel");
+
+    const statTotal     = document.getElementById("statTotal");
+    const statPending   = document.getElementById("statPending");
+    const statAccepted  = document.getElementById("statAccepted");
+    const statCompleted = document.getElementById("statCompleted");
+
+    function formatBudget(num){
+      if(!num && num !== 0) return "N/A";
+      if(typeof num === "string") num = Number(num.replace(/[^\d.]/g,"")) || num;
+      return "₹" + Number(num).toLocaleString("en-IN");
+    }
+
+    function statusChip(status){
+      if(status === "Pending" || status === "" || !status){
+        return '<span class="chip chip-pending">Pending</span>';
+      }else if(status === "Accepted" || status === "In Progress"){
+        return '<span class="chip chip-accepted">In Progress</span>';
+      }else{
+        return '<span class="chip chip-completed">Completed</span>';
+      }
+    }
+
+    function updateStats(){
+      const total = allWorks.length;
+      const pending = allWorks.filter(w => (w.Status || "").toString().toLowerCase() === "pending").length;
+      const accepted = allWorks.filter(w => (w.Status || "").toString().toLowerCase() === "accepted").length;
+      const completed = allWorks.filter(w => (w.Status || "").toString().toLowerCase() === "completed").length;
+
+      statTotal.textContent     = total;
+      statPending.textContent   = pending;
+      statAccepted.textContent  = accepted;
+      statCompleted.textContent = completed;
+    }
+
+    function getWorksForTab(){
+      if(currentTab === "Active"){
+        return allWorks.filter(w => {
+          const st = (w.Status || "").toString().toLowerCase();
+          return st !== "completed"; // Pending + Accepted
+        });
+      }
+      if(currentTab === "Completed"){
+        return allWorks.filter(w => (w.Status || "").toString().toLowerCase() === "completed");
+      }
+      return allWorks; // All
+    }
+
+    function renderWorkList(){
+      const items = getWorksForTab();
+
+      if(!items.length){
+        workListDiv.innerHTML = `
+          <div class="py-10 text-center text-xs text-slate-500">
+            <p>No works in <span class="font-semibold">${currentTab}</span> right now.</p>
+          </div>
+        `;
+        return;
+      }
+
+      workListDiv.innerHTML = items.map(w => {
+        const workId   = w.WorkID || w.WorkId || "";
+        const title    = w.Title || "Untitled Work";
+        const city     = w.City || "";
+        const category = w.Category || "";
+        const budget   = w.Budget;
+        const status   = w.Status || "Pending";
+        const assigned = w.AssignedTo || "Not assigned";
+        const filesUrl = w.FilesURL || w.FilesUrl || "";
+
+        return `
+          <article class="card-bg rounded-lg p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <h3 class="text-sm font-semibold text-slate-100">${title}</h3>
+                ${statusChip(status)}
+              </div>
+              <p class="text-xs text-slate-400">
+                ${city ? city + " · " : ""}${category}
+              </p>
+              <p class="text-xs text-slate-500 mt-1">
+                Budget: <span class="text-emerald-400 font-semibold">${formatBudget(budget)}</span>
+                · ID: <span class="font-mono text-slate-300">${workId}</span>
+              </p>
+              <p class="text-[11px] text-slate-400 mt-1">
+                Assigned to: <span class="text-slate-100">${assigned || "Not assigned yet"}</span>
+              </p>
+              ${filesUrl ? `
+                <p class="text-[11px] mt-1">
+                  <a href="${filesUrl}" target="_blank" class="text-sky-400 hover:text-sky-200 underline">
+                    View submitted files
+                  </a>
+                </p>` : ""}
+            </div>
+            <div class="flex flex-col sm:items-end gap-2 text-xs">
+              <button data-action="open-chat" data-id="${workId}"
+                class="px-3 py-1 rounded-md border border-slate-600 hover:border-purple-500 text-slate-100 font-semibold">
+                Open Chat
+              </button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderChat(workId){
+      const work = allWorks.find(w => (w.WorkID || w.WorkId) == workId);
+      if(!work){
+        chatTitle.textContent = "Select a work to start chatting";
+        chatSubtitle.textContent = "";
+        chatMessages.innerHTML = "";
+        return;
+      }
+
+      const title  = work.Title || "Untitled Work";
+      const city   = work.City || "";
+      const wid    = work.WorkID || work.WorkId || "";
+      const status = work.Status || "";
+
+      chatTitle.textContent = title;
+      chatSubtitle.textContent =
+        `${city ? city + " · " : ""}ID: ${wid} · Status: ${status || "Pending"}`;
+
+      const msgs = chatStore[workId] || [];
+
+      if(!msgs.length){
+        chatMessages.innerHTML = `
+          <div class="py-8 text-center text-xs text-slate-500">
+            No messages yet. Pehla message bhej kar conversation start karo.
+          </div>
+        `;
+        return;
+      }
+
+      chatMessages.innerHTML = msgs.map(m => {
+        const isOwner = m.from === "owner";
+        const align = isOwner ? "items-end" : "items-start";
+        const bubbleClasses = isOwner
+          ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
+          : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
+        const metaAlign = isOwner ? "text-right" : "text-left";
+
+        return `
+          <div class="flex ${align}">
+            <div class="max-w-[80%]">
+              <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
+                ${m.text}
+              </div>
+              <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
+                ${isOwner ? "You (Owner)" : "Freelancer"} · ${m.time || ""}
+              </p>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function loadOwnerWorks(){
+      if(!ownerEmail){
+        statusBar.textContent = "Owner email missing (auth error).";
+        statusBar.className = "mb-4 text-xs text-red-300";
+        return;
+      }
+
+      statusBar.textContent = "Loading your works from Google Sheet…";
+      statusBar.className = "mb-4 text-xs text-slate-400";
+
+      try{
+        const res = await fetch(`${SCRIPT_URL}?sheet=works`);
+        if(!res.ok){
+          throw new Error("HTTP " + res.status);
+        }
+        const data = await res.json();
+        if(!Array.isArray(data)){
+          throw new Error("Invalid data format from server");
+        }
+
+        // Sirf woh rows jahan ClientEmail = ownerEmail
+        const ownerMailLower = ownerEmail.toLowerCase();
+        allWorks = data.filter(row => {
+          const mail = (row.ClientEmail || row.clientEmail || row.Email || "").toString().toLowerCase();
+          return mail === ownerMailLower;
+        });
+
+        updateStats();
+        renderWorkList();
+
+        statusBar.textContent = allWorks.length
+          ? `Loaded ${allWorks.length} works for ${ownerEmail}`
+          : `No works found for ${ownerEmail}`;
+        statusBar.className = "mb-4 text-xs text-emerald-300";
+
+      }catch(err){
+        console.error(err);
+        statusBar.textContent = "Error loading works: " + err.message;
+        statusBar.className = "mb-4 text-xs text-red-300";
+      }
+    }
+
+    // Tabs click
+    document.getElementById("statusTabs").addEventListener("click", (e) => {
+      if(!e.target.matches("[data-tab]")) return;
+      const tab = e.target.getAttribute("data-tab");
+      currentTab = tab;
+
+      document.querySelectorAll("#statusTabs .tab-button").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-tab") === tab);
+      });
+
+      renderWorkList();
+    });
+
+    // Work list delegation: Open Chat
+    workListDiv.addEventListener("click", (e) => {
+      const action = e.target.getAttribute("data-action");
+      const workId = e.target.getAttribute("data-id");
+      if(action === "open-chat" && workId){
+        currentWorkId = workId;
+        if(!chatStore[workId]) chatStore[workId] = []; // ensure array
+        renderChat(workId);
+      }
+    });
+
+    // Chat submit (demo – abhi sirf memory; baad me Apps Script se connect karenge)
+    document.getElementById("chatForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = document.getElementById("chatInput");
+      const text = input.value.trim();
+      if(!text) return;
+
+      if(!currentWorkId){
+        alert("Pehele koi work select karo (Open Chat button).");
+        return;
+      }
+
+      const now = new Date();
+      const time = now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+
+      if(!chatStore[currentWorkId]) chatStore[currentWorkId] = [];
+      chatStore[currentWorkId].push({
+        from: "owner",
+        text,
+        time
+      });
+
+      // TODO: yahi message Apps Script / Google Sheet pe sendMessage action ke through save karna
+
+      input.value = "";
+      renderChat(currentWorkId);
+    });
+  </script>
+
+  <!-- ===========================
+       2) FIREBASE AUTH
+     =========================== -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+      authDomain: "bizlink-exchange.firebaseapp.com",
+      projectId: "bizlink-exchange",
+      storageBucket: "bizlink-exchange.firebasestorage.app",
+      messagingSenderId: "116213651971",
+      appId: "1:116213651971:web:fff60961af0c4da3448c36",
+      measurementId: "G-VQ3JM82D1N"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    auth.onAuthStateChanged((user) => {
+      if(!user){
+        alert("You must be logged in as owner.");
+        window.location.href = "login.html";
+        return;
+      }
+      ownerEmail = user.email || "";
+      document.getElementById("ownerEmailLabel").textContent = "Logged in as: " + ownerEmail;
+      loadOwnerWorks();
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      auth.signOut().then(() => {
+        alert("Logged out.");
+        window.location.href = "index.html";
+      }).catch(err => {
+        console.error("Logout error:", err);
+      });
+    });
+  </script>
+</body>
+</html>
