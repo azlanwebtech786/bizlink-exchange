@@ -167,290 +167,298 @@
     // --------- CONFIG ---------
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec";
 
-    let ownerEmail = null;
-    let allWorks = [];
-    let currentFilter = "all";
-    let currentWorkId = null;
 
-    const statusText = document.getElementById("pageStatus");
-    const workListEl = document.getElementById("workList");
-    const filterLabel = document.getElementById("currentFilterLabel");
+// TODO: Abhi ke liye hard-coded; baad me Firebase se user.email le lenge
+const OWNER_EMAIL = "don@gmail.com";   // yahan apna login email daalo
 
-    const statTotal      = document.getElementById("statTotal");
-    const statPending    = document.getElementById("statPending");
-    const statInProgress = document.getElementById("statInProgress");
-    const statCompleted  = document.getElementById("statCompleted");
+// DOM refs
+const workListEl       = document.getElementById("ownerWorkList");
+const msgListEl        = document.getElementById("chatMessagesOwner");
+const chatFormEl       = document.getElementById("ownerChatForm");
+const chatInputEl      = document.getElementById("ownerChatInput");
 
-    const chatTitle    = document.getElementById("chatTitle");
-    const chatSubtitle = document.getElementById("chatSubtitle");
-    const chatMessages = document.getElementById("chatMessages");
-    const chatInput    = document.getElementById("chatInput");
-    const chatForm     = document.getElementById("chatForm");
+const statTotalEl      = document.getElementById("statOwnerTotal");
+const statPendingEl    = document.getElementById("statOwnerPending");
+const statInProgEl     = document.getElementById("statOwnerInProgress");
+const statCompletedEl  = document.getElementById("statOwnerCompleted");
 
-    // --- Utils ---
-    function setStatus(msg, type = "info") {
-      if (!statusText) return;
-      statusText.textContent = msg || "";
-      if (!msg) {
-        statusText.className = "mb-3 text-xs text-slate-400";
-      } else if (type === "error") {
-        statusText.className = "mb-3 text-xs text-red-300";
-      } else {
-        statusText.className = "mb-3 text-xs text-slate-300";
-      }
+// State
+let allWorks = [];
+let currentWorkId = null;
+let currentWorkTitle = "";
+let chatPollTimer = null;
+
+// ===============================
+//  Helpers
+// ===============================
+function formatBudget(v) {
+  if (v === "" || v == null) return "N/A";
+  const num = Number(v);
+  if (isNaN(num)) return v;
+  return "₹" + num.toLocaleString("en-IN");
+}
+
+function statusChip(status) {
+  const s = (status || "").toLowerCase();
+  if (s === "pending") {
+    return '<span class="chip chip-pending">Pending</span>';
+  } else if (s === "accepted" || s === "in progress") {
+    return '<span class="chip chip-accepted">In Progress</span>';
+  } else if (s === "completed") {
+    return '<span class="chip chip-completed">Completed</span>';
+  }
+  return '<span class="chip">-</span>';
+}
+
+// ===============================
+//  LOAD WORKS FOR OWNER
+// ===============================
+async function loadOwnerWorks() {
+  try {
+    // works sheet ka pura data
+    const res  = await fetch(`${SCRIPT_URL}?sheet=works`);
+    const data = await res.json();   // array of row objects
+
+    if (!Array.isArray(data)) {
+      workListEl.innerHTML = `<p class="text-xs text-red-400">Error loading works (invalid data)</p>`;
+      return;
     }
 
-    function normalizeStatus(s) {
-      s = (s || "").toString().toLowerCase();
-      if (!s || s === "pending") return "pending";
-      if (s === "accepted" || s === "in progress") return "inprogress";
-      if (s === "completed") return "completed";
-      if (s === "paid") return "paid";
-      return "other";
-    }
+    // Sirf woh works jaha ClientEmail = OWNER_EMAIL
+    allWorks = data.filter(w => {
+      const email = (w.ClientEmail || "").toString().trim().toLowerCase();
+      return email === OWNER_EMAIL.toLowerCase();
+    });
 
-    function formatBudget(v) {
-      if (!v && v !== 0) return "N/A";
-      const num = Number(v.toString().replace(/[^0-9.]/g, "")) || 0;
-      return "₹" + num.toLocaleString("en-IN");
-    }
+    renderStats();
+    renderWorkCards();
 
-    // --- Works loading ---
-    async function loadOwnerWorks() {
-      try {
-        setStatus("Loading your works…");
+  } catch (err) {
+    console.error(err);
+    workListEl.innerHTML =
+      `<p class="text-xs text-red-400">Error loading works: ${err.message}</p>`;
+  }
+}
 
-        const res = await fetch(`${SCRIPT_URL}?sheet=works`);
-        const data = await res.json();
+function renderStats() {
+  const total     = allWorks.length;
+  const pending   = allWorks.filter(w => (w.Status || "").toLowerCase() === "pending").length;
+  const inProg    = allWorks.filter(w => (w.Status || "").toLowerCase() === "accepted").length;
+  const completed = allWorks.filter(w => (w.Status || "").toLowerCase() === "completed").length;
 
-        if (!Array.isArray(data)) {
-          throw new Error("Invalid data from server");
-        }
+  statTotalEl.textContent     = total;
+  statPendingEl.textContent   = pending;
+  statInProgEl.textContent    = inProg;
+  statCompletedEl.textContent = completed;
+}
 
-        allWorks = data.filter(w =>
-          (w.ClientEmail || "").toString().toLowerCase() === ownerEmail.toLowerCase()
-        );
+function renderWorkCards(filterStatus = "All") {
+  if (!allWorks.length) {
+    workListEl.innerHTML = `
+      <div class="py-10 text-center text-xs text-slate-500">
+        No works in <span class="font-semibold">${filterStatus}</span>.
+      </div>`;
+    return;
+  }
 
-        updateStats();
-        renderWorkList();
-        setStatus(allWorks.length ? "" : "No works found for your email. Pehle Post a Work form se work create karo.");
-      } catch (err) {
-        console.error(err);
-        setStatus("Error loading works: " + err.message, "error");
-        workListEl.innerHTML = `
-          <div class="py-8 text-center text-xs text-red-300">
-            Error loading works: ${err.message}
-          </div>`;
-      }
-    }
+  const list = allWorks.filter(w => {
+    if (filterStatus === "All") return true;
+    const s = (w.Status || "").toLowerCase();
+    if (filterStatus === "Pending")   return s === "pending";
+    if (filterStatus === "InProgress")return s === "accepted";
+    if (filterStatus === "Completed") return s === "completed";
+    return true;
+  });
 
-    function updateStats() {
-      const total = allWorks.length;
-      const pending = allWorks.filter(w => normalizeStatus(w.Status) === "pending").length;
-      const inProg  = allWorks.filter(w => normalizeStatus(w.Status) === "inprogress").length;
-      const completed = allWorks.filter(w => normalizeStatus(w.Status) === "completed").length;
+  workListEl.innerHTML = list.map(w => {
+    const id      = w.WorkID || "";
+    const title   = w.Title || "No Title";
+    const client  = w.business_name || "";
+    const city    = w.City || w.city || "-";
+    const cat     = w.Category || w.category || "-";
+    const desc    = w.Description || "No description";
+    const status  = w.Status || "Pending";
+    const budget  = formatBudget(w.Budget);
 
-      statTotal.textContent      = total;
-      statPending.textContent    = pending;
-      statInProgress.textContent = inProg;
-      statCompleted.textContent  = completed;
-    }
-
-    function renderWorkList() {
-      const items = allWorks.filter(w => {
-        const st = normalizeStatus(w.Status);
-        if (currentFilter === "all") return true;
-        return st === currentFilter;
-      });
-
-      filterLabel.textContent = "Filter: " + (currentFilter[0].toUpperCase() + currentFilter.slice(1));
-
-      if (!items.length) {
-        workListEl.innerHTML = `
-          <div class="py-10 text-center text-xs text-slate-500">
-            No works in <span class="font-semibold">${currentFilter}</span>.
-          </div>`;
-        return;
-      }
-
-      workListEl.innerHTML = items.map(w => {
-        const st = normalizeStatus(w.Status);
-        let chipClass = "chip-pending", chipLabel = "Pending";
-        if (st === "inprogress") { chipClass = "chip-progress"; chipLabel = "In Progress"; }
-        else if (st === "completed") { chipClass = "chip-completed"; chipLabel = "Completed"; }
-        else if (st === "paid") { chipClass = "chip-paid"; chipLabel = "Paid"; }
-
-        return `
-          <article class="card-bg rounded-lg p-3 flex flex-col gap-2" data-work-id="${w.WorkID || ""}">
-            <div class="flex items-center justify-between gap-2">
-              <div>
-                <h3 class="text-sm font-semibold text-slate-100">${w.Title || "Untitled Work"}</h3>
-                <p class="text-[11px] text-slate-400">
-                  ${w.Category || ""} · ${w.City || ""} · ID: <span class="font-mono">${w.WorkID || ""}</span>
-                </p>
-              </div>
-              <span class="chip ${chipClass}">${chipLabel}</span>
-            </div>
-            <p class="text-xs text-slate-400">
-              ${w.Description || "No description"}
+    return `
+      <article class="card-bg rounded-lg p-3 mb-3 flex flex-col gap-2">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-100">${title}</h3>
+            <p class="text-[11px] text-slate-400">
+              ${cat} · ${city} · ID: <span class="font-mono">${id}</span>
             </p>
-            <div class="flex items-center justify-between text-[11px] text-slate-400">
-              <span>Budget: <span class="text-emerald-400 font-semibold">${formatBudget(w.Budget)}</span></span>
-              <button
-                class="px-3 py-1 rounded-md border border-slate-600 hover:border-purple-500 text-slate-100 font-semibold text-[11px]"
-                data-action="open-chat"
-              >
-                Open Chat
-              </button>
-            </div>
-          </article>
-        `;
-      }).join("");
+          </div>
+          <div>${statusChip(status)}</div>
+        </div>
+        <p class="text-xs text-slate-300 line-clamp-2">${desc}</p>
+        <div class="flex items-center justify-between text-xs mt-1">
+          <p>Budget: <span class="text-emerald-400 font-semibold">${budget}</span></p>
+          <button
+            class="px-3 py-1 rounded-md border border-purple-500 text-purple-300 text-xs font-semibold hover:bg-purple-500 hover:text-white"
+            data-action="open-chat"
+            data-id="${id}">
+            Open Chat
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+// Tabs (All / Pending / In Progress / Completed / Paid soon)
+document.addEventListener("click", (e) => {
+  const tab = e.target.getAttribute("data-owner-tab");
+  if (!tab) return;
+
+  document.querySelectorAll("[data-owner-tab]").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("data-owner-tab") === tab);
+  });
+
+  if (tab === "All")          renderWorkCards("All");
+  if (tab === "Pending")      renderWorkCards("Pending");
+  if (tab === "InProgress")   renderWorkCards("InProgress");
+  if (tab === "Completed")    renderWorkCards("Completed");
+});
+
+// Work card click – Open Chat
+workListEl.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action='open-chat']");
+  if (!btn) return;
+
+  const workId = btn.getAttribute("data-id");
+  const work   = allWorks.find(w => (w.WorkID || "") === workId);
+  if (!work) return;
+
+  openChatForWork(work);
+});
+
+// ===============================
+//  CHAT – LOAD & RENDER
+// ===============================
+function clearChatUI() {
+  msgListEl.innerHTML = `
+    <div class="py-8 text-center text-xs text-slate-500">
+      No work selected.
+    </div>
+  `;
+}
+
+async function loadMessages(workId) {
+  try {
+    const res  = await fetch(`${SCRIPT_URL}?action=getChatMessages&WorkID=${encodeURIComponent(workId)}`);
+    const data = await res.json();
+    if (!data.ok) {
+      console.error(data.error);
+      return;
+    }
+    renderMessages(data.messages || []);
+  } catch (err) {
+    console.error("Chat load error:", err);
+  }
+}
+
+function renderMessages(list) {
+  if (!list.length) {
+    msgListEl.innerHTML = `
+      <div class="py-8 text-center text-xs text-slate-500">
+        No messages yet. Start the conversation.
+      </div>`;
+    return;
+  }
+
+  msgListEl.innerHTML = list.map(m => {
+    const isOwner = (m.FromRole || "").toLowerCase() === "owner";
+    const align   = isOwner ? "items-end" : "items-start";
+    const bubble  = isOwner
+      ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
+      : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
+    const label   = isOwner ? "You (Owner)" : "Freelancer";
+    const timeStr = m.CreatedAt
+      ? new Date(m.CreatedAt).toLocaleString()
+      : "";
+
+    return `
+      <div class="flex ${align} mb-2">
+        <div class="max-w-[80%]">
+          <div class="px-3 py-2 text-[11px] ${bubble}">
+            ${m.Message}
+          </div>
+          <p class="mt-1 text-[10px] text-slate-500 ${isOwner ? "text-right" : "text-left"}">
+            ${label} · ${timeStr}
+          </p>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  msgListEl.scrollTop = msgListEl.scrollHeight;
+}
+
+// Chat open kare
+function openChatForWork(work) {
+  currentWorkId    = work.WorkID;
+  currentWorkTitle = work.Title || "Work";
+
+  // Header text agar tumne banaya ho to optionally yahan set kar sakte ho
+  // document.getElementById("chatHeaderTitle").textContent =
+  //   `${currentWorkTitle} (ID: ${currentWorkId})`;
+
+  clearChatUI();
+  loadMessages(currentWorkId);
+
+  // Polling har 5 second
+  if (chatPollTimer) clearInterval(chatPollTimer);
+  chatPollTimer = setInterval(() => {
+    if (currentWorkId) loadMessages(currentWorkId);
+  }, 5000);
+}
+
+// ===============================
+//  CHAT – SEND MESSAGE
+// ===============================
+chatFormEl.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const text = chatInputEl.value.trim();
+  if (!text) return;
+
+  if (!currentWorkId) {
+    alert("Pehle koi work me 'Open Chat' karo.");
+    return;
+  }
+
+  try {
+    const fd = new FormData();
+    fd.append("action",     "sendMessage");
+    fd.append("WorkID",     currentWorkId);
+    fd.append("FromRole",   "Owner");
+    fd.append("FromEmail",  OWNER_EMAIL);
+    fd.append("Message",    text);
+
+    const res  = await fetch(SCRIPT_URL, { method: "POST", body: fd });
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert("Error sending message: " + (data.error || "Unknown"));
+      return;
     }
 
-    // --- Chat ---
-    async function loadChatMessages(workId) {
-      if (!workId) return;
-      try {
-        const res = await fetch(
-          `${SCRIPT_URL}?action=getChatMessages&WorkID=${encodeURIComponent(workId)}`
-        );
-        const data = await res.json();
-        if (!data.ok) {
-          throw new Error(data.error || "Unknown error");
-        }
-        const msgs = data.messages || [];
-        if (!msgs.length) {
-          chatMessages.innerHTML = `
-            <div class="py-8 text-center text-xs text-slate-500">
-              No messages yet. Pehla message bhej kar conversation start karo.
-            </div>`;
-          return;
-        }
+    chatInputEl.value = "";
+    await loadMessages(currentWorkId);  // fresh messages
 
-        chatMessages.innerHTML = msgs.map(m => {
-          const isOwner = (m.FromRole || "").toLowerCase() === "owner";
-          const align = isOwner ? "items-end" : "items-start";
-          const bubbleClasses = isOwner
-            ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
-            : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
-          const metaAlign = isOwner ? "text-right" : "text-left";
-          const who = isOwner ? "You (Owner)" : "Freelancer";
+  } catch (err) {
+    console.error(err);
+    alert("Network error while sending message.");
+  }
+});
 
-          const timeStr = m.CreatedAt
-            ? new Date(m.CreatedAt).toLocaleString()
-            : "";
+// ===============================
+//  INITIAL LOAD
+// ===============================
+clearChatUI();
+loadOwnerWorks();
 
-          return `
-            <div class="flex ${align}">
-              <div class="max-w-[80%]">
-                <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
-                  ${m.Message || ""}
-                </div>
-                <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
-                  ${who} · ${timeStr}
-                </p>
-              </div>
-            </div>
-          `;
-        }).join("");
+</script>
 
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      } catch (err) {
-        console.error(err);
-        chatMessages.innerHTML = `
-          <div class="py-8 text-center text-xs text-red-300">
-            Error loading messages: ${err.message}
-          </div>`;
-      }
-    }
-
-    async function sendChatMessage() {
-      const text = chatInput.value.trim();
-      if (!text) return;
-      if (!currentWorkId) {
-        alert("Pehle koi work select karo (Open Chat).");
-        return;
-      }
-
-      try {
-        const body = new URLSearchParams();
-        body.append("action", "sendMessage");
-        body.append("WorkID", currentWorkId);
-        body.append("FromRole", "Owner");
-        body.append("FromEmail", ownerEmail);
-        body.append("Message", text);
-
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body
-        });
-        const data = await res.json();
-        if (!data.ok) {
-          throw new Error(data.error || "Error sending message");
-        }
-        chatInput.value = "";
-        await loadChatMessages(currentWorkId);
-      } catch (err) {
-        console.error(err);
-        alert("Error sending message: " + err.message);
-      }
-    }
-
-    // --- Event bindings ---
-    document.getElementById("statusTabs").addEventListener("click", (e) => {
-      if (!e.target.matches("[data-filter]")) return;
-      const filter = e.target.getAttribute("data-filter");
-      currentFilter = filter;
-
-      document.querySelectorAll("#statusTabs .tab-button").forEach(btn => {
-        btn.classList.toggle("active", btn.getAttribute("data-filter") === filter);
-      });
-
-      renderWorkList();
-    });
-
-    workListEl.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-action='open-chat']");
-      if (!btn) return;
-      const card = btn.closest("[data-work-id]");
-      const workId = card ? card.getAttribute("data-work-id") : null;
-      if (!workId) return;
-
-      currentWorkId = workId;
-      const w = allWorks.find(x => (x.WorkID || "").toString() === workId.toString());
-      chatTitle.textContent = w ? w.Title || "Chat" : "Chat";
-      chatSubtitle.textContent = w
-        ? `${w.Category || ""} · ${w.City || ""} · ID: ${w.WorkID || ""}`
-        : "";
-      loadChatMessages(workId);
-    });
-
-    chatForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      sendChatMessage();
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      auth.signOut().then(() => {
-        window.location.href = "index.html";
-      });
-    });
-
-    // --- Auth guard + initial load ---
-    auth.onAuthStateChanged((user) => {
-      if (!user) {
-        alert("Please login first.");
-        window.location.href = "login.html";
-        return;
-      }
-      ownerEmail = user.email;
-      const loggedSpan = document.getElementById("loggedInEmail");
-      if (loggedSpan) {
-        loggedSpan.textContent = `Logged in as: ${ownerEmail}`;
-      }
-      loadOwnerWorks();
-    });
-  </script>
 </body>
 </html>
