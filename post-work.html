@@ -146,122 +146,48 @@
   </div>
 
   <!-- POST WORK JS -->
-  <script>
-    // YAHI Apps Script URL use ho raha hai (jo code tumne bheja hai usi project ka exec URL)
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec";
-    // agar tumne naya deployment banaya ho to yaha uska exec URL laga dena
+<script>
+document.getElementById("postWorkForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const form      = document.getElementById("postWorkForm");
-      const submitBtn = document.getElementById("submitWorkBtn");
+  if (!window.currentUserEmail) {
+    alert("Login required");
+    return;
+  }
 
-      const titleInput    = document.getElementById("work_title");
-      const descInput     = document.getElementById("work_description");
-      const budgetInput   = document.getElementById("work_budget");
-      const categoryInput = document.getElementById("work_category");
-      const cityInput     = document.getElementById("work_city");
-      const statusLabel   = document.getElementById("status");
+  const form = e.target;
 
-      let currentEmail = "";
+  const body = new URLSearchParams();
+  body.append("action", "addWork");
+  body.append("Title", form.Title.value);
+  body.append("Description", form.Description.value);
+  body.append("Budget", form.Budget.value);
+  body.append("Category", form.Category.value);
+  body.append("City", form.City.value);
+  body.append("ClientEmail", window.currentUserEmail);
+  body.append("PostedOn", new Date().toISOString());
 
-      // Login email pakdo
-      auth.onAuthStateChanged(user => {
-        if (!user) {
-          // ye guard upar bhi hai, but safe side
-          alert("Please login to post a work.");
-          window.location.href = "login.html";
-          return;
-        }
-        currentEmail = user.email;
-      });
+  try {
+    const res = await fetch(
+      "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec",
+      { method: "POST", body }
+    );
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    const data = await res.json();
 
-        if (!currentEmail) {
-          alert("Login email nahi mila, page reload karke dobara try karo.");
-          return;
-        }
+    if (data.success) {
+      alert("✅ Work Posted Successfully");
+      form.reset();
+    } else {
+      alert("❌ Error: " + (data.message || "Unknown"));
+    }
+  } catch (err) {
+    alert("❌ Script error");
+    console.error(err);
+  }
+});
+</script>
 
-        const title   = (titleInput.value || "").trim();
-        const desc    = (descInput.value || "").trim();
-        const budget  = (budgetInput.value || "").trim();
-        const cat     = (categoryInput.value || "").trim();
-        const city    = (cityInput.value || "").trim();
-
-        if (!title) {
-          alert("Please enter a title.");
-          return;
-        }
-
-        submitBtn.disabled  = true;
-        submitBtn.textContent = "Submitting…";
-        statusLabel.textContent = "";
-        statusLabel.className = "mt-4 text-sm";
-
-        const body = new URLSearchParams();
-        body.append("action", "addWork");    // Apps Script -> handleAddWork
-        body.append("Title", title);
-        body.append("Description", desc);
-        body.append("Budget", budget);
-        body.append("Category", cat);
-        body.append("City", city);
-        body.append("ClientEmail", currentEmail);
-        body.append("PostedOn", new Date().toISOString());
-
-        try {
-          const res  = await fetch(SCRIPT_URL, { method: "POST", body });
-          const data = await res.json();
-
-          if (data.success) {
-            statusLabel.textContent = "✅ Work successfully posted!";
-            statusLabel.className = "mt-4 text-sm font-semibold text-green-400";
-            form.reset();
-          } else {
-            statusLabel.textContent = "⚠️ Error: " + (data.message || data.error || "Unknown error");
-            statusLabel.className = "mt-4 text-sm font-semibold text-yellow-300";
-          }
-        } catch (err) {
-          console.error(err);
-          statusLabel.textContent = "❌ Network / script error: " + err.message;
-          statusLabel.className = "mt-4 text-sm font-semibold text-red-400";
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Submit Work";
-        }
-      });
-    });
-  </script>
-
-  <!-- HEADER login / logout toggle -->
-  <script>
-    const loginLink   = document.getElementById('loginLink');
-    const signupLink  = document.getElementById('signupLink');
-    const logoutButton= document.getElementById('logoutButton');
-
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        loginLink.classList.add('hidden');
-        signupLink.classList.add('hidden');
-        logoutButton.classList.remove('hidden');
-      } else {
-        loginLink.classList.remove('hidden');
-        signupLink.classList.remove('hidden');
-        logoutButton.classList.add('hidden');
-      }
-    });
-
-    logoutButton.addEventListener('click', () => {
-      auth.signOut()
-        .then(() => {
-          alert("You have been logged out.");
-          window.location.href = 'index.html';
-        })
-        .catch((error) => {
-          console.error("Logout Error:", error);
-        });
-    });
-  </script>
 
 </body>
 </html>
