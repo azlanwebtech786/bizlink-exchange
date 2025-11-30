@@ -8,139 +8,147 @@
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
 <style>
-body { background:#050816;color:#e5e7eb;font-family:Poppins,sans-serif }
-.card { background:#0f172a;border:1px solid #1e293b }
-.scroll { max-height:420px;overflow-y:auto }
-.scroll::-webkit-scrollbar{width:6px}
-.scroll::-webkit-scrollbar-thumb{background:#1f2937}
+body{background:#050816;color:#e5e7eb;font-family:Inter,system-ui}
+.card{background:#0f172a;border:1px solid #1f2937}
+.btn{background:linear-gradient(90deg,#a855f7,#ec4899)}
 </style>
 </head>
 
 <body class="min-h-screen">
 
-<header class="p-4 border-b border-slate-800 flex justify-between items-center">
-  <h1 class="text-xl font-bold">BizLink <span class="text-purple-400">Owner Dashboard</span></h1>
-  <button onclick="logout()" class="bg-red-600 px-4 py-1 rounded">Logout</button>
+<header class="p-4 border-b border-slate-800 flex justify-between">
+<h1 class="font-bold">BizLink <span class="text-purple-400">Owner Dashboard</span></h1>
+<button onclick="logout()" class="bg-red-600 px-3 py-1 rounded text-sm">Logout</button>
 </header>
 
-<main class="max-w-6xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+<main class="max-w-6xl mx-auto p-4 grid grid-cols-2 gap-4">
 
-<!-- WORK LIST -->
+<!-- LEFT -->
 <div class="card p-4">
-  <h2 class="font-semibold mb-2">Your Posted Works</h2>
-  <div id="workList" class="scroll space-y-3 text-sm">
-    Loading works...
-  </div>
+<h2 class="font-semibold mb-2">Your Posted Works</h2>
+<div id="workList" class="space-y-3 text-sm text-slate-300">
+Loading works...
+</div>
 </div>
 
-<!-- CHAT -->
+<!-- RIGHT -->
 <div class="card p-4 flex flex-col">
-  <h2 id="chatTitle" class="font-semibold mb-2 text-sm">Select a work to chat</h2>
-  <div id="chatBox" class="flex-1 scroll space-y-2 text-sm">
-    <div class="text-slate-500">No work selected</div>
-  </div>
+<h2 id="chatTitle" class="font-semibold mb-2">Select a work to chat</h2>
+<div id="chatMessages" class="flex-1 space-y-2 text-sm overflow-y-auto mb-2 text-slate-300">
+No work selected
+</div>
 
-  <form id="chatForm" class="mt-3 flex gap-2">
-    <input id="chatInput" class="flex-1 p-2 rounded bg-slate-900 border border-slate-700 text-sm" placeholder="Type message…" />
-    <button class="bg-purple-600 px-4 rounded text-sm">Send</button>
-  </form>
+<form id="chatForm" class="flex gap-2">
+<input id="chatInput" class="flex-1 bg-slate-900 px-3 py-2 rounded text-sm" placeholder="Type message..." />
+<button class="btn px-4 py-2 rounded text-sm">Send</button>
+</form>
 </div>
 
 </main>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec";
+// ========= CONFIG =========
+const API_URL = "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec";
 
 let ownerEmail = localStorage.getItem("bizlinkOwnerEmail");
-if (!ownerEmail) {
+if(!ownerEmail){
   ownerEmail = prompt("Owner email:");
   localStorage.setItem("bizlinkOwnerEmail", ownerEmail);
 }
 
 let currentWorkId = null;
 
-/* ---------------- LOAD WORKS ---------------- */
-async function loadWorks() {
+// ========= LOAD WORKS =========
+async function loadOwnerWorks(){
+  const res = await fetch(`${API_URL}?sheet=works`);
+  const data = await res.json();
+
+  const myWorks = data.filter(w =>
+    String(w.ClientEmail).toLowerCase() === ownerEmail.toLowerCase()
+  );
+
   const box = document.getElementById("workList");
-  box.innerHTML = "Loading works...";
-  const res = await fetch(`${SCRIPT_URL}?sheet=works`);
-  const data = await res.json();
+  box.innerHTML = "";
 
-  const myWorks = data.filter(w => String(w.ClientEmail).toLowerCase() === ownerEmail.toLowerCase());
-
-  if (!myWorks.length) {
-    box.innerHTML = "<div class='text-slate-500'>No works found.</div>";
+  if(!myWorks.length){
+    box.innerHTML = "<p class='text-slate-500'>No works found</p>";
     return;
   }
 
-  box.innerHTML = myWorks.map(w => `
-    <div class="border border-slate-700 rounded p-3">
-      <div class="font-semibold">${w.Title || "No title"}</div>
-      <div class="text-xs text-slate-400">ID: ${w.WorkID}</div>
-      <div class="text-xs">₹${w.Budget || "-"}</div>
-      <button onclick="openChat('${w.WorkID}')" class="mt-2 text-xs bg-slate-800 px-2 py-1 rounded">Open Chat</button>
-    </div>
-  `).join("");
-}
-
-/* ---------------- CHAT ---------------- */
-async function openChat(workId) {
-  currentWorkId = workId;
-  document.getElementById("chatTitle").textContent = "Chat – " + workId;
-  loadMessages();
-}
-
-async function loadMessages() {
-  if (!currentWorkId) return;
-
-  const box = document.getElementById("chatBox");
-  const res = await fetch(`${SCRIPT_URL}?action=getChatMessages&WorkID=${currentWorkId}`);
-  const data = await res.json();
-
-  if (!data.ok || !data.messages.length) {
-    box.innerHTML = "<div class='text-slate-500'>No messages</div>";
-    return;
-  }
-
-  box.innerHTML = data.messages.map(m => `
-    <div class="${m.FromRole==='Owner'?'text-right':''}">
-      <div class="inline-block px-3 py-1 rounded ${m.FromRole==='Owner'?'bg-purple-600':'bg-slate-800'}">
-        ${m.Message}
+  myWorks.forEach(w=>{
+    box.innerHTML += `
+      <div class="border border-slate-700 rounded p-3">
+        <p class="font-medium">${w.Title || "No title"}</p>
+        <p>ID: ${w.WorkID}</p>
+        <p>₹${w.Budget}</p>
+        <button onclick="openChat('${w.WorkID}','${w.Title}','${w.AssignedTo||""}')" class="mt-2 text-xs bg-slate-800 px-3 py-1 rounded">Open Chat</button>
       </div>
-    </div>
-  `).join("");
+    `;
+  });
+}
+
+// ========= CHAT =========
+async function openChat(workId,title,freelancer){
+  currentWorkId = workId;
+  document.getElementById("chatTitle").innerText = `${title} (${workId})`;
+  loadChat();
+}
+
+async function loadChat(){
+  const res = await fetch(`${API_URL}?action=getChatMessages&WorkID=${currentWorkId}`);
+  const data = await res.json();
+  const box = document.getElementById("chatMessages");
+  box.innerHTML = "";
+
+  if(!data.messages.length){
+    box.innerHTML = "<p class='text-slate-500'>No messages</p>";
+    return;
+  }
+
+  data.messages.forEach(m=>{
+    const align = m.FromRole==="Owner"?"text-right":"text-left";
+    box.innerHTML += `
+      <div class="${align}">
+        <div class="inline-block bg-slate-800 px-3 py-2 rounded mb-1">
+          ${m.Message}
+        </div>
+      </div>
+    `;
+  });
+
   box.scrollTop = box.scrollHeight;
 }
 
-/* SEND MESSAGE */
-document.getElementById("chatForm").addEventListener("submit", async e => {
+// ========= SEND =========
+document.getElementById("chatForm").onsubmit = async e=>{
   e.preventDefault();
-  const input = document.getElementById("chatInput");
-  if (!input.value || !currentWorkId) return;
+  if(!currentWorkId) return alert("Select a work");
 
-  await fetch(SCRIPT_URL, {
+  const msg = chatInput.value.trim();
+  if(!msg) return;
+
+  await fetch(API_URL,{
     method:"POST",
     body:new URLSearchParams({
       action:"sendMessage",
       WorkID:currentWorkId,
       FromRole:"Owner",
       FromEmail:ownerEmail,
-      Message:input.value
+      Message:msg
     })
   });
 
-  input.value="";
-  loadMessages();
-});
+  chatInput.value="";
+  loadChat();
+};
 
+// ========= LOGOUT =========
 function logout(){
   localStorage.clear();
   location.href="index.html";
 }
 
-loadWorks();
-setInterval(loadMessages,5000);
+loadOwnerWorks();
 </script>
-
 </body>
 </html>
