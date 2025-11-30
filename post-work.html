@@ -95,70 +95,106 @@
         <p id="status" class="mt-4 font-semibold"></p>
     </div>
 
+<!-- Firebase (agar upar already include hai to dubara mat lagana) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
 <script>
-    // wahi Apps Script URL jo index.html / get-listed.html me use ho raha hai
-    const sheetURL = "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec"; 
+  // ==== Firebase config (same jo baaki pages me hai) ====
+  const firebaseConfig = {
+    apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+    authDomain: "bizlink-exchange.firebaseapp.com",
+    projectId: "bizlink-exchange",
+    storageBucket: "bizlink-exchange.firebasestorage.app",
+    messagingSenderId: "116213651971",
+    appId: "1:116213651971:web:fff60961af0c4da3448c36",
+    measurementId: "G-VQ3JM82D1N"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    const form = document.getElementById('postWorkForm');
-    const status = document.getElementById('status');
-    const submitBtn = form.querySelector('button[type="submit"]');
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        submitBtn.disabled = true;
-        submitBtn.innerText = 'Submitting...';
-        status.textContent = ''; 
-
-        const formData = new FormData(form);
-
-        // IMPORTANT: works sheet ke liye
-        formData.append('sheet', 'works');
-        formData.append('action', 'addWork');
-        formData.append('PostedOn', new Date().toISOString());
-
-        // logged-in client email (Firebase se)
-        if (window.currentUserEmail) {
-            formData.append('ClientEmail', window.currentUserEmail);
-        }
-
-        try {
-            const res = await fetch(sheetURL, {
-                method: 'POST',
-                body: formData 
-            });
-
-            const text = await res.text();
-            let result;
-            try {
-                result = JSON.parse(text);
-            } catch (err) {
-                console.error('POST /works JSON parse error, raw:', text);
-                status.style.color = 'pink';
-                status.textContent = "⚠️ Server response error. Check console.";
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'Submit Work';
-                return;
-            }
-
-            if (result.success) {
-                status.style.color = 'lightgreen';
-                status.textContent = "✅ Work posted successfully!";
-                form.reset();
-            } else {
-                status.style.color = 'pink';
-                status.textContent = "⚠️ Failed to post work: " + (result.message || 'Unknown error');
-            }
-
-        } catch (err) {
-            status.style.color = 'pink';
-            status.textContent = "❌ Error posting work. Check console for details.";
-            console.error(err);
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = 'Submit Work';
-        }
-    });
+  // ==== Apps Script URL (works wali web app) ====
+  const SCRIPT_URL = "YOUR_SCRIPT_URL_HERE"; 
+  // example: "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec"
 </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form       = document.getElementById("postWorkForm");   // <- tumhare form ka id
+    const submitBtn  = document.getElementById("submitWorkBtn");  // <- button ka id (change if needed)
+
+    // Inputs – IDs check kar lena:
+    const titleInput       = document.getElementById("work_title");
+    const descInput        = document.getElementById("work_description");
+    const budgetInput      = document.getElementById("work_budget");
+    const categoryInput    = document.getElementById("work_category");
+    const cityInput        = document.getElementById("work_city");
+
+    let currentEmail = "";
+
+    // --- Login check + email pakdo ---
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        alert("Please login to post a work.");
+        window.location.href = "login.html";
+        return;
+      }
+      currentEmail = user.email;
+    });
+
+    // --- Form submit handler ---
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentEmail) {
+        alert("Login email nahi mila. Thoda reload karke dobara try karo.");
+        return;
+      }
+
+      const title   = (titleInput.value || "").trim();
+      const desc    = (descInput.value || "").trim();
+      const budget  = (budgetInput.value || "").trim();
+      const cat     = (categoryInput.value || "").trim();
+      const city    = (cityInput.value || "").trim();
+
+      if (!title) {
+        alert("Please enter a title.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting…";
+
+      const body = new URLSearchParams();
+      body.append("action", "addWork");          // Apps Script me handleAddWork
+      body.append("Title", title);
+      body.append("Description", desc);
+      body.append("Budget", budget);
+      body.append("Category", cat);
+      body.append("City", city);
+      body.append("ClientEmail", currentEmail);
+      body.append("PostedOn", new Date().toISOString());
+
+      try {
+        const res  = await fetch(SCRIPT_URL, { method: "POST", body });
+        const data = await res.json();
+
+        if (data.success) {
+          alert("✅ Work successfully posted!");
+          form.reset();
+        } else {
+          alert("⚠️ Error: " + (data.message || data.error || "Unknown error"));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Network / script error: " + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Work";
+      }
+    });
+  });
+</script>
+
 
 <script>
     // Firebase auth object already initialized in head
