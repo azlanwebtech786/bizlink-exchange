@@ -1,4 +1,4 @@
-"<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -167,181 +167,290 @@
     // --------- CONFIG ---------
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec";
 
-function getLoggedInEmailOwner() {
-  let email =
-    (window.LOGGED_IN_EMAIL || "").trim() ||
-    (localStorage.getItem("bizlink_email") || "").trim() ||
-    (localStorage.getItem("bizlinkOwnerEmail") || "").trim();
+    let ownerEmail = null;
+    let allWorks = [];
+    let currentFilter = "all";
+    let currentWorkId = null;
 
-  if (!email) {
-    email = prompt("Owner (client) ka login email likho (temporary):") || "";
-    email = email.trim();
-    if (email) {
-      localStorage.setItem("bizlinkOwnerEmail", email);
-    }
-  }
-  return email;
-}
+    const statusText = document.getElementById("pageStatus");
+    const workListEl = document.getElementById("workList");
+    const filterLabel = document.getElementById("currentFilterLabel");
 
-// =========================
-//  STATE
-// =========================
-let ownerEmail = "";
-let currentOwnerWorkId = null;
-let chatOwnerTimer = null;
+    const statTotal      = document.getElementById("statTotal");
+    const statPending    = document.getElementById("statPending");
+    const statInProgress = document.getElementById("statInProgress");
+    const statCompleted  = document.getElementById("statCompleted");
 
-// yahan se tum agar chaho to header me "Logged in as ..." bhi set kar sakte ho
-window.addEventListener("DOMContentLoaded", () => {
-  ownerEmail = getLoggedInEmailOwner();
-  const span = document.getElementById("ownerEmailLabel");
-  if (span && ownerEmail) span.textContent = ownerEmail;
-  setupOwnerChatForm();
-});
+    const chatTitle    = document.getElementById("chatTitle");
+    const chatSubtitle = document.getElementById("chatSubtitle");
+    const chatMessages = document.getElementById("chatMessages");
+    const chatInput    = document.getElementById("chatInput");
+    const chatForm     = document.getElementById("chatForm");
 
-// =========================
-//  API HELPERS
-// =========================
-async function ownerApiGet(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("HTTP " + res.status);
-  return res.json();
-}
-
-async function ownerApiPost(bodyObj) {
-  const body = new URLSearchParams(bodyObj);
-  const res = await fetch(API_URL_OWNER, {
-    method: "POST",
-    body
-  });
-  if (!res.ok) throw new Error("HTTP " + res.status);
-  return res.json();
-}
-
-// =========================
-//  CHAT – OWNER SIDE
-// =========================
-
-// ye function tumhare work card se call hoga
-// example button HTML:
-// <button onclick="openOwnerChat('W-123','Video editing','freelancer@gmail.com')">Open Chat</button>
-window.openOwnerChat = function (workId, title, assignedTo) {
-  currentOwnerWorkId = workId;
-
-  const titleEl = document.getElementById("ownerChatTitle");
-  const subEl = document.getElementById("ownerChatSubtitle");
-
-  if (titleEl) titleEl.textContent = title || "Chat";
-  if (subEl)
-    subEl.textContent =
-      (assignedTo ? `Freelancer: ${assignedTo}` : "") + ` · Work ID: ${workId}`;
-
-  if (chatOwnerTimer) clearInterval(chatOwnerTimer);
-
-  loadOwnerChatMessages(workId);
-  chatOwnerTimer = setInterval(() => {
-    if (currentOwnerWorkId) loadOwnerChatMessages(currentOwnerWorkId);
-  }, 5000);
-};
-
-function setupOwnerChatForm() {
-  const form = document.getElementById("ownerChatForm");
-  const input = document.getElementById("ownerChatInput");
-  if (!form || !input) return;
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const text = input.value.trim();
-    if (!text) return;
-    if (!currentOwnerWorkId) {
-      alert("Pehle kisi work ka chat open karo.");
-      return;
+    // --- Utils ---
+    function setStatus(msg, type = "info") {
+      if (!statusText) return;
+      statusText.textContent = msg || "";
+      if (!msg) {
+        statusText.className = "mb-3 text-xs text-slate-400";
+      } else if (type === "error") {
+        statusText.className = "mb-3 text-xs text-red-300";
+      } else {
+        statusText.className = "mb-3 text-xs text-slate-300";
+      }
     }
 
-    try {
-      await ownerApiPost({
-        action: "sendMessage",
-        WorkID: currentOwnerWorkId,
-        FromRole: "Owner",
-        FromEmail: ownerEmail,
-        Message: text
+    function normalizeStatus(s) {
+      s = (s || "").toString().toLowerCase();
+      if (!s || s === "pending") return "pending";
+      if (s === "accepted" || s === "in progress") return "inprogress";
+      if (s === "completed") return "completed";
+      if (s === "paid") return "paid";
+      return "other";
+    }
+
+    function formatBudget(v) {
+      if (!v && v !== 0) return "N/A";
+      const num = Number(v.toString().replace(/[^0-9.]/g, "")) || 0;
+      return "₹" + num.toLocaleString("en-IN");
+    }
+
+    // --- Works loading ---
+    async function loadOwnerWorks() {
+      try {
+        setStatus("Loading your works…");
+
+        const res = await fetch(`${SCRIPT_URL}?sheet=works`);
+        const data = await res.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid data from server");
+        }
+
+        allWorks = data.filter(w =>
+          (w.ClientEmail || "").toString().toLowerCase() === ownerEmail.toLowerCase()
+        );
+
+        updateStats();
+        renderWorkList();
+        setStatus(allWorks.length ? "" : "No works found for your email. Pehle Post a Work form se work create karo.");
+      } catch (err) {
+        console.error(err);
+        setStatus("Error loading works: " + err.message, "error");
+        workListEl.innerHTML = `
+          <div class="py-8 text-center text-xs text-red-300">
+            Error loading works: ${err.message}
+          </div>`;
+      }
+    }
+
+    function updateStats() {
+      const total = allWorks.length;
+      const pending = allWorks.filter(w => normalizeStatus(w.Status) === "pending").length;
+      const inProg  = allWorks.filter(w => normalizeStatus(w.Status) === "inprogress").length;
+      const completed = allWorks.filter(w => normalizeStatus(w.Status) === "completed").length;
+
+      statTotal.textContent      = total;
+      statPending.textContent    = pending;
+      statInProgress.textContent = inProg;
+      statCompleted.textContent  = completed;
+    }
+
+    function renderWorkList() {
+      const items = allWorks.filter(w => {
+        const st = normalizeStatus(w.Status);
+        if (currentFilter === "all") return true;
+        return st === currentFilter;
       });
-      input.value = "";
-      await loadOwnerChatMessages(currentOwnerWorkId);
-    } catch (err) {
-      console.error(err);
-      alert("Owner message bhejte time error aaya.");
-    }
-  });
-}
 
-async function loadOwnerChatMessages(workId) {
-  const msgBox = document.getElementById("ownerChatMessages");
-  if (!msgBox) return;
+      filterLabel.textContent = "Filter: " + (currentFilter[0].toUpperCase() + currentFilter.slice(1));
 
-  try {
-    const data = await ownerApiGet(
-      `${API_URL_OWNER}?action=getChatMessages&WorkID=${encodeURIComponent(
-        workId
-      )}`
-    );
+      if (!items.length) {
+        workListEl.innerHTML = `
+          <div class="py-10 text-center text-xs text-slate-500">
+            No works in <span class="font-semibold">${currentFilter}</span>.
+          </div>`;
+        return;
+      }
 
-    if (!data.ok) {
-      msgBox.innerHTML = `
-        <div class="py-6 text-center text-xs text-red-300">
-          Chat load nahi ho paaya.
-        </div>`;
-      return;
-    }
-
-    const messages = data.messages || [];
-    if (!messages.length) {
-      msgBox.innerHTML = `
-        <div class="py-10 text-center text-xs text-slate-500">
-          No messages yet. Pehla message bhejo.
-        </div>`;
-      return;
-    }
-
-    msgBox.innerHTML = messages
-      .map((m) => {
-        const fromRole = (m.FromRole || "").toLowerCase();
-        const isOwner = fromRole === "owner";
-        const align = isOwner ? "items-end" : "items-start";
-        const bubble = isOwner
-          ? "bg-pink-600 text-white rounded-2xl rounded-br-none"
-          : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
-        const metaAlign = isOwner ? "text-right" : "text-left";
-        const who = isOwner ? "You" : "Freelancer";
-
-        const timeStr = m.CreatedAt
-          ? new Date(m.CreatedAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit"
-            })
-          : "";
+      workListEl.innerHTML = items.map(w => {
+        const st = normalizeStatus(w.Status);
+        let chipClass = "chip-pending", chipLabel = "Pending";
+        if (st === "inprogress") { chipClass = "chip-progress"; chipLabel = "In Progress"; }
+        else if (st === "completed") { chipClass = "chip-completed"; chipLabel = "Completed"; }
+        else if (st === "paid") { chipClass = "chip-paid"; chipLabel = "Paid"; }
 
         return `
-          <div class="flex ${align}">
-            <div class="max-w-[80%]">
-              <div class="px-3 py-2 ${bubble} text-[11px]">
-                ${m.Message || ""}
+          <article class="card-bg rounded-lg p-3 flex flex-col gap-2" data-work-id="${w.WorkID || ""}">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <h3 class="text-sm font-semibold text-slate-100">${w.Title || "Untitled Work"}</h3>
+                <p class="text-[11px] text-slate-400">
+                  ${w.Category || ""} · ${w.City || ""} · ID: <span class="font-mono">${w.WorkID || ""}</span>
+                </p>
               </div>
-              <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
-                ${who} · ${timeStr}
-              </p>
+              <span class="chip ${chipClass}">${chipLabel}</span>
             </div>
-          </div>
+            <p class="text-xs text-slate-400">
+              ${w.Description || "No description"}
+            </p>
+            <div class="flex items-center justify-between text-[11px] text-slate-400">
+              <span>Budget: <span class="text-emerald-400 font-semibold">${formatBudget(w.Budget)}</span></span>
+              <button
+                class="px-3 py-1 rounded-md border border-slate-600 hover:border-purple-500 text-slate-100 font-semibold text-[11px]"
+                data-action="open-chat"
+              >
+                Open Chat
+              </button>
+            </div>
+          </article>
         `;
-      })
-      .join("");
+      }).join("");
+    }
 
-    msgBox.scrollTop = msgBox.scrollHeight;
-  } catch (err) {
-    console.error(err);
-  }
-}
-</script>
+    // --- Chat ---
+    async function loadChatMessages(workId) {
+      if (!workId) return;
+      try {
+        const res = await fetch(
+          `${SCRIPT_URL}?action=getChatMessages&WorkID=${encodeURIComponent(workId)}`
+        );
+        const data = await res.json();
+        if (!data.ok) {
+          throw new Error(data.error || "Unknown error");
+        }
+        const msgs = data.messages || [];
+        if (!msgs.length) {
+          chatMessages.innerHTML = `
+            <div class="py-8 text-center text-xs text-slate-500">
+              No messages yet. Pehla message bhej kar conversation start karo.
+            </div>`;
+          return;
+        }
 
+        chatMessages.innerHTML = msgs.map(m => {
+          const isOwner = (m.FromRole || "").toLowerCase() === "owner";
+          const align = isOwner ? "items-end" : "items-start";
+          const bubbleClasses = isOwner
+            ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
+            : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
+          const metaAlign = isOwner ? "text-right" : "text-left";
+          const who = isOwner ? "You (Owner)" : "Freelancer";
 
+          const timeStr = m.CreatedAt
+            ? new Date(m.CreatedAt).toLocaleString()
+            : "";
+
+          return `
+            <div class="flex ${align}">
+              <div class="max-w-[80%]">
+                <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
+                  ${m.Message || ""}
+                </div>
+                <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
+                  ${who} · ${timeStr}
+                </p>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      } catch (err) {
+        console.error(err);
+        chatMessages.innerHTML = `
+          <div class="py-8 text-center text-xs text-red-300">
+            Error loading messages: ${err.message}
+          </div>`;
+      }
+    }
+
+    async function sendChatMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      if (!currentWorkId) {
+        alert("Pehle koi work select karo (Open Chat).");
+        return;
+      }
+
+      try {
+        const body = new URLSearchParams();
+        body.append("action", "sendMessage");
+        body.append("WorkID", currentWorkId);
+        body.append("FromRole", "Owner");
+        body.append("FromEmail", ownerEmail);
+        body.append("Message", text);
+
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          throw new Error(data.error || "Error sending message");
+        }
+        chatInput.value = "";
+        await loadChatMessages(currentWorkId);
+      } catch (err) {
+        console.error(err);
+        alert("Error sending message: " + err.message);
+      }
+    }
+
+    // --- Event bindings ---
+    document.getElementById("statusTabs").addEventListener("click", (e) => {
+      if (!e.target.matches("[data-filter]")) return;
+      const filter = e.target.getAttribute("data-filter");
+      currentFilter = filter;
+
+      document.querySelectorAll("#statusTabs .tab-button").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-filter") === filter);
+      });
+
+      renderWorkList();
+    });
+
+    workListEl.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-action='open-chat']");
+      if (!btn) return;
+      const card = btn.closest("[data-work-id]");
+      const workId = card ? card.getAttribute("data-work-id") : null;
+      if (!workId) return;
+
+      currentWorkId = workId;
+      const w = allWorks.find(x => (x.WorkID || "").toString() === workId.toString());
+      chatTitle.textContent = w ? w.Title || "Chat" : "Chat";
+      chatSubtitle.textContent = w
+        ? `${w.Category || ""} · ${w.City || ""} · ID: ${w.WorkID || ""}`
+        : "";
+      loadChatMessages(workId);
+    });
+
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      sendChatMessage();
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => {
+        window.location.href = "index.html";
+      });
+    });
+
+    // --- Auth guard + initial load ---
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        alert("Please login first.");
+        window.location.href = "login.html";
+        return;
+      }
+      ownerEmail = user.email;
+      const loggedSpan = document.getElementById("loggedInEmail");
+      if (loggedSpan) {
+        loggedSpan.textContent = `Logged in as: ${ownerEmail}`;
+      }
+      loadOwnerWorks();
+    });
+  </script>
 </body>
-</html>"
+</html>
