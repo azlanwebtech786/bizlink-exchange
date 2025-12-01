@@ -141,121 +141,53 @@
   </div>
 
   <!-- POST WORK LOGIC -->
-  <script>
-    // ==== Apps Script URL (same jo index / owner-dashboard me use ho raha hai) ====
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec";
-    // ↑ isko UNHI web-app URL se replace karna agar tumne naya deployment banaya ho
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("postWorkForm");
+  const status = document.getElementById("status");
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const form      = document.getElementById("postWorkForm");
-      const submitBtn = document.getElementById("submitWorkBtn");
-      const statusEl  = document.getElementById("status");
+  let currentEmail = "";
 
-      const titleInput    = document.getElementById("work_title");
-      const descInput     = document.getElementById("work_description");
-      const budgetInput   = document.getElementById("work_budget");
-      const categoryInput = document.getElementById("work_category");
-      const cityInput     = document.getElementById("work_city");
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      alert("Please login first");
+      window.location.href = "login.html";
+      return;
+    }
+    currentEmail = user.email;
+  });
 
-      let currentEmail = "";
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      // ----- Auth state: login check -----
-      auth.onAuthStateChanged(user => {
-        if (!user) {
-          statusEl.textContent = "Please login first to post a work.";
-          statusEl.className   = "mt-4 text-sm font-semibold text-center text-red-400";
-          // redirect optional:
-          // window.location.href = "login.html";
-          return;
-        }
-        currentEmail = user.email || "";
-      });
+    const fd = new FormData(form);
 
-      // ----- Form submit -----
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    fd.append("action", "addWork");
+    fd.append("ClientEmail", currentEmail);
+    fd.append("PostedOn", new Date().toISOString());
 
-        if (!currentEmail) {
-          alert("Login email nahi mila. Thoda reload karke dobara try karo.");
-          return;
-        }
+    try {
+      const res = await fetch(
+        "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec",
+        { method: "POST", body: fd }
+      );
 
-        const title   = (titleInput.value || "").trim();
-        const desc    = (descInput.value || "").trim();
-        const budget  = (budgetInput.value || "").trim();
-        const cat     = (categoryInput.value || "").trim();
-        const city    = (cityInput.value || "").trim();
+      const data = await res.json();
 
-        if (!title) {
-          alert("Please enter a title.");
-          return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Submitting…";
-        statusEl.textContent = "";
-        statusEl.className   = "mt-4 text-sm font-semibold text-center text-slate-300";
-
-        const body = new URLSearchParams();
-        body.append("action", "addWork");   // Apps Script -> handleAddWork
-        body.append("Title", title);
-        body.append("Description", desc);
-        body.append("Budget", budget);
-        body.append("Category", cat);
-        body.append("City", city);
-        body.append("ClientEmail", currentEmail);
-        body.append("PostedOn", new Date().toISOString());
-
-        try {
-          const res  = await fetch(SCRIPT_URL, { method: "POST", body });
-          const data = await res.json();
-
-          if (data.success) {
-            statusEl.textContent = "✅ Work successfully posted!";
-            statusEl.className   = "mt-4 text-sm font-semibold text-center text-green-400";
-            form.reset();
-          } else {
-            statusEl.textContent = "⚠️ Error: " + (data.message || data.error || "Unknown error");
-            statusEl.className   = "mt-4 text-sm font-semibold text-center text-yellow-300";
-          }
-        } catch (err) {
-          console.error(err);
-          statusEl.textContent = "❌ Network / script error: " + err.message;
-          statusEl.className   = "mt-4 text-sm font-semibold text-center text-red-400";
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Submit Work";
-        }
-      });
-
-      // ----- Header login / logout buttons -----
-      const loginLink   = document.getElementById("loginLink");
-      const signupLink  = document.getElementById("signupLink");
-      const logoutBtn   = document.getElementById("logoutButton");
-
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          if (loginLink)  loginLink.classList.add("hidden");
-          if (signupLink) signupLink.classList.add("hidden");
-          if (logoutBtn)  logoutBtn.classList.remove("hidden");
-        } else {
-          if (loginLink)  loginLink.classList.remove("hidden");
-          if (signupLink) signupLink.classList.remove("hidden");
-          if (logoutBtn)  logoutBtn.classList.add("hidden");
-        }
-      });
-
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-          auth.signOut()
-            .then(() => {
-              window.location.href = "index.html";
-            })
-            .catch(err => console.error("Logout error:", err));
-        });
+      if (data.success) {
+        status.textContent = "✅ Work Posted Successfully";
+        form.reset();
+      } else {
+        status.textContent = "❌ Error: " + (data.message || "Unknown");
       }
-    });
-  </script>
+
+    } catch (err) {
+      status.textContent = "❌ Network Error";
+      console.error(err);
+    }
+  });
+});
+</script>
 
 </body>
 </html>
