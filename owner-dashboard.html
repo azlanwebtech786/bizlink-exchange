@@ -335,7 +335,9 @@
             ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
             : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
           const metaAlign = isOwner ? "text-right" : "text-left";
-          const who = isOwner ? "You (Owner)" : "Freelancer";
+
+          // 🔥 LABEL CHANGE YAHAN:
+          const who = isOwner ? "Client (You)" : "BizLink Expert Team";
 
           const timeStr = m.CreatedAt
             ? new Date(m.CreatedAt).toLocaleString()
