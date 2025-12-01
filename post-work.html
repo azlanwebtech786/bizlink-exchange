@@ -20,8 +20,8 @@
       border:1px solid rgba(255,255,255,0.1);
     }
     .input-dark{
-      background-color:rgba(255,255,255,0.1);
-      border:1px solid rgba(255,255,255,0.2);
+      background-color:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.25);
       color:#ffffff;
     }
     .input-dark::placeholder{
@@ -33,7 +33,7 @@
     .text-purple{color:#a855f7;}
   </style>
 
-  <!-- Firebase (sirf ek baar) -->
+  <!-- Firebase (ONLY ONCE) -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script>
@@ -46,26 +46,17 @@
       appId: "1:116213651971:web:fff60961af0c4da3448c36",
       measurementId: "G-VQ3JM82D1N"
     };
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
     const auth = firebase.auth();
-
-    // global email for post-work
-    window.currentUserEmail = "";
-
-    auth.onAuthStateChanged((user) => {
-      if (!user) {
-        alert("You must be logged in to post a work.");
-        window.location.href = "login.html";
-      } else {
-        window.currentUserEmail = user.email || "";
-      }
-    });
   </script>
 </head>
+
 <body class="bg-[#0b0d1e] text-gray-200">
 
   <!-- HEADER -->
-  <header class="flex justify-between items-center px-8 py-4 sticky top-0 bg-opacity-90 bg-[#0b0d1e] z-50 shadow-lg">
+  <header class="flex justify-between items-center px-8 py-4 sticky top-0 bg-[#0b0d1e]/90 z-50 shadow-lg">
     <h1 class="text-2xl font-bold text-white">
       BizLink <span class="text-purple">Exchange</span>
     </h1>
@@ -75,8 +66,12 @@
       <a href="post-work.html" class="hover:text-purple font-semibold transition text-white">Post a Work</a>
       <a href="get-listed.html" class="hover:text-purple transition text-white">Get Listed</a>
 
-      <a id="loginLink" href="login.html" class="button-gradient text-white px-4 py-2 rounded-md font-medium hover:opacity-90">Login</a>
-      <a id="signupLink" href="signup.html" class="bg-gray-700 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-600">Sign Up</a>
+      <a id="loginLink" href="login.html" class="button-gradient text-white px-4 py-2 rounded-md font-medium hover:opacity-90">
+        Login
+      </a>
+      <a id="signupLink" href="signup.html" class="bg-gray-700 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-600">
+        Sign Up
+      </a>
       <button id="logoutButton" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700">
         Logout
       </button>
@@ -88,6 +83,7 @@
     <h2 class="text-2xl font-bold mb-6 text-white">Post a Work</h2>
 
     <form id="postWorkForm" class="space-y-4">
+      <!-- IMPORTANT: IDs add kiye gaye hain -->
       <input
         id="work_title"
         name="Title"
@@ -101,7 +97,6 @@
         id="work_description"
         name="Description"
         placeholder="Description"
-        rows="3"
         required
         class="w-full p-3 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500"
       ></textarea>
@@ -142,52 +137,125 @@
       </button>
     </form>
 
-    <p id="status" class="mt-4 text-sm font-semibold"></p>
+    <p id="status" class="mt-4 text-sm font-semibold text-center"></p>
   </div>
 
-  <!-- POST WORK JS -->
-<script>
-document.getElementById("postWorkForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
+  <!-- POST WORK LOGIC -->
+  <script>
+    // ==== Apps Script URL (same jo index / owner-dashboard me use ho raha hai) ====
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec";
+    // ↑ isko UNHI web-app URL se replace karna agar tumne naya deployment banaya ho
 
-  if (!window.currentUserEmail) {
-    alert("Login required");
-    return;
-  }
+    document.addEventListener("DOMContentLoaded", () => {
+      const form      = document.getElementById("postWorkForm");
+      const submitBtn = document.getElementById("submitWorkBtn");
+      const statusEl  = document.getElementById("status");
 
-  const form = e.target;
+      const titleInput    = document.getElementById("work_title");
+      const descInput     = document.getElementById("work_description");
+      const budgetInput   = document.getElementById("work_budget");
+      const categoryInput = document.getElementById("work_category");
+      const cityInput     = document.getElementById("work_city");
 
-  const body = new URLSearchParams();
-  body.append("action", "addWork");
-  body.append("Title", form.Title.value);
-  body.append("Description", form.Description.value);
-  body.append("Budget", form.Budget.value);
-  body.append("Category", form.Category.value);
-  body.append("City", form.City.value);
-  body.append("ClientEmail", window.currentUserEmail);
-  body.append("PostedOn", new Date().toISOString());
+      let currentEmail = "";
 
-  try {
-    const res = await fetch(
-      "https://script.google.com/macros/s/AKfycbx33xzS-1OyIoSRJcnUt0y3EJR3-GMm96DDnefgI93AXdr_IkDiDCg2ww45epJ5Q-5D1g/exec",
-      { method: "POST", body }
-    );
+      // ----- Auth state: login check -----
+      auth.onAuthStateChanged(user => {
+        if (!user) {
+          statusEl.textContent = "Please login first to post a work.";
+          statusEl.className   = "mt-4 text-sm font-semibold text-center text-red-400";
+          // redirect optional:
+          // window.location.href = "login.html";
+          return;
+        }
+        currentEmail = user.email || "";
+      });
 
-    const data = await res.json();
+      // ----- Form submit -----
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    if (data.success) {
-      alert("✅ Work Posted Successfully");
-      form.reset();
-    } else {
-      alert("❌ Error: " + (data.message || "Unknown"));
-    }
-  } catch (err) {
-    alert("❌ Script error");
-    console.error(err);
-  }
-});
-</script>
+        if (!currentEmail) {
+          alert("Login email nahi mila. Thoda reload karke dobara try karo.");
+          return;
+        }
 
+        const title   = (titleInput.value || "").trim();
+        const desc    = (descInput.value || "").trim();
+        const budget  = (budgetInput.value || "").trim();
+        const cat     = (categoryInput.value || "").trim();
+        const city    = (cityInput.value || "").trim();
+
+        if (!title) {
+          alert("Please enter a title.");
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting…";
+        statusEl.textContent = "";
+        statusEl.className   = "mt-4 text-sm font-semibold text-center text-slate-300";
+
+        const body = new URLSearchParams();
+        body.append("action", "addWork");   // Apps Script -> handleAddWork
+        body.append("Title", title);
+        body.append("Description", desc);
+        body.append("Budget", budget);
+        body.append("Category", cat);
+        body.append("City", city);
+        body.append("ClientEmail", currentEmail);
+        body.append("PostedOn", new Date().toISOString());
+
+        try {
+          const res  = await fetch(SCRIPT_URL, { method: "POST", body });
+          const data = await res.json();
+
+          if (data.success) {
+            statusEl.textContent = "✅ Work successfully posted!";
+            statusEl.className   = "mt-4 text-sm font-semibold text-center text-green-400";
+            form.reset();
+          } else {
+            statusEl.textContent = "⚠️ Error: " + (data.message || data.error || "Unknown error");
+            statusEl.className   = "mt-4 text-sm font-semibold text-center text-yellow-300";
+          }
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = "❌ Network / script error: " + err.message;
+          statusEl.className   = "mt-4 text-sm font-semibold text-center text-red-400";
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Submit Work";
+        }
+      });
+
+      // ----- Header login / logout buttons -----
+      const loginLink   = document.getElementById("loginLink");
+      const signupLink  = document.getElementById("signupLink");
+      const logoutBtn   = document.getElementById("logoutButton");
+
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          if (loginLink)  loginLink.classList.add("hidden");
+          if (signupLink) signupLink.classList.add("hidden");
+          if (logoutBtn)  logoutBtn.classList.remove("hidden");
+        } else {
+          if (loginLink)  loginLink.classList.remove("hidden");
+          if (signupLink) signupLink.classList.remove("hidden");
+          if (logoutBtn)  logoutBtn.classList.add("hidden");
+        }
+      });
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          auth.signOut()
+            .then(() => {
+              window.location.href = "index.html";
+            })
+            .catch(err => console.error("Logout error:", err));
+        });
+      }
+    });
+  </script>
 
 </body>
 </html>
