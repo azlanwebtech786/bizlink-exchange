@@ -329,15 +329,24 @@
         }
 
         chatMessages.innerHTML = msgs.map(m => {
-          const isOwner = (m.FromRole || "").toLowerCase() === "owner";
+          const role = (m.FromRole || "").toString().toLowerCase();
+          const isOwner = role === "owner";
+
           const align = isOwner ? "items-end" : "items-start";
           const bubbleClasses = isOwner
             ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
             : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
           const metaAlign = isOwner ? "text-right" : "text-left";
 
-          // 🔥 LABEL CHANGE YAHAN:
-          const who = isOwner ? "Client (You)" : "BizLink Expert Team";
+          // 🔥 yahan label set ho raha hai
+          let who;
+          if (role === "owner") {
+            who = "BizLink Expert Team";
+          } else if (role === "freelancer") {
+            who = "Client";
+          } else {
+            who = "System";
+          }
 
           const timeStr = m.CreatedAt
             ? new Date(m.CreatedAt).toLocaleString()
