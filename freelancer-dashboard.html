@@ -161,7 +161,6 @@
      *****************************************/
     const API_URL = "https://script.google.com/macros/s/AKfycbxwxvKIWBgPxys9MOqGu2R3-IQFBFaCXKwGyLUftuBmfTtnwDVE81Ji4jC64ncI-xvCvg/exec";
 
-    // Firebase config – same jo baaki pages me use ho raha hai
     const firebaseConfig = {
       apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
       authDomain: "bizlink-exchange.firebaseapp.com",
@@ -171,7 +170,11 @@
       appId: "1:116213651971:web:fff60961af0c4da3448c36",
       measurementId: "G-VQ3JM82D1N"
     };
-    firebase.initializeApp(firebaseConfig);
+
+    // ✅ Safe Firebase init (double init error se bachne ke liye)
+    if (!firebase.apps || !firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
     const auth = firebase.auth();
 
     /*****************************************
@@ -238,7 +241,7 @@
       container.innerHTML = items.map(w => {
         const status = (w.Status || "").toString();
         const canAccept   = status === "Pending";
-        the canComplete = status === "Accepted";
+        const canComplete = status === "Accepted";
 
         const lastUpdate = w.LastUpdate
           ? new Date(w.LastUpdate).toLocaleString()
@@ -313,20 +316,11 @@
       }
 
       messagesContainer.innerHTML = messages.map(m => {
-        // raw role from sheet
-        let role = (m.FromRole || "").toString().toLowerCase();
+        const roleRaw = (m.FromRole || "") + "";
+        const role = roleRaw.toLowerCase();  // old data me spaces / caps ho sakte hain
 
-        // 👉 old messages me FromRole blank hai, to email se infer karo
-        if (!role) {
-          const msgEmail = (m.FromEmail || "").toString().toLowerCase();
-          if (freelancerEmail && msgEmail === freelancerEmail.toLowerCase()) {
-            role = "freelancer";
-          } else {
-            role = "owner";
-          }
-        }
-
-        const isFreelancer = role === "freelancer";
+        const isFreelancer = role.includes("freelancer");
+        const isOwner      = role.includes("owner");
 
         const align = isFreelancer ? "items-end" : "items-start";
         const bubbleClasses = isFreelancer
@@ -334,11 +328,12 @@
           : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
         const metaAlign = isFreelancer ? "text-right" : "text-left";
 
-        // label set karo
+        // 👉 Label logic:
+        // Freelancer side = Client, Owner side = BizLink Expert Team
         let whoLabel;
-        if (role === "freelancer") {
-          whoLabel = "You";
-        } else if (role === "owner") {
+        if (isFreelancer) {
+          whoLabel = "Client";
+        } else if (isOwner) {
           whoLabel = "BizLink Expert Team";
         } else {
           whoLabel = "System";
