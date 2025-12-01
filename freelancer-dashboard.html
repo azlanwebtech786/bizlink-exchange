@@ -159,7 +159,6 @@
     /*****************************************
      *  CONFIG
      *****************************************/
-    // 👉 YAHAN APNA NEW APPS SCRIPT WEB APP URL DALO
     const API_URL = "https://script.google.com/macros/s/AKfycbxwxvKIWBgPxys9MOqGu2R3-IQFBFaCXKwGyLUftuBmfTtnwDVE81Ji4jC64ncI-xvCvg/exec";
 
     // Firebase config – same jo baaki pages me use ho raha hai
@@ -314,17 +313,26 @@
       }
 
       messagesContainer.innerHTML = messages.map(m => {
-        const isFreelancer = (m.FromRole || "").toString().toLowerCase() === "freelancer";
+        const role = (m.FromRole || "").toString().toLowerCase();
+        const isFreelancer = role === "freelancer";
+
         const align = isFreelancer ? "items-end" : "items-start";
         const bubbleClasses = isFreelancer
           ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
           : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
         const metaAlign = isFreelancer ? "text-right" : "text-left";
 
-        const ts = m.CreatedAt ? new Date(m.CreatedAt).toLocaleString() : "";
+        // 🔥 yahan label set ho raha hai
+        let whoLabel;
+        if (role === "freelancer") {
+          whoLabel = "You";
+        } else if (role === "owner") {
+          whoLabel = "BizLink Expert Team";
+        } else {
+          whoLabel = "System";
+        }
 
-        // 🔥 YAHAN CHANGE KIYA: label decide kar rahe hain
-        const senderLabel = isFreelancer ? "BizLink Expert Team" : "Client";
+        const ts = m.CreatedAt ? new Date(m.CreatedAt).toLocaleString() : "";
 
         return `
           <div class="flex ${align}">
@@ -333,7 +341,7 @@
                 ${m.Message}
               </div>
               <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
-                ${senderLabel} · ${ts}
+                ${whoLabel} · ${ts}
               </p>
             </div>
           </div>
@@ -408,7 +416,6 @@
           alert("Error accepting work: " + resp.error);
           return;
         }
-        // Local state bhi update kar do
         const w = works.find(w => w.WorkID == workId);
         if (w) w.Status = "Accepted";
         updateStats();
@@ -459,7 +466,7 @@
           alert("Error sending message: " + resp.error);
           return;
         }
-        await loadChatForWork(workId); // refresh chat
+        await loadChatForWork(workId);
       } catch (err) {
         console.error("sendMessage error:", err);
         alert("Network error while sending message.");
