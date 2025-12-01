@@ -304,59 +304,58 @@
      *  CHAT RENDERING
      *****************************************/
     function renderChatMessages(messages) {
-      const messagesContainer = document.getElementById("chatMessages");
+  const messagesContainer = document.getElementById("chatMessages");
 
-      if (!messages || !messages.length) {
-        messagesContainer.innerHTML = `
-          <div class="py-10 text-center text-xs text-slate-500">
-            No messages yet. Pehla message bhej kar conversation start karo.
-          </div>
-        `;
-        return;
-      }
+  if (!messages || !messages.length) {
+    messagesContainer.innerHTML = `
+      <div class="py-10 text-center text-xs text-slate-500">
+        No messages yet. Pehla message bhej kar conversation start karo.
+      </div>
+    `;
+    return;
+  }
 
-      messagesContainer.innerHTML = messages.map(m => {
-        const roleRaw = (m.FromRole || "") + "";
-        const role = roleRaw.toLowerCase();  // old data me spaces / caps ho sakte hain
+  messagesContainer.innerHTML = messages.map(m => {
+    const rawRole = (m.FromRole || "").toString();
+    const role = rawRole.trim().toLowerCase();   // 👈 IMPORTANT: trim()
 
-        const isFreelancer = role.includes("freelancer");
-        const isOwner      = role.includes("owner");
+    const isFreelancer = role === "freelancer";
 
-        const align = isFreelancer ? "items-end" : "items-start";
-        const bubbleClasses = isFreelancer
-          ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
-          : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
-        const metaAlign = isFreelancer ? "text-right" : "text-left";
+    const align = isFreelancer ? "items-end" : "items-start";
+    const bubbleClasses = isFreelancer
+      ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
+      : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
+    const metaAlign = isFreelancer ? "text-right" : "text-left";
 
-        // 👉 Label logic:
-        // Freelancer side = Client, Owner side = BizLink Expert Team
-        let whoLabel;
-        if (isFreelancer) {
-          whoLabel = "Client";
-        } else if (isOwner) {
-          whoLabel = "BizLink Expert Team";
-        } else {
-          whoLabel = "System";
-        }
-
-        const ts = m.CreatedAt ? new Date(m.CreatedAt).toLocaleString() : "";
-
-        return `
-          <div class="flex ${align}">
-            <div class="max-w-[80%]">
-              <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
-                ${m.Message}
-              </div>
-              <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
-                ${whoLabel} · ${ts}
-              </p>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    // 👇 Labels: right side = You, left side = BizLink Expert Team
+    let whoLabel;
+    if (role === "freelancer") {
+      whoLabel = "You";
+    } else if (role === "owner") {
+      whoLabel = "BizLink Expert Team";
+    } else {
+      whoLabel = "System";
     }
+
+    const ts = m.CreatedAt ? new Date(m.CreatedAt).toLocaleString() : "";
+
+    return `
+      <div class="flex ${align}">
+        <div class="max-w-[80%]">
+          <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
+            ${m.Message}
+          </div>
+          <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
+            ${whoLabel} · ${ts}
+          </p>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
 
     async function loadChatForWork(workId) {
       if (!workId) return;
