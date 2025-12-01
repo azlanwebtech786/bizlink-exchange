@@ -238,7 +238,7 @@
       container.innerHTML = items.map(w => {
         const status = (w.Status || "").toString();
         const canAccept   = status === "Pending";
-        const canComplete = status === "Accepted";
+        the canComplete = status === "Accepted";
 
         const lastUpdate = w.LastUpdate
           ? new Date(w.LastUpdate).toLocaleString()
@@ -313,7 +313,19 @@
       }
 
       messagesContainer.innerHTML = messages.map(m => {
-        const role = (m.FromRole || "").toString().toLowerCase();
+        // raw role from sheet
+        let role = (m.FromRole || "").toString().toLowerCase();
+
+        // 👉 old messages me FromRole blank hai, to email se infer karo
+        if (!role) {
+          const msgEmail = (m.FromEmail || "").toString().toLowerCase();
+          if (freelancerEmail && msgEmail === freelancerEmail.toLowerCase()) {
+            role = "freelancer";
+          } else {
+            role = "owner";
+          }
+        }
+
         const isFreelancer = role === "freelancer";
 
         const align = isFreelancer ? "items-end" : "items-start";
@@ -322,7 +334,7 @@
           : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
         const metaAlign = isFreelancer ? "text-right" : "text-left";
 
-        // 🔥 yahan label set ho raha hai
+        // label set karo
         let whoLabel;
         if (role === "freelancer") {
           whoLabel = "You";
