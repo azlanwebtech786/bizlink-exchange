@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BizLink | Direct Works Marketplace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind & Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
+    .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
+    .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
+    .chip{font-size:.70rem;padding:.15rem .55rem;border-radius:999px}
+    .chip-pending{background:#facc15;color:#1f2937}
+    .scroll-y{max-height:520px;overflow-y:auto}
+    .scroll-y::-webkit-scrollbar{width:6px}
+    .scroll-y::-webkit-scrollbar-thumb{background:#1f2937;border-radius:999px}
+    .badge-sm{font-size:.65rem;padding:.1rem .45rem;border-radius:999px}
+    .input-dark{background:#020617;border:1px solid #1f2937;color:#e5e7eb}
+    .input-dark::placeholder{color:#6b7280}
+  </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+</head>
+<body class="min-h-screen">
+
+  <!-- TOP BAR -->
+  <header class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
+          ← Back to Home
+        </a>
+        <h1 class="text-lg sm:text-2xl font-bold text-white">
+          BizLink <span class="text-purple-400">Direct Works</span>
+        </h1>
+      </div>
+      <div class="flex items-center space-x-3 text-xs sm:text-sm">
+        <span class="hidden sm:inline text-slate-300">
+          Logged in as <span id="freelancerEmailLabel" class="font-semibold">--</span>
+        </span>
+        <a href="freelancer-dashboard.html"
+           class="hidden sm:inline px-3 py-1.5 rounded-md border border-slate-600 text-slate-100 text-xs font-semibold hover:border-purple-500">
+          Freelancer Dashboard
+        </a>
+        <button id="logoutBtn"
+                class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 space-y-4">
+
+    <!-- TOP INFO + SEARCH -->
+    <section class="grid lg:grid-cols-3 gap-4 items-start">
+      <div class="lg:col-span-2 card-bg rounded-xl p-4">
+        <h2 class="text-sm font-semibold text-slate-100 mb-1">Open Works Marketplace</h2>
+        <p class="text-xs text-slate-400">
+          Yahan <span class="font-semibold">saare Pending & unassigned works</span> dikhte hain.
+          Jo pasand aaye, <span class="font-semibold text-slate-100">"Take Work"</span> pe click karke
+          kaam apne naam lo. Phir woh tumhare Freelancer Dashboard ke
+          <span class="font-semibold text-emerald-400">Accepted tab</span> me aa jayega.
+        </p>
+      </div>
+
+      <div class="card-bg rounded-xl p-4 space-y-2">
+        <p class="text-xs text-slate-400 mb-1">Search & Filter</p>
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Search by title / category / city..."
+          class="w-full text-xs px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+        <p class="text-[11px] text-slate-500">
+          Total Open Works:
+          <span id="openCount" class="font-semibold text-sky-400">0</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- WORK LIST -->
+    <section class="card-bg rounded-xl p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-semibold text-slate-200">All Open Works</h2>
+        <p id="statusText" class="text-[11px] text-slate-400"></p>
+      </div>
+
+      <div id="workList" class="space-y-3 scroll-y">
+        <div class="py-12 text-center text-xs text-slate-500">
+          Loading open works...
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /*****************************************
+     *  CONFIG
+     *****************************************/
+    const SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbxwxvKIWBgPxys9MOqGu2R3-IQFBFaCXKwGyLUftuBmfTtnwDVE81Ji4jC64ncI-xvCvg/exec";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+      authDomain: "bizlink-exchange.firebaseapp.com",
+      projectId: "bizlink-exchange",
+      storageBucket: "bizlink-exchange.firebasestorage.app",
+      messagingSenderId: "116213651971",
+      appId: "1:116213651971:web:fff60961af0c4da3448c36",
+      measurementId: "G-VQ3JM82D1N"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+
+    /*****************************************
+     *  STATE
+     *****************************************/
+    let freelancerEmail = "";
+    let allWorks = [];      // sheet se aaya full data
+    let openWorks = [];     // Pending + unassigned
+    const statusEl   = document.getElementById("statusText");
+    const workListEl = document.getElementById("workList");
+    const openCountEl = document.getElementById("openCount");
+    const searchInput = document.getElementById("searchInput");
+
+    /*****************************************
+     *  HELPERS
+     *****************************************/
+    function setStatus(msg) {
+      statusEl.textContent = msg || "";
+    }
+
+    function formatBudget(v) {
+      if (!v && v !== 0) return "N/A";
+      const num = Number(v.toString().replace(/[^0-9.]/g, "")) || 0;
+      return "₹" + num.toLocaleString("en-IN");
+    }
+
+    function maskEmail(email) {
+      if (!email) return "Client";
+      const [user, domain] = email.split("@");
+      if (!domain) return email;
+      const shortUser = user.slice(0, 3);
+      return shortUser + "***@" + domain;
+    }
+
+    function isOpenWork(w) {
+      const status = (w.Status || "").toString();
+      const assigned = (w.AssignedTo || "").toString().trim();
+      // Sirf Pending + AssignedTo empty wale works
+      return status === "Pending" && !assigned;
+    }
+
+    function applySearchFilter() {
+      const q = (searchInput.value || "").toLowerCase().trim();
+      if (!q) return openWorks.slice();
+
+      return openWorks.filter(w => {
+        const text = (
+          (w.Title || "") + " " +
+          (w.Description || "") + " " +
+          (w.Category || "") + " " +
+          (w.City || "")
+        ).toLowerCase();
+        return text.includes(q);
+      });
+    }
+
+    /*****************************************
+     *  RENDER
+     *****************************************/
+    function renderWorkList() {
+      const items = applySearchFilter();
+      openCountEl.textContent = items.length;
+
+      if (!items.length) {
+        workListEl.innerHTML = `
+          <div class="py-12 text-center text-xs text-slate-500">
+            No open works right now. Thodi der baad dubara check karo. 🙂
+          </div>
+        `;
+        return;
+      }
+
+      workListEl.innerHTML = items.map(w => {
+        const posted = w.PostedOn
+          ? new Date(w.PostedOn).toLocaleDateString()
+          : "";
+
+        return `
+          <article class="card-bg rounded-lg p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <h3 class="text-sm font-semibold text-slate-100">${w.Title || "Untitled Work"}</h3>
+                <span class="chip chip-pending">Open</span>
+                ${
+                  w.Category
+                    ? `<span class="badge-sm bg-slate-700 text-slate-200 ml-1">${w.Category}</span>`
+                    : ""
+                }
+              </div>
+              <p class="text-xs text-slate-400">
+                ${maskEmail(w.ClientEmail)} · ${w.City || ""}
+              </p>
+              <p class="text-xs text-slate-500 mt-1">
+                Budget: <span class="text-emerald-400 font-semibold">${formatBudget(w.Budget)}</span>
+                ${posted ? ` · Posted: <span class="text-slate-300">${posted}</span>` : ""}
+                · ID: <span class="font-mono text-slate-300">${w.WorkID}</span>
+              </p>
+            </div>
+            <div class="flex flex-col sm:items-end gap-2 text-xs">
+              <button
+                class="px-4 py-1.5 rounded-md button-gradient text-white font-semibold"
+                data-action="take-work"
+                data-id="${w.WorkID}"
+              >
+                Take Work
+              </button>
+              <p class="text-[10px] text-slate-500">
+                After taking, ye work tumhare Freelancer Dashboard ke <span class="font-semibold text-emerald-400">Accepted</span> tab me aa jayega.
+              </p>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    /*****************************************
+     *  API CALLS
+     *****************************************/
+    async function loadOpenWorks() {
+      try {
+        setStatus("Loading open works...");
+        workListEl.innerHTML = `
+          <div class="py-12 text-center text-xs text-slate-500">
+            Loading open works...
+          </div>
+        `;
+
+        const res = await fetch(`${SCRIPT_URL}?sheet=works`);
+        const data = await res.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid data from server");
+        }
+
+        allWorks = data;
+        openWorks = allWorks.filter(isOpenWork);
+        setStatus(openWorks.length ? "" : "No open works right now.");
+        renderWorkList();
+      } catch (err) {
+        console.error(err);
+        setStatus("Error loading works: " + err.message);
+        workListEl.innerHTML = `
+          <div class="py-12 text-center text-xs text-red-300">
+            Error loading works: ${err.message}
+          </div>
+        `;
+      }
+    }
+
+    async function apiPost(bodyObj) {
+      const form = new URLSearchParams();
+      Object.keys(bodyObj).forEach(k => form.append(k, bodyObj[k]));
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: form.toString()
+      });
+      return res.json();
+    }
+
+    async function takeWork(workId) {
+      if (!workId) return;
+      if (!freelancerEmail) {
+        alert("Freelancer email missing. Dobara login karke try karo.");
+        return;
+      }
+
+      if (!confirm("Ye work apne naam lena hai?")) return;
+
+      try {
+        const resp = await apiPost({
+          action: "acceptWork",
+          WorkID: workId,
+          freelancerEmail: freelancerEmail,
+          notes: "Taken via Direct Work marketplace"
+        });
+
+        if (!resp.ok) {
+          alert("Error taking work: " + (resp.error || "Unknown error"));
+          return;
+        }
+
+        // Local state se bhi hata do
+        allWorks = allWorks.map(w => {
+          if ((w.WorkID || "").toString() === workId.toString()) {
+            return {
+              ...w,
+              Status: "Accepted",
+              AssignedTo: freelancerEmail
+            };
+          }
+          return w;
+        });
+        openWorks = allWorks.filter(isOpenWork);
+        renderWorkList();
+
+        alert("✅ Work accepted! Ab yeh tumhare Freelancer Dashboard ke Accepted tab me dikh jayega.");
+      } catch (err) {
+        console.error(err);
+        alert("Network / script error while taking work: " + err.message);
+      }
+    }
+
+    /*****************************************
+     *  EVENT BINDINGS
+     *****************************************/
+    // Take Work button (delegation)
+    workListEl.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-action='take-work']");
+      if (!btn) return;
+      const workId = btn.getAttribute("data-id");
+      takeWork(workId);
+    });
+
+    // Search
+    searchInput.addEventListener("input", () => {
+      renderWorkList();
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => {
+        window.location.href = "login.html";
+      }).catch(err => {
+        console.error("Logout error:", err);
+      });
+    });
+
+    /*****************************************
+     *  AUTH + INITIAL LOAD
+     *****************************************/
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        alert("Please login as Freelancer.");
+        window.location.href = "login.html";
+        return;
+      }
+      freelancerEmail = (user.email || "").toLowerCase();
+      document.getElementById("freelancerEmailLabel").textContent = freelancerEmail;
+      loadOpenWorks();
+    });
+  </script>
+</body>
+</html>
