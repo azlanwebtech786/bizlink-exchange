@@ -320,14 +320,14 @@
             </button>
           `;
         } else {
-          paymentButtons = `
-            <button
-              class="px-3 py-1 rounded-md bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-semibold"
-              data-action="lock-payment"
-            >
-              Lock Payment
-            </button>
-          `;
+         paymentButtons = `
+  <button 
+    class="px-3 py-1 rounded-md bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-semibold"
+    onclick="lockPayment('${w.WorkID}', '${w.Budget}')"
+  >
+    Lock Payment
+  </button>
+`;
         }
 
         const lockedInfo = isLocked
