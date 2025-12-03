@@ -18,6 +18,7 @@
     .chip-progress{background:#22c55e;color:#022c22}
     .chip-completed{background:#38bdf8;color:#0f172a}
     .chip-paid{background:#4ade80;color:#022c22}
+    .chip-locked{background:#a855f7;color:#f9fafb}
     .tab-button{color:#9ca3af;border-bottom:2px solid transparent}
     .tab-button.active{color:#a855f7;border-bottom-color:#a855f7;font-weight:600}
     .scroll-y{max-height:430px;overflow-y:auto}
@@ -99,7 +100,6 @@
         </div>
 
         <div id="workList" class="space-y-3 scroll-y">
-          <!-- JS se cards aayenge -->
           <div class="py-10 text-center text-xs text-slate-500">
             Loading works…
           </div>
@@ -206,6 +206,7 @@
       if (s === "accepted" || s === "in progress") return "inprogress";
       if (s === "completed") return "completed";
       if (s === "paid") return "paid";
+      if (s === "locked") return "locked"; // payment lock ke liye separate use kar rahe hain
       return "other";
     }
 
@@ -256,10 +257,25 @@
       statCompleted.textContent  = completed;
     }
 
+    function paymentChip(w) {
+      const status = (w.PaymentStatus || "").toString();
+      if (status === "Paid") {
+        return `<span class="chip chip-paid">Paid</span>`;
+      }
+      if (status === "Locked") {
+        const amt = w.LockedAmount ? "₹" + w.LockedAmount : "";
+        return `<span class="chip chip-locked">Locked ${amt}</span>`;
+      }
+      return `<span class="chip chip-pending">Not Locked</span>`;
+    }
+
     function renderWorkList() {
       const items = allWorks.filter(w => {
         const st = normalizeStatus(w.Status);
         if (currentFilter === "all") return true;
+        if (currentFilter === "paid") {
+          return (w.PaymentStatus || "").toString() === "Paid";
+        }
         return st === currentFilter;
       });
 
@@ -280,29 +296,80 @@
         else if (st === "completed") { chipClass = "chip-completed"; chipLabel = "Completed"; }
         else if (st === "paid") { chipClass = "chip-paid"; chipLabel = "Paid"; }
 
+        const payStatus = (w.PaymentStatus || "").toString();
+        const isLocked = payStatus === "Locked";
+        const isPaid   = payStatus === "Paid";
+
+        // Payment action buttons:
+        let paymentButtons = "";
+        if (isPaid) {
+          paymentButtons = `<span class="text-[11px] text-emerald-400 font-semibold">Payment Done</span>`;
+        } else if (isLocked) {
+          paymentButtons = `
+            <button
+              class="px-3 py-1 rounded-md border border-yellow-400 text-yellow-300 text-[11px] font-semibold"
+              data-action="unlock-payment"
+            >
+              Unlock
+            </button>
+            <button
+              class="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold"
+              data-action="mark-paid"
+            >
+              Mark Paid
+            </button>
+          `;
+        } else {
+          paymentButtons = `
+            <button
+              class="px-3 py-1 rounded-md bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-semibold"
+              data-action="lock-payment"
+            >
+              Lock Payment
+            </button>
+          `;
+        }
+
+        const lockedInfo = isLocked
+          ? `<p class="text-[10px] text-slate-500 mt-1">
+              Locked: ${w.LockedAmount || "-"} by ${w.LockedBy || "-"}
+              ${w.LockedAt ? " · " + new Date(w.LockedAt).toLocaleString() : ""}
+             </p>`
+          : "";
+
         return `
           <article class="card-bg rounded-lg p-3 flex flex-col gap-2" data-work-id="${w.WorkID || ""}">
-            <div class="flex items-center justify-between gap-2">
+            <div class="flex items-start justify-between gap-2">
               <div>
                 <h3 class="text-sm font-semibold text-slate-100">${w.Title || "Untitled Work"}</h3>
                 <p class="text-[11px] text-slate-400">
                   ${w.Category || ""} · ${w.City || ""} · ID: <span class="font-mono">${w.WorkID || ""}</span>
                 </p>
               </div>
-              <span class="chip ${chipClass}">${chipLabel}</span>
+              <div class="flex flex-col items-end gap-1">
+                <span class="chip ${chipClass}">${chipLabel}</span>
+                ${paymentChip(w)}
+              </div>
             </div>
+
             <p class="text-xs text-slate-400">
               ${w.Description || "No description"}
             </p>
-            <div class="flex items-center justify-between text-[11px] text-slate-400">
+
+            <div class="flex items-center justify-between text-[11px] text-slate-400 flex-wrap gap-2">
               <span>Budget: <span class="text-emerald-400 font-semibold">${formatBudget(w.Budget)}</span></span>
-              <button
-                class="px-3 py-1 rounded-md border border-slate-600 hover:border-purple-500 text-slate-100 font-semibold text-[11px]"
-                data-action="open-chat"
-              >
-                Open Chat
-              </button>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  class="px-3 py-1 rounded-md border border-slate-600 hover:border-purple-500 text-slate-100 font-semibold text-[11px]"
+                  data-action="open-chat"
+                >
+                  Open Chat
+                </button>
+                ${paymentButtons}
+              </div>
             </div>
+
+            ${lockedInfo}
           </article>
         `;
       }).join("");
@@ -329,24 +396,13 @@
         }
 
         chatMessages.innerHTML = msgs.map(m => {
-          const role = (m.FromRole || "").toString().toLowerCase();
-          const isOwner = role === "owner";
-
+          const isOwner = (m.FromRole || "").toLowerCase() === "owner";
           const align = isOwner ? "items-end" : "items-start";
           const bubbleClasses = isOwner
             ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
             : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
           const metaAlign = isOwner ? "text-right" : "text-left";
-
-          // 🔥 yahan label set ho raha hai
-          let who;
-          if (role === "owner") {
-            who = "client";
-          } else if (role === "freelancer") {
-            who = "BizLink Expert Team";
-          } else {
-            who = "client";
-          }
+          const who = isOwner ? "You (Owner)" : "Freelancer";
 
           const timeStr = m.CreatedAt
             ? new Date(m.CreatedAt).toLocaleString()
@@ -408,6 +464,88 @@
       }
     }
 
+    // --- Payment actions ---
+    async function apiPost(bodyObj) {
+      const body = new URLSearchParams();
+      Object.keys(bodyObj).forEach(k => body.append(k, bodyObj[k]));
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        body
+      });
+      return res.json();
+    }
+
+    async function lockPayment(workId, budgetValue) {
+      const amount = (budgetValue || "").toString().replace(/[^0-9.]/g, "");
+      const ok = confirm(`Is work ke liye payment lock karein? Amount: ₹${amount || "0"}`);
+      if (!ok) return;
+
+      try {
+        const resp = await apiPost({
+          action: "lockPayment",
+          WorkID: workId,
+          ownerEmail: ownerEmail,
+          amount: amount
+        });
+        if (!resp.ok) {
+          alert("Lock error: " + (resp.error || "Unknown"));
+          return;
+        }
+        await loadOwnerWorks();
+      } catch (err) {
+        console.error(err);
+        alert("Network error while locking payment.");
+      }
+    }
+
+    async function unlockPayment(workId) {
+      const ok = confirm("Payment lock hataana hai?");
+      if (!ok) return;
+
+      try {
+        const resp = await apiPost({
+          action: "unlockPayment",
+          WorkID: workId,
+          ownerEmail: ownerEmail,
+          notes: ""
+        });
+        if (!resp.ok) {
+          alert("Unlock error: " + (resp.error || "Unknown"));
+          return;
+        }
+        await loadOwnerWorks();
+      } catch (err) {
+        console.error(err);
+        alert("Network error while unlocking payment.");
+      }
+    }
+
+    async function markPaid(workId) {
+      const ok = confirm("Mark as PAID? (Freelancer ko payment done)");
+      if (!ok) return;
+
+      const work = allWorks.find(w => (w.WorkID || "").toString() === workId.toString());
+      const assigned = work ? (work.AssignedTo || "") : "";
+
+      try {
+        const resp = await apiPost({
+          action: "markPaid",
+          WorkID: workId,
+          freelancerEmail: assigned,
+          amount: work ? (work.LockedAmount || work.Budget || "") : "",
+          notes: ""
+        });
+        if (!resp.ok) {
+          alert("Mark paid error: " + (resp.error || "Unknown"));
+          return;
+        }
+        await loadOwnerWorks();
+      } catch (err) {
+        console.error(err);
+        alert("Network error while marking paid.");
+      }
+    }
+
     // --- Event bindings ---
     document.getElementById("statusTabs").addEventListener("click", (e) => {
       if (!e.target.matches("[data-filter]")) return;
@@ -422,19 +560,34 @@
     });
 
     workListEl.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-action='open-chat']");
-      if (!btn) return;
-      const card = btn.closest("[data-work-id]");
-      const workId = card ? card.getAttribute("data-work-id") : null;
-      if (!workId) return;
+      const el = e.target.closest("[data-action]");
+      if (!el) return;
+      const action = el.getAttribute("data-action");
+      const card = el.closest("[data-work-id]");
+      if (!card) return;
+      const workId = card.getAttribute("data-work-id");
+      const work = allWorks.find(x => (x.WorkID || "").toString() === workId.toString());
 
-      currentWorkId = workId;
-      const w = allWorks.find(x => (x.WorkID || "").toString() === workId.toString());
-      chatTitle.textContent = w ? w.Title || "Chat" : "Chat";
-      chatSubtitle.textContent = w
-        ? `${w.Category || ""} · ${w.City || ""} · ID: ${w.WorkID || ""}`
-        : "";
-      loadChatMessages(workId);
+      if (action === "open-chat") {
+        currentWorkId = workId;
+        chatTitle.textContent = work ? work.Title || "Chat" : "Chat";
+        chatSubtitle.textContent = work
+          ? `${work.Category || ""} · ${work.City || ""} · ID: ${work.WorkID || ""}`
+          : "";
+        loadChatMessages(workId);
+      }
+
+      if (action === "lock-payment") {
+        lockPayment(workId, work ? work.Budget : "");
+      }
+
+      if (action === "unlock-payment") {
+        unlockPayment(workId);
+      }
+
+      if (action === "mark-paid") {
+        markPaid(workId);
+      }
     });
 
     chatForm.addEventListener("submit", (e) => {
