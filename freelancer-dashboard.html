@@ -561,6 +561,19 @@
       document.getElementById("freelancerEmailLabel").textContent = freelancerEmail;
       await loadWorksForFreelancer(freelancerEmail);
     });
+    // --- NEW: Freelancer side payment status text / badge ---
+function getFreelancerPaymentLabel(work) {
+  const status = (work.PaymentStatus || "").toString();
+  const amount = (work.LockedAmount || work.Budget || "").toString().replace(/[^0-9.]/g, "");
+  
+  if (status === "Paid") {
+    return `✅ Paid${amount ? " · ₹" + Number(amount).toLocaleString("en-IN") : ""}`;
+  }
+  if (status === "Locked") {
+    return `🔒 Payment Locked${amount ? " · ₹" + Number(amount).toLocaleString("en-IN") : ""}`;
+  }
+  return "💤 Payment not locked yet";
+}
   </script>
 </body>
 </html>
