@@ -1,145 +1,637 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>BizLink | Freelancer Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <title>BizLink | Freelancer Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind & Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
-.card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
-.button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
-.chip{font-size:.70rem;padding:.15rem .55rem;border-radius:999px}
-.chip-pending{background:#facc15;color:#1f2937}
-.chip-accepted{background:#22c55e;color:#022c22}
-.chip-completed{background:#38bdf8;color:#0f172a}
-.scroll-y{max-height:430px;overflow-y:auto}
-.input-dark{background:#020617;border:1px solid #1f2937;color:#e5e7eb}
-.badge{
-font-size:.65rem;padding:.15rem .6rem;border-radius:999px;border:1px solid
-}
-.badge-lock{color:#facc15;border-color:#facc15}
-.badge-paid{color:#22c55e;border-color:#22c55e}
-</style>
+  <style>
+    body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
+    .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
+    .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
+    .chip{font-size:.70rem;padding:.15rem .55rem;border-radius:999px}
+    .chip-pending{background:#facc15;color:#1f2937}
+    .chip-accepted{background:#22c55e;color:#022c22}
+    .chip-completed{background:#38bdf8;color:#0f172a}
+    .tab-button{color:#9ca3af;border-bottom:2px solid transparent}
+    .tab-button.active{color:#a855f7;border-bottom-color:#a855f7;font-weight:600}
+    .scroll-y{max-height:430px;overflow-y:auto}
+    .scroll-y::-webkit-scrollbar{width:6px}
+    .scroll-y::-webkit-scrollbar-thumb{background:#1f2937;border-radius:999px}
+    .input-dark{background:#020617;border:1px solid #1f2937;color:#e5e7eb}
+    .input-dark::placeholder{color:#6b7280}
+    .badge-sm{font-size:.65rem;padding:.1rem .45rem;border-radius:999px}
 
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    /* Payment badges */
+    .pay-badge-base{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      border-radius:999px;
+      font-size:.65rem;
+      padding:.15rem .55rem;
+      font-weight:500;
+    }
+    .pay-badge-notlocked{
+      background:rgba(250,204,21,0.15);
+      color:#facc15;
+      border:1px solid rgba(250,204,21,0.4);
+    }
+    .pay-badge-locked{
+      background:rgba(168,85,247,0.18);
+      color:#e9d5ff;
+      border:1px solid rgba(168,85,247,0.5);
+    }
+    .pay-badge-paid{
+      background:rgba(34,197,94,0.18);
+      color:#bbf7d0;
+      border:1px solid rgba(34,197,94,0.5);
+    }
+  </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 </head>
+<body class="min-h-screen">
 
-<body>
+  <!-- TOP BAR -->
+  <header class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
+          ← Back to Home
+        </a>
+        <h1 class="text-lg sm:text-2xl font-bold text-white">
+          BizLink <span class="text-purple-400">Freelancer Dashboard</span>
+        </h1>
+      </div>
+      <div class="flex items-center space-x-3 text-xs sm:text-sm">
+        <span class="hidden sm:inline text-slate-300">
+          Logged in as <span id="freelancerEmailLabel" class="font-semibold">--</span>
+        </span>
+        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
 
-<header class="p-4 border-b border-slate-800 flex justify-between">
-<h1 class="text-lg font-bold">BizLink Freelancer</h1>
-<span id="email"></span>
-</header>
+  <main class="max-w-6xl mx-auto px-4 py-6">
 
-<main class="max-w-6xl mx-auto p-4 grid grid-cols-2 gap-4">
+    <!-- STATS -->
+    <section class="grid sm:grid-cols-3 gap-4 mb-6">
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Pending</p>
+        <p id="statPending" class="text-2xl font-bold text-yellow-400">0</p>
+      </div>
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Accepted / In Progress</p>
+        <p id="statAccepted" class="text-2xl font-bold text-green-400">0</p>
+      </div>
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Completed</p>
+        <p id="statCompleted" class="text-2xl font-bold text-sky-400">0</p>
+      </div>
+    </section>
 
-<!-- LEFT -->
-<div class="card-bg p-4 rounded-xl">
-<h2 class="mb-2 font-semibold">Your Works</h2>
-<div id="works" class="space-y-3 scroll-y"></div>
-</div>
+    <!-- TABS -->
+    <section class="mb-4">
+      <nav class="-mb-px flex space-x-6 overflow-x-auto" id="statusTabs">
+        <button class="tab-button active whitespace-nowrap py-2 text-sm" data-tab="Pending">Pending</button>
+        <button class="tab-button whitespace-nowrap py-2 text-sm" data-tab="Accepted">Accepted</button>
+        <button class="tab-button whitespace-nowrap py-2 text-sm" data-tab="History">History</button>
+      </nav>
+    </section>
 
-<!-- RIGHT CHAT -->
-<div class="card-bg p-4 rounded-xl flex flex-col">
-<h2 id="chatTitle">Select work</h2>
-<div id="chat" class="flex-1 scroll-y mt-3 text-sm"></div>
-<form id="chatForm" class="flex gap-2 mt-3">
-<input id="chatInput" class="flex-1 px-3 py-2 rounded input-dark" placeholder="message"/>
-<button class="button-gradient px-4 rounded">Send</button>
-</form>
-</div>
+    <!-- MAIN LAYOUT -->
+    <section class="grid lg:grid-cols-2 gap-6">
 
-</main>
+      <!-- LEFT: WORK LIST -->
+      <div class="card-bg rounded-xl p-4">
+        <h2 class="text-sm font-semibold text-slate-200 mb-3">Your Works</h2>
+        <p class="text-xs text-slate-400 mb-4">
+          Pending, accepted, completed – sab ek jagah. Kisi bhi card par
+          <span class="font-semibold text-slate-200">“Open Chat”</span> click karke right side chat panel control karo.
+        </p>
 
-<script>
-const API_URL="YOUR_APPS_SCRIPT_URL";
+        <div id="workList" class="space-y-3 scroll-y">
+          <div class="py-12 text-center text-xs text-slate-500">
+            Loading your works...
+          </div>
+        </div>
+      </div>
 
-firebase.initializeApp({
-apiKey:"AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
-authDomain:"bizlink-exchange.firebaseapp.com"
-});
-const auth=firebase.auth();
+      <!-- RIGHT: CHAT PANEL -->
+      <div class="card-bg rounded-xl p-4 flex flex-col">
+        <div id="chatHeader" class="border-b border-slate-800 pb-3 mb-3">
+          <p class="text-xs text-slate-400">Chat Panel</p>
+          <h2 id="chatTitle" class="text-sm font-semibold text-slate-100 mt-1">
+            Select a work to start chatting
+          </h2>
+          <p id="chatSubtitle" class="text-xs text-slate-400 mt-1">
+            “Open Chat” pe click karo kisi work card par. Har WorkID ka chat alag store hoga.
+          </p>
+        </div>
 
-let email=null,currentWork=null,works=[];
+        <!-- Chat messages -->
+        <div id="chatMessages" class="flex-1 scroll-y space-y-3 text-xs">
+          <div class="h-full flex flex-col items-center justify-center text-center text-slate-500">
+            <div class="mb-2 text-2xl">💬</div>
+            <p>No work selected.</p>
+          </div>
+        </div>
 
-function paymentBadge(w){
-if(w.PaymentStatus==="Paid")
-return `<span class="badge badge-paid">✅ Paid ₹${w.LockedAmount||w.Budget}</span>`;
-if(w.PaymentStatus==="Locked")
-return `<span class="badge badge-lock">🔒 Locked ₹${w.LockedAmount||w.Budget}</span>`;
-return `<span class="badge badge-lock">💤 Not locked</span>`;
-}
+        <!-- File URL + Notes (for completion) -->
+        <div class="mt-3 space-y-2">
+          <input
+            id="fileUrlInput"
+            type="text"
+            placeholder="File URL (Google Drive / WeTransfer) – optional"
+            class="w-full text-xs px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <textarea
+            id="notesInput"
+            rows="2"
+            placeholder="Notes for client (optional)"
+            class="w-full text-xs px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500"
+          ></textarea>
+        </div>
 
-function render(){
-const box=document.getElementById("works");
-box.innerHTML="";
-works.forEach(w=>{
-box.innerHTML+=`
-<div class="card-bg p-3 rounded">
-<b>${w.Title}</b>
-<p class="text-xs">₹${w.Budget} • ${w.WorkID}</p>
-${paymentBadge(w)}
-<div class="mt-2 flex gap-2">
-<button onclick="openChat('${w.WorkID}')" class="border px-2 rounded">Chat</button>
-<button onclick="requestWork('${w.WorkID}')" class="border px-2 rounded text-purple-400">Request Work</button>
-</div>
-</div>`;
-});
-}
+        <!-- Chat form -->
+        <form id="chatForm" class="mt-3 flex gap-2 items-center">
+          <input
+            id="chatInput"
+            type="text"
+            placeholder="Type a message…"
+            class="flex-1 text-xs px-3 py-2 rounded-lg input-dark placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <button
+            type="submit"
+            class="button-gradient px-4 py-2 rounded-lg text-xs font-semibold text-white disabled:opacity-50"
+          >
+            Send
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
 
-async function load(){
-const r=await fetch(`${API_URL}?action=listWorksForFreelancer&freelancerEmail=${email}`);
-const j=await r.json();
-works=j.works||[];
-render();
-}
+  <script>
+    /*****************************************
+     *  CONFIG
+     *****************************************/
+    const API_URL = "https://script.google.com/macros/s/AKfycbyDw-YRQzfEBiZUzlOFf02Z-42QLu7HkiTvZ7_ge_Ae4_kMjK0ovQ8ZuTRooIoMjCx36g/exec";
 
-async function requestWork(id){
-const cover=prompt("Cover note (optional)")||"";
-const portfolio=prompt("Portfolio URL (optional)")||"";
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+      authDomain: "bizlink-exchange.firebaseapp.com",
+      projectId: "bizlink-exchange",
+      storageBucket: "bizlink-exchange.firebasestorage.app",
+      messagingSenderId: "116213651971",
+      appId: "1:116213651971:web:fff60961af0c4da3448c36",
+      measurementId: "G-VQ3JM82D1N"
+    };
 
-const f=new URLSearchParams();
-f.append("action","requestWork");
-f.append("WorkID",id);
-f.append("freelancerEmail",email);
-f.append("coverNote",cover);
-f.append("portfolioURL",portfolio);
+    // Safe Firebase init
+    if (!firebase.apps || !firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
 
-await fetch(API_URL,{method:"POST",body:f});
-alert("✅ Request sent to owner");
-}
+    /*****************************************
+     *  STATE
+     *****************************************/
+    let currentTab = "Pending";
+    let works = [];              // full list from API
+    let currentWorkId = null;
+    let freelancerEmail = null;
 
-function openChat(id){
-currentWork=id;
-document.getElementById("chatTitle").innerText=id;
-}
+    /*****************************************
+     *  HELPERS
+     *****************************************/
+    function formatBudget(num) {
+      if (!num && num !== 0) return "N/A";
+      const n = Number(num);
+      if (isNaN(n)) return num;
+      return "₹" + n.toLocaleString("en-IN");
+    }
 
-document.getElementById("chatForm").onsubmit=e=>{
-e.preventDefault();
-if(!currentWork)return;
-const text=chatInput.value;
-chatInput.value="";
-fetch(API_URL,{method:"POST",body:new URLSearchParams({
-action:"sendMessage",
-WorkID:currentWork,
-FromRole:"Freelancer",
-FromEmail:email,
-Message:text
-})});
-};
+    function statusChip(status) {
+      if (status === "Pending") {
+        return '<span class="chip chip-pending">Pending</span>';
+      } else if (status === "Accepted") {
+        return '<span class="chip chip-accepted">Accepted</span>';
+      } else {
+        return '<span class="chip chip-completed">Completed</span>';
+      }
+    }
 
-auth.onAuthStateChanged(u=>{
-if(!u)return location="login.html";
-email=u.email;
-document.getElementById("email").innerText=email;
-load();
-});
-</script>
+    // ⭐ Freelancer side payment label
+    function getFreelancerPaymentLabel(work) {
+      const status = (work.PaymentStatus || "").toString();
+      const rawAmount = (work.LockedAmount || work.Budget || "").toString();
+      const amountNum = Number(rawAmount.replace(/[^0-9.]/g, "")) || 0;
+      const amountText = amountNum ? "₹" + amountNum.toLocaleString("en-IN") : "";
 
+      if (status === "Paid") {
+        return `<span class="pay-badge-base pay-badge-paid">✅ Paid ${amountText}</span>`;
+      }
+      if (status === "Locked") {
+        return `<span class="pay-badge-base pay-badge-locked">🔒 Payment Locked ${amountText}</span>`;
+      }
+      return `<span class="pay-badge-base pay-badge-notlocked">💤 Not Locked yet</span>`;
+    }
+
+    function getWorksForTab(tab) {
+      if (tab === "Pending")   return works.filter(w => (w.Status || "").toString() === "Pending");
+      if (tab === "Accepted")  return works.filter(w => (w.Status || "").toString() === "Accepted");
+      if (tab === "History")   return works.filter(w => (w.Status || "").toString() === "Completed");
+      return works;
+    }
+
+    function updateStats() {
+      const pending   = works.filter(w => (w.Status || "").toString() === "Pending").length;
+      const accepted  = works.filter(w => (w.Status || "").toString() === "Accepted").length;
+      const completed = works.filter(w => (w.Status || "").toString() === "Completed").length;
+
+      document.getElementById("statPending").textContent   = pending;
+      document.getElementById("statAccepted").textContent  = accepted;
+      document.getElementById("statCompleted").textContent = completed;
+    }
+
+    /*****************************************
+     *  RENDER WORK CARDS
+     *****************************************/
+    function renderWorkList() {
+      const container = document.getElementById("workList");
+      const items = getWorksForTab(currentTab);
+
+      if (!items.length) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-xs text-slate-500">
+            No works in <span class="font-semibold">${currentTab}</span> right now.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = items.map(w => {
+        const status = (w.Status || "").toString();
+        const canAccept   = status === "Pending";
+        const canComplete = status === "Accepted";
+        const lastUpdate = w.LastUpdate
+          ? new Date(w.LastUpdate).toLocaleString()
+          : "";
+        const paymentStatusHtml = getFreelancerPaymentLabel(w);
+        const payStatus = (w.PaymentStatus || "").toString();
+        const showRequestBtn = payStatus !== "Paid"; // Paid na ho to hi request button
+
+        return `
+          <article class="card-bg rounded-lg p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <h3 class="text-sm font-semibold text-slate-100">${w.Title || "Untitled work"}</h3>
+                ${statusChip(status)}
+                ${
+                  w.Category
+                    ? `<span class="badge-sm bg-slate-700 text-slate-200 ml-1">${w.Category}</span>`
+                    : ""
+                }
+              </div>
+              <p class="text-xs text-slate-400">
+                <span class="font-semibold text-slate-200">${w.ClientEmail || "Client"}</span>
+                · ${w.City || ""} 
+              </p>
+              <p class="text-xs text-slate-500 mt-1">
+                Budget: <span class="text-emerald-400 font-semibold">${formatBudget(w.Budget)}</span>
+                · ID: <span class="font-mono text-slate-300">${w.WorkID}</span>
+              </p>
+              <p class="mt-2">
+                ${paymentStatusHtml}
+              </p>
+            </div>
+
+            <div class="flex flex-col sm:items-end gap-2 text-xs">
+              <div class="flex flex-wrap gap-2">
+                ${
+                  canAccept
+                    ? `<button data-action="accept" data-id="${w.WorkID}"
+                         class="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-semibold">
+                         Accept
+                       </button>`
+                    : ""
+                }
+                ${
+                  canComplete
+                    ? `<button data-action="complete" data-id="${w.WorkID}"
+                         class="px-3 py-1 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-semibold">
+                         Mark Completed
+                       </button>`
+                    : ""
+                }
+                <button data-action="open-chat" data-id="${w.WorkID}"
+                  class="px-3 py-1 rounded-md border border-slate-600 hover:border-purple-500 text-slate-100 font-semibold">
+                  Open Chat
+                </button>
+                ${
+                  showRequestBtn
+                    ? `<button data-action="request-payment" data-id="${w.WorkID}"
+                         class="px-3 py-1 rounded-md border border-emerald-500 text-emerald-300 font-semibold">
+                         Request Payment
+                       </button>`
+                    : ""
+                }
+              </div>
+              <p class="text-[10px] text-slate-500">
+                Last Update: ${lastUpdate}
+              </p>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    /*****************************************
+     *  CHAT RENDERING
+     *****************************************/
+    function renderChatMessages(messages) {
+      const messagesContainer = document.getElementById("chatMessages");
+
+      if (!messages || !messages.length) {
+        messagesContainer.innerHTML = `
+          <div class="py-10 text-center text-xs text-slate-500">
+            No messages yet. Pehla message bhej kar conversation start karo.
+          </div>
+        `;
+        return;
+      }
+
+      messagesContainer.innerHTML = messages.map(m => {
+        const rawRole = (m.FromRole || "").toString();
+        const role = rawRole.trim().toLowerCase();
+        const isFreelancer = role === "freelancer";
+
+        const align = isFreelancer ? "items-end" : "items-start";
+        const bubbleClasses = isFreelancer
+          ? "bg-violet-600 text-white rounded-2xl rounded-br-none"
+          : "bg-slate-800 text-slate-100 rounded-2xl rounded-bl-none";
+        const metaAlign = isFreelancer ? "text-right" : "text-left";
+
+        let whoLabel;
+        if (role === "freelancer") {
+          whoLabel = "You";
+        } else if (role === "owner") {
+          whoLabel = "Client";
+        } else {
+          whoLabel = "BizLink Expert Team";
+        }
+
+        const ts = m.CreatedAt ? new Date(m.CreatedAt).toLocaleString() : "";
+
+        return `
+          <div class="flex ${align}">
+            <div class="max-w-[80%]">
+              <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
+                ${m.Message}
+              </div>
+              <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
+                ${whoLabel} · ${ts}
+              </p>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    async function loadChatForWork(workId) {
+      if (!workId) return;
+      try {
+        const res = await fetch(`${API_URL}?action=getChatMessages&WorkID=${encodeURIComponent(workId)}`);
+        const data = await res.json();
+        if (!data.ok) {
+          console.error("getChatMessages error:", data.error);
+          renderChatMessages([]);
+          return;
+        }
+        renderChatMessages(data.messages || []);
+      } catch (err) {
+        console.error("getChatMessages fetch error:", err);
+        renderChatMessages([]);
+      }
+    }
+
+    /*****************************************
+     *  API CALLS
+     *****************************************/
+    async function loadWorksForFreelancer(email) {
+      const workListDiv = document.getElementById("workList");
+      workListDiv.innerHTML = `<div class="py-12 text-center text-xs text-slate-500">Loading your works...</div>`;
+      try {
+        const url = `${API_URL}?action=listWorksForFreelancer&freelancerEmail=${encodeURIComponent(email)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.ok) {
+          console.error("listWorksForFreelancer error:", data.error);
+          workListDiv.innerHTML = `<div class="py-12 text-center text-xs text-red-400">Error loading works: ${data.error}</div>`;
+          return;
+        }
+        works = data.works || [];
+        updateStats();
+        renderWorkList();
+      } catch (err) {
+        console.error("loadWorksForFreelancer fetch error:", err);
+        workListDiv.innerHTML = `<div class="py-12 text-center text-xs text-red-400">Network error loading works.</div>`;
+      }
+    }
+
+    async function apiPost(bodyObj) {
+      const form = new URLSearchParams();
+      Object.keys(bodyObj).forEach(k => form.append(k, bodyObj[k]));
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: form.toString()
+      });
+      return res.json();
+    }
+
+    async function handleAccept(workId) {
+      try {
+        const resp = await apiPost({
+          action: "acceptWork",
+          WorkID: workId,
+          freelancerEmail: freelancerEmail,
+          notes: ""
+        });
+        if (!resp.ok) {
+          alert("Error accepting work: " + resp.error);
+          return;
+        }
+        const w = works.find(w => w.WorkID == workId);
+        if (w) w.Status = "Accepted";
+        updateStats();
+        renderWorkList();
+      } catch (err) {
+        console.error("acceptWork error:", err);
+        alert("Network error while accepting work.");
+      }
+    }
+
+    async function handleComplete(workId) {
+      const fileUrl = document.getElementById("fileUrlInput").value.trim();
+      const notes   = document.getElementById("notesInput").value.trim();
+      if (!confirm("Mark this work as COMPLETED?")) return;
+
+      try {
+        const resp = await apiPost({
+          action: "completeWork",
+          WorkID: workId,
+          freelancerEmail: freelancerEmail,
+          fileUrl,
+          notes
+        });
+        if (!resp.ok) {
+          alert("Error completing work: " + resp.error);
+          return;
+        }
+        const w = works.find(w => w.WorkID == workId);
+        if (w) w.Status = "Completed";
+        updateStats();
+        renderWorkList();
+      } catch (err) {
+        console.error("completeWork error:", err);
+        alert("Network error while completing work.");
+      }
+    }
+
+    async function sendChatMessage(workId, text) {
+      try {
+        const resp = await apiPost({
+          action: "sendMessage",
+          WorkID: workId,
+          FromRole: "Freelancer",
+          FromEmail: freelancerEmail,
+          Message: text
+        });
+        if (!resp.ok) {
+          alert("Error sending message: " + resp.error);
+          return;
+        }
+        await loadChatForWork(workId);
+      } catch (err) {
+        console.error("sendMessage error:", err);
+        alert("Network error while sending message.");
+      }
+    }
+
+    // ⭐ Payment request helper (chat ke through request)
+    async function handleRequestPayment(workId) {
+      const work = works.find(w => w.WorkID == workId);
+      const amountText = work ? formatBudget(work.LockedAmount || work.Budget || "") : "";
+      const confirmMsg =
+        `Payment request bhejna hai?\n\nWorkID: ${workId}\nAmount: ${amountText || "N/A"}`;
+      if (!confirm(confirmMsg)) return;
+
+      const msg =
+        `Payment request – WorkID: ${workId}. ` +
+        `Please lock / release payment. Expected amount: ${amountText || "N/A"}.`;
+
+      await sendChatMessage(workId, msg);
+      alert("Payment request client ko chat me bhej di gayi ✅");
+    }
+
+    /*****************************************
+     *  EVENT BINDINGS
+     *****************************************/
+    // Tabs
+    document.getElementById("statusTabs").addEventListener("click", (e) => {
+      if (!e.target.matches("[data-tab]")) return;
+      const tab = e.target.getAttribute("data-tab");
+      currentTab = tab;
+
+      document.querySelectorAll("#statusTabs .tab-button").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-tab") === tab);
+      });
+
+      renderWorkList();
+    });
+
+    // Work list delegation (accept, complete, open-chat, request-payment)
+    document.getElementById("workList").addEventListener("click", (e) => {
+      const action = e.target.getAttribute("data-action");
+      const workId = e.target.getAttribute("data-id");
+      if (!action || !workId) return;
+
+      if (action === "accept") {
+        handleAccept(workId);
+      } else if (action === "complete") {
+        handleComplete(workId);
+      } else if (action === "open-chat") {
+        currentWorkId = workId;
+        const work = works.find(w => w.WorkID == workId);
+        const chatTitle = document.getElementById("chatTitle");
+        const chatSubtitle = document.getElementById("chatSubtitle");
+
+        if (work) {
+          chatTitle.textContent = work.Title || "Work";
+          chatSubtitle.textContent = `${work.ClientEmail || "Client"} · ${work.City || ""} · ID: ${work.WorkID}`;
+        } else {
+          chatTitle.textContent = "Work";
+          chatSubtitle.textContent = `ID: ${workId}`;
+        }
+
+        loadChatForWork(workId);
+      } else if (action === "request-payment") {
+        handleRequestPayment(workId);
+      }
+    });
+
+    // Chat form
+    document.getElementById("chatForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = document.getElementById("chatInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      if (!currentWorkId) {
+        alert("Pehle koi work select karo (Open Chat button).");
+        return;
+      }
+
+      sendChatMessage(currentWorkId, text);
+      input.value = "";
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => {
+        window.location.href = "login.html";
+      }).catch(err => {
+        console.error("Logout error:", err);
+      });
+    });
+
+    /*****************************************
+     *  AUTH + INITIAL LOAD
+     *****************************************/
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        alert("Please login as Freelancer.");
+        window.location.href = "login.html";
+        return;
+      }
+      freelancerEmail = (user.email || "").toLowerCase();
+      document.getElementById("freelancerEmailLabel").textContent = freelancerEmail;
+      await loadWorksForFreelancer(freelancerEmail);
+    });
+  </script>
 </body>
 </html>
