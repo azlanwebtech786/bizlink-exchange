@@ -206,7 +206,7 @@
       if (s === "accepted" || s === "in progress") return "inprogress";
       if (s === "completed") return "completed";
       if (s === "paid") return "paid";
-      if (s === "locked") return "locked"; // payment lock ke liye separate use kar rahe hain
+      if (s === "locked") return "locked"; // payment lock ke liye
       return "other";
     }
 
@@ -475,7 +475,6 @@
       return res.json();
     }
 
-    // ✅ yehi sahi lockPayment hai (Firebase ownerEmail + SCRIPT_URL)
     async function lockPayment(workId, budgetValue) {
       const amount = (budgetValue || "").toString().replace(/[^0-9.]/g, "");
       const ok = confirm(`Is work ke liye payment lock karein? Amount: ₹${amount || "0"}`);
@@ -489,7 +488,7 @@
           amount: amount
         });
         if (!resp.ok) {
-          alert("Lock error: " + (resp.error || "Unknown"));
+          alert("Lock error: " + (resp.error || resp.message || "Unknown"));
           return;
         }
         await loadOwnerWorks();
@@ -511,7 +510,7 @@
           notes: ""
         });
         if (!resp.ok) {
-          alert("Unlock error: " + (resp.error || "Unknown"));
+          alert("Unlock error: " + (resp.error || resp.message || "Unknown"));
           return;
         }
         await loadOwnerWorks();
@@ -537,7 +536,7 @@
           notes: ""
         });
         if (!resp.ok) {
-          alert("Mark paid error: " + (resp.error || "Unknown"));
+          alert("Mark paid error: " + (resp.error || resp.message || "Unknown"));
           return;
         }
         await loadOwnerWorks();
