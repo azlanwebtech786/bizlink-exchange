@@ -206,7 +206,7 @@
       if (s === "accepted" || s === "in progress") return "inprogress";
       if (s === "completed") return "completed";
       if (s === "paid") return "paid";
-      if (s === "locked") return "locked"; // payment lock ke liye
+      if (s === "locked") return "locked"; // payment lock ke liye separate use kar rahe hain
       return "other";
     }
 
@@ -464,7 +464,7 @@
       }
     }
 
-    // --- Payment actions ---
+    // --- Payment actions helper ---
     async function apiPost(bodyObj) {
       const body = new URLSearchParams();
       Object.keys(bodyObj).forEach(k => body.append(k, bodyObj[k]));
@@ -475,6 +475,7 @@
       return res.json();
     }
 
+    // ✅ ONLY ONE lockPayment function (yehi use hoga)
     async function lockPayment(workId, budgetValue) {
       const amount = (budgetValue || "").toString().replace(/[^0-9.]/g, "");
       const ok = confirm(`Is work ke liye payment lock karein? Amount: ₹${amount || "0"}`);
