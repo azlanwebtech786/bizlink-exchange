@@ -65,9 +65,8 @@
         <p class="text-xs text-slate-400">
           Yahan <span class="font-semibold">saare Pending & unassigned works</span> dikhte hain.
           Jo pasand aaye, <span class="font-semibold text-slate-100">"Request Work"</span> pe click karke
-          owner ko request bhejo. Owner approve karega to kaam
-          tumhare Freelancer Dashboard ke
-          <span class="font-semibold text-emerald-400">Accepted tab</span> me aa jayega.
+          client ko **request bhejo** (cover note + portfolio link ke saath).
+          Client approve karega to kaam aapke Freelancer Dashboard me assign ho jayega.
         </p>
       </div>
 
@@ -129,8 +128,8 @@
     let freelancerEmail = "";
     let allWorks = [];      // sheet se aaya full data
     let openWorks = [];     // Pending + unassigned
-    const statusEl   = document.getElementById("statusText");
-    const workListEl = document.getElementById("workList");
+    const statusEl    = document.getElementById("statusText");
+    const workListEl  = document.getElementById("workList");
     const openCountEl = document.getElementById("openCount");
     const searchInput = document.getElementById("searchInput");
 
@@ -198,6 +197,14 @@
           ? new Date(w.PostedOn).toLocaleDateString()
           : "";
 
+        const alreadyRequested = !!w._requestedByMe;
+
+        const btnLabel = alreadyRequested ? "Requested" : "Request Work";
+        const btnDisabledAttr = alreadyRequested ? "disabled" : "";
+        const btnExtraClass = alreadyRequested
+          ? "bg-slate-700 cursor-not-allowed opacity-60"
+          : "button-gradient";
+
         return `
           <article class="card-bg rounded-lg p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div class="flex-1">
@@ -221,15 +228,17 @@
             </div>
             <div class="flex flex-col sm:items-end gap-2 text-xs">
               <button
-                class="px-4 py-1.5 rounded-md button-gradient text-white font-semibold"
+                class="px-4 py-1.5 rounded-md text-white font-semibold ${btnExtraClass}"
                 data-action="request-work"
                 data-id="${w.WorkID}"
+                ${btnDisabledAttr}
               >
-                Request Work
+                ${btnLabel}
               </button>
               <p class="text-[10px] text-slate-500">
-                Request owner ke paas jayegi. Approve hone ke baad yeh work tumhare
-                Freelancer Dashboard ke <span class="font-semibold text-emerald-400">Accepted</span> tab me dikh jayega.
+                Request send hone ke baad client approve karega. Approve hone par
+                work aapke <span class="font-semibold text-emerald-400">Freelancer Dashboard</span>
+                me assign ho jayega.
               </p>
             </div>
           </article>
@@ -257,6 +266,7 @@
         }
 
         allWorks = data;
+        // Local requested flag reset ho jayega, par koi issue nahi – user phir se request kar sakta hai
         openWorks = allWorks.filter(isOpenWork);
         setStatus(openWorks.length ? "" : "No open works right now.");
         renderWorkList();
@@ -282,23 +292,22 @@
       return res.json();
     }
 
-    // ⭐ NEW: Request Work (acceptWork ki jagah requestWork)
-    async function requestWork(workId) {
+    // 🔁 NEW: Request Work instead of Accept Work
+    async function requestWorkForFreelancer(workId) {
       if (!workId) return;
       if (!freelancerEmail) {
         alert("Freelancer email missing. Dobara login karke try karo.");
         return;
       }
 
-      // cover note & portfolio URL lete hain
-      const coverNote = prompt("Short cover note likho (kyu aap is work ke liye best ho?):", "");
-      if (coverNote === null) return; // cancel dabaya
+      // Cover note + portfolio URL dialogs
+      const coverNote = prompt(
+        "Short cover note likho (kyon aap is work ke liye best ho?)\n(Empty bhi chhod sakte ho)"
+      ) || "";
 
-      const portfolioUrl = prompt("Portfolio / work sample URL (optional, blank chhod sakte ho):", "") || "";
-
-      const confirmMsg =
-        `Confirm?\n\nWorkID: ${workId}\nCover Note: ${coverNote || "(empty)"}\nPortfolio: ${portfolioUrl || "(none)"}`;
-      if (!confirm(confirmMsg)) return;
+      const portfolioUrl = prompt(
+        "Portfolio URL (Behance, Dribbble, Google Drive, website etc.)\n(Empty bhi chhod sakte ho)"
+      ) || "";
 
       try {
         const resp = await apiPost({
@@ -314,13 +323,20 @@
           return;
         }
 
-        alert("✅ Request owner ke paas chali gayi.\nOwner approve karega to work aapke Freelancer Dashboard me 'Accepted' tab par dikh jayega.");
+        // Local flag: is work ke liye request bhej di
+        allWorks = allWorks.map(w => {
+          if ((w.WorkID || "").toString() === workId.toString()) {
+            return { ...w, _requestedByMe: true };
+          }
+          return w;
+        });
+        openWorks = allWorks.filter(isOpenWork);
+        renderWorkList();
 
-        // NOTE: yahan hum work ko Pending hi rehne dete hain.
-        // Owner jab assignFreelancer karega tab Status = Accepted hoga.
+        alert("✅ Request client ko bhej di gayi.\nClient approve karega to work aapko assign ho jayega.");
       } catch (err) {
         console.error(err);
-        alert("Network / script error while requesting work: " + err.message);
+        alert("Network / script error while sending request: " + err.message);
       }
     }
 
@@ -331,8 +347,10 @@
     workListEl.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-action='request-work']");
       if (!btn) return;
+      if (btn.disabled) return;
+
       const workId = btn.getAttribute("data-id");
-      requestWork(workId);
+      requestWorkForFreelancer(workId);
     });
 
     // Search
