@@ -24,6 +24,28 @@
     .scroll-y{max-height:430px;overflow-y:auto}
     .scroll-y::-webkit-scrollbar{width:6px}
     .scroll-y::-webkit-scrollbar-thumb{background:#1f2937;border-radius:999px}
+
+    .req-chip{
+      font-size:.65rem;
+      padding:.15rem .55rem;
+      border-radius:999px;
+      font-weight:500;
+    }
+    .req-pending{
+      background:rgba(250,204,21,0.15);
+      color:#facc15;
+      border:1px solid rgba(250,204,21,0.5);
+    }
+    .req-accepted{
+      background:rgba(34,197,94,0.15);
+      color:#bbf7d0;
+      border:1px solid rgba(34,197,94,0.5);
+    }
+    .req-rejected{
+      background:rgba(248,113,113,0.15);
+      color:#fecaca;
+      border:1px solid rgba(248,113,113,0.5);
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -143,6 +165,26 @@
         </form>
       </div>
     </section>
+
+    <!-- NEW: FREELANCER REQUESTS SECTION -->
+    <section class="mt-6 card-bg rounded-xl p-4">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <h2 class="text-sm font-semibold text-slate-200">Freelancer Requests</h2>
+          <p class="text-xs text-slate-400">
+            Direct Works se freelancers jo kaam ke liye request karte hain, woh yahan dikhte hain.
+            Aap profile / portfolio dekh kar <span class="font-semibold">Accept / Reject</span> kar sakte hain.
+          </p>
+        </div>
+        <p id="requestsStatus" class="text-[11px] text-slate-400"></p>
+      </div>
+
+      <div id="requestsList" class="space-y-3 max-h-72 overflow-y-auto">
+        <div class="py-8 text-center text-xs text-slate-500">
+          Loading requests…
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- FIREBASE + OWNER DASHBOARD JS -->
@@ -165,12 +207,15 @@
 
   <script>
     // --------- CONFIG ---------
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDw-YRQzfEBiZUzlOFf02Z-42QLu7HkiTvZ7_ge_Ae4_kMjK0ovQ8ZuTRooIoMjCx36g/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwxvKIWBgPxys9MOqGu2R3-IQFBFaCXKwGyLUftuBmfTtnwDVE81Ji4jC64ncI-xvCvg/exec";
 
     let ownerEmail = null;
     let allWorks = [];
+    let worksById = {};      // NEW: map WorkID -> work object
     let currentFilter = "all";
     let currentWorkId = null;
+
+    let ownerRequests = [];  // NEW: freelancer requests list
 
     const statusText = document.getElementById("pageStatus");
     const workListEl = document.getElementById("workList");
@@ -186,6 +231,10 @@
     const chatMessages = document.getElementById("chatMessages");
     const chatInput    = document.getElementById("chatInput");
     const chatForm     = document.getElementById("chatForm");
+
+    // Requests DOM
+    const requestsStatusEl = document.getElementById("requestsStatus");
+    const requestsListEl   = document.getElementById("requestsList");
 
     // --- Utils ---
     function setStatus(msg, type = "info") {
@@ -206,7 +255,7 @@
       if (s === "accepted" || s === "in progress") return "inprogress";
       if (s === "completed") return "completed";
       if (s === "paid") return "paid";
-      if (s === "locked") return "locked"; // payment lock ke liye
+      if (s === "locked") return "locked"; // payment lock ke liye separate
       return "other";
     }
 
@@ -232,6 +281,14 @@
           (w.ClientEmail || "").toString().toLowerCase() === ownerEmail.toLowerCase()
         );
 
+        // map create
+        worksById = {};
+        allWorks.forEach(w => {
+          if (w.WorkID != null) {
+            worksById[w.WorkID.toString()] = w;
+          }
+        });
+
         updateStats();
         renderWorkList();
         setStatus(allWorks.length ? "" : "No works found for your email. Pehle Post a Work form se work create karo.");
@@ -247,8 +304,8 @@
 
     function updateStats() {
       const total = allWorks.length;
-      const pending   = allWorks.filter(w => normalizeStatus(w.Status) === "pending").length;
-      const inProg    = allWorks.filter(w => normalizeStatus(w.Status) === "inprogress").length;
+      const pending = allWorks.filter(w => normalizeStatus(w.Status) === "pending").length;
+      const inProg  = allWorks.filter(w => normalizeStatus(w.Status) === "inprogress").length;
       const completed = allWorks.filter(w => normalizeStatus(w.Status) === "completed").length;
 
       statTotal.textContent      = total;
@@ -300,6 +357,7 @@
         const isLocked = payStatus === "Locked";
         const isPaid   = payStatus === "Paid";
 
+        // Payment action buttons:
         let paymentButtons = "";
         if (isPaid) {
           paymentButtons = `<span class="text-[11px] text-emerald-400 font-semibold">Payment Done</span>`;
@@ -320,7 +378,7 @@
           `;
         } else {
           paymentButtons = `
-            <button
+            <button 
               class="px-3 py-1 rounded-md bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-semibold"
               data-action="lock-payment"
             >
@@ -408,14 +466,16 @@
             : "";
 
           return `
-            <div class="flex ${align}"><div class="max-w-[80%]">
-              <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
-                ${m.Message || ""}
+            <div class="flex ${align}">
+              <div class="max-w-[80%]">
+                <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
+                  ${m.Message || ""}
+                </div>
+                <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
+                  ${who} · ${timeStr}
+                </p>
               </div>
-              <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
-                ${who} · ${timeStr}
-              </p>
-            </div></div>
+            </div>
           `;
         }).join("");
 
@@ -445,7 +505,10 @@
         body.append("FromEmail", ownerEmail);
         body.append("Message", text);
 
-        const res = await fetch(SCRIPT_URL, { method: "POST", body });
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body
+        });
         const data = await res.json();
         if (!data.ok) {
           throw new Error(data.error || "Error sending message");
@@ -458,15 +521,17 @@
       }
     }
 
-    // --- Payment helper for POST ---
+    // --- Payment actions ---
     async function apiPost(bodyObj) {
       const body = new URLSearchParams();
       Object.keys(bodyObj).forEach(k => body.append(k, bodyObj[k]));
-      const res = await fetch(SCRIPT_URL, { method: "POST", body });
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        body
+      });
       return res.json();
     }
 
-    // --- Payment actions ---
     async function lockPayment(workId, budgetValue) {
       const amount = (budgetValue || "").toString().replace(/[^0-9.]/g, "");
       const ok = confirm(`Is work ke liye payment lock karein? Amount: ₹${amount || "0"}`);
@@ -538,7 +603,223 @@
       }
     }
 
-    // --- Event bindings ---
+    /*****************************************
+     *  NEW: OWNER SIDE – WORK REQUESTS
+     *****************************************/
+    async function loadWorkRequests() {
+      if (!ownerEmail) return;
+      try {
+        requestsStatusEl.textContent = "Loading requests...";
+        requestsListEl.innerHTML = `
+          <div class="py-8 text-center text-xs text-slate-500">
+            Loading requests...
+          </div>
+        `;
+
+        const url = `${SCRIPT_URL}?action=listWorkRequestsForOwner&ownerEmail=${encodeURIComponent(ownerEmail)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data.ok) {
+          throw new Error(data.error || "Unknown error");
+        }
+        ownerRequests = data.requests || [];
+
+        requestsStatusEl.textContent = ownerRequests.length
+          ? `Total Requests: ${ownerRequests.length}`
+          : "No requests yet.";
+
+        renderRequestsList();
+      } catch (err) {
+        console.error(err);
+        requestsStatusEl.textContent = "Error loading requests";
+        requestsListEl.innerHTML = `
+          <div class="py-8 text-center text-xs text-red-300">
+            Error loading requests: ${err.message}
+          </div>
+        `;
+      }
+    }
+
+    function renderRequestsList() {
+      if (!ownerRequests.length) {
+        requestsListEl.innerHTML = `
+          <div class="py-8 text-center text-xs text-slate-500">
+            Abhi tak koi freelancer ne aapke works ke liye request nahi ki. 🙂
+          </div>
+        `;
+        return;
+      }
+
+      requestsListEl.innerHTML = ownerRequests.map(r => {
+        const status = (r.Status || "Pending").toString();
+        let chipClass = "req-pending";
+        let chipLabel = "Pending";
+
+        if (status.toLowerCase() === "accepted") {
+          chipClass = "req-accepted";
+          chipLabel = "Accepted";
+        } else if (status.toLowerCase() === "rejected") {
+          chipClass = "req-rejected";
+          chipLabel = "Rejected";
+        }
+
+        const workId = r.WorkID || "";
+        const freelancer = r.FreelancerEmail || "";
+        const cover = r.CoverNote || "";
+        const portfolio = r.PortfolioURL || r.PortfolioUrl || "";
+
+        // check agar ye freelancer already assigned hai is work pe
+        const workObj = worksById[workId ? workId.toString() : ""];
+        const alreadyAssigned = workObj && (workObj.AssignedTo || "").toLowerCase() === freelancer.toLowerCase();
+
+        const ts = r.Timestamp ? new Date(r.Timestamp).toLocaleString() : "";
+
+        // Accept / Reject buttons ko disable / replace karo agar already assigned
+        let actionButtons = "";
+        if (alreadyAssigned || status.toLowerCase() === "accepted") {
+          actionButtons = `
+            <span class="text-[11px] text-emerald-400 font-semibold">
+              Assigned to this freelancer
+            </span>
+          `;
+        } else if (status.toLowerCase() === "rejected") {
+          actionButtons = `
+            <span class="text-[11px] text-red-300 font-semibold">
+              Rejected
+            </span>
+          `;
+        } else {
+          actionButtons = `
+            <button
+              class="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold"
+              data-req-action="accept"
+              data-work-id="${workId}"
+              data-freelancer="${freelancer}"
+            >
+              Accept & Assign
+            </button>
+            <button
+              class="px-3 py-1 rounded-md border border-red-500 text-red-300 text-[11px] font-semibold"
+              data-req-action="reject"
+              data-work-id="${workId}"
+              data-freelancer="${freelancer}"
+            >
+              Reject
+            </button>
+          `;
+        }
+
+        return `
+          <article class="card-bg rounded-lg p-3 flex flex-col gap-2 text-xs">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-[11px] text-slate-400">
+                  Work ID: <span class="font-mono text-slate-100">${workId}</span>
+                </p>
+                <p class="text-[11px] text-slate-400">
+                  Freelancer: <span class="font-semibold text-slate-100">${freelancer}</span>
+                </p>
+                ${portfolio ? `
+                  <p class="text-[11px] mt-1">
+                    Portfolio: 
+                    <a href="${portfolio}" target="_blank" class="text-sky-400 underline">
+                      View Portfolio
+                    </a>
+                  </p>
+                ` : ""}
+              </div>
+              <span class="req-chip ${chipClass}">${chipLabel}</span>
+            </div>
+
+            ${cover ? `
+              <p class="text-[11px] text-slate-300">
+                <span class="font-semibold text-slate-400">Cover Note:</span> ${cover}
+              </p>
+            ` : ""}
+
+            <div class="flex items-center justify-between mt-1">
+              <p class="text-[10px] text-slate-500">
+                Requested at: ${ts}
+              </p>
+              <div class="flex gap-2">
+                ${actionButtons}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    async function handleAcceptRequest(workId, freelancer) {
+      const msg = `Is freelancer ko assign karein?\n\nWorkID: ${workId}\nFreelancer: ${freelancer}`;
+      if (!confirm(msg)) return;
+
+      try {
+        const resp = await apiPost({
+          action: "assignFreelancer",
+          WorkID: workId,
+          freelancerEmail: freelancer,
+          notes: "Owner approved via Requests panel"
+        });
+        if (!resp.ok) {
+          alert("Error assigning freelancer: " + (resp.error || "Unknown"));
+          return;
+        }
+
+        // optional: freelancer ko chat se inform
+        const infoMsg = `Hi, aapki request approve ho gayi hai. WorkID: ${workId}.`;
+        await apiPost({
+          action: "sendMessage",
+          WorkID: workId,
+          FromRole: "Owner",
+          FromEmail: ownerEmail,
+          Message: infoMsg
+        });
+
+        await loadOwnerWorks();
+        await loadWorkRequests();
+        alert("✅ Freelancer assigned successfully.");
+      } catch (err) {
+        console.error(err);
+        alert("Network error while assigning freelancer.");
+      }
+    }
+
+    async function handleRejectRequest(workId, freelancer) {
+      const msg = `Is request ko reject karein?\n\nWorkID: ${workId}\nFreelancer: ${freelancer}`;
+      if (!confirm(msg)) return;
+
+      try {
+        // Filhaal simple version: sirf chat me message, sheet ka Status backend se change nahi kar rahe.
+        const infoMsg = `Hi, aapki request for WorkID: ${workId} is baar approve nahi ho paayi.`;
+        await apiPost({
+          action: "sendMessage",
+          WorkID: workId,
+          FromRole: "Owner",
+          FromEmail: ownerEmail,
+          Message: infoMsg
+        });
+
+        // Local UI me Status = Rejected mark kar dete hain
+        ownerRequests = ownerRequests.map(r => {
+          if ((r.WorkID || "").toString() === workId.toString()
+              && (r.FreelancerEmail || "").toLowerCase() === freelancer.toLowerCase()) {
+            return { ...r, Status: "Rejected" };
+          }
+          return r;
+        });
+        renderRequestsList();
+
+        alert("Request rejected (freelancer ko chat message chala gaya).");
+      } catch (err) {
+        console.error(err);
+        alert("Network error while rejecting request.");
+      }
+    }
+
+    /*****************************************
+     *  EVENT BINDINGS
+     *****************************************/
     document.getElementById("statusTabs").addEventListener("click", (e) => {
       if (!e.target.matches("[data-filter]")) return;
       const filter = e.target.getAttribute("data-filter");
@@ -593,6 +874,22 @@
       });
     });
 
+    // NEW: Requests list actions
+    requestsListEl.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-req-action]");
+      if (!btn) return;
+      const action = btn.getAttribute("data-req-action");
+      const workId = btn.getAttribute("data-work-id");
+      const freelancer = btn.getAttribute("data-freelancer");
+      if (!workId || !freelancer) return;
+
+      if (action === "accept") {
+        handleAcceptRequest(workId, freelancer);
+      } else if (action === "reject") {
+        handleRejectRequest(workId, freelancer);
+      }
+    });
+
     // --- Auth guard + initial load ---
     auth.onAuthStateChanged((user) => {
       if (!user) {
@@ -600,12 +897,13 @@
         window.location.href = "login.html";
         return;
       }
-      ownerEmail = user.email;
+      ownerEmail = (user.email || "").toLowerCase();
       const loggedSpan = document.getElementById("loggedInEmail");
       if (loggedSpan) {
         loggedSpan.textContent = `Logged in as: ${ownerEmail}`;
       }
       loadOwnerWorks();
+      loadWorkRequests();   // NEW: also load requests
     });
   </script>
 </body>
