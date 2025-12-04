@@ -65,9 +65,9 @@
         <p class="text-xs text-slate-400">
           Yahan <span class="font-semibold">saare Pending & unassigned works</span> dikhte hain.
           Jo pasand aaye, <span class="font-semibold text-slate-100">"Request Work"</span> pe click karke
-          client ko request bhejo. Owner aapki <span class="font-semibold">profile / request</span> dekhkar
-          approve karega. Approval ke baad work aapke
-          <span class="font-semibold text-emerald-400">Freelancer Dashboard → Accepted tab</span> me ayega.
+          owner ko request bhejo. Owner approve karega to kaam
+          tumhare Freelancer Dashboard ke
+          <span class="font-semibold text-emerald-400">Accepted tab</span> me aa jayega.
         </p>
       </div>
 
@@ -228,8 +228,8 @@
                 Request Work
               </button>
               <p class="text-[10px] text-slate-500">
-                Request bhejne ke baad owner approve karega.
-                Approve hone par work aapke <span class="font-semibold text-emerald-400">Freelancer Dashboard → Accepted</span> tab me aayega.
+                Request owner ke paas jayegi. Approve hone ke baad yeh work tumhare
+                Freelancer Dashboard ke <span class="font-semibold text-emerald-400">Accepted</span> tab me dikh jayega.
               </p>
             </div>
           </article>
@@ -282,7 +282,7 @@
       return res.json();
     }
 
-    // ✅ Ab ye acceptWork nahi, requestWork call karega
+    // ⭐ NEW: Request Work (acceptWork ki jagah requestWork)
     async function requestWork(workId) {
       if (!workId) return;
       if (!freelancerEmail) {
@@ -290,40 +290,23 @@
         return;
       }
 
-      // Cover note
-      const coverNote = prompt(
-        "Short cover note likho (kyon aap best ho is work ke liye?):",
-        "Hi, I have done similar projects and can deliver high quality work."
-      );
-      if (coverNote === null) {
-        // user ne cancel dabaya
-        return;
-      }
+      // cover note & portfolio URL lete hain
+      const coverNote = prompt("Short cover note likho (kyu aap is work ke liye best ho?):", "");
+      if (coverNote === null) return; // cancel dabaya
 
-      // Portfolio URL (optional)
-      const portfolioURL = prompt(
-        "Portfolio / work samples ka URL (optional):",
-        ""
-      );
-      if (portfolioURL === null) {
-        // user ne cancel dabaya
-        return;
-      }
+      const portfolioUrl = prompt("Portfolio / work sample URL (optional, blank chhod sakte ho):", "") || "";
 
-      const ok = confirm(
-        "Request bhejni hai?\n\nWorkID: " + workId +
-        "\nCover note: " + (coverNote || "N/A") +
-        "\nPortfolio: " + (portfolioURL || "N/A")
-      );
-      if (!ok) return;
+      const confirmMsg =
+        `Confirm?\n\nWorkID: ${workId}\nCover Note: ${coverNote || "(empty)"}\nPortfolio: ${portfolioUrl || "(none)"}`;
+      if (!confirm(confirmMsg)) return;
 
       try {
         const resp = await apiPost({
           action: "requestWork",
           WorkID: workId,
           freelancerEmail: freelancerEmail,
-          coverNote: coverNote || "",
-          portfolioURL: portfolioURL || ""
+          coverNote: coverNote,
+          portfolioURL: portfolioUrl
         });
 
         if (!resp.ok) {
@@ -331,14 +314,13 @@
           return;
         }
 
-        alert("✅ Request submit ho gayi! Owner jab approve karega tab work aapke Freelancer Dashboard me show hoga.");
+        alert("✅ Request owner ke paas chali gayi.\nOwner approve karega to work aapke Freelancer Dashboard me 'Accepted' tab par dikh jayega.");
 
-        // NOTE: yahan hum work ko open list se nahi hata rahe,
-        // kyunki work abhi bhi dusre freelancers ke liye open ho sakta hai
-        // jab tak owner kisi ko assign na kare.
+        // NOTE: yahan hum work ko Pending hi rehne dete hain.
+        // Owner jab assignFreelancer karega tab Status = Accepted hoga.
       } catch (err) {
         console.error(err);
-        alert("Network / script error while sending request: " + err.message);
+        alert("Network / script error while requesting work: " + err.message);
       }
     }
 
