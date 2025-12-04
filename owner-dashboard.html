@@ -149,6 +149,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script>
+    // ---- Firebase config (same as baaki pages) ----
     const firebaseConfig = {
       apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
       authDomain: "bizlink-exchange.firebaseapp.com",
@@ -164,7 +165,7 @@
 
   <script>
     // --------- CONFIG ---------
-    const SCRIPT_URL = "YOUR_SCRIPT_URL_HERE"; // ← yahan apna deployed Apps Script URL daalo
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwxvKIWBgPxys9MOqGu2R3-IQFBFaCXKwGyLUftuBmfTtnwDVE81Ji4jC64ncI-xvCvg/exec";
 
     let ownerEmail = null;
     let allWorks = [];
@@ -205,7 +206,7 @@
       if (s === "accepted" || s === "in progress") return "inprogress";
       if (s === "completed") return "completed";
       if (s === "paid") return "paid";
-      if (s === "locked") return "locked";
+      if (s === "locked") return "locked"; // payment lock ke liye
       return "other";
     }
 
@@ -246,8 +247,8 @@
 
     function updateStats() {
       const total = allWorks.length;
-      const pending = allWorks.filter(w => normalizeStatus(w.Status) === "pending").length;
-      const inProg  = allWorks.filter(w => normalizeStatus(w.Status) === "inprogress").length;
+      const pending   = allWorks.filter(w => normalizeStatus(w.Status) === "pending").length;
+      const inProg    = allWorks.filter(w => normalizeStatus(w.Status) === "inprogress").length;
       const completed = allWorks.filter(w => normalizeStatus(w.Status) === "completed").length;
 
       statTotal.textContent      = total;
@@ -407,16 +408,14 @@
             : "";
 
           return `
-            <div class="flex ${align}">
-              <div class="max-w-[80%]">
-                <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
-                  ${m.Message || ""}
-                </div>
-                <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
-                  ${who} · ${timeStr}
-                </p>
+            <div class="flex ${align}"><div class="max-w-[80%]">
+              <div class="px-3 py-2 ${bubbleClasses} text-[11px]">
+                ${m.Message || ""}
               </div>
-            </div>
+              <p class="mt-1 text-[10px] text-slate-500 ${metaAlign}">
+                ${who} · ${timeStr}
+              </p>
+            </div></div>
           `;
         }).join("");
 
@@ -446,10 +445,7 @@
         body.append("FromEmail", ownerEmail);
         body.append("Message", text);
 
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body
-        });
+        const res = await fetch(SCRIPT_URL, { method: "POST", body });
         const data = await res.json();
         if (!data.ok) {
           throw new Error(data.error || "Error sending message");
@@ -462,17 +458,15 @@
       }
     }
 
-    // --- Payment actions (API helper) ---
+    // --- Payment helper for POST ---
     async function apiPost(bodyObj) {
       const body = new URLSearchParams();
       Object.keys(bodyObj).forEach(k => body.append(k, bodyObj[k]));
-      const res = await fetch(SCRIPT_URL, {
-        method: "POST",
-        body
-      });
+      const res = await fetch(SCRIPT_URL, { method: "POST", body });
       return res.json();
     }
 
+    // --- Payment actions ---
     async function lockPayment(workId, budgetValue) {
       const amount = (budgetValue || "").toString().replace(/[^0-9.]/g, "");
       const ok = confirm(`Is work ke liye payment lock karein? Amount: ₹${amount || "0"}`);
