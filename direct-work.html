@@ -64,9 +64,10 @@
         <h2 class="text-sm font-semibold text-slate-100 mb-1">Open Works Marketplace</h2>
         <p class="text-xs text-slate-400">
           Yahan <span class="font-semibold">saare Pending & unassigned works</span> dikhte hain.
-          Jo pasand aaye, <span class="font-semibold text-slate-100">"Take Work"</span> pe click karke
-          kaam apne naam lo. Phir woh tumhare Freelancer Dashboard ke
-          <span class="font-semibold text-emerald-400">Accepted tab</span> me aa jayega.
+          Jo pasand aaye, <span class="font-semibold text-slate-100">"Request Work"</span> pe click karke
+          client ko request bhejo. Owner aapki <span class="font-semibold">profile / request</span> dekhkar
+          approve karega. Approval ke baad work aapke
+          <span class="font-semibold text-emerald-400">Freelancer Dashboard → Accepted tab</span> me ayega.
         </p>
       </div>
 
@@ -221,13 +222,14 @@
             <div class="flex flex-col sm:items-end gap-2 text-xs">
               <button
                 class="px-4 py-1.5 rounded-md button-gradient text-white font-semibold"
-                data-action="take-work"
+                data-action="request-work"
                 data-id="${w.WorkID}"
               >
-                Take Work
+                Request Work
               </button>
               <p class="text-[10px] text-slate-500">
-                After taking, ye work tumhare Freelancer Dashboard ke <span class="font-semibold text-emerald-400">Accepted</span> tab me aa jayega.
+                Request bhejne ke baad owner approve karega.
+                Approve hone par work aapke <span class="font-semibold text-emerald-400">Freelancer Dashboard → Accepted</span> tab me aayega.
               </p>
             </div>
           </article>
@@ -280,85 +282,75 @@
       return res.json();
     }
 
-    // ⭐ Take Work = acceptWork (same flow) + extra info for owner (cover note + portfolio)
-    async function takeWork(workId) {
+    // ✅ Ab ye acceptWork nahi, requestWork call karega
+    async function requestWork(workId) {
       if (!workId) return;
       if (!freelancerEmail) {
         alert("Freelancer email missing. Dobara login karke try karo.");
         return;
       }
 
-      // Confirm
-      const ok = confirm("Ye work apne naam lena hai?");
-      if (!ok) return;
-
-      // Optional cover note & portfolio
+      // Cover note
       const coverNote = prompt(
-        "Client ke liye short note (optional).\n\nExample: 'Mere 3 saal ka experience hai, same niche ka kaam kiya hai.'",
-        ""
-      ) || "";
+        "Short cover note likho (kyon aap best ho is work ke liye?):",
+        "Hi, I have done similar projects and can deliver high quality work."
+      );
+      if (coverNote === null) {
+        // user ne cancel dabaya
+        return;
+      }
 
+      // Portfolio URL (optional)
       const portfolioURL = prompt(
-        "Portfolio / work samples ka URL (optional).",
+        "Portfolio / work samples ka URL (optional):",
         ""
-      ) || "";
-
-      const extraParts = [];
-      if (coverNote.trim()) {
-        extraParts.push("CoverNote: " + coverNote.trim());
-      }
-      if (portfolioURL.trim()) {
-        extraParts.push("Portfolio: " + portfolioURL.trim());
+      );
+      if (portfolioURL === null) {
+        // user ne cancel dabaya
+        return;
       }
 
-      const notes =
-        ["Taken via Direct Work marketplace"]
-          .concat(extraParts)
-          .join(" | ");
+      const ok = confirm(
+        "Request bhejni hai?\n\nWorkID: " + workId +
+        "\nCover note: " + (coverNote || "N/A") +
+        "\nPortfolio: " + (portfolioURL || "N/A")
+      );
+      if (!ok) return;
 
       try {
         const resp = await apiPost({
-          action: "acceptWork",          // 🔴 same backend action – flow intact
+          action: "requestWork",
           WorkID: workId,
           freelancerEmail: freelancerEmail,
-          notes: notes                   // ✅ owner ko note + portfolio sheet me mil jayega
+          coverNote: coverNote || "",
+          portfolioURL: portfolioURL || ""
         });
 
         if (!resp.ok) {
-          alert("Error taking work: " + (resp.error || "Unknown error"));
+          alert("Error sending request: " + (resp.error || "Unknown error"));
           return;
         }
 
-        // Local state se bhi hata do
-        allWorks = allWorks.map(w => {
-          if ((w.WorkID || "").toString() === workId.toString()) {
-            return {
-              ...w,
-              Status: "Accepted",
-              AssignedTo: freelancerEmail
-            };
-          }
-          return w;
-        });
-        openWorks = allWorks.filter(isOpenWork);
-        renderWorkList();
+        alert("✅ Request submit ho gayi! Owner jab approve karega tab work aapke Freelancer Dashboard me show hoga.");
 
-        alert("✅ Work accepted! Ab yeh tumhare Freelancer Dashboard ke Accepted tab me dikh jayega.");
+        // NOTE: yahan hum work ko open list se nahi hata rahe,
+        // kyunki work abhi bhi dusre freelancers ke liye open ho sakta hai
+        // jab tak owner kisi ko assign na kare.
       } catch (err) {
         console.error(err);
-        alert("Network / script error while taking work: " + err.message);
+        alert("Network / script error while sending request: " + err.message);
       }
     }
 
     /*****************************************
      *  EVENT BINDINGS
      *****************************************/
-    // Take Work button (delegation)
+    // Request Work button (delegation)
     workListEl.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-action='take-work']");
+      const btn = e.target.closest("[data-action='request-work']");
       if (!btn) return;
       const workId = btn.getAttribute("data-id");
-      takeWork(workId);
+      requestWork(workId);
     });
 
     // Search
