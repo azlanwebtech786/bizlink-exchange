@@ -65,8 +65,8 @@
         <p class="text-xs text-slate-400">
           Yahan <span class="font-semibold">saare Pending & unassigned works</span> dikhte hain.
           Jo pasand aaye, <span class="font-semibold text-slate-100">"Request Work"</span> pe click karke
-          owner ko apni request bhejo. Owner approve karega tabhi work aapko assign hoga
-          aur <span class="font-semibold text-emerald-400">Freelancer Dashboard</span> me dikhne lagega.
+          owner ke paas request bhejo. Owner approve karega tabhi work tumhare
+          Freelancer Dashboard ke <span class="font-semibold text-emerald-400">Accepted / In Progress</span> tab me dikhega.
         </p>
       </div>
 
@@ -126,8 +126,8 @@
      *  STATE
      *****************************************/
     let freelancerEmail = "";
-    let allWorks = [];      // sheet se aaya full data
-    let openWorks = [];     // Pending + unassigned
+    let allWorks = [];
+    let openWorks = [];
     const statusEl   = document.getElementById("statusText");
     const workListEl = document.getElementById("workList");
     const openCountEl = document.getElementById("openCount");
@@ -227,8 +227,9 @@
                 Request Work
               </button>
               <p class="text-[10px] text-slate-500">
-                Request owner ke paas jaayegi. Approve hone ke baad yeh work
-                aapke Freelancer Dashboard ke <span class="font-semibold text-emerald-400">Accepted / In Progress</span> tab me aayega.
+                Request owner ke paas jaayegi. Approve hone ke baad yeh work aapke
+                Freelancer Dashboard ke <span class="font-semibold text-emerald-400">
+                Accepted / In Progress</span> tab me aayega.
               </p>
             </div>
           </article>
@@ -281,7 +282,7 @@
       return res.json();
     }
 
-    // ⭐ NEW: requestWork (instead of acceptWork)
+    // ⭐ Request work (owner approval system)
     async function requestWork(workId) {
       if (!workId) return;
       if (!freelancerEmail) {
@@ -289,17 +290,8 @@
         return;
       }
 
-      // Cover note
-      const coverNote = prompt(
-        "Short cover note likho (kyun aap is work ke liye best ho?)\n\nOptional – blank bhi chhod sakte ho:"
-      ) || "";
-
-      // Portfolio URL
-      const portfolioUrl = prompt(
-        "Apna portfolio URL daalo (Behance / Dribbble / Google Drive / Website) – optional:"
-      ) || "";
-
-      if (!confirm("Is work ke liye request bhejna hai?")) return;
+      const coverNote = prompt("Short cover note (kyun aap best ho is work ke liye)? Optional hai.", "") || "";
+      const portfolioUrl = prompt("Portfolio / sample work ka URL (optional)", "") || "";
 
       try {
         const resp = await apiPost({
@@ -310,20 +302,15 @@
           portfolioURL: portfolioUrl
         });
 
-        if (!resp.ok) {
-          alert("Error sending request: " + (resp.error || "Unknown error"));
+        if (!resp || resp.ok === false || resp.success === false) {
+          alert("Error sending request: " + (resp && (resp.error || resp.message) || "Unknown error"));
           return;
         }
 
-        alert("✅ Request bhej di gayi! Jab owner approve karega, work aapke dashboard me assign ho jayega.");
-
-        // Yahan hum work ko list se nahi hata rahe,
-        // kyunki multiple freelancers request bhej sakte hain.
-        // Sirf status text thoda update kar dete hain.
-        setStatus("Request sent. Aap apni requests owner approval ke baad dashboard me dekhenge.");
+        alert("✅ Request bhej di gayi! Owner approve karega tabhi yeh work tumhare dashboard me ayega.");
       } catch (err) {
         console.error(err);
-        alert("Network / script error while sending request: " + err.message);
+        alert("Error sending request: " + (err.message || "Unknown error"));
       }
     }
 
