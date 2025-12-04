@@ -145,11 +145,10 @@
     </section>
   </main>
 
-  <!-- FIREBASE + OWNER DASHBOARD JS -->
+  <!-- FIREBASE -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script>
-    // ---- Firebase config (same as baaki pages) ----
     const firebaseConfig = {
       apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
       authDomain: "bizlink-exchange.firebaseapp.com",
@@ -163,6 +162,7 @@
     const auth = firebase.auth();
   </script>
 
+  <!-- OWNER DASHBOARD LOGIC -->
   <script>
     // --------- CONFIG ---------
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwxvKIWBgPxys9MOqGu2R3-IQFBFaCXKwGyLUftuBmfTtnwDVE81Ji4jC64ncI-xvCvg/exec";
@@ -206,7 +206,7 @@
       if (s === "accepted" || s === "in progress") return "inprogress";
       if (s === "completed") return "completed";
       if (s === "paid") return "paid";
-      if (s === "locked") return "locked"; // payment lock ke liye separate use kar rahe hain
+      if (s === "locked") return "locked";
       return "other";
     }
 
@@ -300,7 +300,6 @@
         const isLocked = payStatus === "Locked";
         const isPaid   = payStatus === "Paid";
 
-        // Payment action buttons:
         let paymentButtons = "";
         if (isPaid) {
           paymentButtons = `<span class="text-[11px] text-emerald-400 font-semibold">Payment Done</span>`;
@@ -464,7 +463,7 @@
       }
     }
 
-    // --- Payment actions helper ---
+    // --- Generic POST helper ---
     async function apiPost(bodyObj) {
       const body = new URLSearchParams();
       Object.keys(bodyObj).forEach(k => body.append(k, bodyObj[k]));
@@ -475,11 +474,11 @@
       return res.json();
     }
 
-    // ✅ ONLY ONE lockPayment function (yehi use hoga)
+    // --- Payment actions ---
     async function lockPayment(workId, budgetValue) {
       const amount = (budgetValue || "").toString().replace(/[^0-9.]/g, "");
-      const ok = confirm(`Is work ke liye payment lock karein? Amount: ₹${amount || "0"}`);
-      if (!ok) return;
+      const okConfirm = confirm(`Is work ke liye payment lock karein? Amount: ₹${amount || "0"}`);
+      if (!okConfirm) return;
 
       try {
         const resp = await apiPost({
@@ -488,8 +487,11 @@
           ownerEmail: ownerEmail,
           amount: amount
         });
-        if (!resp.ok) {
-          alert("Lock error: " + (resp.error || resp.message || "Unknown"));
+
+        const isOk = (resp.ok === true) || (resp.success === true);
+        if (!isOk) {
+          const errMsg = resp.error || resp.message || "Unknown";
+          alert("Lock error: " + errMsg);
           return;
         }
         await loadOwnerWorks();
@@ -500,8 +502,8 @@
     }
 
     async function unlockPayment(workId) {
-      const ok = confirm("Payment lock hataana hai?");
-      if (!ok) return;
+      const okConfirm = confirm("Payment lock hataana hai?");
+      if (!okConfirm) return;
 
       try {
         const resp = await apiPost({
@@ -510,8 +512,10 @@
           ownerEmail: ownerEmail,
           notes: ""
         });
-        if (!resp.ok) {
-          alert("Unlock error: " + (resp.error || resp.message || "Unknown"));
+        const isOk = (resp.ok === true) || (resp.success === true);
+        if (!isOk) {
+          const errMsg = resp.error || resp.message || "Unknown";
+          alert("Unlock error: " + errMsg);
           return;
         }
         await loadOwnerWorks();
@@ -522,8 +526,8 @@
     }
 
     async function markPaid(workId) {
-      const ok = confirm("Mark as PAID? (Freelancer ko payment done)");
-      if (!ok) return;
+      const okConfirm = confirm("Mark as PAID? (Freelancer ko payment done)");
+      if (!okConfirm) return;
 
       const work = allWorks.find(w => (w.WorkID || "").toString() === workId.toString());
       const assigned = work ? (work.AssignedTo || "") : "";
@@ -536,8 +540,10 @@
           amount: work ? (work.LockedAmount || work.Budget || "") : "",
           notes: ""
         });
-        if (!resp.ok) {
-          alert("Mark paid error: " + (resp.error || resp.message || "Unknown"));
+        const isOk = (resp.ok === true) || (resp.success === true);
+        if (!isOk) {
+          const errMsg = resp.error || resp.message || "Unknown";
+          alert("Mark paid error: " + errMsg);
           return;
         }
         await loadOwnerWorks();
