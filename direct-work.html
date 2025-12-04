@@ -64,9 +64,11 @@
         <h2 class="text-sm font-semibold text-slate-100 mb-1">Open Works Marketplace</h2>
         <p class="text-xs text-slate-400">
           Yahan <span class="font-semibold">saare Pending & unassigned works</span> dikhte hain.
-          Jo pasand aaye, <span class="font-semibold text-slate-100">"Request Work"</span> pe click karke
-          owner ke paas request bhejo. Owner approve karega tabhi work tumhare
-          Freelancer Dashboard ke <span class="font-semibold text-emerald-400">Accepted / In Progress</span> tab me dikhega.
+          Ab seedha "Take Work" nahi hoga.
+          Jo pasand aaye, <span class="font-semibold text-slate-100">"Request Work"</span> pe click karo.
+          Request owner ke paas jaayegi; approve hone ke baad hi work tumhare
+          <span class="font-semibold text-emerald-400">Freelancer Dashboard → Accepted / In Progress</span>
+          tab me aayega.
         </p>
       </div>
 
@@ -126,8 +128,8 @@
      *  STATE
      *****************************************/
     let freelancerEmail = "";
-    let allWorks = [];
-    let openWorks = [];
+    let allWorks = [];      // sheet se aaya full data
+    let openWorks = [];     // Pending + unassigned
     const statusEl   = document.getElementById("statusText");
     const workListEl = document.getElementById("workList");
     const openCountEl = document.getElementById("openCount");
@@ -227,9 +229,8 @@
                 Request Work
               </button>
               <p class="text-[10px] text-slate-500">
-                Request owner ke paas jaayegi. Approve hone ke baad yeh work aapke
-                Freelancer Dashboard ke <span class="font-semibold text-emerald-400">
-                Accepted / In Progress</span> tab me aayega.
+                Request owner ke paas jaayegi. Approve hone ke baad ye work aapke Freelancer Dashboard ke
+                <span class="font-semibold text-emerald-400">Accepted / In Progress</span> tab me aayega.
               </p>
             </div>
           </article>
@@ -282,7 +283,7 @@
       return res.json();
     }
 
-    // ⭐ Request work (owner approval system)
+    // ⭐ NEW: requestWork – freelancer → owner
     async function requestWork(workId) {
       if (!workId) return;
       if (!freelancerEmail) {
@@ -290,27 +291,37 @@
         return;
       }
 
-      const coverNote = prompt("Short cover note (kyun aap best ho is work ke liye)? Optional hai.", "") || "";
-      const portfolioUrl = prompt("Portfolio / sample work ka URL (optional)", "") || "";
+      // Simple prompts – chahe to baad me proper modal bana sakte ho
+      const coverNote = prompt(
+        "Short cover note likho (kya plan hai is work ke liye?)\n\n(optional – blank bhi chhod sakte ho):",
+        ""
+      ) || "";
+
+      const portfolioURL = prompt(
+        "Apna best portfolio link (Drive, Behance, Website, etc.)\n\n(optional – blank bhi chhod sakte ho):",
+        ""
+      ) || "";
+
+      if (!confirm("Is work ke liye request bhejni hai?")) return;
 
       try {
         const resp = await apiPost({
-          action: "requestWork",
+          action: "requestWork",             // 👈 IMPORTANT: yahi field Apps Script dekh raha hai
           WorkID: workId,
           freelancerEmail: freelancerEmail,
           coverNote: coverNote,
-          portfolioURL: portfolioUrl
+          portfolioURL: portfolioURL
         });
 
-        if (!resp || resp.ok === false || resp.success === false) {
-          alert("Error sending request: " + (resp && (resp.error || resp.message) || "Unknown error"));
+        if (!resp.ok) {
+          alert("Error sending request: " + (resp.error || resp.message || "Unknown error"));
           return;
         }
 
-        alert("✅ Request bhej di gayi! Owner approve karega tabhi yeh work tumhare dashboard me ayega.");
+        alert("✅ Request owner ke paas chali gayi! Owner approve karega to work aapke Freelancer Dashboard me dikh jayega.");
       } catch (err) {
         console.error(err);
-        alert("Error sending request: " + (err.message || "Unknown error"));
+        alert("Network / script error while sending request: " + err.message);
       }
     }
 
