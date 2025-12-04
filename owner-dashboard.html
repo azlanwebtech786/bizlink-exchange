@@ -320,14 +320,14 @@
             </button>
           `;
         } else {
-         paymentButtons = `
-  <button 
-    class="px-3 py-1 rounded-md bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-semibold"
-    onclick="lockPayment('${w.WorkID}', '${w.Budget}')"
-  >
-    Lock Payment
-  </button>
-`;
+          paymentButtons = `
+            <button
+              class="px-3 py-1 rounded-md bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-semibold"
+              data-action="lock-payment"
+            >
+              Lock Payment
+            </button>
+          `;
         }
 
         const lockedInfo = isLocked
@@ -475,6 +475,7 @@
       return res.json();
     }
 
+    // ✅ yehi sahi lockPayment hai (Firebase ownerEmail + SCRIPT_URL)
     async function lockPayment(workId, budgetValue) {
       const amount = (budgetValue || "").toString().replace(/[^0-9.]/g, "");
       const ok = confirm(`Is work ke liye payment lock karein? Amount: ₹${amount || "0"}`);
@@ -615,48 +616,6 @@
       }
       loadOwnerWorks();
     });
-    async function lockPayment(workId, amount) {
-  if (!workId) {
-    alert("WorkID missing");
-    return;
-  }
-
-  if (!amount) {
-    amount = prompt("Enter amount to lock:");
-    if (!amount) return;
-  }
-
-  const ownerEmail = localStorage.getItem("userEmail");
-  if (!ownerEmail) {
-    alert("Owner email not found");
-    return;
-  }
-
-  const formData = new URLSearchParams();
-  formData.append("action", "lockPayment");
-  formData.append("WorkID", workId);
-  formData.append("ownerEmail", ownerEmail);
-  formData.append("amount", amount);
-
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: formData
-    });
-    const data = await res.json();
-
-    if (!data.ok) {
-      alert(data.error || "Payment lock failed");
-      return;
-    }
-
-    alert("✅ Payment Locked Successfully");
-    loadOwnerWorks(); // refresh list
-  } catch (err) {
-    console.error(err);
-    alert("Server error while locking payment");
-  }
-}
   </script>
 </body>
 </html>
