@@ -280,6 +280,7 @@
       return res.json();
     }
 
+    // ⭐ Take Work = acceptWork (same flow) + extra info for owner (cover note + portfolio)
     async function takeWork(workId) {
       if (!workId) return;
       if (!freelancerEmail) {
@@ -287,14 +288,40 @@
         return;
       }
 
-      if (!confirm("Ye work apne naam lena hai?")) return;
+      // Confirm
+      const ok = confirm("Ye work apne naam lena hai?");
+      if (!ok) return;
+
+      // Optional cover note & portfolio
+      const coverNote = prompt(
+        "Client ke liye short note (optional).\n\nExample: 'Mere 3 saal ka experience hai, same niche ka kaam kiya hai.'",
+        ""
+      ) || "";
+
+      const portfolioURL = prompt(
+        "Portfolio / work samples ka URL (optional).",
+        ""
+      ) || "";
+
+      const extraParts = [];
+      if (coverNote.trim()) {
+        extraParts.push("CoverNote: " + coverNote.trim());
+      }
+      if (portfolioURL.trim()) {
+        extraParts.push("Portfolio: " + portfolioURL.trim());
+      }
+
+      const notes =
+        ["Taken via Direct Work marketplace"]
+          .concat(extraParts)
+          .join(" | ");
 
       try {
         const resp = await apiPost({
-          action: "acceptWork",
+          action: "acceptWork",          // 🔴 same backend action – flow intact
           WorkID: workId,
           freelancerEmail: freelancerEmail,
-          notes: "Taken via Direct Work marketplace"
+          notes: notes                   // ✅ owner ko note + portfolio sheet me mil jayega
         });
 
         if (!resp.ok) {
