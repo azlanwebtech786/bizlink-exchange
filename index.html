@@ -88,7 +88,7 @@
             Get Direct Work
           </a>
 
-          <!-- Owner / Business only -->
+          <!-- Owner / Business only (10X Grow Lab / Business) -->
           <a href="get-listed.html"
              data-role-required="business"
              class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
@@ -721,18 +721,13 @@
 
   <!-- ⭐ ROLE-BASED NAV LOCK (Home se guard) -->
   <script>
-    function getCurrentUserRole(){
+    // localStorage se raw role text nikaalna
+    function getRawRole(){
       try{
-        const possibleKeys = [
-          'bizlink_user_role',
-          'bizlink_role',
-          'user_role',
-          'role',
-          'bizRole'
-        ];
-        for (const k of possibleKeys){
+        const keys = ['bizlink_user_role','bizlink_role','user_role','role','bizRole'];
+        for(const k of keys){
           const v = localStorage.getItem(k);
-          if (v) return v.toLowerCase();
+          if(v) return v;
         }
         return null;
       }catch(e){
@@ -744,54 +739,63 @@
       document.querySelectorAll('[data-role-required]').forEach(function(link){
         link.addEventListener('click', function(e){
           const required = (link.getAttribute('data-role-required') || '').toLowerCase();
-          const role = getCurrentUserRole();
+          const rawRole = getRawRole();
           const user = (typeof auth !== 'undefined') ? auth.currentUser : null;
 
           // 1) login hi nahi hai
-          if (!user){
+          if(!user){
             e.preventDefault();
             alert('Pehle login / signup kijiye, phir yeh section use kar sakte ho.');
             window.location.href = 'login.html';
             return;
           }
 
-          // 2) login hai lekin role missing → guard skip (old accounts bhi chal jayenge)
-          if (!role){
-            console.warn('Role not found in localStorage, skipping role guard.');
+          // role normalise
+          if(!rawRole){
+            // old users → sab allowed, guard skip
+            console.warn('Role missing, skipping role guard.');
             return;
           }
 
-          // 3) OWNER SECTIONS: post-work, owner-dashboard
-          //    allowed: owner, business (10X)
-          if (required === 'owner'){
-            if (!(role === 'owner' || role === 'business')){
+          const roleStr = rawRole.toLowerCase();
+
+          const isFreelancer = roleStr.includes('free');           // "freelancer", "freelance" etc
+          const isOwner      = roleStr.includes('owner');          // "owner", "business owner"
+          const isBusiness10x= roleStr.includes('business') ||
+                               roleStr.includes('10x') ||
+                               roleStr.includes('grow');           // "10x grow lab", "growth lab business"
+
+          // 3) OWNER SECTIONS: Post a Work, Work Dashboard
+          //    allowed: owner + 10X business
+          if(required === 'owner'){
+            if(!(isOwner || isBusiness10x)){
               e.preventDefault();
-              alert('Yeh section sirf Owner ya 10X Grow Lab Business users ke liye hai.');
+              alert('Yeh tab aapke account type ke liye nahi hai. Sirf Owner ya 10X Grow Lab Business use kar sakte hain.');
               return;
             }
           }
 
-          // 4) BUSINESS / 10X SECTIONS: get-listed, client-dashboard, 10x dashboards
-          //    allowed: sirf business (10X)
-          if (required === 'business'){
-            if (role !== 'business'){
+          // 4) BUSINESS / 10X SECTIONS: Get Listed, Client Dashboard
+          //    allowed: sirf 10X business
+          if(required === 'business'){
+            if(!isBusiness10x){
               e.preventDefault();
-              alert('Yeh section sirf 10X Grow Lab / Business users ke liye hai.');
+              alert('Yeh tab sirf 10X Grow Lab / Business users ke liye hai.');
               return;
             }
           }
 
-          // 5) FREELANCER SECTIONS: freelancer-dashboard, direct-work
-          //    allowed: sirf freelancer
-          if (required === 'freelancer'){
-            if (role !== 'freelancer'){
+          // 5) FREELANCER SECTIONS: Freelancer Dashboard, Direct Work
+          //    allowed: sirf freelancers
+          if(required === 'freelancer'){
+            if(!isFreelancer){
               e.preventDefault();
-              alert('Yeh section sirf Freelancers ke liye hai.');
+              alert('Yeh tab sirf Freelancers ke liye hai.');
               return;
             }
           }
 
-          // sab pass ho gaya → normal navigation
+          // sab clear → normal navigation
         });
       });
     });
