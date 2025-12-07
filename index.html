@@ -719,7 +719,7 @@
     updatePlanUI();
   </script>
 
-  <!-- ⭐ ROLE-BASED NAV LOCK (Home se guard) -->
+  <!-- ⭐ ROLE-BASED NAV LOCK (FINAL FIXED) -->
   <script>
     // localStorage se raw role text nikaalna
     function getRawRole(){
@@ -759,18 +759,19 @@
 
           const roleStr = rawRole.toLowerCase();
 
-          const isFreelancer = roleStr.includes('free');           // "freelancer", "freelance" etc
-          const isOwner      = roleStr.includes('owner');          // "owner", "business owner"
+          // ✅ FINAL MAPPING
+          const isFreelancer = roleStr.includes('free');                 // "freelancer"
+          const isOwner      = roleStr.includes('owner') || roleStr.includes('project'); // "Work Owner (Project Owner)"
           const isBusiness10x= roleStr.includes('business') ||
                                roleStr.includes('10x') ||
-                               roleStr.includes('grow');           // "10x grow lab", "growth lab business"
+                               roleStr.includes('grow');                 // "10X Grow Lab"
 
           // 3) OWNER SECTIONS: Post a Work, Work Dashboard
           //    allowed: owner + 10X business
           if(required === 'owner'){
             if(!(isOwner || isBusiness10x)){
               e.preventDefault();
-              alert('Yeh tab aapke account type ke liye nahi hai. Sirf Owner ya 10X Grow Lab Business use kar sakte hain.');
+              alert('Yeh tab aapke account type ke liye nahi hai. Sirf Work Owner ya 10X Grow Lab Business use kar sakte hain.');
               return;
             }
           }
