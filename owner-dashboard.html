@@ -265,6 +265,22 @@
       return "₹" + num.toLocaleString("en-IN");
     }
 
+    // ⭐ USER ROLE HELPER – Owner guard
+    async function fetchUserRole(email) {
+      try {
+        const url = `${SCRIPT_URL}?action=getUserRole&email=${encodeURIComponent(email)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.ok && data.role) {
+          return data.role; // e.g. "freelancer" / "owner" / "business"
+        }
+        return null;
+      } catch (err) {
+        console.error("getUserRole error:", err);
+        return null;
+      }
+    }
+
     // --- Works loading ---
     async function loadOwnerWorks() {
       try {
@@ -992,18 +1008,44 @@
       }
     });
 
-    // --- Auth guard + initial load ---
-    auth.onAuthStateChanged((user) => {
+    // --- Auth guard + initial load (⭐ role-based) ---
+    auth.onAuthStateChanged(async (user) => {
       if (!user) {
         alert("Please login first.");
         window.location.href = "login.html";
         return;
       }
+
       ownerEmail = (user.email || "").toLowerCase();
       const loggedSpan = document.getElementById("loggedInEmail");
       if (loggedSpan) {
         loggedSpan.textContent = `Logged in as: ${ownerEmail}`;
       }
+
+      // 🔒 Role check – sirf owner-type roles allowed
+      const role = await fetchUserRole(ownerEmail);
+      const allowedOwnerRoles = [
+        "owner",
+        "client",
+        "business_owner",
+        "business",
+        "growth",
+        "10x",
+        "growth_lab"
+      ];
+
+      if (!role || !allowedOwnerRoles.includes(role.toLowerCase())) {
+        if (role && role.toLowerCase() === "freelancer") {
+          alert("Ye Owner Dashboard hai. Freelancers ke liye Freelancer Dashboard available hai.");
+          window.location.href = "freelancer-dashboard.html";
+        } else {
+          alert("Aapka role owner / business category me nahi hai. Home par redirect kiya ja raha hai.");
+          window.location.href = "index.html";
+        }
+        return;
+      }
+
+      // ✅ Role sahi hai to hi data load karein
       loadOwnerWorks();
       loadWorkRequests();
     });
