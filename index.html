@@ -562,21 +562,39 @@
     const firebaseConfig={ apiKey:"AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I", authDomain:"bizlink-exchange.firebaseapp.com", projectId:"bizlink-exchange", storageBucket:"bizlink-exchange.firebasestorage.app", messagingSenderId:"116213651971", appId:"1:116213651971:web:fff60961af0c4da3448c36", measurementId:"G-VQ3JM82D1N" };
     firebase.initializeApp(firebaseConfig);
     const auth=firebase.auth();
-    const loginLinkDesktop=document.getElementById('loginLinkDesktop'), signupLinkDesktop=document.getElementById('signupLinkDesktop'), logoutButtonDesktop=document.getElementById('logoutButtonDesktop'), loginLinkMobile=document.getElementById('loginLinkMobile'), signupLinkMobile=document.getElementById('signupLinkMobile'), logoutButtonMobile=document.getElementById('logoutButtonMobile');
+    const loginLinkDesktop=document.getElementById('loginLinkDesktop'),
+          signupLinkDesktop=document.getElementById('signupLinkDesktop'),
+          logoutButtonDesktop=document.getElementById('logoutButtonDesktop'),
+          loginLinkMobile=document.getElementById('loginLinkMobile'),
+          signupLinkMobile=document.getElementById('signupLinkMobile'),
+          logoutButtonMobile=document.getElementById('logoutButtonMobile');
+
     auth.onAuthStateChanged(user=>{
       const loggedIn=!!user;
-      loginLinkDesktop?.classList.toggle('hidden',loggedIn); signupLinkDesktop?.classList.toggle('hidden',loggedIn); logoutButtonDesktop?.classList.toggle('hidden',!loggedIn);
-      loginLinkMobile?.classList.toggle('hidden',loggedIn); signupLinkMobile?.classList.toggle('hidden',loggedIn); logoutButtonMobile?.classList.toggle('hidden',!loggedIn);
+      loginLinkDesktop?.classList.toggle('hidden',loggedIn);
+      signupLinkDesktop?.classList.toggle('hidden',loggedIn);
+      logoutButtonDesktop?.classList.toggle('hidden',!loggedIn);
+      loginLinkMobile?.classList.toggle('hidden',loggedIn);
+      signupLinkMobile?.classList.toggle('hidden',loggedIn);
+      logoutButtonMobile?.classList.toggle('hidden',!loggedIn);
 
-      // email ko optional store kar de (role already signup page se aa raha hoga)
       try{
         if(user && user.email){
           localStorage.setItem('bizlink_user_email', user.email.toLowerCase());
         }
       }catch(e){}
     });
-    function handleLogout(){ auth.signOut().then(()=>{ alert("Logged out."); location.href='index.html'; }).catch(e=>console.error('Logout Error:',e)); }
-    logoutButtonDesktop?.addEventListener('click',handleLogout); logoutButtonMobile?.addEventListener('click',handleLogout);
+
+    function handleLogout(){
+      auth.signOut().then(()=>{
+        localStorage.removeItem('bizlink_user_role');
+        localStorage.removeItem('bizlink_user_email');
+        alert("Logged out.");
+        location.href='index.html';
+      }).catch(e=>console.error('Logout Error:',e));
+    }
+    logoutButtonDesktop?.addEventListener('click',handleLogout);
+    logoutButtonMobile?.addEventListener('click',handleLogout);
   </script>
 
   <!-- Mobile menu + Lead modal + PLAN SYSTEM -->
@@ -701,7 +719,7 @@
     updatePlanUI();
   </script>
 
-  <!-- ⭐ ROLE-BASED NAV LOCK (Home se hi guard) -->
+  <!-- ⭐ ROLE-BASED NAV LOCK (Home se guard) -->
   <script>
     function getCurrentUserRole(){
       try{
@@ -713,23 +731,29 @@
     }
 
     document.addEventListener('DOMContentLoaded', function(){
-      // Sirf un links par guard lagayenge jinke paas data-role-required hai
       document.querySelectorAll('[data-role-required]').forEach(function(link){
         link.addEventListener('click', function(e){
           const required = (link.getAttribute('data-role-required') || '').toLowerCase();
           const role = getCurrentUserRole();
+          const user = (typeof auth !== 'undefined') ? auth.currentUser : null;
 
-          // 1) Login hi nahi hai → login page
-          if(!role){
+          // 1) Login hi nahi hai
+          if(!user){
             e.preventDefault();
             alert('Pehle login / signup kijiye, phir yeh section use kar sakte ho.');
             window.location.href = 'login.html';
             return;
           }
 
-          // 2) Owner / business section
+          // 2) User login hai lekin role missing (old account)
+          if(!role){
+            e.preventDefault();
+            alert('Aapka role system me nahi mila. Naya account se signup kijiye (Freelancer / Owner / Business) ya support se contact kijiye.');
+            return;
+          }
+
+          // 3) Owner type sections (owner + business dono allowed)
           if(required === 'owner'){
-            // owner ya business dono allowed
             if(!(role === 'owner' || role === 'business')){
               e.preventDefault();
               alert('Yeh section sirf Owner / Business users ke liye hai.');
@@ -737,7 +761,7 @@
             }
           }
 
-          // 3) Business only (Get Listed, Business Dashboard)
+          // 4) Business-only sections (Get Listed / Business Dashboard)
           if(required === 'business'){
             if(!(role === 'business' || role === 'owner')){
               e.preventDefault();
@@ -746,7 +770,7 @@
             }
           }
 
-          // 4) Freelancer only
+          // 5) Freelancer-only sections
           if(required === 'freelancer'){
             if(role !== 'freelancer'){
               e.preventDefault();
@@ -754,8 +778,7 @@
               return;
             }
           }
-
-          // Agar yahan tak aa gaye to navigation normal chalega
+          // Agar sab pass ho gaya, normal navigation chalega
         });
       });
     });
