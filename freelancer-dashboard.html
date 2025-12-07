@@ -51,6 +51,24 @@
       color:#bbf7d0;
       border:1px solid rgba(34,197,94,0.5);
     }
+
+    /* ⭐ Review pill */
+    .review-pill{
+      font-size:.65rem;
+      padding:.1rem .55rem;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.6);
+      background:rgba(15,23,42,0.9);
+      color:#e5e7eb;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+    .review-pill-reviewed{
+      background:rgba(22,163,74,0.18);
+      border-color:rgba(22,163,74,0.6);
+      color:#bbf7d0;
+    }
   </style>
 
   <!-- Firebase -->
@@ -83,7 +101,30 @@
 
   <main class="max-w-6xl mx-auto px-4 py-6">
 
-    <!-- STATS -->
+    <!-- ⭐ MY PROFILE SNAPSHOT (Rating + Works) -->
+    <section class="grid sm:grid-cols-3 gap-4 mb-6">
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">My Rating</p>
+        <p id="fd-avgRating" class="text-2xl font-bold text-yellow-300">–</p>
+        <p id="fd-totalReviews" class="text-[11px] text-slate-500 mt-1">0 reviews</p>
+      </div>
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Completed Works</p>
+        <p id="fd-totalWorks" class="text-2xl font-bold text-emerald-400">0</p>
+        <p class="text-[11px] text-slate-500 mt-1">
+          History sheet se Completed / Paid ka count.
+        </p>
+      </div>
+      <div class="card-bg rounded-xl px-4 py-4">
+        <p class="text-xs text-slate-400 mb-1">Profile</p>
+        <p id="fd-email" class="text-sm font-semibold text-slate-100">—</p>
+        <p id="fd-name" class="text-[11px] text-slate-400 mt-1">
+          Name from <span class="font-semibold">Freelancer</span> sheet.
+        </p>
+      </div>
+    </section>
+
+    <!-- STATS (existing) -->
     <section class="grid sm:grid-cols-3 gap-4 mb-6">
       <div class="card-bg rounded-xl px-4 py-4">
         <p class="text-xs text-slate-400 mb-1">Pending</p>
@@ -179,6 +220,21 @@
         </form>
       </div>
     </section>
+
+    <!-- ⭐ REVIEWS FROM OWNERS -->
+    <section class="mt-6 card-bg rounded-xl p-4">
+      <h2 class="text-sm font-semibold text-slate-200 mb-2">
+        Reviews from Business Owners
+      </h2>
+      <p class="text-[11px] text-slate-400 mb-3">
+        Jab bhi koi owner aapke kaam pe rating / feedback deta hai, woh yahan show hoga.
+      </p>
+      <div id="fd-reviewsList" class="space-y-3 max-h-72 overflow-y-auto text-xs">
+        <div class="py-6 text-center text-slate-500">
+          Loading reviews…
+        </div>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -210,6 +266,11 @@
     let works = [];              // full list from API
     let currentWorkId = null;
     let freelancerEmail = null;
+
+    // ⭐ New: profile + reviews state
+    let myProfileData = null;
+    let myReviews = [];
+    let myReviewsByWorkId = {}; // WorkID → review object
 
     /*****************************************
      *  HELPERS
@@ -265,6 +326,145 @@
     }
 
     /*****************************************
+     *  ⭐ PROFILE + REVIEWS LOAD
+     *****************************************/
+    async function loadFreelancerProfile() {
+      if (!freelancerEmail) return;
+
+      try {
+        const url = `${API_URL}?action=listFreelancerProfile&freelancerEmail=${encodeURIComponent(freelancerEmail)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.ok) {
+          console.warn("Profile load error:", data.error);
+          renderProfileHeader(null);
+          renderReviewsList();
+          return;
+        }
+
+        myProfileData = data.profile || {};
+        myReviews     = data.reviews || [];
+
+        // WorkID wise map
+        myReviewsByWorkId = {};
+        myReviews.forEach(r => {
+          const wid = (r.WorkID || "").toString();
+          if (!wid) return;
+          myReviewsByWorkId[wid] = r;
+        });
+
+        renderProfileHeader(data);
+        renderReviewsList();
+        // re-render work list so badges show
+        renderWorkList();
+      } catch (err) {
+        console.error("Profile load error:", err);
+        renderProfileHeader(null);
+        renderReviewsList();
+      }
+    }
+
+    function renderProfileHeader(data) {
+      const avgRatingEl   = document.getElementById("fd-avgRating");
+      const totalReviewsEl= document.getElementById("fd-totalReviews");
+      const totalWorksEl  = document.getElementById("fd-totalWorks");
+      const emailEl       = document.getElementById("fd-email");
+      const nameEl        = document.getElementById("fd-name");
+
+      if (!avgRatingEl) return;
+
+      if (!data || !data.ok) {
+        avgRatingEl.textContent   = "No rating";
+        totalReviewsEl.textContent= "0 reviews";
+        totalWorksEl.textContent  = "0";
+        emailEl.textContent       = freelancerEmail || "—";
+        nameEl.textContent        = "Update your profile in Freelancer sheet";
+        return;
+      }
+
+      const avg   = data.avgRating || 0;
+      const count = data.totalReviews || 0;
+      const profile = data.profile || {};
+
+      avgRatingEl.textContent = count ? `⭐ ${avg.toFixed(1)}` : "No rating";
+      totalReviewsEl.textContent = `${count} review${count === 1 ? "" : "s"}`;
+
+      const totalWorks =
+        profile._TotalWorks ||
+        profile.TotalWorks   ||
+        0;
+      totalWorksEl.textContent = totalWorks;
+
+      emailEl.textContent = freelancerEmail || (profile.Email || "—");
+      nameEl.textContent  = profile.Name || profile["Full Name"] || "Update your profile in Freelancer sheet";
+    }
+
+    function reviewBadgeForWork(work) {
+      const wid = (work.WorkID || "").toString();
+      if (!wid || !myReviewsByWorkId) return "";
+      const rev = myReviewsByWorkId[wid];
+      if (!rev) {
+        return `
+          <span class="review-pill">
+            ⏳ Not reviewed yet
+          </span>
+        `;
+      }
+      return `
+        <span class="review-pill review-pill-reviewed">
+          ⭐ ${rev.Rating || "-"} · Reviewed
+        </span>
+      `;
+    }
+
+    function renderReviewsList() {
+      const listEl = document.getElementById("fd-reviewsList");
+      if (!listEl) return;
+
+      if (!myReviews || !myReviews.length) {
+        listEl.innerHTML = `
+          <div class="py-6 text-center text-slate-500 text-xs">
+            Abhi tak koi review nahi aaya. Jab owner rating dega, yahan show hoga. 🙂
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = myReviews
+        .slice()
+        .sort((a,b) => new Date(b.Timestamp) - new Date(a.Timestamp))
+        .map(r => {
+          const timeStr = r.Timestamp ? new Date(r.Timestamp).toLocaleString() : "";
+          return `
+            <article class="card-bg rounded-lg p-3 flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <p class="text-[11px] text-slate-300">
+                  Work ID: <span class="font-mono text-slate-100">${r.WorkID || ""}</span>
+                </p>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-700 text-emerald-100">
+                  ⭐ ${r.Rating || "-"}
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-400">
+                Owner: <span class="font-semibold text-slate-200">${r.OwnerEmail || "N/A"}</span>
+              </p>
+              ${
+                r.Comment
+                  ? `<p class="text-[11px] text-slate-300 mt-1">
+                       “${r.Comment}”
+                     </p>`
+                  : ""
+              }
+              <p class="text-[10px] text-slate-500 mt-1">
+                ${timeStr}
+              </p>
+            </article>
+          `;
+        }).join("");
+    }
+
+    /*****************************************
      *  RENDER WORK CARDS
      *****************************************/
     function renderWorkList() {
@@ -291,16 +491,22 @@
         const payStatus = (w.PaymentStatus || "").toString();
         const showRequestBtn = payStatus !== "Paid"; // Paid na ho to hi request button
 
+        const isCompletedOrPaid =
+          status === "Completed" || payStatus === "Paid";
+
         return `
           <article class="card-bg rounded-lg p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
+              <div class="flex items-center gap-2 mb-1 flex-wrap">
                 <h3 class="text-sm font-semibold text-slate-100">${w.Title || "Untitled work"}</h3>
                 ${statusChip(status)}
                 ${
                   w.Category
                     ? `<span class="badge-sm bg-slate-700 text-slate-200 ml-1">${w.Category}</span>`
                     : ""
+                }
+                ${
+                  isCompletedOrPaid ? reviewBadgeForWork(w) : ""
                 }
               </div>
               <p class="text-xs text-slate-400">
@@ -630,7 +836,9 @@
       }
       freelancerEmail = (user.email || "").toLowerCase();
       document.getElementById("freelancerEmailLabel").textContent = freelancerEmail;
+
       await loadWorksForFreelancer(freelancerEmail);
+      await loadFreelancerProfile(); // ⭐ new – rating + reviews + total works
     });
   </script>
 </body>
