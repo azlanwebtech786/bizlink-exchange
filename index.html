@@ -723,7 +723,6 @@
   <script>
     function getCurrentUserRole(){
       try{
-        // agar future me role kisi aur key me save ho jaye to bhi mil jaye
         const possibleKeys = [
           'bizlink_user_role',
           'bizlink_role',
@@ -731,9 +730,9 @@
           'role',
           'bizRole'
         ];
-        for(const k of possibleKeys){
+        for (const k of possibleKeys){
           const v = localStorage.getItem(k);
-          if(v) return v.toLowerCase();
+          if (v) return v.toLowerCase();
         }
         return null;
       }catch(e){
@@ -748,47 +747,51 @@
           const role = getCurrentUserRole();
           const user = (typeof auth !== 'undefined') ? auth.currentUser : null;
 
-          // 1) Login hi nahi hai → block + redirect
-          if(!user){
+          // 1) login hi nahi hai
+          if (!user){
             e.preventDefault();
             alert('Pehle login / signup kijiye, phir yeh section use kar sakte ho.');
             window.location.href = 'login.html';
             return;
           }
 
-          // 2) User login hai lekin role missing → ab guard skip, normal navigation
-          if(!role){
+          // 2) login hai lekin role missing → guard skip (old accounts bhi chal jayenge)
+          if (!role){
             console.warn('Role not found in localStorage, skipping role guard.');
             return;
           }
 
-          // 3) Owner type sections (owner + business dono allowed)
-          if(required === 'owner'){
-            if(!(role === 'owner' || role === 'business')){
+          // 3) OWNER SECTIONS: post-work, owner-dashboard
+          //    allowed: owner, business (10X)
+          if (required === 'owner'){
+            if (!(role === 'owner' || role === 'business')){
               e.preventDefault();
-              alert('Yeh section sirf Owner / Business users ke liye hai.');
+              alert('Yeh section sirf Owner ya 10X Grow Lab Business users ke liye hai.');
               return;
             }
           }
 
-          // 4) Business-only sections (Get Listed / Business Dashboard)
-          if(required === 'business'){
-            if(!(role === 'business' || role === 'owner')){
+          // 4) BUSINESS / 10X SECTIONS: get-listed, client-dashboard, 10x dashboards
+          //    allowed: sirf business (10X)
+          if (required === 'business'){
+            if (role !== 'business'){
               e.preventDefault();
-              alert('Yeh section sirf Business / Owner users ke liye hai.');
+              alert('Yeh section sirf 10X Grow Lab / Business users ke liye hai.');
               return;
             }
           }
 
-          // 5) Freelancer-only sections
-          if(required === 'freelancer'){
-            if(role !== 'freelancer'){
+          // 5) FREELANCER SECTIONS: freelancer-dashboard, direct-work
+          //    allowed: sirf freelancer
+          if (required === 'freelancer'){
+            if (role !== 'freelancer'){
               e.preventDefault();
               alert('Yeh section sirf Freelancers ke liye hai.');
               return;
             }
           }
-          // sab ok → normal navigation
+
+          // sab pass ho gaya → normal navigation
         });
       });
     });
