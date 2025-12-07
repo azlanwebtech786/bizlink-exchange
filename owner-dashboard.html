@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -211,11 +211,11 @@
 
     let ownerEmail = null;
     let allWorks = [];
-    let worksById = {};      // NEW: map WorkID -> work object
+    let worksById = {};      // map WorkID -> work object
     let currentFilter = "all";
     let currentWorkId = null;
 
-    let ownerRequests = [];  // NEW: freelancer requests list
+    let ownerRequests = [];  // freelancer requests list
 
     const statusText = document.getElementById("pageStatus");
     const workListEl = document.getElementById("workList");
@@ -394,6 +394,9 @@
              </p>`
           : "";
 
+        const showRateButton =
+          (st === "completed") && (w.AssignedTo && w.AssignedTo.toString().trim() !== "");
+
         return `
           <article class="card-bg rounded-lg p-3 flex flex-col gap-2" data-work-id="${w.WorkID || ""}">
             <div class="flex items-start justify-between gap-2">
@@ -423,6 +426,16 @@
                   Open Chat
                 </button>
                 ${paymentButtons}
+                ${
+                  showRateButton
+                    ? `<button
+                        class="px-3 py-1 rounded-md bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-semibold"
+                        data-action="rate-freelancer"
+                      >
+                        Rate Freelancer
+                      </button>`
+                    : ""
+                }
               </div>
             </div>
 
@@ -604,6 +617,51 @@
     }
 
     /*****************************************
+     *  ⭐ NEW: OWNER → FREELANCER RATING / REVIEW
+     *****************************************/
+    async function openRatingPrompt(work) {
+      if (!work || !work.AssignedTo) {
+        alert("Is work par abhi koi freelancer assign nahi hai.");
+        return;
+      }
+
+      const ratingStr = prompt(
+        `Freelancer (${work.AssignedTo}) ko rating do (1-5):`,
+        "5"
+      );
+      if (!ratingStr) return;
+
+      const rating = Number(ratingStr);
+      if (!rating || rating < 1 || rating > 5) {
+        alert("Rating 1 se 5 ke beech honi chahiye.");
+        return;
+      }
+
+      const comment = prompt("Short review / feedback (optional):", "") || "";
+
+      try {
+        const resp = await apiPost({
+          action: "submitReview",
+          FreelancerEmail: work.AssignedTo,
+          WorkID: work.WorkID,
+          OwnerEmail: ownerEmail,
+          Rating: rating,
+          Comment: comment
+        });
+
+        if (!resp.ok) {
+          alert("Error submitting review: " + (resp.error || "Unknown"));
+          return;
+        }
+
+        alert("✅ Review save ho gaya! Freelancer profile pe rating update ho jayegi.");
+      } catch (err) {
+        console.error(err);
+        alert("Network error while submitting review.");
+      }
+    }
+
+    /*****************************************
      *  NEW: OWNER SIDE – WORK REQUESTS
      *****************************************/
     async function loadWorkRequests() {
@@ -616,7 +674,7 @@
           </div>
         `;
 
-        const url = `${SCRIPT_URL}?action=listWorkRequestsForOwner&ownerEmail=${encodeURIComponent(ownerEmail)}`;
+        const url = `${SCRIPT_URL}?action=listWorkRequestsForOwner&ownerEmail=${encodeURIComponent(ownerEmail)}&includeProfile=true`;
         const res = await fetch(url);
         const data = await res.json();
         if (!data.ok) {
@@ -655,7 +713,7 @@
         let chipClass = "req-pending";
         let chipLabel = "Pending";
 
-        if (status.toLowerCase() === "accepted") {
+        if (status.toLowerCase() === "accepted" || status.toLowerCase() === "approved") {
           chipClass = "req-accepted";
           chipLabel = "Accepted";
         } else if (status.toLowerCase() === "rejected") {
@@ -668,6 +726,15 @@
         const cover = r.CoverNote || "";
         const portfolio = r.PortfolioURL || r.PortfolioUrl || "";
 
+        // profile info (Apps Script se _freelancerProfile)
+        const profile = r._freelancerProfile || {};
+        const fName  = profile.Name || profile["Full Name"] || "";
+        const fCity  = profile.City || "";
+        const fSkills = profile.Skills || profile.Tags || "";
+        const totalWorks = profile._TotalWorks || profile.TotalWorks || 0;
+        const avgRating   = profile.AvgRating || profile.avgRating || null;
+        const totalReviews = profile.TotalReviews || profile.ReviewsCount || 0;
+
         // check agar ye freelancer already assigned hai is work pe
         const workObj = worksById[workId ? workId.toString() : ""];
         const alreadyAssigned = workObj && (workObj.AssignedTo || "").toLowerCase() === freelancer.toLowerCase();
@@ -676,7 +743,7 @@
 
         // Accept / Reject buttons ko disable / replace karo agar already assigned
         let actionButtons = "";
-        if (alreadyAssigned || status.toLowerCase() === "accepted") {
+        if (alreadyAssigned || status.toLowerCase() === "accepted" || status.toLowerCase() === "approved") {
           actionButtons = `
             <span class="text-[11px] text-emerald-400 font-semibold">
               Assigned to this freelancer
@@ -719,6 +786,36 @@
                 <p class="text-[11px] text-slate-400">
                   Freelancer: <span class="font-semibold text-slate-100">${freelancer}</span>
                 </p>
+                ${
+                  fName
+                    ? `<p class="text-[11px] text-slate-300">
+                        Name: <span class="font-semibold">${fName}</span>
+                       </p>`
+                    : ""
+                }
+                ${
+                  fCity
+                    ? `<p class="text-[11px] text-slate-400">
+                         City: ${fCity}
+                       </p>`
+                    : ""
+                }
+                ${
+                  (avgRating || totalWorks)
+                    ? `<p class="text-[11px] text-slate-400 mt-1">
+                         ${avgRating ? `⭐ ${Number(avgRating).toFixed(1)} · ` : ""}
+                         ${totalReviews ? `${totalReviews} reviews · ` : ""}
+                         ${totalWorks ? `${totalWorks} completed works` : ""}
+                       </p>`
+                    : ""
+                }
+                ${
+                  fSkills
+                    ? `<p class="text-[11px] text-slate-400 mt-1">
+                         <span class="font-semibold text-slate-300">Skills:</span> ${fSkills}
+                       </p>`
+                    : ""
+                }
                 ${portfolio ? `
                   <p class="text-[11px] mt-1">
                     Portfolio: 
@@ -755,11 +852,12 @@
       if (!confirm(msg)) return;
 
       try {
+        // Backend approveRequest: request row update + assignFreelancer
         const resp = await apiPost({
-          action: "assignFreelancer",
+          action: "approveRequest",
           WorkID: workId,
-          freelancerEmail: freelancer,
-          notes: "Owner approved via Requests panel"
+          FreelancerEmail: freelancer,
+          OwnerEmail: ownerEmail
         });
         if (!resp.ok) {
           alert("Error assigning freelancer: " + (resp.error || "Unknown"));
@@ -861,6 +959,10 @@
       if (action === "mark-paid") {
         markPaid(workId);
       }
+
+      if (action === "rate-freelancer") {
+        openRatingPrompt(work);
+      }
     });
 
     chatForm.addEventListener("submit", (e) => {
@@ -903,7 +1005,7 @@
         loggedSpan.textContent = `Logged in as: ${ownerEmail}`;
       }
       loadOwnerWorks();
-      loadWorkRequests();   // NEW: also load requests
+      loadWorkRequests();
     });
   </script>
 </body>
