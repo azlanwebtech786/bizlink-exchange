@@ -38,64 +38,108 @@
         </p>
     </div>
 
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
     <script>
-       // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
-  authDomain: "bizlink-exchange.firebaseapp.com",
-  projectId: "bizlink-exchange",
-  storageBucket: "bizlink-exchange.firebasestorage.app",
-  messagingSenderId: "116213651971",
-  appId: "1:116213651971:web:fff60961af0c4da3448c36",
-  measurementId: "G-VQ3JM82D1N"
-};
+        // ✅ YAHAN apna NEW deployed Apps Script URL daalo
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbym03QN9_xpG9HTnRxpCs_1SlVYf3GrObHh_cC_otQgZpQlWN6CFKjomfTGjQJfvTWAbA/exec";
 
-        // 2. Firebase ko initialize karein
+        // Firebase config (same as baaki pages)
+        const firebaseConfig = {
+          apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+          authDomain: "bizlink-exchange.firebaseapp.com",
+          projectId: "bizlink-exchange",
+          storageBucket: "bizlink-exchange.firebasestorage.app",
+          messagingSenderId: "116213651971",
+          appId: "1:116213651971:web:fff60961af0c4da3448c36",
+          measurementId: "G-VQ3JM82D1N"
+        };
+
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(); 
+        const auth   = firebase.auth(); 
 
-        // 3. Form elements ko select karein
-        const loginForm = document.getElementById('loginForm');
-        const emailInput = document.getElementById('email');
+        const loginForm   = document.getElementById('loginForm');
+        const emailInput  = document.getElementById('email');
         const passwordInput = document.getElementById('password');
-        const submitBtn = document.getElementById('submitBtn');
-        const status = document.getElementById('status');
+        const submitBtn   = document.getElementById('submitBtn');
+        const statusEl    = document.getElementById('status');
 
-        // 4. Form submit hone par yeh function chalega
-        loginForm.addEventListener('submit', (e) => {
+        // 🔁 Helper: role ke hisaab se redirect
+        function redirectByRole(role) {
+            if (!role) {
+                // agar role nahi mila toh safe fallback
+                window.location.href = "index.html";
+                return;
+            }
+
+            const r = role.toString().toLowerCase();
+
+            // Tumne signup me approx ye options rakhe the:
+            // "freelancer" / "owner" / "business" / "growth"
+            if (r === "freelancer") {
+                window.location.href = "freelancer-dashboard.html";
+            } else if (r === "owner" || r === "client" || r === "business_owner" || r === "business") {
+                window.location.href = "owner-dashboard.html";
+            } else if (r === "growth" || r === "10x" || r === "growth_lab") {
+                // abhi ke liye same owner dashboard pe bhej rahe
+                window.location.href = "owner-dashboard.html";
+            } else {
+                // unknown role → home
+                window.location.href = "index.html";
+            }
+        }
+
+        // 🔁 Helper: backend se role fetch
+        async function fetchUserRole(email) {
+            try {
+                const url = `${SCRIPT_URL}?action=getUserRole&email=${encodeURIComponent(email)}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data && data.ok && data.role) {
+                    return data.role;
+                }
+                return null;
+            } catch (err) {
+                console.error("getUserRole error:", err);
+                return null;
+            }
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault(); 
 
-            const email = emailInput.value;
-            const password = passwordInput.value;
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
 
             submitBtn.disabled = true;
             submitBtn.innerText = 'Logging in...';
-            status.innerText = '';
+            statusEl.style.color = '#FFE4E6';
+            statusEl.innerText = '';
 
-            // 5. Firebase ko login karne ke liye bolein
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Success!
-                    status.style.color = 'lightgreen';
-                    status.innerText = '✅ Login successful! Redirecting...';
-                    
-                    // User ko 2 second baad home page par bhej dein
-                    setTimeout(() => {
-                        window.location.href = 'index.html'; // Yahan se user ko dashboard ya home page par bhej sakte hain
-                    }, 2000);
-                })
-                .catch((error) => {
-                    // Error!
-                    status.style.color = 'pink';
-                    status.innerText = `❌ Error: ${error.message}`;
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = 'Log In';
-                });
+            try {
+                // 1️⃣ Firebase auth login
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+
+                statusEl.style.color = 'lightgreen';
+                statusEl.innerText = '✅ Login successful! Checking your profile...';
+
+                const userEmail = (userCredential.user.email || '').toLowerCase();
+
+                // 2️⃣ Apps Script se ROLE fetch karo
+                const role = await fetchUserRole(userEmail);
+
+                // 3️⃣ Role ke hisaab se redirect
+                redirectByRole(role);
+
+            } catch (error) {
+                statusEl.style.color = 'pink';
+                statusEl.innerText = `❌ Error: ${error.message}`;
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Log In';
+            }
         });
     </script>
-
 </body>
 </html>
