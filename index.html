@@ -59,22 +59,42 @@
         <nav class="hidden md:flex space-x-6 items-center">
           <a href="index.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
           <a href="#" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Events</a>
-          <a href="post-work.html" class="hover:text-purple font-semibold transition text-white px-3 py-2 rounded-md text-sm font-medium">Post a Work</a>
 
-          <!-- Freelancer Dashboard link (Desktop) -->
-          <a href="freelancer-dashboard.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
+          <!-- Owner / Business only -->
+          <a href="post-work.html"
+             data-role-required="owner"
+             class="hover:text-purple font-semibold transition text-white px-3 py-2 rounded-md text-sm font-medium">
+            Post a Work
+          </a>
+
+          <!-- Freelancer only -->
+          <a href="freelancer-dashboard.html"
+             data-role-required="freelancer"
+             class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
             Freelancer Dashboard
           </a>
-          <a href="owner-dashboard.html"
-   class="hover:text-purple transition text-white">
-   Work Dashboard
-</a>
- <a href="direct-work.html"
-   class="hover:text-purple transition text-white">
-  Get Direct Work
-</a>
 
-          <a href="get-listed.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Get Listed</a>
+          <!-- Owner / Business only -->
+          <a href="owner-dashboard.html"
+             data-role-required="owner"
+             class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
+            Work Dashboard
+          </a>
+
+          <!-- Freelancer only (Direct Work requests) -->
+          <a href="direct-work.html"
+             data-role-required="freelancer"
+             class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
+            Get Direct Work
+          </a>
+
+          <!-- Owner / Business only -->
+          <a href="get-listed.html"
+             data-role-required="business"
+             class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
+            Get Listed
+          </a>
+
           <a id="loginLinkDesktop" href="login.html" class="button-gradient text-white px-4 py-2 rounded-md font-medium hover:opacity-90 text-sm">Login</a>
           <a id="signupLinkDesktop" href="signup.html" class="bg-gray-700 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-600 text-sm">Sign Up</a>
           <button id="logoutButtonDesktop" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 text-sm">Logout</button>
@@ -91,28 +111,49 @@
     </div>
     <div class="md:hidden hidden" id="mobile-menu">
       <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <!-- Freelancer Dashboard link (Mobile) -->
-        <a href="freelancer-dashboard.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">
+        <!-- Freelancer Dashboard (mobile) -->
+        <a href="freelancer-dashboard.html"
+           data-role-required="freelancer"
+           class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">
           Freelancer Dashboard
         </a>
+
+        <!-- Work Dashboard (owner/business) -->
         <a href="owner-dashboard.html"
-   class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
-   Work Dashboard
-</a>
- <a href="direct-work.html"
-   class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
-   Get Direct Work
-</a>
-           <a href="client-dashboard.html"
-   class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
-   Business Owner  Dashboard 
-</a>
+           data-role-required="owner"
+           class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
+          Work Dashboard
+        </a>
+
+        <!-- Direct Work (freelancer) -->
+        <a href="direct-work.html"
+           data-role-required="freelancer"
+           class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
+          Get Direct Work
+        </a>
+
+        <!-- Business Owner Dashboard (business/owner) -->
+        <a href="client-dashboard.html"
+           data-role-required="business"
+           class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
+          Business Owner Dashboard 
+        </a>
 
         <a href="#home" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
         <a href="#growlab" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">10X Grow Lab</a>
         <a href="#pricing" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Pricing</a>
-        <a href="post-work.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Post a Work</a>
-        <a href="get-listed.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Get Listed</a>
+
+        <!-- Post work / Get listed (owner/business) -->
+        <a href="post-work.html"
+           data-role-required="owner"
+           class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">
+          Post a Work
+        </a>
+        <a href="get-listed.html"
+           data-role-required="business"
+           class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">
+          Get Listed
+        </a>
       </div>
       <div class="pt-4 pb-3 border-t border-gray-700 px-2 sm:px-3">
         <a id="loginLinkMobile" href="login.html" class="block w-full text-left button-gradient text-white px-3 py-2 rounded-md font-medium hover:opacity-90 mb-2">Login</a>
@@ -526,6 +567,13 @@
       const loggedIn=!!user;
       loginLinkDesktop?.classList.toggle('hidden',loggedIn); signupLinkDesktop?.classList.toggle('hidden',loggedIn); logoutButtonDesktop?.classList.toggle('hidden',!loggedIn);
       loginLinkMobile?.classList.toggle('hidden',loggedIn); signupLinkMobile?.classList.toggle('hidden',loggedIn); logoutButtonMobile?.classList.toggle('hidden',!loggedIn);
+
+      // email ko optional store kar de (role already signup page se aa raha hoga)
+      try{
+        if(user && user.email){
+          localStorage.setItem('bizlink_user_email', user.email.toLowerCase());
+        }
+      }catch(e){}
     });
     function handleLogout(){ auth.signOut().then(()=>{ alert("Logged out."); location.href='index.html'; }).catch(e=>console.error('Logout Error:',e)); }
     logoutButtonDesktop?.addEventListener('click',handleLogout); logoutButtonMobile?.addEventListener('click',handleLogout);
@@ -651,6 +699,66 @@
 
     // Page load pe agar pehle se plan save hai to show karo
     updatePlanUI();
+  </script>
+
+  <!-- ⭐ ROLE-BASED NAV LOCK (Home se hi guard) -->
+  <script>
+    function getCurrentUserRole(){
+      try{
+        const raw = localStorage.getItem('bizlink_user_role');
+        return raw ? raw.toLowerCase() : null;
+      }catch(e){
+        return null;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      // Sirf un links par guard lagayenge jinke paas data-role-required hai
+      document.querySelectorAll('[data-role-required]').forEach(function(link){
+        link.addEventListener('click', function(e){
+          const required = (link.getAttribute('data-role-required') || '').toLowerCase();
+          const role = getCurrentUserRole();
+
+          // 1) Login hi nahi hai → login page
+          if(!role){
+            e.preventDefault();
+            alert('Pehle login / signup kijiye, phir yeh section use kar sakte ho.');
+            window.location.href = 'login.html';
+            return;
+          }
+
+          // 2) Owner / business section
+          if(required === 'owner'){
+            // owner ya business dono allowed
+            if(!(role === 'owner' || role === 'business')){
+              e.preventDefault();
+              alert('Yeh section sirf Owner / Business users ke liye hai.');
+              return;
+            }
+          }
+
+          // 3) Business only (Get Listed, Business Dashboard)
+          if(required === 'business'){
+            if(!(role === 'business' || role === 'owner')){
+              e.preventDefault();
+              alert('Yeh section sirf Business / Owner users ke liye hai.');
+              return;
+            }
+          }
+
+          // 4) Freelancer only
+          if(required === 'freelancer'){
+            if(role !== 'freelancer'){
+              e.preventDefault();
+              alert('Yeh section sirf Freelancers ke liye hai.');
+              return;
+            }
+          }
+
+          // Agar yahan tak aa gaye to navigation normal chalega
+        });
+      });
+    });
   </script>
 </body>
 </html>
