@@ -1008,7 +1008,7 @@
       }
     });
 
-    // --- Auth guard + initial load (⭐ role-based) ---
+    // --- Auth guard + initial load (⭐ UPDATED role-based) ---
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
         alert("Please login first.");
@@ -1022,26 +1022,46 @@
         loggedSpan.textContent = `Logged in as: ${ownerEmail}`;
       }
 
-      // 🔒 Role check – sirf owner-type roles allowed
-      const role = await fetchUserRole(ownerEmail);
-      const allowedOwnerRoles = [
-        "owner",
-        "client",
-        "business_owner",
-        "business",
-        "growth",
-        "10x",
-        "growth_lab"
-      ];
+      // Backend role
+      const backendRoleRaw = await fetchUserRole(ownerEmail);
+      const backendRole = backendRoleRaw ? backendRoleRaw.toString().toLowerCase() : "";
 
-      if (!role || !allowedOwnerRoles.includes(role.toLowerCase())) {
-        if (role && role.toLowerCase() === "freelancer") {
-          alert("Ye Owner Dashboard hai. Freelancers ke liye Freelancer Dashboard available hai.");
-          window.location.href = "freelancer-dashboard.html";
-        } else {
-          alert("Aapka role owner / business category me nahi hai. Home par redirect kiya ja raha hai.");
-          window.location.href = "index.html";
-        }
+      // LocalStorage role (signup ne jo save kiya)
+      let storedRole = "";
+      try {
+        storedRole = (localStorage.getItem("bizlink_user_role") || "").toString().toLowerCase();
+      } catch (e) {
+        storedRole = "";
+      }
+
+      const combinedRoleStr = (backendRole || storedRole || "").toLowerCase();
+
+      const isFreelancer =
+        combinedRoleStr.includes("free") || backendRole === "freelancer";
+
+      const isOwner =
+        combinedRoleStr.includes("owner") ||
+        combinedRoleStr.includes("project") ||
+        combinedRoleStr.includes("client");
+
+      const isBusiness10x =
+        combinedRoleStr.includes("business") ||
+        combinedRoleStr.includes("10x") ||
+        combinedRoleStr.includes("grow"); // "10X Grow Lab", "growth lab business" etc
+
+      // Freelancer ko yahan allow nahi karna
+      if (isFreelancer) {
+        alert("Ye Owner Dashboard hai. Freelancers ke liye Freelancer Dashboard available hai.");
+        window.location.href = "freelancer-dashboard.html";
+        return;
+      }
+
+      const isAllowedOwner = isOwner || isBusiness10x;
+
+      // Agar role clear owner/business type nahi hai → block
+      if (!isAllowedOwner) {
+        alert("Aapka role owner / business category me nahi hai. Home par redirect kiya ja raha hai.");
+        window.location.href = "index.html";
         return;
       }
 
