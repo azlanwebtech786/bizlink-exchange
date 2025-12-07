@@ -2,207 +2,481 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>BizLink | Profile Details</title>
+  <title>BizLink | My Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind + Font -->
+  <!-- Tailwind & Fonts -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body{
-      font-family:'Poppins',sans-serif;
-      min-height:100vh;
-      background:linear-gradient(135deg,#4f46e5 0%,#0f172a 40%,#020617 100%);
-      color:#e5e7eb;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:1.5rem;
-    }
-    .card-bg{
-      background:#020617cc;
-      border:1px solid rgba(148,163,184,.4);
-      backdrop-filter:blur(18px);
-    }
-    .badge{
-      font-size:.7rem;
-      padding:.15rem .55rem;
-      border-radius:999px;
-      background:#1d4ed8;
-    }
-    .button-gradient{
-      background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%);
-    }
+    body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
+    .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
+    .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
+    .chip{font-size:.70rem;padding:.15rem .55rem;border-radius:999px}
+    .chip-role-owner{background:rgba(56,189,248,0.18);color:#7dd3fc;border:1px solid rgba(56,189,248,0.6)}
+    .chip-role-freelancer{background:rgba(244,114,182,0.18);color:#f9a8d4;border:1px solid rgba(244,114,182,0.6)}
+    .chip-role-business{background:rgba(52,211,153,0.15);color:#a7f3d0;border:1px solid rgba(52,211,153,0.6)}
+    .chip-plan{background:rgba(168,85,247,0.15);color:#e9d5ff;border:1px solid rgba(168,85,247,0.6)}
+    .separator{height:1px;background:rgba(15,23,42,1);border-bottom:1px solid rgba(30,41,59,1);margin:1rem 0}
+    .rating-star{font-size:1.1rem;line-height:1}
   </style>
 </head>
-<body>
+<body class="min-h-screen">
 
-  <main class="w-full max-w-2xl">
-    <div class="card-bg rounded-2xl p-6 shadow-2xl">
-      <!-- Top bar -->
-      <div class="flex items-center justify-between mb-4">
-        <a href="index.html" class="text-xs sm:text-sm text-slate-300 hover:text-white flex items-center gap-1">
+  <!-- TOP BAR -->
+  <header class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
           ← Back to Home
         </a>
-        <h1 class="text-sm sm:text-base font-semibold text-slate-200">
+        <h1 class="text-lg sm:text-2xl font-bold text-white">
           BizLink <span class="text-purple-400">Profile</span>
         </h1>
       </div>
+      <div class="flex items-center space-x-3 text-xs sm:text-sm">
+        <span id="topEmail" class="hidden sm:inline text-slate-300"></span>
+        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
 
-      <!-- Status area -->
-      <div id="statusBox" class="mb-4 text-center text-sm text-slate-400">
-        Loading profile…
+  <main class="max-w-5xl mx-auto px-4 py-6">
+
+    <!-- STATUS / ERROR -->
+    <div id="pageStatus" class="mb-3 text-xs text-slate-400"></div>
+
+    <!-- PROFILE HEADER -->
+    <section class="card-bg rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div class="flex items-center gap-4">
+        <div class="h-14 w-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xl font-bold text-white">
+          <span id="avatarInitials">BZ</span>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400 mb-0.5">My BizLink Profile</p>
+          <h2 id="profileName" class="text-xl font-semibold text-slate-50">Loading…</h2>
+          <p id="profileEmail" class="text-xs text-slate-400 break-all">—</p>
+
+          <div class="mt-2 flex flex-wrap gap-2 items-center">
+            <span id="roleChip" class="chip chip-role-owner hidden"></span>
+            <span id="bizIdChip" class="chip chip-plan hidden"></span>
+          </div>
+        </div>
       </div>
 
-      <!-- Profile content -->
-      <section id="profileContent" class="hidden">
-        <div class="flex items-start justify-between gap-3 mb-4">
-          <div>
-            <p id="profileCategoryBadge" class="badge inline-block mb-2"></p>
-            <h2 id="profileBusinessName" class="text-2xl font-bold text-white mb-1"></h2>
-            <p id="profileOwnerName" class="text-sm text-slate-300"></p>
-          </div>
-          <div class="text-right text-xs text-slate-400">
-            <p id="profileCity"></p>
-            <p id="profileTimestamp" class="mt-1"></p>
+      <div class="text-xs sm:text-sm space-y-2 w-full md:w-auto">
+        <div class="flex items-center justify-between md:justify-end gap-2">
+          <span class="text-slate-400">Current Plan</span>
+          <span id="currentPlan" class="chip chip-plan">Loading…</span>
+        </div>
+        <div class="flex items-center justify-between md:justify-end gap-2">
+          <span class="text-slate-400">Member since</span>
+          <span id="memberSince" class="text-slate-200">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 COLUMN GRID -->
+    <section class="grid md:grid-cols-3 gap-5">
+      <!-- LEFT: BASIC INFO -->
+      <div class="md:col-span-2 space-y-5">
+
+        <!-- Contact / Details -->
+        <div class="card-bg rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-slate-200 mb-3">Basic Details</h3>
+          <div class="grid sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <p class="text-slate-400">Full Name</p>
+              <p id="detailName" class="text-slate-100 font-medium mt-0.5">—</p>
+            </div>
+            <div>
+              <p class="text-slate-400">Role / Account Type</p>
+              <p id="detailRole" class="text-slate-100 font-medium mt-0.5">—</p>
+            </div>
+            <div>
+              <p class="text-slate-400">City</p>
+              <p id="detailCity" class="text-slate-100 mt-0.5">—</p>
+            </div>
+            <div>
+              <p class="text-slate-400">Phone</p>
+              <p id="detailPhone" class="text-slate-100 mt-0.5">—</p>
+            </div>
+            <div>
+              <p class="text-slate-400">BizLink ID</p>
+              <p id="detailBizId" class="text-slate-100 mt-0.5">—</p>
+            </div>
+            <div>
+              <p class="text-slate-400">Last Login (browser)</p>
+              <p id="detailLastLogin" class="text-slate-100 mt-0.5">—</p>
+            </div>
           </div>
         </div>
 
-        <div class="mb-4">
-          <h3 class="text-sm font-semibold text-slate-200 mb-1">About</h3>
-          <p id="profileDescription" class="text-sm text-slate-300 leading-relaxed">
+        <!-- Activity Summary -->
+        <div class="card-bg rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-slate-200 mb-3">Activity Summary</h3>
+          <p class="text-[11px] text-slate-400 mb-4">
+            Yeh numbers basic overview dete hain ki aapne BizLink par kitna kaam kiya hai.
           </p>
+          <div class="grid sm:grid-cols-3 gap-3 text-xs">
+            <div class="rounded-xl bg-slate-900/60 border border-slate-700 px-3 py-3">
+              <p id="activityLabel1" class="text-slate-400 mb-1">Works Posted</p>
+              <p id="activityValue1" class="text-2xl font-bold text-sky-400">0</p>
+            </div>
+            <div class="rounded-xl bg-slate-900/60 border border-slate-700 px-3 py-3">
+              <p id="activityLabel2" class="text-slate-400 mb-1">In Progress</p>
+              <p id="activityValue2" class="text-2xl font-bold text-emerald-400">0</p>
+            </div>
+            <div class="rounded-xl bg-slate-900/60 border border-slate-700 px-3 py-3">
+              <p id="activityLabel3" class="text-slate-400 mb-1">Completed</p>
+              <p id="activityValue3" class="text-2xl font-bold text-purple-400">0</p>
+            </div>
+          </div>
         </div>
 
-        <div class="grid sm:grid-cols-2 gap-3 text-sm">
-          <div class="space-y-1">
-            <p class="text-xs uppercase tracking-wide text-slate-400">Role</p>
-            <p id="profileRole" class="text-slate-100 font-medium"></p>
-          </div>
-          <div class="space-y-1">
-            <p class="text-xs uppercase tracking-wide text-slate-400">Category</p>
-            <p id="profileCategory" class="text-slate-100 font-medium"></p>
-          </div>
-          <div class="space-y-1">
-            <p class="text-xs uppercase tracking-wide text-slate-400">Email</p>
-            <a id="profileEmail" href="#" class="text-indigo-300 hover:text-indigo-100 break-all"></a>
+      </div>
+
+      <!-- RIGHT: RATING / REVIEWS -->
+      <div class="space-y-5">
+        <div class="card-bg rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-slate-200 mb-1">Ratings</h3>
+          <p id="ratingRoleNote" class="text-[11px] text-slate-400 mb-3">
+            Freelancer profile par owners jo rating dete hain, woh yahan dikhengi.
+          </p>
+
+          <div id="ratingBlock">
+            <div id="ratingStars" class="flex items-center gap-1 mb-1">
+              <!-- stars dynamic -->
+            </div>
+            <p id="ratingSummary" class="text-xs text-slate-300 mb-1">No ratings yet.</p>
+            <p id="ratingBreakdown" class="text-[11px] text-slate-500">—</p>
           </div>
         </div>
 
-        <div class="mt-6 flex justify-end">
-          <a id="contactBtn" href="#" class="button-gradient text-white px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold">
-            Contact via Email
-          </a>
+        <div class="card-bg rounded-2xl p-4">
+          <h3 class="text-sm font-semibold text-slate-200 mb-2">Plan & Billing</h3>
+          <p class="text-[11px] text-slate-400 mb-2">
+            Current plan sheet ya `local plan` se fetch ho raha hai. Plan change karwane ke liye Growth Officer se baat karein.
+          </p>
+          <ul class="text-[11px] text-slate-400 space-y-1">
+            <li>• Plan: <span id="planNameInline" class="text-slate-100 font-medium">—</span></li>
+            <li>• Type: <span id="planTypeInline" class="text-slate-100">Marketing / 10X Grow Lab</span></li>
+            <li>• Status: <span id="planStatusInline" class="text-emerald-300">Active</span></li>
+          </ul>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
+
   </main>
 
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
   <script>
-    // 👉 SAME Apps Script URL jo index.html / get-listed.html me use ho raha hai
+    // ---- Firebase config (same as other pages) ----
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+      authDomain: "bizlink-exchange.firebaseapp.com",
+      projectId: "bizlink-exchange",
+      storageBucket: "bizlink-exchange.firebasestorage.app",
+      messagingSenderId: "116213651971",
+      appId: "1:116213651971:web:fff60961af0c4da3448c36",
+      measurementId: "G-VQ3JM82D1N"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  </script>
+
+  <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbym03QN9_xpG9HTnRxpCs_1SlVYf3GrObHh_cC_otQgZpQlWN6CFKjomfTGjQJfvTWAbA/exec";
 
-    const statusBox = document.getElementById("statusBox");
-    const profileContent = document.getElementById("profileContent");
+    let userEmail = null;
+    let userRole  = null;
 
-    // DOM references
-    const elBusinessName = document.getElementById("profileBusinessName");
-    const elOwnerName    = document.getElementById("profileOwnerName");
-    const elCity         = document.getElementById("profileCity");
-    const elTimestamp    = document.getElementById("profileTimestamp");
-    const elDesc         = document.getElementById("profileDescription");
-    const elRole         = document.getElementById("profileRole");
-    const elCategory     = document.getElementById("profileCategory");
-    const elEmail        = document.getElementById("profileEmail");
-    const elCatBadge     = document.getElementById("profileCategoryBadge");
-    const contactBtn     = document.getElementById("contactBtn");
+    const pageStatus = document.getElementById("pageStatus");
 
-    (async function init(){
-      // 1) URL se id nikaalo  (example: corporate-95216)
-      const params = new URLSearchParams(window.location.search);
-      const urlId = params.get("id");
-
-      if (!urlId) {
-        showError("Invalid link. Profile ID missing.");
-        return;
+    function setStatus(msg, type = "info") {
+      if (!pageStatus) return;
+      pageStatus.textContent = msg || "";
+      if (!msg) {
+        pageStatus.className = "mb-3 text-xs text-slate-400";
+      } else if (type === "error") {
+        pageStatus.className = "mb-3 text-xs text-red-300";
+      } else {
+        pageStatus.className = "mb-3 text-xs text-slate-300";
       }
+    }
 
-      // 2) sheet name nikaalo (corporate / Startup / small_business / Freelancer)
-      const sheetName = urlId.split("-")[0]; // "corporate"
-      if (!sheetName) {
-        showError("Invalid profile ID.");
-        return;
-      }
-
+    // --- helper: user role from Apps Script (same approach as other pages) ---
+    async function fetchUserRole(email) {
       try {
-        // 3) Poora sheet data lao (yeh waise hi call hai jo index.html use karta hai)
-        const res = await fetch(`${SCRIPT_URL}?sheet=${encodeURIComponent(sheetName)}`);
-        if (!res.ok) throw new Error("HTTP " + res.status);
+        const res = await fetch(`${SCRIPT_URL}?action=getUserRole&email=${encodeURIComponent(email)}`);
         const data = await res.json();
-
-        if (!Array.isArray(data)) {
-          showError("Invalid data format from server.");
-          return;
-        }
-
-        // 4) Us row ko dhoondo jiska ProfileLink me "id=<urlId>" aa raha ho
-        const match = data.find(row => {
-          const link = (row.ProfileLink || row["ProfileLink"] || "").toString();
-          return link.includes(`id=${urlId}`);
-        });
-
-        if (!match) {
-          showError("Profile not found for ID: " + urlId);
-          return;
-        }
-
-        // 5) UI fill karo
-        fillProfile(match);
+        if (data && data.ok && data.role) return data.role;
+        return null;
       } catch (err) {
-        console.error(err);
-        showError("Error fetching data.");
+        console.error("getUserRole error:", err);
+        return null;
       }
-    })();
-
-    function showError(msg){
-      statusBox.textContent = msg;
-      statusBox.className =
-        "mb-4 text-sm text-center text-red-300 bg-red-900/40 border border-red-500/60 px-3 py-2 rounded-lg";
-      profileContent.classList.add("hidden");
     }
 
-    function fillProfile(p){
-      // Header text hatao
-      statusBox.textContent = "";
-      statusBox.className = "mb-4 text-center text-sm text-slate-400";
-
-      const businessName = p["Business Name"] || "Unnamed";
-      const ownerName    = p["Owner Name"] || p.Owner || "";
-      const email        = p.Email || "";
-      const category     = p.Category || "General";
-      const description  = p.Description || "No description available.";
-      const city         = p.City || "-";
-      const role         = p.Role || "Business";
-      const timestamp    = p.Timestamp || "";
-
-      elBusinessName.textContent = businessName;
-      elOwnerName.textContent    = ownerName ? `Owner: ${ownerName}` : "";
-      elCity.textContent         = city ? `City: ${city}` : "";
-      elTimestamp.textContent    = timestamp ? `Listed on: ${timestamp}` : "";
-
-      elDesc.textContent         = description;
-      elRole.textContent         = role;
-      elCategory.textContent     = category;
-      elEmail.textContent        = email;
-      elEmail.href               = email ? `mailto:${email}` : "#";
-
-      elCatBadge.textContent     = category || "General";
-
-      contactBtn.href = email ? `mailto:${email}` : "#";
-
-      profileContent.classList.remove("hidden");
+    // ⭐ PROFILE API CALL
+    // Apps Script me ek action implement karna hoga:
+    //   action=getUserProfile&email=...
+    // Expected response:
+    // { ok:true, profile:{ Name, City, Phone, Role, UserID, Plan, CreatedAt,
+    //                      AvgRating, TotalReviews, CompletedWorks, InProgress, PostedWorks } }
+    async function fetchUserProfile(email) {
+      try {
+        const url = `${SCRIPT_URL}?action=getUserProfile&email=${encodeURIComponent(email)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.ok && data.profile) {
+          return data.profile;
+        }
+        return null;
+      } catch (err) {
+        console.error("getUserProfile error:", err);
+        return null;
+      }
     }
+
+    // Fallback works stats agar profile me stats na aaye
+    async function fetchActivityStats(email, role) {
+      try {
+        const res = await fetch(`${SCRIPT_URL}?sheet=works`);
+        const data = await res.json();
+        if (!Array.isArray(data)) return null;
+
+        const normRole = (role || "").toLowerCase();
+        let myWorks = [];
+
+        if (normRole.includes("free")) {
+          // freelancer → AssignedTo = email
+          myWorks = data.filter(w =>
+            (w.AssignedTo || "").toString().toLowerCase() === email.toLowerCase()
+          );
+        } else {
+          // owner / business → ClientEmail = email
+          myWorks = data.filter(w =>
+            (w.ClientEmail || "").toString().toLowerCase() === email.toLowerCase()
+          );
+        }
+
+        const normalizeStatus = (s) => {
+          s = (s || "").toString().toLowerCase();
+          if (!s || s === "pending") return "pending";
+          if (s === "accepted" || s === "in progress") return "inprogress";
+          if (s === "completed") return "completed";
+          return "other";
+        };
+
+        const total = myWorks.length;
+        const inProgress = myWorks.filter(w => normalizeStatus(w.Status) === "inprogress").length;
+        const completed  = myWorks.filter(w => normalizeStatus(w.Status) === "completed").length;
+
+        return { total, inProgress, completed };
+      } catch (err) {
+        console.error("fetchActivityStats error:", err);
+        return null;
+      }
+    }
+
+    function renderStars(avg) {
+      const starsEl = document.getElementById("ratingStars");
+      starsEl.innerHTML = "";
+      const rating = Number(avg || 0);
+      for (let i = 1; i <= 5; i++) {
+        const span = document.createElement("span");
+        span.className = "rating-star";
+        span.textContent = i <= rating ? "★" : "☆";
+        starsEl.appendChild(span);
+      }
+    }
+
+    function applyRoleChips(role) {
+      const r = (role || "").toLowerCase();
+      const chip = document.getElementById("roleChip");
+      if (!chip) return;
+      chip.classList.remove("hidden","chip-role-owner","chip-role-freelancer","chip-role-business");
+
+      if (r.includes("free")) {
+        chip.textContent = "Freelancer";
+        chip.classList.add("chip-role-freelancer");
+      } else if (r.includes("business") || r.includes("grow") || r.includes("10x")) {
+        chip.textContent = "Business / 10X Grow Lab";
+        chip.classList.add("chip-role-business");
+      } else {
+        chip.textContent = "Work Owner";
+        chip.classList.add("chip-role-owner");
+      }
+    }
+
+    function fillActivityCards(stats, role) {
+      const a1 = document.getElementById("activityValue1");
+      const a2 = document.getElementById("activityValue2");
+      const a3 = document.getElementById("activityValue3");
+      const l1 = document.getElementById("activityLabel1");
+      const l2 = document.getElementById("activityLabel2");
+      const l3 = document.getElementById("activityLabel3");
+
+      const r = (role || "").toLowerCase();
+
+      if (r.includes("free")) {
+        l1.textContent = "Jobs Assigned";
+        l2.textContent = "Active Jobs";
+        l3.textContent = "Completed Jobs";
+      } else {
+        l1.textContent = "Works Posted";
+        l2.textContent = "In Progress";
+        l3.textContent = "Completed";
+      }
+
+      if (!stats) {
+        a1.textContent = "0";
+        a2.textContent = "0";
+        a3.textContent = "0";
+        return;
+      }
+      a1.textContent = stats.total || 0;
+      a2.textContent = stats.inProgress || 0;
+      a3.textContent = stats.completed || 0;
+    }
+
+    function fillPlanInfo(planName) {
+      const name = planName || "No active plan";
+      const currentPlan = document.getElementById("currentPlan");
+      const planInline = document.getElementById("planNameInline");
+
+      currentPlan.textContent = name;
+      planInline.textContent = name;
+
+      const statusInline = document.getElementById("planStatusInline");
+      if (!planName) {
+        statusInline.textContent = "No Active Plan";
+        statusInline.className = "text-amber-300";
+      } else {
+        statusInline.textContent = "Active";
+        statusInline.className = "text-emerald-300";
+      }
+    }
+
+    // --- MAIN LOAD ---
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        alert("Please login first.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      userEmail = (user.email || "").toLowerCase();
+      document.getElementById("topEmail").textContent = `Logged in as: ${userEmail}`;
+      document.getElementById("profileEmail").textContent = userEmail;
+
+      // local last login
+      try {
+        const nowStr = new Date().toLocaleString();
+        const last = localStorage.getItem("bizlink_last_login");
+        document.getElementById("detailLastLogin").textContent = last || "—";
+        localStorage.setItem("bizlink_last_login", nowStr);
+      } catch (e) {}
+
+      // role
+      setStatus("Loading your profile…");
+      userRole = await fetchUserRole(userEmail) || "owner";
+      applyRoleChips(userRole);
+      document.getElementById("detailRole").textContent = userRole;
+
+      // PROFILE
+      const profile = await fetchUserProfile(userEmail);
+
+      // Fill basics
+      const name = (profile && (profile.Name || profile["Full Name"])) || user.displayName || "New BizLink User";
+      document.getElementById("profileName").textContent = name;
+      document.getElementById("detailName").textContent = name;
+      document.getElementById("avatarInitials").textContent = name.split(" ").map(w => w[0] || "").join("").toUpperCase().slice(0,2);
+
+      const city = profile && (profile.City || profile.Location) || "—";
+      const phone = profile && (profile.Phone || profile.Mobile) || "—";
+      document.getElementById("detailCity").textContent = city;
+      document.getElementById("detailPhone").textContent = phone;
+
+      // BizLink ID (BZ1234 type)
+      const bizId = profile && (profile.UserID || profile.BizID || profile.MemberCode);
+      if (bizId) {
+        document.getElementById("detailBizId").textContent = bizId;
+        const chip = document.getElementById("bizIdChip");
+        chip.classList.remove("hidden");
+        chip.textContent = `ID: ${bizId}`;
+      } else {
+        document.getElementById("detailBizId").textContent = "Will be assigned by BizLink team";
+      }
+
+      // Member since
+      const created = profile && (profile.CreatedAt || profile.SignupAt || profile.CreatedDate);
+      document.getElementById("memberSince").textContent =
+        created ? new Date(created).toLocaleDateString() : "—";
+
+      // Plan from profile OR localStorage
+      let planName = profile && profile.Plan;
+      try {
+        const localPlan = localStorage.getItem("bizlinkPlan");
+        if (!planName && localPlan) planName = localPlan;
+      } catch (e) {}
+      fillPlanInfo(planName);
+
+      // Ratings (mostly for freelancers)
+      const avgRating = profile && (profile.AvgRating || profile.avgRating);
+      const totalReviews = profile && (profile.TotalReviews || profile.ReviewsCount);
+      const completedWorks = profile && (profile.CompletedWorks || profile.TotalWorks);
+
+      renderStars(avgRating || 0);
+      const ratingSummary = document.getElementById("ratingSummary");
+      const ratingBreakdown = document.getElementById("ratingBreakdown");
+
+      if (avgRating && totalReviews) {
+        ratingSummary.textContent = `${Number(avgRating).toFixed(1)} / 5 · ${totalReviews} review(s)`;
+      } else {
+        ratingSummary.textContent = "No ratings yet.";
+      }
+
+      const rNote = document.getElementById("ratingRoleNote");
+      if ((userRole || "").toLowerCase().includes("free")) {
+        rNote.textContent = "Owners ne aapko jo rating di hai, uska summary yahan dikh raha hai.";
+      } else {
+        rNote.textContent = "Owners / Business ke liye detailed rating system jaldi aa raha hai.";
+      }
+
+      ratingBreakdown.textContent = completedWorks
+        ? `Approx. ${completedWorks} completed works recorded.`
+        : "Completed works data will appear here once you start using BizLink more.";
+
+      // Activity stats (fallback agar profile me nahi hai)
+      let stats = null;
+      if (profile && (profile.PostedWorks || profile.InProgress || profile.CompletedWorks)) {
+        stats = {
+          total: profile.PostedWorks || profile.AssignedWorks || 0,
+          inProgress: profile.InProgress || 0,
+          completed: profile.CompletedWorks || 0
+        };
+      } else {
+        stats = await fetchActivityStats(userEmail, userRole);
+      }
+      fillActivityCards(stats, userRole);
+
+      setStatus("");
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => {
+        window.location.href = "index.html";
+      });
+    });
   </script>
 </body>
 </html>
