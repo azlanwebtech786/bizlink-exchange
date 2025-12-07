@@ -723,8 +723,19 @@
   <script>
     function getCurrentUserRole(){
       try{
-        const raw = localStorage.getItem('bizlink_user_role');
-        return raw ? raw.toLowerCase() : null;
+        // agar future me role kisi aur key me save ho jaye to bhi mil jaye
+        const possibleKeys = [
+          'bizlink_user_role',
+          'bizlink_role',
+          'user_role',
+          'role',
+          'bizRole'
+        ];
+        for(const k of possibleKeys){
+          const v = localStorage.getItem(k);
+          if(v) return v.toLowerCase();
+        }
+        return null;
       }catch(e){
         return null;
       }
@@ -737,7 +748,7 @@
           const role = getCurrentUserRole();
           const user = (typeof auth !== 'undefined') ? auth.currentUser : null;
 
-          // 1) Login hi nahi hai
+          // 1) Login hi nahi hai → block + redirect
           if(!user){
             e.preventDefault();
             alert('Pehle login / signup kijiye, phir yeh section use kar sakte ho.');
@@ -745,10 +756,9 @@
             return;
           }
 
-          // 2) User login hai lekin role missing (old account)
+          // 2) User login hai lekin role missing → ab guard skip, normal navigation
           if(!role){
-            e.preventDefault();
-            alert('Aapka role system me nahi mila. Naya account se signup kijiye (Freelancer / Owner / Business) ya support se contact kijiye.');
+            console.warn('Role not found in localStorage, skipping role guard.');
             return;
           }
 
@@ -778,7 +788,7 @@
               return;
             }
           }
-          // Agar sab pass ho gaya, normal navigation chalega
+          // sab ok → normal navigation
         });
       });
     });
