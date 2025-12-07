@@ -20,13 +20,32 @@
         <h1 class="text-3xl font-bold text-center mb-6">Create Your Account</h1>
         
         <form id="signupForm" class="space-y-4">
-            <input type="email" id="email" placeholder="Enter your email" required 
+            <input type="email" id="email" placeholder="Enter your email" required
                    class="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-200 outline-none focus:bg-white/30">
             
-            <input type="password" id="password" placeholder="Create a password (min. 6 chars)" required 
+            <input type="password" id="password" placeholder="Create a password (min. 6 chars)" required
                    class="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-200 outline-none focus:bg-white/30">
+
+            <!-- NEW: Role selection -->
+            <div class="space-y-2 text-sm mt-2">
+                <p class="text-center text-gray-100">Choose your role</p>
+                <div class="flex flex-col gap-2 text-xs">
+                    <label class="flex items-center gap-2">
+                        <input type="radio" name="role" value="freelancer" checked class="accent-red-500">
+                        <span>Freelancer (kaam lene ke liye)</span>
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <input type="radio" name="role" value="owner" class="accent-red-500">
+                        <span>Business Owner (Post a Work / Owner Dashboard)</span>
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <input type="radio" name="role" value="biz10x" class="accent-red-500">
+                        <span>10X Grow Lab (Growth System)</span>
+                    </label>
+                </div>
+            </div>
             
-            <button type="submit" id="submitBtn" 
+            <button type="submit" id="submitBtn"
                     class="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition">
                 Create Account
             </button>
@@ -38,62 +57,88 @@
         </p>
     </div>
 
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
     <script>
        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
-  authDomain: "bizlink-exchange.firebaseapp.com",
-  projectId: "bizlink-exchange",
-  storageBucket: "bizlink-exchange.firebasestorage.app",
-  messagingSenderId: "116213651971",
-  appId: "1:116213651971:web:fff60961af0c4da3448c36",
-  measurementId: "G-VQ3JM82D1N"
-};
+       const firebaseConfig = {
+          apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+          authDomain: "bizlink-exchange.firebaseapp.com",
+          projectId: "bizlink-exchange",
+          storageBucket: "bizlink-exchange.firebasestorage.app",
+          messagingSenderId: "116213651971",
+          appId: "1:116213651971:web:fff60961af0c4da3448c36",
+          measurementId: "G-VQ3JM82D1N"
+       };
 
-        // 2. Firebase ko initialize karein
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(); // Authentication service ko use karein
+       // Apps Script URL (same as dashboards)
+       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwh86jupkABs5rFaR87_q3Vu77lEUnjud4U1Zzh63R-GHf_60KAF6ijFUOC9-rgDqJZyA/exec";
 
-        // 3. Form elements ko select karein
-        const signupForm = document.getElementById('signupForm');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const submitBtn = document.getElementById('submitBtn');
-        const status = document.getElementById('status');
+       // Firebase initialize
+       firebase.initializeApp(firebaseConfig);
+       const auth = firebase.auth(); // Authentication service
 
-        // 4. Form submit hone par yeh function chalega
-        signupForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // Page ko reload hone se rokein
+       // Form elements
+       const signupForm = document.getElementById('signupForm');
+       const emailInput = document.getElementById('email');
+       const passwordInput = document.getElementById('password');
+       const submitBtn = document.getElementById('submitBtn');
+       const statusEl = document.getElementById('status');
 
-            const email = emailInput.value;
+       // Helper: call Apps Script to save user profile + role
+       async function saveUserProfile(email, role) {
+         try {
+           const body = new URLSearchParams();
+           body.append('action', 'setUserProfile');
+           body.append('email', email);
+           body.append('role', role);
+
+           await fetch(SCRIPT_URL, {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+             body: body.toString()
+           });
+         } catch (err) {
+           console.warn('setUserProfile error', err);
+         }
+       }
+
+       // Form submit
+       signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Page reload rokna
+
+            const email = emailInput.value.trim();
             const password = passwordInput.value;
+            const roleInput = document.querySelector('input[name="role"]:checked');
+            const role = roleInput ? roleInput.value : '';
 
             submitBtn.disabled = true;
             submitBtn.innerText = 'Creating account...';
-            status.innerText = '';
+            statusEl.innerText = '';
 
-            // 5. Firebase ko naya user banane ke liye bolein
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Success!
-                    status.style.color = 'lightgreen';
-                    status.innerText = '✅ Account created successfully! Redirecting to login...';
-                    // User ko 2 second baad login page par bhej dein
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
-                })
-                .catch((error) => {
-                    // Error!
-                    status.style.color = 'pink';
-                    status.innerText = `❌ Error: ${error.message}`;
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = 'Create Account';
-                });
-        });
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+
+                // Role + profile Apps Script me save karo
+                if (role) {
+                  saveUserProfile(email, role); // fire-and-forget
+                }
+
+                statusEl.style.color = 'lightgreen';
+                statusEl.innerText = '✅ Account created successfully! Redirecting to login...';
+
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } catch (error) {
+                statusEl.style.color = 'pink';
+                statusEl.innerText = `❌ Error: ${error.message}`;
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Create Account';
+            }
+       });
     </script>
 
 </body>
