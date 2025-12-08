@@ -5,7 +5,7 @@
   <title>BizLink | Sign Up</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind & Fonts -->
+  <!-- Tailwind + Fonts -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -22,224 +22,198 @@
     .button-gradient{
       background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%);
     }
-    .role-card{
-      border:1px solid rgba(148,163,184,.4);
-      border-radius:0.75rem;
-      padding:0.75rem 0.9rem;
+    .role-pill{
+      border:1px solid rgba(148,163,184,.6);
+      border-radius:999px;
+      padding:0.4rem 0.9rem;
+      font-size:0.75rem;
+      display:inline-flex;
+      align-items:center;
+      gap:0.35rem;
       cursor:pointer;
       transition:all .15s ease;
-      background:#020617;
     }
-    .role-card:hover{
-      border-color:#a855f7;
-      background:#020617;
-    }
-    .role-card.active{
-      border-color:#a855f7;
-      box-shadow:0 0 0 1px rgba(168,85,247,.4);
-      background:#020617;
-    }
-    .role-badge{
-      font-size:.70rem;
-      padding:.10rem .4rem;
-      border-radius:999px;
-      background:rgba(148,163,184,.2);
+    .role-pill.active{
+      border-color:#c084fc;
+      background:rgba(129,140,248,0.25);
       color:#e5e7eb;
+    }
+    .role-pill span.badge{
+      font-size:0.65rem;
+      border-radius:999px;
+      padding:0.1rem 0.5rem;
+      background:rgba(15,23,42,0.9);
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center px-4">
+<body class="min-h-screen">
 
-  <main class="w-full max-w-xl mx-auto">
-    <header class="mb-6 flex items-center justify-between">
-      <div>
-        <a href="index.html" class="text-xs text-slate-400 hover:text-white flex items-center mb-1">
-          ← Back to Home
-        </a>
-        <h1 class="text-2xl font-bold text-white">
-          Create your <span class="text-purple-400">BizLink</span> account
-        </h1>
-        <p class="text-xs text-slate-400 mt-1">
-          1 account se aap Freelancer / Owner / 10X Business flow choose kar sakte ho.
-        </p>
-      </div>
-      <a href="login.html" class="text-xs text-purple-300 hover:text-purple-200">
-        Already have an account? Login
+  <!-- Top bar -->
+  <header class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40">
+    <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
+        ← Back to Home
       </a>
-    </header>
+      <div class="flex items-center gap-3 text-xs">
+        <span class="hidden sm:inline text-slate-400">Already have an account?</span>
+        <a href="login.html" class="px-3 py-1 rounded-md border border-slate-600 text-slate-100 hover:border-purple-500 text-xs font-semibold">
+          Login
+        </a>
+      </div>
+    </div>
+  </header>
 
-    <section class="card-bg rounded-2xl p-5">
+  <main class="max-w-xl mx-auto px-4 py-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
+      Create your <span class="text-purple-400">BizLink</span> account
+    </h1>
+    <p class="text-xs text-slate-400 mb-6">
+      Ek hi signup se aap <span class="font-semibold text-slate-200">Freelancer / Work Owner / 10X Grow Lab Business</span> me se
+      koi bhi role choose kar sakte ho.
+      Niche jo role select karoge, wahi aage dashboards me use hoga.
+    </p>
+
+    <!-- Status line -->
+    <div id="statusBox" class="mb-4 text-xs text-slate-400"></div>
+
+    <!-- Signup Card -->
+    <section class="card-bg rounded-2xl p-5 sm:p-6">
       <form id="signupForm" class="space-y-4">
-        <!-- STATUS -->
-        <p id="signupStatus" class="text-xs text-slate-400 mb-1"></p>
-
-        <!-- NAME + EMAIL -->
-        <div class="grid sm:grid-cols-2 gap-3">
+        <!-- Full name + Phone -->
+        <div class="grid sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs text-slate-300 mb-1">Full Name</label>
+            <label class="block text-xs mb-1">Full Name</label>
             <input
+              type="text"
               id="fullName"
-              type="text"
               required
-              class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Your full name"
+              placeholder="Apna naam"
+              class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
           <div>
-            <label class="block text-xs text-slate-300 mb-1">Email</label>
+            <label class="block text-xs mb-1">Phone</label>
             <input
-              id="email"
-              type="email"
-              required
-              class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="you@example.com"
-            />
-          </div>
-        </div>
-
-        <!-- PHONE + CITY -->
-        <div class="grid sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Phone</label>
-            <input
-              id="phone"
               type="tel"
-              class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="WhatsApp number"
+              id="phone"
+              required
+              placeholder="10 digit mobile"
+              class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+        </div>
+
+        <!-- Email + City -->
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs mb-1">Email (Google login wala)</label>
+            <input
+              type="email"
+              id="email"
+              required
+              placeholder="you@example.com"
+              class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
           <div>
-            <label class="block text-xs text-slate-300 mb-1">City</label>
+            <label class="block text-xs mb-1">City</label>
             <input
-              id="city"
               type="text"
-              class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="City / Location"
+              id="city"
+              required
+              placeholder="Jaise: Jaipur / Delhi"
+              class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
         </div>
 
-        <!-- PASSWORD -->
-        <div class="grid sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Password</label>
-            <input
-              id="password"
-              type="password"
-              required
-              minlength="6"
-              class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Minimum 6 characters"
-            />
-          </div>
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Confirm Password</label>
-            <input
-              id="confirmPassword"
-              type="password"
-              required
-              minlength="6"
-              class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Re-enter password"
-            />
-          </div>
-        </div>
-
-        <!-- ROLE SELECT -->
+        <!-- Password -->
         <div>
-          <p class="text-xs font-semibold text-slate-200 mb-2">
-            Choose your primary role
+          <label class="block text-xs mb-1">Password</label>
+          <input
+            type="password"
+            id="password"
+            required
+            minlength="6"
+            placeholder="Min 6 characters"
+            class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <p class="mt-1 text-[11px] text-slate-500">
+            Password kam se kam 6 characters ka hona chahiye.
           </p>
-
-          <div class="space-y-2">
-            <!-- FREELANCER -->
-            <label class="role-card flex items-start gap-3" data-role-card="freelancer">
-              <input
-                type="radio"
-                name="role"
-                value="freelancer"
-                data-label="Freelancer"
-                class="mt-1"
-              />
-              <div class="flex-1">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-semibold text-slate-100">Freelancer</span>
-                  <span class="role-badge">Direct Work + Marketplace</span>
-                </div>
-                <p class="text-[11px] text-slate-400 mt-1">
-                  Aapko clients ke liye kaam karna hai – Direct Work + Freelancer Dashboard use karoge.
-                </p>
-              </div>
-            </label>
-
-            <!-- WORK OWNER -->
-            <label class="role-card flex items-start gap-3" data-role-card="owner">
-              <input
-                type="radio"
-                name="role"
-                value="owner"
-                data-label="Work Owner (Project Owner)"
-                class="mt-1"
-              />
-              <div class="flex-1">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-semibold text-slate-100">
-                    Work Owner (Project Owner)
-                  </span>
-                  <span class="role-badge">Post a Work + Work Dashboard</span>
-                </div>
-                <p class="text-[11px] text-slate-400 mt-1">
-                  Aapko freelancers se kaam karwana hai – Post a Work + Work (Owner) Dashboard use karoge.
-                </p>
-              </div>
-            </label>
-
-            <!-- BUSINESS / 10X -->
-            <label class="role-card flex items-start gap-3" data-role-card="business">
-              <input
-                type="radio"
-                name="role"
-                value="business"
-                data-label="Business (10X Grow Lab)"
-                class="mt-1"
-              />
-              <div class="flex-1">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-semibold text-slate-100">
-                    Business (10X Grow Lab)
-                  </span>
-                  <span class="role-badge">Get Listed + 10X Dashboard</span>
-                </div>
-                <p class="text-[11px] text-slate-400 mt-1">
-                  Aap 10X Grow Lab system me aana chahte ho – Get Listed + Business / 10X dashboards use karoge.
-                </p>
-              </div>
-            </label>
-          </div>
         </div>
 
-        <!-- SUBMIT -->
+        <!-- Role pills -->
+        <div>
+          <label class="block text-xs mb-1">Choose Account Type / Role</label>
+          <div class="flex flex-wrap gap-2 mt-1" id="rolePills">
+            <!-- Freelancer -->
+            <button type="button" class="role-pill" data-role="freelancer">
+              <span class="badge">Freelancer</span>
+              <span>Kaam karoge</span>
+            </button>
+
+            <!-- Work Owner -->
+            <button type="button" class="role-pill active" data-role="owner">
+              <span class="badge">Work Owner</span>
+              <span>Freelancer se kaam karwana hai</span>
+            </button>
+
+            <!-- 10X Grow Lab Business -->
+            <button type="button" class="role-pill" data-role="business">
+              <span class="badge">10X Business</span>
+              <span>Marketing / Grow Lab</span>
+            </button>
+          </div>
+          <p class="mt-2 text-[11px] text-slate-500">
+            • <span class="font-semibold">Freelancer</span> → Direct Work + Freelancer Dashboard  
+            • <span class="font-semibold">Work Owner</span> → Post a Work + Owner Dashboard  
+            • <span class="font-semibold">Business (10X Grow Lab)</span> → Get Listed + 10X Growth system
+          </p>
+        </div>
+
+        <!-- Plan -->
+        <div>
+          <label class="block text-xs mb-1">Current Plan</label>
+          <select
+            id="plan"
+            class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            <option value="Free">Free (default)</option>
+            <option value="Basic">Basic</option>
+            <option value="Standard">Standard</option>
+            <option value="Premium 10X">Premium 10X</option>
+          </select>
+          <p class="mt-1 text-[11px] text-slate-500">
+            Agar aapne pehle se pricing section se koi plan choose kiya hoga to yahan auto-fill ho jayega.
+          </p>
+        </div>
+
+        <!-- Submit -->
         <div class="pt-2">
           <button
             id="signupBtn"
             type="submit"
-            class="w-full button-gradient text-white py-2.5 rounded-lg text-sm font-semibold hover:opacity-95 disabled:opacity-60"
+            class="button-gradient w-full py-2.5 rounded-lg text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Create Account
+            Create BizLink Account
           </button>
         </div>
       </form>
     </section>
 
-    <p class="text-[11px] text-slate-500 mt-3 text-center">
-      By signing up, you agree to basic terms. BizLink abhi private beta me hai.
+    <p class="mt-4 text-[11px] text-slate-500">
+      Sign up karke aap BizLink ke basic terms se agree ho rahe ho. Ye account aap index page ke sabhi role-based
+      dashboards ke liye use kar paoge.
     </p>
   </main>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
   <script>
+    // ---- Firebase config (same jo baaki pages par hai) ----
     const firebaseConfig = {
       apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
       authDomain: "bizlink-exchange.firebaseapp.com",
@@ -251,150 +225,162 @@
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-  </script>
 
-  <script>
-    // 👉 Users Apps Script URL (jisme registerUser & getUserProfile hai)
-    const USERS_SCRIPT_URL =
-      "https://script.google.com/macros/s/AKfycbyt_-zovOHhovnE067tC_XQEEVAP3R-j0QxN9lhxzqcTpmHYwoHzKzbrJ7O3UYvqA7H/exec";
+    // ---- Users Apps Script URL (ye tumne diya hai) ----
+    const USERS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyt_-zovOHhovnE067tC_XQEEVAP3R-j0QxN9lhxzqcTpmHYwoHzKzbrJ7O3UYvqA7H/exec";
 
-    const signupForm   = document.getElementById("signupForm");
-    const signupStatus = document.getElementById("signupStatus");
-    const signupBtn    = document.getElementById("signupBtn");
+    const statusBox   = document.getElementById("statusBox");
+    const signupForm  = document.getElementById("signupForm");
+    const signupBtn   = document.getElementById("signupBtn");
+    const rolePills   = document.getElementById("rolePills");
+    const planSelect  = document.getElementById("plan");
 
+    let selectedRole = "owner"; // default
+
+    // ---- Small helpers ----
     function setStatus(msg, type = "info") {
-      signupStatus.textContent = msg || "";
+      if (!statusBox) return;
+      statusBox.textContent = msg || "";
       if (!msg) {
-        signupStatus.className = "text-xs text-slate-400 mb-1";
+        statusBox.className = "mb-4 text-xs text-slate-400";
       } else if (type === "error") {
-        signupStatus.className = "text-xs text-red-300 mb-1";
+        statusBox.className = "mb-4 text-xs text-red-300";
       } else {
-        signupStatus.className = "text-xs text-slate-300 mb-1";
+        statusBox.className = "mb-4 text-xs text-emerald-300";
       }
     }
 
-    // Role card UI
-    document.querySelectorAll("[data-role-card]").forEach(card => {
-      card.addEventListener("click", () => {
-        const input = card.querySelector("input[type='radio']");
-        if (input) input.checked = true;
+    function setLoading(isLoading) {
+      if (!signupBtn) return;
+      signupBtn.disabled = isLoading;
+      signupBtn.textContent = isLoading ? "Creating account…" : "Create BizLink Account";
+    }
 
-        document.querySelectorAll("[data-role-card]").forEach(c =>
-          c.classList.remove("active")
-        );
-        card.classList.add("active");
-      });
+    // ---- Role pills click ----
+    rolePills.addEventListener("click", (e) => {
+      const pill = e.target.closest(".role-pill");
+      if (!pill) return;
+      const role = pill.getAttribute("data-role");
+      if (!role) return;
+      selectedRole = role;
+
+      rolePills.querySelectorAll(".role-pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
     });
 
-    // Google Sheet entry banaane wala helper
-    async function registerUserInSheet({ fullName, email, roleCode, phone, city, plan }) {
+    // ---- Plan auto-fill from localStorage (agar user ne pricing se choose kiya ho) ----
+    (function hydratePlanFromLocalStorage() {
       try {
-        const body = new URLSearchParams();
-        body.append("action", "registerUser");
-        body.append("FullName", fullName || "");
-        body.append("Email", email || "");
-        body.append("Role", roleCode || ""); // canonical: freelancer / owner / business
-        body.append("Phone", phone || "");
-        body.append("City", city || "");
-        body.append("Plan", plan || "Free");
-
-        const res = await fetch(USERS_SCRIPT_URL, {
-          method: "POST",
-          body
-        });
-
-        const data = await res.json();
-        console.log("registerUser response:", data);
-
-        if (data.ok && data.user && data.user.BizID) {
-          try {
-            localStorage.setItem("bizlink_user_bizid", data.user.BizID);
-          } catch (e) {}
+        const savedPlan = localStorage.getItem("bizlinkPlan");
+        if (savedPlan) {
+          for (const opt of planSelect.options) {
+            if (opt.value.toLowerCase() === savedPlan.toLowerCase()) {
+              planSelect.value = opt.value;
+              break;
+            }
+          }
         }
-      } catch (err) {
-        console.error("registerUserInSheet error:", err);
-        // sheet error ki wajah se signup flow nahi todenge
+      } catch (e) {
+        // ignore
       }
+    })();
+
+    // ---- Users Sheet me entry banane ka helper ----
+    async function saveUserToSheet(payload) {
+      const body = new URLSearchParams();
+      Object.keys(payload).forEach(k => body.append(k, payload[k]));
+
+      const res = await fetch(USERS_SCRIPT_URL, {
+        method: "POST",
+        body
+      });
+
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (err) {
+        console.error("Users script JSON parse error:", err);
+      }
+      return data;
     }
 
+    // ---- Signup submit ----
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      setStatus("");
 
       const fullName = document.getElementById("fullName").value.trim();
-      const email    = document.getElementById("email").value.trim();
       const phone    = document.getElementById("phone").value.trim();
+      const email    = document.getElementById("email").value.trim().toLowerCase();
       const city     = document.getElementById("city").value.trim();
       const password = document.getElementById("password").value;
-      const confirm  = document.getElementById("confirmPassword").value;
+      const plan     = planSelect.value || "Free";
 
-      const roleInput = document.querySelector("input[name='role']:checked");
-
-      if (!roleInput) {
-        setStatus("Pehle apna role select karo (Freelancer / Owner / Business).", "error");
-        return;
-      }
-
-      const roleCode  = roleInput.value;              // 'freelancer' | 'owner' | 'business'
-      const roleLabel = roleInput.dataset.label || roleCode; // pretty label for localStorage
-
-      if (!fullName) {
-        setStatus("Full name required hai.", "error");
+      if (!fullName || !phone || !email || !city || !password) {
+        setStatus("Please fill all required fields.", "error");
         return;
       }
       if (password.length < 6) {
-        setStatus("Password minimum 6 characters ka hona chahiye.", "error");
+        setStatus("Password kam se kam 6 characters ka hona chahiye.", "error");
         return;
       }
-      if (password !== confirm) {
-        setStatus("Password aur Confirm Password match nahi kar rahe.", "error");
-        return;
-      }
+
+      setLoading(true);
+      setStatus("Creating Firebase account…");
 
       try {
-        signupBtn.disabled = true;
-        signupBtn.textContent = "Creating account…";
-        setStatus("Account create ho raha hai…");
-
+        // 1) Firebase signup
         const cred = await auth.createUserWithEmailAndPassword(email, password);
+        const user = cred.user;
 
-        // Optional: displayName set
+        // 2) LocalStorage me details save (index.html ke role guard ke liye)
         try {
-          await cred.user.updateProfile({ displayName: fullName });
+          localStorage.setItem("bizlink_user_email", email);
+          localStorage.setItem("bizlink_user_role", selectedRole);   // important for nav guard
+          localStorage.setItem("bizlinkPlan", plan);
         } catch (e) {
-          console.warn("updateProfile error:", e);
+          console.warn("localStorage error:", e);
         }
 
-        // localStorage me friendly role + email
-        try {
-          localStorage.setItem("bizlink_user_role", roleLabel);
-          localStorage.setItem("bizlink_user_email", email.toLowerCase());
-        } catch (e) {}
+        setStatus("Saving profile in Users sheet…");
 
-        // Google Sheet me Users entry
-        await registerUserInSheet({
-          fullName,
-          email,
-          roleCode,
-          phone,
-          city,
-          plan: "Free" // future: paid plan bhi yahi se save kar sakte hain
+        // 3) Users Google Sheet me entry
+        const resp = await saveUserToSheet({
+          action: "addUser",
+          FullName: fullName,
+          Email: email,
+          Role: selectedRole,
+          Phone: phone,
+          City: city,
+          Plan: plan
         });
 
-        setStatus("Account ban gaya, redirect ho rahe ho…");
+        if (!resp || resp.ok !== true) {
+          console.error("Users script response:", resp);
+          setStatus("Account ban gaya, lekin Users sheet me entry nahi bani. Support se contact karein.", "error");
+        } else if (resp.alreadyExists) {
+          setStatus("Firebase account pehle se tha, Users sheet entry already present hai.", "info");
+        } else {
+          setStatus("Account ready! BizLink profile Users sheet se connect ho gaya.", "success");
+        }
 
-        // Abhi sabko home bhej rahe hain (jaise pehle tha)
-        window.location.href = "index.html";
+        // 4) Redirect (index ya profile)
+        setTimeout(() => {
+          window.location.href = "profile.html";
+        }, 800);
+
       } catch (err) {
         console.error(err);
-        let msg = err.message || "Signup error";
-        if (msg.includes("email-already-in-use")) {
-          msg = "Ye email pehle se registered hai. Please login try karo.";
+
+        if (err.code === "auth/email-already-in-use") {
+          setStatus("Ye email pehle se registered hai. Login page se sign in kijiye.", "error");
+        } else if (err.code === "auth/weak-password") {
+          setStatus("Password weak hai. Thoda strong password use karein.", "error");
+        } else {
+          setStatus("Signup error: " + (err.message || "Unknown error"), "error");
         }
-        setStatus(msg, "error");
+
       } finally {
-        signupBtn.disabled = false;
-        signupBtn.textContent = "Create Account";
+        setLoading(false);
       }
     });
   </script>
