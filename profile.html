@@ -11,137 +11,129 @@
 
   <style>
     body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
-    .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.32)}
-    .badge{font-size:.70rem;padding:.15rem .6rem;border-radius:999px;font-weight:600}
-    .badge-purple{background:#a855f7;color:white}
-    .badge-blue{background:#2563eb;color:white}
-    .badge-green{background:#16a34a;color:white}
+    .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
+    .badge{font-size:.65rem;padding:.2rem .55rem;border-radius:999px}
+    .badge-role{background:#1d4ed8;color:#bfdbfe}
+    .badge-plan{background:#047857;color:#bbf7d0}
+    .badge-id{background:#6b21a8;color:#f3e8ff}
   </style>
 </head>
 <body class="min-h-screen">
 
   <!-- TOP BAR -->
   <header class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center space-x-3 text-sm">
-        <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
-          ← Back to Home
-        </a>
-        <h1 class="text-lg sm:text-2xl font-bold text-white">
-          My <span class="text-purple-400">BizLink</span> Profile
-        </h1>
-      </div>
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
+        ← Back to Home
+      </a>
+      <h1 class="text-lg sm:text-2xl font-bold text-white">
+        My <span class="text-purple-400">BizLink</span> Profile
+      </h1>
       <div class="flex items-center space-x-3 text-xs sm:text-sm">
-        <span id="loggedInEmail" class="hidden sm:inline text-slate-300"></span>
-        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
+        <span id="loggedInEmailTop" class="hidden sm:inline text-slate-300"></span>
+        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md text-xs font-semibold">
           Logout
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 py-6">
-    <!-- STATUS LINE -->
-    <p id="profileStatus" class="text-xs text-rose-300 mb-3 hidden">
-      Profile not found in Users sheet. Ho sakta hai signup ke time entry nahi bani ho.
-    </p>
+  <main class="max-w-5xl mx-auto px-4 py-6">
+    <p id="pageStatus" class="mb-3 text-xs text-slate-400"></p>
 
     <!-- TOP PROFILE CARD -->
-    <section id="topCard" class="card-bg rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <section class="card-bg rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div class="flex items-center gap-4">
-        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-purple-600 flex items-center justify-center text-xl font-bold">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-purple-600 flex items-center justify-center text-lg font-bold">
           <span id="avatarInitials">BZ</span>
         </div>
         <div>
-          <h2 id="displayName" class="text-lg sm:text-xl font-semibold text-slate-50">No profile found</h2>
-          <p id="displayEmail" class="text-xs text-slate-300 mt-1">—</p>
+          <p id="profileName" class="text-base sm:text-lg font-semibold text-slate-50">
+            No profile found
+          </p>
+          <p id="profileEmail" class="text-xs text-slate-400 mt-0.5">—</p>
           <div class="flex flex-wrap gap-2 mt-2">
-            <span id="bizIdBadge" class="badge badge-purple">BZ----</span>
-            <span id="roleBadge" class="badge badge-blue">Role</span>
-            <span id="planBadge" class="badge badge-green">Plan</span>
+            <span id="badgeId" class="badge badge-id">BZ----</span>
+            <span id="badgeRole" class="badge badge-role">Role</span>
+            <span id="badgePlan" class="badge badge-plan">Plan</span>
           </div>
         </div>
       </div>
 
-      <div class="text-right text-xs sm:text-sm space-y-1">
-        <p><span class="font-semibold">Rating:</span> <span id="ratingValue">- / 5</span></p>
-        <p><span class="font-semibold">Total Reviews:</span> <span id="ratingCount">0</span></p>
-        <p><span class="font-semibold">Joined:</span> <span id="joinedAtText">-</span></p>
-        <p><span class="font-semibold">Last Login:</span> <span id="lastLoginText">-</span></p>
+      <div class="text-right text-xs sm:text-sm">
+        <p class="text-slate-400">
+          Rating:
+          <span id="ratingValue" class="font-semibold text-amber-300">-</span>
+          <span class="text-slate-500">/ 5</span>
+        </p>
+        <p class="text-slate-400">
+          Total Reviews:
+          <span id="ratingCount" class="font-semibold text-slate-100">0</span>
+        </p>
+        <p class="text-slate-400 mt-1">
+          Joined:
+          <span id="joinedAt">-</span>
+        </p>
+        <p class="text-slate-400">
+          Last Login:
+          <span id="lastLogin">-</span>
+        </p>
       </div>
     </section>
 
-    <!-- DETAILS + INFO -->
-    <section class="grid md:grid-cols-2 gap-6 mb-6">
-      <!-- BASIC DETAILS -->
+    <p id="notFoundNote" class="mt-3 text-xs text-amber-300 hidden">
+      Profile not found in Users sheet. Ho sakta hai signup ke time entry nahi bani ho.
+    </p>
+
+    <!-- BOTTOM 2-COLUMN -->
+    <section class="mt-6 grid md:grid-cols-2 gap-5">
+      <!-- LEFT: BASIC DETAILS -->
       <div class="card-bg rounded-2xl p-4 sm:p-5">
-        <h3 class="text-sm font-semibold mb-3 text-slate-100">Basic Details</h3>
-        <dl class="space-y-2 text-xs sm:text-sm">
+        <h2 class="text-sm font-semibold mb-3 text-slate-100">Basic Details</h2>
+        <dl class="text-xs sm:text-sm space-y-2 text-slate-300">
           <div class="flex justify-between">
             <dt class="text-slate-400">Full Name</dt>
-            <dd id="bdFullName" class="text-slate-100 text-right">—</dd>
+            <dd id="detailName" class="font-medium text-slate-50">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">Role / Account Type</dt>
-            <dd id="bdRole" class="text-slate-100 text-right">—</dd>
+            <dd id="detailRole" class="font-medium text-slate-50">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">Phone</dt>
-            <dd id="bdPhone" class="text-slate-100 text-right">—</dd>
+            <dd id="detailPhone" class="font-medium text-slate-50">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">City</dt>
-            <dd id="bdCity" class="text-slate-100 text-right">—</dd>
+            <dd id="detailCity" class="font-medium text-slate-50">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">BizLink ID</dt>
-            <dd id="bdBizId" class="text-slate-100 text-right">—</dd>
+            <dd id="detailBizId" class="font-medium text-slate-50">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">Plan</dt>
-            <dd id="bdPlan" class="text-slate-100 text-right">—</dd>
+            <dd id="detailPlan" class="font-medium text-slate-50">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">Account Status</dt>
-            <dd id="bdStatus" class="text-slate-100 text-right">—</dd>
+            <dd id="detailStatus" class="font-medium text-slate-50">—</dd>
           </div>
         </dl>
       </div>
 
-      <!-- PROFILE INFO -->
+      <!-- RIGHT: INFO -->
       <div class="card-bg rounded-2xl p-4 sm:p-5">
-        <h3 class="text-sm font-semibold mb-3 text-slate-100">Profile Info</h3>
+        <h2 class="text-sm font-semibold mb-3 text-slate-100">Profile Info</h2>
         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-          Ye profile data <span class="font-semibold">BizLink_Users → Users</span>
-          Google Sheet se aa raha hai (signup ke time auto entry).
+          Ye profile data <span class="font-semibold text-slate-100">BizLink_Users → Users</span> Google Sheet se aa raha hai
+          (signup ke time auto entry).
         </p>
         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mt-3">
-          Future me yahin se aapka <span class="font-semibold">public profile link, rating badge</span>
-          aur <span class="font-semibold">activity summary</span> generate hoga.
+          Future me yahin se aapka <span class="font-semibold text-sky-300">public profile link</span>,
+          <span class="font-semibold text-amber-300"> rating badge</span> aur
+          <span class="font-semibold text-purple-300"> activity summary</span> generate hoga.
         </p>
-      </div>
-    </section>
-
-    <!-- ACTIVITY SUMMARY (placeholder abhi) -->
-    <section class="card-bg rounded-2xl p-4 sm:p-5 mt-4">
-      <h3 class="text-sm font-semibold mb-3 text-slate-100">Activity Summary</h3>
-      <p class="text-xs text-slate-400 mb-3">
-        Abhi tak koi work <span class="font-semibold">Post a Work</span> se create nahi hua, isliye sab zero hai.
-        Baad me yahan se aapke works ka overview show karenge.
-      </p>
-      <div class="grid sm:grid-cols-3 gap-4 text-center text-sm">
-        <div class="border border-slate-700 rounded-xl py-4">
-          <p class="text-slate-400 text-xs mb-1">Works Posted</p>
-          <p class="text-2xl font-bold" id="statPosted">0</p>
-        </div>
-        <div class="border border-slate-700 rounded-xl py-4">
-          <p class="text-slate-400 text-xs mb-1">In Progress</p>
-          <p class="text-2xl font-bold" id="statInProgress">0</p>
-        </div>
-        <div class="border border-slate-700 rounded-xl py-4">
-          <p class="text-slate-400 text-xs mb-1">Completed</p>
-          <p class="text-2xl font-bold" id="statCompleted">0</p>
-        </div>
       </div>
     </section>
   </main>
@@ -150,7 +142,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script>
-    // ---- Firebase config (same as baaki pages) ----
     const firebaseConfig = {
       apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
       authDomain: "bizlink-exchange.firebaseapp.com",
@@ -158,142 +149,204 @@
       storageBucket: "bizlink-exchange.firebasestorage.app",
       messagingSenderId: "116213651971",
       appId: "1:116213651971:web:fff60961af0c4da3448c36",
-      measurementId: "G-VQ3M820IW"
+      measurementId: "G-VQ3JM82D1N"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
   </script>
 
+  <!-- PROFILE LOGIC -->
   <script>
-    // ---- SAME SCRIPT URL JO signup.html me hai ----
     const USERS_SCRIPT_URL =
       "https://script.google.com/macros/s/AKfycbztkBN5GcgZdPARgOSrvBvgJcfClCvXzIq0mEk64TpaShqQ4FzpFAjQ742Io70wyzNa/exec";
 
-    // DOM refs
-    const profileStatus  = document.getElementById("profileStatus");
-    const loggedInEmailEl= document.getElementById("loggedInEmail");
-    const avatarInitials = document.getElementById("avatarInitials");
-    const displayName    = document.getElementById("displayName");
-    const displayEmail   = document.getElementById("displayEmail");
-    const bizIdBadge     = document.getElementById("bizIdBadge");
-    const roleBadge      = document.getElementById("roleBadge");
-    const planBadge      = document.getElementById("planBadge");
-    const ratingValue    = document.getElementById("ratingValue");
-    const ratingCount    = document.getElementById("ratingCount");
-    const joinedAtText   = document.getElementById("joinedAtText");
-    const lastLoginText  = document.getElementById("lastLoginText");
+    const statusEl      = document.getElementById("pageStatus");
+    const notFoundNote  = document.getElementById("notFoundNote");
+    const loggedTop     = document.getElementById("loggedInEmailTop");
 
-    const bdFullName = document.getElementById("bdFullName");
-    const bdRole     = document.getElementById("bdRole");
-    const bdPhone    = document.getElementById("bdPhone");
-    const bdCity     = document.getElementById("bdCity");
-    const bdBizId    = document.getElementById("bdBizId");
-    const bdPlan     = document.getElementById("bdPlan");
-    const bdStatus   = document.getElementById("bdStatus");
+    const avatarInitials= document.getElementById("avatarInitials");
+    const profileNameEl = document.getElementById("profileName");
+    const profileEmailEl= document.getElementById("profileEmail");
+    const badgeIdEl     = document.getElementById("badgeId");
+    const badgeRoleEl   = document.getElementById("badgeRole");
+    const badgePlanEl   = document.getElementById("badgePlan");
 
-    function showStatus(msg) {
+    const ratingValueEl = document.getElementById("ratingValue");
+    const ratingCountEl = document.getElementById("ratingCount");
+    const joinedAtEl    = document.getElementById("joinedAt");
+    const lastLoginEl   = document.getElementById("lastLogin");
+
+    const dName   = document.getElementById("detailName");
+    const dRole   = document.getElementById("detailRole");
+    const dPhone  = document.getElementById("detailPhone");
+    const dCity   = document.getElementById("detailCity");
+    const dBizId  = document.getElementById("detailBizId");
+    const dPlan   = document.getElementById("detailPlan");
+    const dStatus = document.getElementById("detailStatus");
+
+    function setStatus(msg, type="info") {
+      statusEl.textContent = msg || "";
       if (!msg) {
-        profileStatus.classList.add("hidden");
-        return;
-      }
-      profileStatus.textContent = msg;
-      profileStatus.classList.remove("hidden");
-    }
-
-    function setLocalRoleAndBizId(profile) {
-      try {
-        if (profile.role) {
-          localStorage.setItem("bizlink_user_role", String(profile.role));
-        }
-        if (profile.bizId) {
-          localStorage.setItem("bizlink_user_bizid", String(profile.bizId));
-        }
-      } catch (e) {
-        console.warn("LocalStorage error:", e);
+        statusEl.className = "mb-3 text-xs text-slate-400";
+      } else if (type === "error") {
+        statusEl.className = "mb-3 text-xs text-red-300";
+      } else {
+        statusEl.className = "mb-3 text-xs text-slate-300";
       }
     }
 
-    function fillProfileCard(p, email) {
-      const name = p.fullName || "New BizLink User";
-      const initials = name
-        .split(" ")
-        .filter(Boolean)
-        .map(w => w[0].toUpperCase())
-        .join("")
-        .slice(0,2) || "BZ";
-
-      avatarInitials.textContent = initials;
-      displayName.textContent    = name;
-      displayEmail.textContent   = email || p.email || "-";
-
-      bizIdBadge.textContent = p.bizId || "BZ----";
-      roleBadge.textContent  = (p.role || "Role").toLowerCase();
-      planBadge.textContent  = p.plan || "Free";
-
-      ratingValue.textContent = (p.rating && p.rating !== "-")
-        ? `${p.rating} / 5`
-        : "- / 5";
-      ratingCount.textContent = p.totalReviews || 0;
-      joinedAtText.textContent = p.joinedAt || "-";
-      lastLoginText.textContent= p.lastLogin || "-";
-
-      bdFullName.textContent = name;
-      bdRole.textContent     = p.role || "-";
-      bdPhone.textContent    = p.phone || "-";
-      bdCity.textContent     = p.city || "-";
-      bdBizId.textContent    = p.bizId || "-";
-      bdPlan.textContent     = p.plan || "-";
-      bdStatus.textContent   = p.status || "-";
+    function safe(v, def="—") {
+      if (v === null || v === undefined || v === "") return def;
+      return String(v);
     }
 
-    async function loadProfileForEmail(rawEmail) {
-      if (!rawEmail) {
-        showStatus("User email missing (auth issue).");
-        return;
+    function initialsFromNameOrEmail(name, email) {
+      if (name && name.trim()) {
+        const parts = name.trim().split(/\s+/);
+        if (parts.length === 1) return parts[0].substring(0,2).toUpperCase();
+        return (parts[0][0] + parts[1][0]).toUpperCase();
       }
-      const email = rawEmail.trim().toLowerCase();
-      loggedInEmailEl.textContent = `Logged in as: ${email}`;
-      displayEmail.textContent = email;
+      if (email) return email[0].toUpperCase();
+      return "BZ";
+    }
+
+    function renderProfile(p, authEmail) {
+      notFoundNote.classList.add("hidden");
+
+      const fullName = safe(p.FullName, "New BizLink User");
+      const email    = authEmail || safe(p.Email, "—");
+      const bizId    = safe(p.BizID, "BZ----");
+      const role     = safe(p.Role, "—").toLowerCase();
+      const phone    = safe(p.Phone);
+      const city     = safe(p.City);
+      const plan     = safe(p.Plan, "Free");
+      const rating   = p.Rating && p.Rating !== "-" ? p.Rating : "-";
+      const totalRev = p.TotalReviews || 0;
+      const joined   = safe(p.JoinedAt, "-");
+      const lastLog  = safe(p.LastLogin, "-");
+      const status   = safe(p.Status, "active");
+
+      avatarInitials.textContent = initialsFromNameOrEmail(fullName, email);
+      profileNameEl.textContent  = fullName;
+      profileEmailEl.textContent = email;
+
+      badgeIdEl.textContent   = bizId;
+      badgeRoleEl.textContent = role || "Role";
+      badgePlanEl.textContent = plan || "Plan";
+
+      ratingValueEl.textContent = rating;
+      ratingCountEl.textContent = totalRev;
+      joinedAtEl.textContent    = joined;
+      lastLoginEl.textContent   = lastLog;
+
+      dName.textContent   = fullName;
+      dRole.textContent   = role;
+      dPhone.textContent  = phone;
+      dCity.textContent   = city;
+      dBizId.textContent  = bizId;
+      dPlan.textContent   = plan;
+      dStatus.textContent = status;
 
       try {
-        const url =
-          `${USERS_SCRIPT_URL}?action=profile&email=${encodeURIComponent(email)}&ts=` +
-          Date.now();
+        if (role) localStorage.setItem("bizlink_user_role", role);
+        if (plan) localStorage.setItem("bizlinkPlan", plan);
+      } catch (e) {}
+    }
+
+    function renderNotFound(email, extraMsg) {
+      profileNameEl.textContent  = "No profile found";
+      profileEmailEl.textContent = email || "—";
+      avatarInitials.textContent = initialsFromNameOrEmail("", email);
+      badgeIdEl.textContent      = "BZ----";
+      badgeRoleEl.textContent    = "Role";
+      badgePlanEl.textContent    = "Plan";
+      ratingValueEl.textContent  = "-";
+      ratingCountEl.textContent  = "0";
+      joinedAtEl.textContent     = "-";
+      lastLoginEl.textContent    = "-";
+
+      dName.textContent   = "—";
+      dRole.textContent   = "—";
+      dPhone.textContent  = "—";
+      dCity.textContent   = "—";
+      dBizId.textContent  = "—";
+      dPlan.textContent   = "—";
+      dStatus.textContent = "—";
+
+      notFoundNote.classList.remove("hidden");
+      if (extraMsg) setStatus(extraMsg, "error");
+    }
+
+    async function loadUserProfile(email) {
+      if (!email) {
+        setStatus("Auth email missing.", "error");
+        renderNotFound("");
+        return;
+      }
+
+      setStatus("Loading profile…");
+
+      try {
+        const url = `${USERS_SCRIPT_URL}?action=getProfile&email=${encodeURIComponent(email)}`;
         const res = await fetch(url);
         const data = await res.json();
 
-        console.log("PROFILE RESPONSE", data);
-
-        if (!data || !data.ok || !data.profile) {
-          showStatus("Profile not found in Users sheet. Ho sakta hai signup ke time entry nahi bani ho.");
+        // Debug info show karo agar script error bhej raha hai
+        if (data && data.ok === false && data.error) {
+          renderNotFound(email, "Sheet script error: " + data.error);
           return;
         }
 
-        showStatus(""); // hide red line
-        const p = data.profile;
-        fillProfileCard(p, email);
-        setLocalRoleAndBizId(p);
+        let profile = null;
+
+        if (data && data.profile) {
+          profile = data.profile;
+        } else if (data && data.found && data.profile) {
+          profile = data.profile;
+        }
+
+        if (!profile) {
+          renderNotFound(email);
+          setStatus("Profile not found in Users sheet.");
+          return;
+        }
+
+        renderProfile(profile, email);
+        setStatus("");
+
       } catch (err) {
         console.error("Profile load error:", err);
-        showStatus("Error loading profile. Thodi der baad try karein.");
+        renderNotFound(email, "Error loading profile: " + err.message);
       }
     }
 
-    // Logout
     document.getElementById("logoutBtn").addEventListener("click", () => {
       auth.signOut().then(() => {
-        window.location.href = "login.html";
+        try {
+          localStorage.removeItem("bizlink_user_role");
+          localStorage.removeItem("bizlinkPlan");
+          localStorage.removeItem("bizlink_user_email");
+        } catch (e) {}
+        window.location.href = "index.html";
       });
     });
 
-    // Auth guard
     auth.onAuthStateChanged((user) => {
       if (!user) {
+        alert("Please login first.");
         window.location.href = "login.html";
         return;
       }
+
       const email = (user.email || "").toLowerCase();
-      loadProfileForEmail(email);
+      loggedTop.textContent = `Logged in as: ${email}`;
+      loggedTop.classList.remove("hidden");
+
+      try {
+        localStorage.setItem("bizlink_user_email", email);
+      } catch (e) {}
+
+      loadUserProfile(email);
     });
   </script>
 </body>
