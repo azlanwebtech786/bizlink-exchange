@@ -227,13 +227,21 @@
     const auth = firebase.auth();
 
     // ---- Users Apps Script URL (ye tumne diya hai) ----
-    const USERS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyt_-zovOHhovnE067tC_XQEEVAP3R-j0QxN9lhxzqcTpmHYwoHzKzbrJ7O3UYvqA7H/exec";
+    const USERS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztkBN5GcgZdPARgOSrvBvgJcfClCvXzIq0mEk64TpaShqQ4FzpFAjQ742Io70wyzNa/exec";
 
-    const statusBox   = document.getElementById("statusBox");
-    const signupForm  = document.getElementById("signupForm");
-    const signupBtn   = document.getElementById("signupBtn");
-    const rolePills   = document.getElementById("rolePills");
-    const planSelect  = document.getElementById("plan");
+    const body = new URLSearchParams();
+body.append("action", "upsertUser");   // ya "signupUser" – dono supported
+body.append("fullName", fullName);
+body.append("email", user.email);
+body.append("role", selectedRole);
+body.append("phone", phone);
+body.append("city", city);
+body.append("plan", selectedPlan);
+
+fetch(USERS_SCRIPT_URL, {
+  method: "POST",
+  body
+});
 
     let selectedRole = "owner"; // default
 
