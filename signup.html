@@ -7,90 +7,83 @@
 
   <!-- Tailwind -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body{background:#020617;color:#e5e7eb;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    .card-bg{background:#020617;border-radius:1.25rem;border:1px solid rgba(148,163,184,.4)}
-    .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
+    body{
+      font-family:'Poppins',sans-serif;
+      background:#050816;
+      color:#e5e7eb;
+    }
+    .card-bg{background:#020617;border:1px solid rgba(148,163,184,.4);}
+    .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%);}
+    .input-dark{
+      background:#020617;
+      border:1px solid #1f2937;
+      color:#e5e7eb;
+      font-size:0.875rem;
+    }
+    .input-dark::placeholder{color:#6b7280;}
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center">
+<body class="min-h-screen flex items-center justify-center px-4">
 
-  <main class="w-full max-w-md px-4">
-    <div class="card-bg px-8 py-10 shadow-xl">
-      <h1 class="text-2xl font-bold text-center mb-6">
-        Create <span class="text-purple-400">BizLink</span> Account
-      </h1>
+  <main class="w-full max-w-md card-bg rounded-2xl p-6 sm:p-8 shadow-xl">
+    <h1 class="text-center text-2xl sm:text-3xl font-bold mb-6">
+      Create <span class="text-purple-400">BizLink</span> Account
+    </h1>
 
-      <form id="signupForm" class="space-y-4">
-        <div>
-          <input id="fullName" type="text" required
-                 placeholder="Full name"
-                 class="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
-        </div>
+    <form id="signupForm" class="space-y-3">
+      <input id="fullName" type="text" placeholder="Full Name"
+             class="w-full px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
-        <div>
-          <input id="email" type="email" required
-                 placeholder="Email"
-                 class="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
-        </div>
+      <input id="email" type="email" placeholder="Email"
+             class="w-full px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
-        <div>
-          <input id="password" type="password" required
-                 placeholder="Password"
-                 class="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
-        </div>
+      <input id="password" type="password" placeholder="Password (min 6 chars)"
+             class="w-full px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
-        <div>
-          <input id="phone" type="tel" required
-                 placeholder="Phone"
-                 class="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
-        </div>
+      <input id="phone" type="text" placeholder="Phone"
+             class="w-full px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
-        <div>
-          <input id="city" type="text" required
-                 placeholder="City"
-                 class="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
-        </div>
+      <input id="city" type="text" placeholder="City"
+             class="w-full px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
-        <div>
-          <select id="role" required
-                  class="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
-            <option value="owner">Work Owner</option>
-            <option value="freelancer">Freelancer</option>
-            <option value="business">Business (10X Grow Lab)</option>
-          </select>
-        </div>
+      <select id="role"
+              class="w-full px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500">
+        <option value="owner">Work Owner</option>
+        <option value="freelancer">Freelancer</option>
+        <option value="business">10X Grow Lab Business</option>
+      </select>
 
-        <div>
-          <select id="plan" required
-                  class="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
-            <option value="Free">Free</option>
-            <option value="Basic">Basic</option>
-            <option value="Standard">Standard</option>
-            <option value="Premium 10X">Premium 10X</option>
-          </select>
-        </div>
+      <select id="plan"
+              class="w-full px-3 py-2 rounded-lg input-dark focus:outline-none focus:ring-2 focus:ring-purple-500">
+        <option value="Free">Free</option>
+        <option value="Basic">Basic</option>
+        <option value="Standard">Standard</option>
+        <option value="Premium 10X">Premium 10X</option>
+      </select>
 
-        <button id="signupBtn" type="submit"
-                class="w-full mt-2 button-gradient text-white font-semibold py-2 rounded-md text-sm">
-          Sign Up
-        </button>
+      <button type="submit"
+              class="w-full mt-2 button-gradient text-white font-semibold py-2 rounded-lg hover:opacity-90">
+        Sign Up
+      </button>
+    </form>
 
-        <p id="statusBox" class="mt-2 text-xs text-center text-slate-400"></p>
-      </form>
+    <p id="statusBox" class="mt-3 text-xs text-center text-slate-400"></p>
 
-      <p class="mt-4 text-[11px] text-center text-slate-500">
-        Sign up karke aap BizLink ke basic terms se agree ho rahe ho. Account ke baad Home page se
-        role-based dashboards use kar sakte ho.
-      </p>
-    </div>
+    <p class="mt-6 text-[11px] text-center text-slate-400">
+      Sign up karke aap BizLink ke basic terms se agree ho rahe ho.
+      Account ke baad Home page se role-based dashboards use kar sakte ho.
+    </p>
   </main>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
   <script>
-    // ---- Firebase config (same jo baaki pages par hai) ----
+    // ---- Firebase config (same as baaki pages) ----
     const firebaseConfig = {
       apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
       authDomain: "bizlink-exchange.firebaseapp.com",
@@ -102,130 +95,113 @@
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-  </script>
 
-  <script>
-    // ---- Users Apps Script URL (naya wala) ----
-    const USERS_SCRIPT_URL =
-      "https://script.google.com/macros/s/AKfycbztkBN5GcgZdPARgOSrvBvgJcfClCvXzIq0mEk64TpaShqQ4FzpFAjQ742Io70wyzNa/exec";
+    // ---- Users Apps Script URL (BizLink_Users) ----
+    const USERS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztkBN5GcgZdPARgOSrvBvgJcfClCvXzIq0mEk64TpaShqQ4FzpFAjQ742Io70wyzNa/exec";
 
-    const signupForm = document.getElementById('signupForm');
-    const signupBtn  = document.getElementById('signupBtn');
-    const statusBox  = document.getElementById('statusBox');
+    const statusBox = document.getElementById("statusBox");
+    const form      = document.getElementById("signupForm");
 
-    function setStatus(msg, isError = false) {
-      statusBox.textContent = msg || '';
-      statusBox.className =
-        'mt-2 text-xs text-center ' + (isError ? 'text-red-400' : 'text-emerald-300');
+    const fullNameEl = document.getElementById("fullName");
+    const emailEl    = document.getElementById("email");
+    const passEl     = document.getElementById("password");
+    const phoneEl    = document.getElementById("phone");
+    const cityEl     = document.getElementById("city");
+    const roleEl     = document.getElementById("role");
+    const planEl     = document.getElementById("plan");
+
+    function setStatus(msg, type="info"){
+      statusBox.textContent = msg || "";
+      if(!msg){
+        statusBox.className = "mt-3 text-xs text-center text-slate-400";
+      }else if(type === "error"){
+        statusBox.className = "mt-3 text-xs text-center text-red-400";
+      }else{
+        statusBox.className = "mt-3 text-xs text-center text-emerald-300";
+      }
     }
 
-    function saveLocalRole(email, role, plan) {
-      try {
-        localStorage.setItem('bizlink_user_email', email.toLowerCase());
-        localStorage.setItem('bizlink_user_role', role);
-        localStorage.setItem('bizlinkPlan', plan);
-      } catch (e) {}
-    }
-
-    async function saveToUsersSheet(payload) {
-      // payload: {FullName, Email, Role, Phone, City, Plan}
+    async function saveUserToSheet(profile){
+      // yahan se email REQUIRED hai – "email" key ke naam se hi bhej rahe hain
       const body = new URLSearchParams();
-      body.append('action', 'signup');
-      Object.keys(payload).forEach(k => body.append(k, payload[k]));
+      body.append("action",   "signup");
+      body.append("email",    profile.email);      // **important**
+      body.append("fullName", profile.fullName);
+      body.append("phone",    profile.phone);
+      body.append("city",     profile.city);
+      body.append("role",     profile.role);
+      body.append("plan",     profile.plan);
 
-      try {
-        const res = await fetch(USERS_SCRIPT_URL, {
-          method: 'POST',
-          body
-        });
+      const res  = await fetch(USERS_SCRIPT_URL, { method:"POST", body });
+      const data = await res.json();   // Apps Script JSON
 
-        if (!res.ok) {
-          // yahan se hame REAL HTTP error pata chalega
-          setStatus('Sheet HTTP error: ' + res.status + ' ' + res.statusText, true);
-          return { ok: false, error: 'HTTP ' + res.status };
-        }
-
-        let data;
-        try {
-          data = await res.json();
-        } catch (err) {
-          setStatus('Sheet JSON parse error: ' + err, true);
-          return { ok: false, error: 'JSON parse error' };
-        }
-
-        if (!data.ok) {
-          setStatus('Sheet script error: ' + (data.error || 'Unknown'), true);
-          return { ok: false, error: data.error || 'Script error' };
-        }
-
-        return { ok: true, data };
-      } catch (err) {
-        setStatus('Network/Apps Script error: ' + err, true);
-        return { ok: false, error: String(err) };
+      if(!data.ok){
+        throw new Error(data.error || "Sheet error");
       }
+      return data;
     }
 
-    signupForm.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e)=>{
       e.preventDefault();
-      setStatus('');
-      signupBtn.disabled = true;
-      signupBtn.textContent = 'Creating account…';
+      setStatus("");
 
-      const fullName = document.getElementById('fullName').value.trim();
-      const email    = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const phone    = document.getElementById('phone').value.trim();
-      const city     = document.getElementById('city').value.trim();
-      const role     = document.getElementById('role').value;
-      const plan     = document.getElementById('plan').value;
+      const fullName = fullNameEl.value.trim();
+      const emailRaw = emailEl.value.trim();
+      const password = passEl.value;
+      const phone    = phoneEl.value.trim();
+      const city     = cityEl.value.trim();
+      const role     = roleEl.value || "owner";
+      const plan     = planEl.value || "Free";
 
-      if (!fullName || !email || !password) {
-        setStatus('Please fill all required fields.', true);
-        signupBtn.disabled = false;
-        signupBtn.textContent = 'Sign Up';
-        return;
+      if(!fullName){
+        setStatus("Please enter full name.", "error"); return;
+      }
+      if(!emailRaw){
+        setStatus("Please enter email.", "error"); return;
+      }
+      if(password.length < 6){
+        setStatus("Password 6 characters se zyada rakho.", "error"); return;
       }
 
-      try {
+      const email = emailRaw.toLowerCase();
+
+      try{
+        setStatus("Creating account…");
+
         // 1) Firebase signup
         const cred = await auth.createUserWithEmailAndPassword(email, password);
-        if (cred.user && fullName) {
-          await cred.user.updateProfile({ displayName: fullName });
-        }
+        const user = cred.user;
+        const usedEmail = (user && user.email) ? user.email.toLowerCase() : email;
 
-        // 2) Local storage – role + email + plan
-        saveLocalRole(email, role, plan);
+        // localStorage main role / email save
+        try{
+          localStorage.setItem("bizlink_user_email", usedEmail);
+          localStorage.setItem("bizlink_user_role", role);
+          localStorage.setItem("bizlinkPlan", plan);
+        }catch(e){}
 
-        // 3) Apps Script – Users sheet entry
-        setStatus('Saving profile to sheet…');
-        const sheetResp = await saveToUsersSheet({
-          FullName: fullName,
-          Email: email,
-          Role: role,
-          Phone: phone,
-          City: city,
-          Plan: plan
+        // 2) Google Sheet entry
+        setStatus("Saving profile to BizLink_Users sheet…");
+        await saveUserToSheet({
+          email: usedEmail,
+          fullName,
+          phone,
+          city,
+          role,
+          plan
         });
 
-        if (!sheetResp.ok) {
-          // yahan message already setStatus se aa chuka hoga
-          console.log('Sheet debug:', sheetResp);
-          signupBtn.disabled = false;
-          signupBtn.textContent = 'Sign Up';
-          return;
-        }
+        setStatus("Account created! Redirecting to profile…","success");
 
-        setStatus('Signup successful! Redirecting…', false);
-        signupBtn.textContent = 'Done';
-
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 1200);
-      } catch (err) {
+        // 3) Profile pe bhejo
+        window.location.href = "profile.html";
+      }catch(err){
         console.error(err);
-        setStatus('Firebase error: ' + (err.message || err), true);
-        signupBtn.disabled = false;
-        signupBtn.textContent = 'Sign Up';
+        if(err.code === "auth/email-already-in-use"){
+          setStatus("Ye email pehle se registered hai. Login try karo.", "error");
+        }else{
+          setStatus("Sheet script error: " + (err.message || "Unknown error"), "error");
+        }
       }
     });
   </script>
