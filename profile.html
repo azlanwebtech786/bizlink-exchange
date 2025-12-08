@@ -136,6 +136,29 @@
         </p>
       </div>
     </section>
+
+    <!-- ACTIVITY SUMMARY -->
+    <section class="mt-6 card-bg rounded-2xl p-4 sm:p-5">
+      <h2 class="text-sm font-semibold mb-2 text-slate-100">Activity Summary</h2>
+      <p id="activityInfoText" class="text-xs sm:text-sm text-slate-300 mb-4">
+        Abhi tak koi work Post a Work se create nahi hua, isliye sab zero hai. Baad me yahan se aapke works ka overview show karenge.
+      </p>
+
+      <div class="grid sm:grid-cols-3 gap-4 text-center">
+        <div class="border border-slate-700 rounded-xl py-4">
+          <p class="text-xs text-slate-400 mb-1">Works Posted</p>
+          <p id="statWorksPosted" class="text-2xl font-bold text-slate-50">0</p>
+        </div>
+        <div class="border border-slate-700 rounded-xl py-4">
+          <p class="text-xs text-slate-400 mb-1">In Progress</p>
+          <p id="statInProgress" class="text-2xl font-bold text-slate-50">0</p>
+        </div>
+        <div class="border border-slate-700 rounded-xl py-4">
+          <p class="text-xs text-slate-400 mb-1">Completed</p>
+          <p id="statCompleted" class="text-2xl font-bold text-slate-50">0</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Firebase -->
@@ -155,10 +178,15 @@
     const auth = firebase.auth();
   </script>
 
-  <!-- PROFILE LOGIC -->
+  <!-- PROFILE + ACTIVITY LOGIC -->
   <script>
+    // Users sheet script (BizLink_Users)
     const USERS_SCRIPT_URL =
       "https://script.google.com/macros/s/AKfycbztkBN5GcgZdPARgOSrvBvgJcfClCvXzIq0mEk64TpaShqQ4FzpFAjQ742Io70wyzNa/exec";
+
+    // Main BizLink script (works, chats, etc. – same as owner-dashboard)
+    const MAIN_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbym03QN9_xpG9HTnRxpCs_1SlVYf3GrObHh_cC_otQgZpQlWN6CFKjomfTGjQJfvTWAbA/exec";
 
     const statusEl      = document.getElementById("pageStatus");
     const notFoundNote  = document.getElementById("notFoundNote");
@@ -184,6 +212,12 @@
     const dPlan   = document.getElementById("detailPlan");
     const dStatus = document.getElementById("detailStatus");
 
+    // Activity DOM
+    const activityInfoEl   = document.getElementById("activityInfoText");
+    const statPostedEl     = document.getElementById("statWorksPosted");
+    const statInProgressEl = document.getElementById("statInProgress");
+    const statCompletedEl  = document.getElementById("statCompleted");
+
     function setStatus(msg, type="info") {
       statusEl.textContent = msg || "";
       if (!msg) {
@@ -208,6 +242,73 @@
       }
       if (email) return email[0].toUpperCase();
       return "BZ";
+    }
+
+    function normalizeStatus(s) {
+      s = (s || "").toString().toLowerCase();
+      if (!s || s === "pending") return "pending";
+      if (s === "accepted" || s === "in progress") return "inprogress";
+      if (s === "completed") return "completed";
+      return "other";
+    }
+
+    function inferRoleType(roleStr) {
+      const r = (roleStr || "").toLowerCase();
+      if (r.includes("free")) return "freelancer";
+      return "owner";
+    }
+
+    function renderActivitySummary(summary) {
+      const posted = summary?.worksPosted || 0;
+      const inProg = summary?.inProgress || 0;
+      const comp   = summary?.completed || 0;
+
+      statPostedEl.textContent     = posted;
+      statInProgressEl.textContent = inProg;
+      statCompletedEl.textContent  = comp;
+
+      if (posted + inProg + comp === 0) {
+        activityInfoEl.textContent =
+          "Abhi tak koi work Post a Work se create nahi hua, isliye sab zero hai. Baad me yahan se aapke works ka overview show karenge.";
+      } else {
+        activityInfoEl.textContent =
+          "Yeh numbers basic overview dete hain ki aapne BizLink par kitna kaam kiya hai.";
+      }
+    }
+
+    async function loadActivitySummary(email, role) {
+      if (!email) return;
+      try {
+        const res = await fetch(`${MAIN_SCRIPT_URL}?sheet=works`);
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+          console.log("Activity summary: invalid data", data);
+          return;
+        }
+
+        const emailLower = email.toLowerCase();
+        const roleType = inferRoleType(role);
+
+        let myWorks;
+        if (roleType === "freelancer") {
+          myWorks = data.filter(w =>
+            (w.AssignedTo || "").toString().toLowerCase() === emailLower
+          );
+        } else {
+          // owner / business
+          myWorks = data.filter(w =>
+            (w.ClientEmail || "").toString().toLowerCase() === emailLower
+          );
+        }
+
+        const worksPosted = myWorks.length;
+        const inProgress  = myWorks.filter(w => normalizeStatus(w.Status) === "inprogress").length;
+        const completed   = myWorks.filter(w => normalizeStatus(w.Status) === "completed").length;
+
+        renderActivitySummary({ worksPosted, inProgress, completed });
+      } catch (err) {
+        console.error("Activity summary load error:", err);
+      }
     }
 
     function renderProfile(p, authEmail) {
@@ -251,6 +352,9 @@
         if (role) localStorage.setItem("bizlink_user_role", role);
         if (plan) localStorage.setItem("bizlinkPlan", plan);
       } catch (e) {}
+
+      // 🔹 Activity Summary (works counts)
+      loadActivitySummary(email, role);
     }
 
     function renderNotFound(email, extraMsg) {
@@ -275,6 +379,9 @@
 
       notFoundNote.classList.remove("hidden");
       if (extraMsg) setStatus(extraMsg, "error");
+
+      // No profile => zero activity
+      renderActivitySummary({ worksPosted: 0, inProgress: 0, completed: 0 });
     }
 
     async function loadUserProfile(email) {
@@ -291,14 +398,12 @@
         const res = await fetch(url);
         const data = await res.json();
 
-        // Debug info show karo agar script error bhej raha hai
         if (data && data.ok === false && data.error) {
           renderNotFound(email, "Sheet script error: " + data.error);
           return;
         }
 
         let profile = null;
-
         if (data && data.profile) {
           profile = data.profile;
         } else if (data && data.found && data.profile) {
