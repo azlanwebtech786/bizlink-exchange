@@ -207,7 +207,16 @@
 
   <script>
     // --------- CONFIG ---------
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbym03QN9_xpG9HTnRxpCs_1SlVYf3GrObHh_cC_otQgZpQlWN6CFKjomfTGjQJfvTWAbA/exec";
+    // 🟣 Main Apps Script = works / chat / payment / requests
+    const MAIN_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbym03QN9_xpG9HTnRxpCs_1SlVYf3GrObHh_cC_otQgZpQlWN6CFKjomfTGjQJfvTWAbA/exec";
+
+    // 🟢 Users sheet script = signup / profile / roles etc.
+    const USERS_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbztkBN5GcgZdPARgOSrvBvgJcfClCvXzIq0mEk64TpaShqQ4FzpFAjQ742Io70wyzNa/exec";
+
+    // Backward compatibility: purane code me SCRIPT_URL use ho raha hai
+    const SCRIPT_URL = MAIN_SCRIPT_URL;
 
     let ownerEmail = null;
     let allWorks = [];
@@ -265,13 +274,19 @@
       return "₹" + num.toLocaleString("en-IN");
     }
 
-    // ⭐ USER ROLE HELPER – Owner guard
+    // ⭐ USER ROLE HELPER – Owner guard (Users script se)
     async function fetchUserRole(email) {
       try {
-        const url = `${SCRIPT_URL}?action=getUserRole&email=${encodeURIComponent(email)}`;
+        const url = `${USERS_SCRIPT_URL}?action=getUserRole&email=${encodeURIComponent(email)}`;
         const res = await fetch(url);
         const data = await res.json();
         if (data && data.ok && data.role) {
+          // thoda sync localStorage me bhi
+          try {
+            if (data.bizId) localStorage.setItem("bizlinkBizID", data.bizId);
+            if (data.plan)  localStorage.setItem("bizlinkPlan", data.plan);
+            if (data.role)  localStorage.setItem("bizlink_user_role", data.role.toLowerCase());
+          } catch (e) {}
           return data.role; // e.g. "freelancer" / "owner" / "business"
         }
         return null;
@@ -1022,7 +1037,7 @@
         loggedSpan.textContent = `Logged in as: ${ownerEmail}`;
       }
 
-      // Backend role
+      // Backend role (Users sheet se)
       const backendRoleRaw = await fetchUserRole(ownerEmail);
       const backendRole = backendRoleRaw ? backendRoleRaw.toString().toLowerCase() : "";
 
