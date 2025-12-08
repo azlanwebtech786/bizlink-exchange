@@ -42,7 +42,7 @@
     <p id="pageStatus" class="mb-3 text-xs text-slate-400"></p>
 
     <!-- TOP PROFILE CARD -->
-    <section id="profileCard" class="card-bg rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <section class="card-bg rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div class="flex items-center gap-4">
         <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-purple-600 flex items-center justify-center text-lg font-bold">
           <span id="avatarInitials">BZ</span>
@@ -157,7 +157,6 @@
 
   <!-- PROFILE LOGIC -->
   <script>
-    // 👉 Yahi pe NEW Users Apps Script URL lagana hai
     const USERS_SCRIPT_URL =
       "https://script.google.com/macros/s/AKfycbztkBN5GcgZdPARgOSrvBvgJcfClCvXzIq0mEk64TpaShqQ4FzpFAjQ742Io70wyzNa/exec";
 
@@ -248,18 +247,13 @@
       dPlan.textContent   = plan;
       dStatus.textContent = status;
 
-      // localStorage update → baaki pages ke liye (role + plan)
       try {
-        if (role) {
-          localStorage.setItem("bizlink_user_role", role);
-        }
-        if (plan) {
-          localStorage.setItem("bizlinkPlan", plan);
-        }
+        if (role) localStorage.setItem("bizlink_user_role", role);
+        if (plan) localStorage.setItem("bizlinkPlan", plan);
       } catch (e) {}
     }
 
-    function renderNotFound(email) {
+    function renderNotFound(email, extraMsg) {
       profileNameEl.textContent  = "No profile found";
       profileEmailEl.textContent = email || "—";
       avatarInitials.textContent = initialsFromNameOrEmail("", email);
@@ -280,6 +274,7 @@
       dStatus.textContent = "—";
 
       notFoundNote.classList.remove("hidden");
+      if (extraMsg) setStatus(extraMsg, "error");
     }
 
     async function loadUserProfile(email) {
@@ -292,28 +287,39 @@
       setStatus("Loading profile…");
 
       try {
-        // try dedicated profile endpoint
         const url = `${USERS_SCRIPT_URL}?action=getProfile&email=${encodeURIComponent(email)}`;
         const res = await fetch(url);
         const data = await res.json();
 
-        if (!data || data.ok === false || !data.profile) {
-          // fallback: maybe API returns {ok:false} or different structure
+        // Debug info show karo agar script error bhej raha hai
+        if (data && data.ok === false && data.error) {
+          renderNotFound(email, "Sheet script error: " + data.error);
+          return;
+        }
+
+        let profile = null;
+
+        if (data && data.profile) {
+          profile = data.profile;
+        } else if (data && data.found && data.profile) {
+          profile = data.profile;
+        }
+
+        if (!profile) {
           renderNotFound(email);
           setStatus("Profile not found in Users sheet.");
           return;
         }
 
-        renderProfile(data.profile, email);
+        renderProfile(profile, email);
         setStatus("");
+
       } catch (err) {
         console.error("Profile load error:", err);
-        setStatus("Error loading profile: " + err.message, "error");
-        renderNotFound(email);
+        renderNotFound(email, "Error loading profile: " + err.message);
       }
     }
 
-    // Logout
     document.getElementById("logoutBtn").addEventListener("click", () => {
       auth.signOut().then(() => {
         try {
@@ -325,7 +331,6 @@
       });
     });
 
-    // Auth guard
     auth.onAuthStateChanged((user) => {
       if (!user) {
         alert("Please login first.");
