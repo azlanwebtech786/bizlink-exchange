@@ -10,138 +10,167 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
+    body{
+      font-family:'Poppins',sans-serif;
+      background:#020617;
+      color:#e5e7eb;
+      min-height:100vh;
+    }
     .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
-    .badge{font-size:.65rem;padding:.2rem .55rem;border-radius:999px}
-    .badge-role{background:#1d4ed8;color:#bfdbfe}
-    .badge-plan{background:#047857;color:#bbf7d0}
-    .badge-id{background:#6b21a8;color:#f3e8ff}
+    .chip{font-size:.70rem;padding:.15rem .55rem;border-radius:999px;font-weight:500}
+    .chip-id{background:#1d243a;color:#e5e7eb;border:1px solid rgba(148,163,184,.6)}
+    .chip-role{background:#1d243a;color:#bfdbfe;border:1px solid rgba(59,130,246,.7)}
+    .chip-plan{background:#0f766e;color:#ecfdf5;border:1px solid rgba(45,212,191,.8)}
+    .button-gradient{background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%)}
   </style>
 </head>
 <body class="min-h-screen">
 
   <!-- TOP BAR -->
   <header class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
-        ← Back to Home
-      </a>
-      <h1 class="text-lg sm:text-2xl font-bold text-white">
-        My <span class="text-purple-400">BizLink</span> Profile
-      </h1>
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
+          ← Back to Home
+        </a>
+        <h1 class="text-lg sm:text-2xl font-bold">
+          My <span class="text-purple-400">BizLink</span> Profile
+        </h1>
+      </div>
       <div class="flex items-center space-x-3 text-xs sm:text-sm">
-        <span id="loggedInEmailTop" class="hidden sm:inline text-slate-300"></span>
-        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md text-xs font-semibold">
+        <span id="headerEmail" class="hidden sm:inline text-slate-300"></span>
+        <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
           Logout
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-4 py-6">
-    <p id="pageStatus" class="mb-3 text-xs text-slate-400"></p>
+  <main class="max-w-6xl mx-auto px-4 py-6">
 
-    <!-- TOP PROFILE CARD -->
-    <section class="card-bg rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <p id="topStatus" class="text-xs text-amber-300 mb-4 hidden">
+      <!-- yahan profile status message ayega -->
+    </p>
+
+    <!-- PROFILE HEADER CARD -->
+    <section class="card-bg rounded-2xl px-5 py-4 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div class="flex items-center gap-4">
-        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-purple-600 flex items-center justify-center text-lg font-bold">
+        <div class="w-16 h-16 rounded-full bg-purple-600 flex items-center justify-center text-xl font-bold">
           <span id="avatarInitials">BZ</span>
         </div>
         <div>
-          <p id="profileName" class="text-base sm:text-lg font-semibold text-slate-50">
-            No profile found
-          </p>
-          <p id="profileEmail" class="text-xs text-slate-400 mt-0.5">—</p>
+          <h2 id="profileName" class="text-lg sm:text-xl font-semibold">No profile found</h2>
+          <p id="profileEmail" class="text-xs text-slate-300">—</p>
           <div class="flex flex-wrap gap-2 mt-2">
-            <span id="badgeId" class="badge badge-id">BZ----</span>
-            <span id="badgeRole" class="badge badge-role">Role</span>
-            <span id="badgePlan" class="badge badge-plan">Plan</span>
+            <span id="chipBizId" class="chip chip-id">BZ----</span>
+            <span id="chipRole" class="chip chip-role">Role</span>
+            <span id="chipPlan" class="chip chip-plan">Plan</span>
           </div>
         </div>
       </div>
 
-      <div class="text-right text-xs sm:text-sm">
-        <p class="text-slate-400">
-          Rating:
-          <span id="ratingValue" class="font-semibold text-amber-300">-</span>
-          <span class="text-slate-500">/ 5</span>
+      <div class="text-xs text-right space-y-1">
+        <p>
+          <span class="font-semibold">Rating:</span>
+          <span id="ratingValue">-</span> / 5
         </p>
-        <p class="text-slate-400">
-          Total Reviews:
-          <span id="ratingCount" class="font-semibold text-slate-100">0</span>
+        <p>
+          <span class="font-semibold">Total Reviews:</span>
+          <span id="ratingCount">0</span>
         </p>
-        <p class="text-slate-400 mt-1">
-          Joined:
+        <p>
+          <span class="font-semibold">Joined:</span>
           <span id="joinedAt">-</span>
         </p>
-        <p class="text-slate-400">
-          Last Login:
+        <p>
+          <span class="font-semibold">Last Login:</span>
           <span id="lastLogin">-</span>
         </p>
       </div>
     </section>
 
-    <p id="notFoundNote" class="mt-3 text-xs text-amber-300 hidden">
-      Profile not found in Users sheet. Ho sakta hai signup ke time entry nahi bani ho.
-    </p>
-
-    <!-- BOTTOM 2-COLUMN -->
-    <section class="mt-6 grid md:grid-cols-2 gap-5">
-      <!-- LEFT: BASIC DETAILS -->
-      <div class="card-bg rounded-2xl p-4 sm:p-5">
-        <h2 class="text-sm font-semibold mb-3 text-slate-100">Basic Details</h2>
-        <dl class="text-xs sm:text-sm space-y-2 text-slate-300">
+    <!-- MAIN GRID: BASIC DETAILS + PROFILE INFO -->
+    <section class="grid md:grid-cols-2 gap-6 mb-6">
+      <!-- BASIC DETAILS CARD -->
+      <div class="card-bg rounded-2xl p-5">
+        <h3 class="text-sm font-semibold mb-3">Basic Details</h3>
+        <dl class="space-y-2 text-xs">
           <div class="flex justify-between">
             <dt class="text-slate-400">Full Name</dt>
-            <dd id="detailName" class="font-medium text-slate-50">—</dd>
+            <dd id="bdFullName">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">Role / Account Type</dt>
-            <dd id="detailRole" class="font-medium text-slate-50">—</dd>
+            <dd id="bdRole">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">Phone</dt>
-            <dd id="detailPhone" class="font-medium text-slate-50">—</dd>
+            <dd id="bdPhone">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">City</dt>
-            <dd id="detailCity" class="font-medium text-slate-50">—</dd>
+            <dd id="bdCity">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">BizLink ID</dt>
-            <dd id="detailBizId" class="font-medium text-slate-50">—</dd>
+            <dd id="bdBizId">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">Plan</dt>
-            <dd id="detailPlan" class="font-medium text-slate-50">—</dd>
+            <dd id="bdPlan">—</dd>
           </div>
           <div class="flex justify-between">
             <dt class="text-slate-400">Account Status</dt>
-            <dd id="detailStatus" class="font-medium text-slate-50">—</dd>
+            <dd id="bdStatus">—</dd>
           </div>
         </dl>
       </div>
 
-      <!-- RIGHT: INFO -->
-      <div class="card-bg rounded-2xl p-4 sm:p-5">
-        <h2 class="text-sm font-semibold mb-3 text-slate-100">Profile Info</h2>
-        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-          Ye profile data <span class="font-semibold text-slate-100">BizLink_Users → Users</span> Google Sheet se aa raha hai
+      <!-- PROFILE INFO / HELP CARD -->
+      <div class="card-bg rounded-2xl p-5">
+        <h3 class="text-sm font-semibold mb-3">Profile Info</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Ye profile data <span class="font-semibold">BizLink_Users → Users</span> Google Sheet se aa raha hai
           (signup ke time auto entry).
         </p>
-        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mt-3">
-          Future me yahin se aapka <span class="font-semibold text-sky-300">public profile link</span>,
-          <span class="font-semibold text-amber-300"> rating badge</span> aur
-          <span class="font-semibold text-purple-300"> activity summary</span> generate hoga.
+        <p class="text-xs text-slate-300 leading-relaxed mt-3">
+          Future me yahin se aapka <span class="font-semibold">public profile link, rating badge</span> aur
+          <span class="font-semibold">activity summary</span> generate hoga.
         </p>
       </div>
     </section>
+
+    <!-- ⭐ ACTIVITY SUMMARY -->
+    <section class="card-bg rounded-2xl p-5 mb-10">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-semibold">Activity Summary</h3>
+        <p class="text-[11px] text-slate-400" id="activityStatus">Loading…</p>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-4 text-center">
+        <div class="rounded-xl bg-slate-900/60 border border-slate-700 px-4 py-4">
+          <p class="text-[11px] text-slate-400 mb-1">Works Posted</p>
+          <p id="statWorksPosted" class="text-xl font-bold">0</p>
+        </div>
+        <div class="rounded-xl bg-slate-900/60 border border-slate-700 px-4 py-4">
+          <p class="text-[11px] text-slate-400 mb-1">In Progress</p>
+          <p id="statInProgress" class="text-xl font-bold">0</p>
+        </div>
+        <div class="rounded-xl bg-slate-900/60 border border-slate-700 px-4 py-4">
+          <p class="text-[11px] text-slate-400 mb-1">Completed</p>
+          <p id="statCompleted" class="text-xl font-bold">0</p>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
   <script>
+    // ---- Firebase config (same project) ----
     const firebaseConfig = {
       apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
       authDomain: "bizlink-exchange.firebaseapp.com",
@@ -153,200 +182,209 @@
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-  </script>
 
-  <!-- PROFILE LOGIC -->
-  <script>
+    // ---- Script URLs ----
+    // Users sheet (BizLink_Users)
     const USERS_SCRIPT_URL =
       "https://script.google.com/macros/s/AKfycbztkBN5GcgZdPARgOSrvBvgJcfClCvXzIq0mEk64TpaShqQ4FzpFAjQ742Io70wyzNa/exec";
 
-    const statusEl      = document.getElementById("pageStatus");
-    const notFoundNote  = document.getElementById("notFoundNote");
-    const loggedTop     = document.getElementById("loggedInEmailTop");
+    // Main sheet (Web3FormsToSheets) – yahi works, freelancers, etc. wala hai
+    const MAIN_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbym03QN9_xpG9HTnRxpCs_1SlVYf3GrObHh_cC_otQgZpQlWN6CFKjomfTGjQJfvTWAbA/exec";
 
-    const avatarInitials= document.getElementById("avatarInitials");
-    const profileNameEl = document.getElementById("profileName");
-    const profileEmailEl= document.getElementById("profileEmail");
-    const badgeIdEl     = document.getElementById("badgeId");
-    const badgeRoleEl   = document.getElementById("badgeRole");
-    const badgePlanEl   = document.getElementById("badgePlan");
+    // ---- DOM refs ----
+    const topStatus      = document.getElementById('topStatus');
+    const headerEmailEl  = document.getElementById('headerEmail');
+    const avatarInitials = document.getElementById('avatarInitials');
+    const profileNameEl  = document.getElementById('profileName');
+    const profileEmailEl = document.getElementById('profileEmail');
+    const chipBizIdEl    = document.getElementById('chipBizId');
+    const chipRoleEl     = document.getElementById('chipRole');
+    const chipPlanEl     = document.getElementById('chipPlan');
+    const ratingValueEl  = document.getElementById('ratingValue');
+    const ratingCountEl  = document.getElementById('ratingCount');
+    const joinedAtEl     = document.getElementById('joinedAt');
+    const lastLoginEl    = document.getElementById('lastLogin');
 
-    const ratingValueEl = document.getElementById("ratingValue");
-    const ratingCountEl = document.getElementById("ratingCount");
-    const joinedAtEl    = document.getElementById("joinedAt");
-    const lastLoginEl   = document.getElementById("lastLogin");
+    const bdFullNameEl = document.getElementById('bdFullName');
+    const bdRoleEl     = document.getElementById('bdRole');
+    const bdPhoneEl    = document.getElementById('bdPhone');
+    const bdCityEl     = document.getElementById('bdCity');
+    const bdBizIdEl    = document.getElementById('bdBizId');
+    const bdPlanEl     = document.getElementById('bdPlan');
+    const bdStatusEl   = document.getElementById('bdStatus');
 
-    const dName   = document.getElementById("detailName");
-    const dRole   = document.getElementById("detailRole");
-    const dPhone  = document.getElementById("detailPhone");
-    const dCity   = document.getElementById("detailCity");
-    const dBizId  = document.getElementById("detailBizId");
-    const dPlan   = document.getElementById("detailPlan");
-    const dStatus = document.getElementById("detailStatus");
+    const activityStatusEl = document.getElementById('activityStatus');
+    const statWorksPostedEl = document.getElementById('statWorksPosted');
+    const statInProgressEl  = document.getElementById('statInProgress');
+    const statCompletedEl   = document.getElementById('statCompleted');
 
-    function setStatus(msg, type="info") {
-      statusEl.textContent = msg || "";
+    function showTopStatus(msg, type='info') {
       if (!msg) {
-        statusEl.className = "mb-3 text-xs text-slate-400";
-      } else if (type === "error") {
-        statusEl.className = "mb-3 text-xs text-red-300";
-      } else {
-        statusEl.className = "mb-3 text-xs text-slate-300";
-      }
-    }
-
-    function safe(v, def="—") {
-      if (v === null || v === undefined || v === "") return def;
-      return String(v);
-    }
-
-    function initialsFromNameOrEmail(name, email) {
-      if (name && name.trim()) {
-        const parts = name.trim().split(/\s+/);
-        if (parts.length === 1) return parts[0].substring(0,2).toUpperCase();
-        return (parts[0][0] + parts[1][0]).toUpperCase();
-      }
-      if (email) return email[0].toUpperCase();
-      return "BZ";
-    }
-
-    function renderProfile(p, authEmail) {
-      notFoundNote.classList.add("hidden");
-
-      const fullName = safe(p.FullName, "New BizLink User");
-      const email    = authEmail || safe(p.Email, "—");
-      const bizId    = safe(p.BizID, "BZ----");
-      const role     = safe(p.Role, "—").toLowerCase();
-      const phone    = safe(p.Phone);
-      const city     = safe(p.City);
-      const plan     = safe(p.Plan, "Free");
-      const rating   = p.Rating && p.Rating !== "-" ? p.Rating : "-";
-      const totalRev = p.TotalReviews || 0;
-      const joined   = safe(p.JoinedAt, "-");
-      const lastLog  = safe(p.LastLogin, "-");
-      const status   = safe(p.Status, "active");
-
-      avatarInitials.textContent = initialsFromNameOrEmail(fullName, email);
-      profileNameEl.textContent  = fullName;
-      profileEmailEl.textContent = email;
-
-      badgeIdEl.textContent   = bizId;
-      badgeRoleEl.textContent = role || "Role";
-      badgePlanEl.textContent = plan || "Plan";
-
-      ratingValueEl.textContent = rating;
-      ratingCountEl.textContent = totalRev;
-      joinedAtEl.textContent    = joined;
-      lastLoginEl.textContent   = lastLog;
-
-      dName.textContent   = fullName;
-      dRole.textContent   = role;
-      dPhone.textContent  = phone;
-      dCity.textContent   = city;
-      dBizId.textContent  = bizId;
-      dPlan.textContent   = plan;
-      dStatus.textContent = status;
-
-      try {
-        if (role) localStorage.setItem("bizlink_user_role", role);
-        if (plan) localStorage.setItem("bizlinkPlan", plan);
-      } catch (e) {}
-    }
-
-    function renderNotFound(email, extraMsg) {
-      profileNameEl.textContent  = "No profile found";
-      profileEmailEl.textContent = email || "—";
-      avatarInitials.textContent = initialsFromNameOrEmail("", email);
-      badgeIdEl.textContent      = "BZ----";
-      badgeRoleEl.textContent    = "Role";
-      badgePlanEl.textContent    = "Plan";
-      ratingValueEl.textContent  = "-";
-      ratingCountEl.textContent  = "0";
-      joinedAtEl.textContent     = "-";
-      lastLoginEl.textContent    = "-";
-
-      dName.textContent   = "—";
-      dRole.textContent   = "—";
-      dPhone.textContent  = "—";
-      dCity.textContent   = "—";
-      dBizId.textContent  = "—";
-      dPlan.textContent   = "—";
-      dStatus.textContent = "—";
-
-      notFoundNote.classList.remove("hidden");
-      if (extraMsg) setStatus(extraMsg, "error");
-    }
-
-    async function loadUserProfile(email) {
-      if (!email) {
-        setStatus("Auth email missing.", "error");
-        renderNotFound("");
+        topStatus.classList.add('hidden');
         return;
       }
+      topStatus.textContent = msg;
+      topStatus.classList.remove('hidden');
+      if (type === 'error') {
+        topStatus.className = 'text-xs text-red-400 mb-4';
+      } else {
+        topStatus.className = 'text-xs text-amber-300 mb-4';
+      }
+    }
 
-      setStatus("Loading profile…");
-
+    function formatDate(dStr) {
+      if (!dStr) return '-';
       try {
-        const url = `${USERS_SCRIPT_URL}?action=getProfile&email=${encodeURIComponent(email)}`;
+        const d = new Date(dStr);
+        if (isNaN(d.getTime())) return dStr;
+        return d.toLocaleString();
+      } catch(e) {
+        return dStr;
+      }
+    }
+
+    // ---- Users sheet se profile load ----
+    async function loadUserProfile(email) {
+      try {
+        const url = USERS_SCRIPT_URL + '?action=profile&email=' + encodeURIComponent(email);
         const res = await fetch(url);
         const data = await res.json();
 
-        // Debug info show karo agar script error bhej raha hai
-        if (data && data.ok === false && data.error) {
-          renderNotFound(email, "Sheet script error: " + data.error);
-          return;
+        if (!data || !data.ok || !data.user) {
+          showTopStatus('Profile not found in Users sheet. Ho sakta hai signup ke time entry nahi bani ho.', 'error');
+          return null;
         }
 
-        let profile = null;
+        const u = data.user;
 
-        if (data && data.profile) {
-          profile = data.profile;
-        } else if (data && data.found && data.profile) {
-          profile = data.profile;
-        }
+        const fullName = u.FullName || 'New BizLink User';
+        const role     = (u.Role || '').toString().toLowerCase();
+        const phone    = u.Phone || '';
+        const city     = u.City || '';
+        const bizId    = u.BizID || 'BZ----';
+        const plan     = u.Plan || 'Free';
+        const rating   = u.Rating || '-';
+        const totalRev = u.TotalReviews || 0;
+        const joined   = u.JoinedAt || '';
+        const lastLog  = u.LastLogin || '';
 
-        if (!profile) {
-          renderNotFound(email);
-          setStatus("Profile not found in Users sheet.");
-          return;
-        }
+        // header
+        profileNameEl.textContent  = fullName;
+        profileEmailEl.textContent = email;
+        headerEmailEl.textContent  = 'Logged in as: ' + email;
 
-        renderProfile(profile, email);
-        setStatus("");
+        const initials = fullName
+          .split(' ')
+          .filter(Boolean)
+          .map(w => w[0].toUpperCase())
+          .join('')
+          .slice(0,2) || 'BZ';
+        avatarInitials.textContent = initials;
 
+        chipBizIdEl.textContent = bizId;
+        chipRoleEl.textContent  = role || 'role';
+        chipPlanEl.textContent  = plan || 'Plan';
+
+        ratingValueEl.textContent = rating === '-' ? '-' : Number(rating).toFixed(1);
+        ratingCountEl.textContent = totalRev || 0;
+        joinedAtEl.textContent    = formatDate(joined);
+        lastLoginEl.textContent   = formatDate(lastLog);
+
+        // basic details
+        bdFullNameEl.textContent = fullName;
+        bdRoleEl.textContent     = role || '-';
+        bdPhoneEl.textContent    = phone || '-';
+        bdCityEl.textContent     = city || '-';
+        bdBizIdEl.textContent    = bizId || '-';
+        bdPlanEl.textContent     = plan || '-';
+        bdStatusEl.textContent   = u.Status || 'active';
+
+        showTopStatus('Profile loaded from Users sheet.');
+        return u;
       } catch (err) {
-        console.error("Profile load error:", err);
-        renderNotFound(email, "Error loading profile: " + err.message);
+        console.error(err);
+        showTopStatus('Error loading profile from Users sheet.', 'error');
+        return null;
       }
     }
 
-    document.getElementById("logoutBtn").addEventListener("click", () => {
+    // ⭐ Activity summary – works sheet se
+    function normalizeStatus(s) {
+      s = (s || '').toString().toLowerCase();
+      if (!s || s === 'pending') return 'pending';
+      if (s === 'accepted' || s === 'in progress') return 'inprogress';
+      if (s === 'completed') return 'completed';
+      if (s === 'paid') return 'paid';
+      return s;
+    }
+
+    async function loadActivityForEmail(email) {
+      activityStatusEl.textContent = 'Loading…';
+
+      try {
+        const res = await fetch(MAIN_SCRIPT_URL + '?sheet=works');
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+          activityStatusEl.textContent = 'No works data.';
+          return;
+        }
+
+        const myEmail = (email || '').toLowerCase();
+        const myWorks = data.filter(w =>
+          (w.ClientEmail || '').toString().toLowerCase() === myEmail
+        );
+
+        const total = myWorks.length;
+        let inProg = 0;
+        let completed = 0;
+
+        myWorks.forEach(w => {
+          const st = normalizeStatus(w.Status);
+          if (st === 'completed') completed++;
+          else if (st === 'inprogress') inProg++;
+        });
+
+        statWorksPostedEl.textContent = total;
+        statInProgressEl.textContent  = inProg;
+        statCompletedEl.textContent   = completed;
+
+        activityStatusEl.textContent = total
+          ? 'Owner side activity (Post a Work) based summary.'
+          : 'Abhi tak koi work Post a Work se create nahi hua.';
+      } catch (err) {
+        console.error(err);
+        activityStatusEl.textContent = 'Error loading activity.';
+      }
+    }
+
+    // ---- Logout ----
+    document.getElementById('logoutBtn').addEventListener('click', () => {
       auth.signOut().then(() => {
         try {
-          localStorage.removeItem("bizlink_user_role");
-          localStorage.removeItem("bizlinkPlan");
-          localStorage.removeItem("bizlink_user_email");
-        } catch (e) {}
-        window.location.href = "index.html";
+          localStorage.removeItem('bizlink_user_role');
+          localStorage.removeItem('bizlink_bizid');
+          localStorage.removeItem('bizlink_plan');
+          localStorage.removeItem('bizlink_fullname');
+          localStorage.removeItem('bizlink_user_email');
+        } catch(e){}
+        window.location.href = 'index.html';
       });
     });
 
-    auth.onAuthStateChanged((user) => {
+    // ---- Auth guard ----
+    auth.onAuthStateChanged(async (user) => {
       if (!user) {
-        alert("Please login first.");
-        window.location.href = "login.html";
+        alert('Pehle login kijiye.');
+        window.location.href = 'login.html';
         return;
       }
 
-      const email = (user.email || "").toLowerCase();
-      loggedTop.textContent = `Logged in as: ${email}`;
-      loggedTop.classList.remove("hidden");
+      const email = (user.email || '').toLowerCase();
+      headerEmailEl.textContent = 'Logged in as: ' + email;
 
-      try {
-        localStorage.setItem("bizlink_user_email", email);
-      } catch (e) {}
-
-      loadUserProfile(email);
+      const profile = await loadUserProfile(email);
+      await loadActivityForEmail(email);
     });
   </script>
 </body>
