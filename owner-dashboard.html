@@ -173,7 +173,8 @@
           <h2 class="text-sm font-semibold text-slate-200">Freelancer Requests</h2>
           <p class="text-xs text-slate-400">
             Direct Works se freelancers jo kaam ke liye request karte hain, woh yahan dikhte hain.
-            Aap profile / portfolio dekh kar <span class="font-semibold">Accept / Reject</span> kar sakte hain.
+            Aap unka <span class="font-semibold">profile / portfolio / bid amount</span> dekh kar
+            <span class="font-semibold">Accept / Reject</span> kar sakte hain.
           </p>
         </div>
         <p id="requestsStatus" class="text-[11px] text-slate-400"></p>
@@ -693,7 +694,7 @@
     }
 
     /*****************************************
-     *  NEW: OWNER SIDE – WORK REQUESTS
+     *  NEW: OWNER SIDE – WORK REQUESTS (WITH BID)
      *****************************************/
     async function loadWorkRequests() {
       if (!ownerEmail) return;
@@ -757,6 +758,16 @@
         const cover = r.CoverNote || "";
         const portfolio = r.PortfolioURL || r.PortfolioUrl || "";
 
+        // ⭐ NEW: Bid amount (Place Bid se aaya)
+        const rawBid = r.BidAmount != null ? r.BidAmount : (r.bidAmount != null ? r.bidAmount : "");
+        let bidDisplay = "";
+        if (rawBid !== "" && rawBid != null) {
+          const n = Number(rawBid.toString().replace(/[^0-9.]/g, ""));
+          if (!isNaN(n) && n > 0) {
+            bidDisplay = formatBudget(n);
+          }
+        }
+
         // profile info (Apps Script se _freelancerProfile)
         const profile = r._freelancerProfile || {};
         const fName  = profile.Name || profile["Full Name"] || "";
@@ -769,6 +780,9 @@
         // check agar ye freelancer already assigned hai is work pe
         const workObj = worksById[workId ? workId.toString() : ""];
         const alreadyAssigned = workObj && (workObj.AssignedTo || "").toLowerCase() === freelancer.toLowerCase();
+
+        // ⭐ Work ka budget compare ke liye
+        const budgetDisplay = workObj && workObj.Budget ? formatBudget(workObj.Budget) : "";
 
         const ts = r.Timestamp ? new Date(r.Timestamp).toLocaleString() : "";
 
@@ -844,6 +858,22 @@
                   fSkills
                     ? `<p class="text-[11px] text-slate-400 mt-1">
                          <span class="font-semibold text-slate-300">Skills:</span> ${fSkills}
+                       </p>`
+                    : ""
+                }
+                ${
+                  bidDisplay || budgetDisplay
+                    ? `<p class="text-[11px] text-slate-400 mt-1">
+                         ${
+                           bidDisplay
+                             ? `Bid: <span class="text-emerald-300 font-semibold">${bidDisplay}</span>`
+                             : ""
+                         }
+                         ${
+                           budgetDisplay
+                             ? ` · Budget: <span class="text-slate-300">${budgetDisplay}</span>`
+                             : ""
+                         }
                        </p>`
                     : ""
                 }
