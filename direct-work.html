@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -65,7 +65,8 @@
         <p class="text-xs text-slate-400">
           Yahan <span class="font-semibold">saare Pending & unassigned works</span> dikhte hain.
           Ab seedha "Take Work" nahi hoga.
-          Jo pasand aaye, <span class="font-semibold text-slate-100">"Request Work"</span> pe click karo.
+          Jo pasand aaye, <span class="font-semibold text-slate-100">"Place Bid"</span> pe click karo.
+          Aap apna <span class="font-semibold text-emerald-300">Bid Amount + Cover Note + Portfolio</span> bhejoge.
           Request owner ke paas jaayegi; approve hone ke baad hi work tumhare
           <span class="font-semibold text-emerald-400">Freelancer Dashboard → Accepted / In Progress</span>
           tab me aayega.
@@ -223,13 +224,14 @@
             <div class="flex flex-col sm:items-end gap-2 text-xs">
               <button
                 class="px-4 py-1.5 rounded-md button-gradient text-white font-semibold"
-                data-action="request-work"
+                data-action="place-bid"
                 data-id="${w.WorkID}"
               >
-                Request Work
+                Place Bid
               </button>
               <p class="text-[10px] text-slate-500">
-                Request owner ke paas jaayegi. Approve hone ke baad ye work aapke Freelancer Dashboard ke
+                Aapka <span class="font-semibold">Bid + Cover Note</span> owner ke paas jaayega.
+                Approve hone ke baad ye work aapke Freelancer Dashboard ke
                 <span class="font-semibold text-emerald-400">Accepted / In Progress</span> tab me aayega.
               </p>
             </div>
@@ -283,57 +285,84 @@
       return res.json();
     }
 
-    // ⭐ NEW: requestWork – freelancer → owner
-    async function requestWork(workId) {
+    // ⭐ NEW: PLACE BID – freelancer → owner (requestWork + BidAmount)
+    async function placeBid(workId) {
       if (!workId) return;
       if (!freelancerEmail) {
         alert("Freelancer email missing. Dobara login karke try karo.");
         return;
       }
 
-      // Simple prompts – chahe to baad me proper modal bana sakte ho
+      // STEP 1: Bid Amount (required)
+      let bidAmount = prompt(
+        "Apna Bid Amount likho (sirf number, ₹ sign mat likho):\n\nExample: 1500",
+        ""
+      );
+      if (bidAmount === null) return; // user cancelled
+
+      bidAmount = bidAmount.trim();
+      if (!bidAmount) {
+        alert("Bid Amount required hai.");
+        return;
+      }
+      // numeric validate (basic)
+      const cleanNum = Number(bidAmount.replace(/[^0-9.]/g, ""));
+      if (!cleanNum || isNaN(cleanNum) || cleanNum <= 0) {
+        alert("Valid Bid Amount (number) daalo.");
+        return;
+      }
+
+      // STEP 2: Cover Note (optional)
       const coverNote = prompt(
         "Short cover note likho (kya plan hai is work ke liye?)\n\n(optional – blank bhi chhod sakte ho):",
         ""
       ) || "";
 
+      // STEP 3: Portfolio URL (optional)
       const portfolioURL = prompt(
         "Apna best portfolio link (Drive, Behance, Website, etc.)\n\n(optional – blank bhi chhod sakte ho):",
         ""
       ) || "";
 
-      if (!confirm("Is work ke liye request bhejni hai?")) return;
+      const confirmText =
+        `Confirm Bid?\n\n` +
+        `WorkID: ${workId}\n` +
+        `Bid Amount: ₹${cleanNum.toLocaleString("en-IN")}\n\n` +
+        `Isko owner ke paas bhejna hai?`;
+      if (!confirm(confirmText)) return;
 
       try {
         const resp = await apiPost({
-          action: "requestWork",             // 👈 IMPORTANT: yahi field Apps Script dekh raha hai
+          action: "requestWork",             // 👈 Apps Script ka same action
           WorkID: workId,
           freelancerEmail: freelancerEmail,
           coverNote: coverNote,
-          portfolioURL: portfolioURL
+          portfolioURL: portfolioURL,
+          BidAmount: cleanNum,               // 👈 BidAmount field
+          bidAmount: cleanNum                // safety (agar script lowercase check kare)
         });
 
         if (!resp.ok) {
-          alert("Error sending request: " + (resp.error || resp.message || "Unknown error"));
+          alert("Error sending bid: " + (resp.error || resp.message || "Unknown error"));
           return;
         }
 
-        alert("✅ Request owner ke paas chali gayi! Owner approve karega to work aapke Freelancer Dashboard me dikh jayega.");
+        alert("✅ Aapka bid owner ke paas chala gaya! Approve hone ke baad work aapke Freelancer Dashboard me dikh jayega.");
       } catch (err) {
         console.error(err);
-        alert("Network / script error while sending request: " + err.message);
+        alert("Network / script error while sending bid: " + err.message);
       }
     }
 
     /*****************************************
      *  EVENT BINDINGS
      *****************************************/
-    // Request Work button (delegation)
+    // Place Bid button (delegation)
     workListEl.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-action='request-work']");
+      const btn = e.target.closest("[data-action='place-bid']");
       if (!btn) return;
       const workId = btn.getAttribute("data-id");
-      requestWork(workId);
+      placeBid(workId);
     });
 
     // Search
