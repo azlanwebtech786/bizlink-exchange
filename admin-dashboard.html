@@ -2,222 +2,524 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>BizLink | Admin Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - BizLink Exchange</title>
+
+  <!-- Tailwind & Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      margin: 0;
-      background: #f1f5f9;
-      color: #333;
-    }
-    header {
-      background: linear-gradient(90deg, #0077b6, #00b4d8);
-      color: white;
-      text-align: center;
-      padding: 20px;
-      font-size: 26px;
-      font-weight: bold;
-    }
-    nav {
-      background: #023e8a;
-      color: white;
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      padding: 10px 0;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    .container {
-      width: 90%;
-      max-width: 1100px;
-      margin: 30px auto;
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    h2 {
-      color: #0077b6;
-      border-bottom: 2px solid #00b4d8;
-      padding-bottom: 5px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background: #0077b6;
-      color: white;
-    }
-    tr:nth-child(even) {
-      background: #f8f9fa;
-    }
-    .empty {
-      text-align: center;
-      padding: 20px;
-      color: #888;
-    }
-    button.delete {
-      background: #e63946;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    button.delete:hover {
-      background: #d00000;
-    }
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: #0077b6;
-      color: white;
-      font-size: 14px;
-      margin-top: 30px;
-    }
+    body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
+    .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
+    .chip{font-size:.70rem;padding:.15rem .5rem;border-radius:999px}
+    .chip-open{background:rgba(248,250,252,0.1);color:#facc15}
+    .chip-resolved{background:rgba(16,185,129,0.15);color:#6ee7b7}
+    .tab-button{color:#9ca3af;border-bottom:2px solid transparent}
+    .tab-button.active{color:#a855f7;border-bottom-color:#a855f7;font-weight:600}
+    .scroll-y{max-height:420px;overflow-y:auto}
+    .scroll-y::-webkit-scrollbar{width:6px}
+    .scroll-y::-webkit-scrollbar-thumb{background:#1f2937;border-radius:999px}
   </style>
 </head>
-<body>
-  <header>BizLink Exchange — Admin Dashboard</header>
-  <nav>
-    <a href="#business">📋 Businesses</a>
-    <a href="#messages">💌 Messages</a>
-    <a href="business-listing.html">🌐 View Site</a>
-  </nav>
+<body class="min-h-screen">
 
-  <div class="container" id="business">
-    <h2>📋 Registered Businesses</h2>
-    <table id="bizTable">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Business Name</th>
-          <th>Owner</th>
-          <th>Mobile</th>
-          <th>Email</th>
-          <th>Location</th>
-          <th>Category</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="bizEmpty" class="empty">No businesses found.</div>
+<header class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <a href="index.html" class="text-xs text-slate-300 hover:text-white flex items-center">
+        ← Back to Home
+      </a>
+      <h1 class="text-lg sm:text-2xl font-bold text-white">
+        BizLink <span class="text-purple-400">Admin Dashboard</span>
+      </h1>
+    </div>
+    <div class="flex items-center space-x-3 text-xs sm:text-sm">
+      <span id="loggedInEmail" class="hidden sm:inline text-slate-300"></span>
+      <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold">
+        Logout
+      </button>
+    </div>
   </div>
+</header>
 
-  <div class="container" id="messages">
-    <h2>💌 Contact Messages</h2>
-    <table id="msgTable">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>To (Business)</th>
-          <th>From (Name)</th>
-          <th>Email</th>
-          <th>Message</th>
-          <th>Date</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="msgEmpty" class="empty">No messages received yet.</div>
-  </div>
+<main class="max-w-6xl mx-auto px-4 py-6">
+  <div id="pageStatus" class="mb-3 text-xs text-slate-400"></div>
 
-  <footer>© 2025 BizLink Exchange — Admin Panel</footer>
+  <!-- TOP STATS -->
+  <section class="grid sm:grid-cols-4 gap-4 mb-6">
+    <div class="card-bg rounded-xl px-4 py-4">
+      <p class="text-xs text-slate-400 mb-1">Total Works</p>
+      <p id="statTotal" class="text-2xl font-bold text-slate-100">0</p>
+      <p class="text-[11px] text-slate-500 mt-1">
+        Pending: <span id="statPending" class="text-yellow-300 font-semibold">0</span> ·
+        In Progress: <span id="statInProgress" class="text-emerald-300 font-semibold">0</span> ·
+        Completed: <span id="statCompleted" class="text-sky-300 font-semibold">0</span>
+      </p>
+    </div>
+    <div class="card-bg rounded-xl px-4 py-4">
+      <p class="text-xs text-slate-400 mb-1">Payment Status</p>
+      <p class="text-sm text-slate-300">
+        Locked: <span id="statLocked" class="text-purple-300 font-semibold">0</span><br>
+        Paid: <span id="statPaid" class="text-emerald-300 font-semibold">0</span>
+      </p>
+    </div>
+    <div class="card-bg rounded-xl px-4 py-4">
+      <p class="text-xs text-slate-400 mb-1">Total Value (Budget)</p>
+      <p id="statBudget" class="text-xl font-bold text-emerald-300">₹0</p>
+      <p class="text-[11px] text-slate-500 mt-1">All posted works ka total budget</p>
+    </div>
+    <div class="card-bg rounded-xl px-4 py-4">
+      <p class="text-xs text-slate-400 mb-1">Earnings Snapshot</p>
+      <p class="text-[11px] text-slate-300">
+        Locked: <span id="statLockedAmt" class="font-semibold text-purple-300">₹0</span><br>
+        Paid Out: <span id="statPaidAmt" class="font-semibold text-emerald-300">₹0</span>
+      </p>
+    </div>
+  </section>
 
-  <script>
-    // Load Businesses
-    const bizTable = document.querySelector("#bizTable tbody");
-    const bizEmpty = document.getElementById("bizEmpty");
-    let businesses = JSON.parse(localStorage.getItem("bizListings")) || [];
+  <!-- SECOND ROW STATS -->
+  <section class="grid sm:grid-cols-3 gap-4 mb-6">
+    <div class="card-bg rounded-xl px-4 py-4">
+      <p class="text-xs text-slate-400 mb-1">Disputes</p>
+      <p class="text-sm text-slate-300">
+        Open: <span id="statDisputesOpen" class="text-yellow-300 font-semibold">0</span><br>
+        Resolved: <span id="statDisputesResolved" class="text-emerald-300 font-semibold">0</span>
+      </p>
+    </div>
+    <div class="card-bg rounded-xl px-4 py-4">
+      <p class="text-xs text-slate-400 mb-1">Quick Filters</p>
+      <div class="flex flex-wrap gap-2 mt-1">
+        <button data-filter="all" class="px-2 py-1 rounded-md text-[11px] bg-slate-800 text-slate-200">All</button>
+        <button data-filter="pending" class="px-2 py-1 rounded-md text-[11px] bg-slate-800 text-slate-200">Pending</button>
+        <button data-filter="inprogress" class="px-2 py-1 rounded-md text-[11px] bg-slate-800 text-slate-200">In Progress</button>
+        <button data-filter="completed" class="px-2 py-1 rounded-md text-[11px] bg-slate-800 text-slate-200">Completed</button>
+        <button data-filter="paid" class="px-2 py-1 rounded-md text-[11px] bg-slate-800 text-slate-200">Paid</button>
+      </div>
+    </div>
+    <div class="card-bg rounded-xl px-4 py-4">
+      <p class="text-xs text-slate-400 mb-1">Search</p>
+      <input id="searchInput" type="text"
+             placeholder="Search by title / city / email / WorkID..."
+             class="w-full text-xs px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500">
+    </div>
+  </section>
 
-    function renderBusinesses() {
-      bizTable.innerHTML = "";
-      if (businesses.length === 0) {
-        bizEmpty.style.display = "block";
-        return;
-      }
-      bizEmpty.style.display = "none";
-      businesses.forEach((b, i) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${i + 1}</td>
-          <td>${b.name}</td>
-          <td>${b.owner}</td>
-          <td>${b.phone}</td>
-          <td>${b.email}</td>
-          <td>${b.location}</td>
-          <td>${b.category}</td>
-          <td><button class="delete" onclick="deleteBusiness(${i})">Delete</button></td>
-        `;
-        bizTable.appendChild(row);
+  <!-- MAIN GRIDS: Works + Disputes -->
+  <section class="grid lg:grid-cols-2 gap-6">
+    <!-- All Works -->
+    <div class="card-bg rounded-xl p-4 flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <h2 class="text-sm font-semibold text-slate-200">All Works (Global)</h2>
+          <p class="text-xs text-slate-400">
+            Yahan poore BizLink ke sare works dikhte hain. Filters se view tune kar sakte ho.
+          </p>
+        </div>
+        <p id="worksCountLabel" class="text-[11px] text-slate-400">0 works</p>
+      </div>
+
+      <div id="worksList" class="scroll-y space-y-3 text-xs">
+        <div class="py-8 text-center text-slate-500">
+          Loading works...
+        </div>
+      </div>
+    </div>
+
+    <!-- Disputes -->
+    <div class="card-bg rounded-xl p-4 flex flex-col">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <h2 class="text-sm font-semibold text-slate-200">Disputes Monitor</h2>
+          <p class="text-xs text-slate-400">
+            Yahan sirf wo works dikhte hain jinke against dispute raise hua hai.
+          </p>
+        </div>
+        <select id="disputeFilter" class="text-[11px] bg-slate-900 border border-slate-700 rounded-md px-2 py-1">
+          <option value="">All</option>
+          <option value="Open">Open</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+      </div>
+
+      <div id="disputesList" class="scroll-y space-y-3 text-xs">
+        <div class="py-8 text-center text-slate-500">
+          Loading disputes...
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+    authDomain: "bizlink-exchange.firebaseapp.com",
+    projectId: "bizlink-exchange",
+    storageBucket: "bizlink-exchange.firebasestorage.app",
+    messagingSenderId: "116213651971",
+    appId: "1:116213651971:web:fff60961af0c4da3448c36",
+    measurementId: "G-VQ3JM82D1N"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+</script>
+
+<script>
+  // 👇 yahan sirf admin emails allow kar rahe hain
+  const ADMIN_EMAILS = [
+    "sahilkhandadar@gmail.com",
+    "susi2@gmail.com"         // jo bhi tum chaho, apna email yahan add kar sakte ho
+  ];
+
+  const SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbym03QN9_xpG9HTnRxpCs_1SlVYf3GrObHh_cC_otQgZpQlWN6CFKjomfTGjQJfvTWAbA/exec";
+
+  let currentUserEmail = null;
+  let allWorks = [];
+
+  const statusEl = document.getElementById("pageStatus");
+  const worksListEl = document.getElementById("worksList");
+  const disputesListEl = document.getElementById("disputesList");
+
+  const statTotal      = document.getElementById("statTotal");
+  const statPending    = document.getElementById("statPending");
+  const statInProgress = document.getElementById("statInProgress");
+  const statCompleted  = document.getElementById("statCompleted");
+  const statLocked     = document.getElementById("statLocked");
+  const statPaid       = document.getElementById("statPaid");
+  const statBudget     = document.getElementById("statBudget");
+  const statLockedAmt  = document.getElementById("statLockedAmt");
+  const statPaidAmt    = document.getElementById("statPaidAmt");
+  const statDisputesOpen     = document.getElementById("statDisputesOpen");
+  const statDisputesResolved = document.getElementById("statDisputesResolved");
+
+  const searchInput  = document.getElementById("searchInput");
+  const worksCountLabel = document.getElementById("worksCountLabel");
+  const disputeFilter = document.getElementById("disputeFilter");
+
+  function setStatus(msg, type="info") {
+    statusEl.textContent = msg || "";
+    if (!msg) {
+      statusEl.className = "mb-3 text-xs text-slate-400";
+    } else if (type === "error") {
+      statusEl.className = "mb-3 text-xs text-red-300";
+    } else {
+      statusEl.className = "mb-3 text-xs text-slate-300";
+    }
+  }
+
+  function formatMoney(v) {
+    const n = Number(v || 0);
+    if (!n) return "₹0";
+    return "₹" + n.toLocaleString("en-IN");
+  }
+
+  async function fetchJson(url) {
+    const res = await fetch(url);
+    return res.json();
+  }
+
+  async function loadAdminStats() {
+    try {
+      const data = await fetchJson(`${SCRIPT_URL}?action=adminStats`);
+      if (!data.ok) throw new Error(data.error || "Stats error");
+      const s = data.stats || {};
+      statTotal.textContent      = s.totalWorks || 0;
+      statPending.textContent    = s.pending || 0;
+      statInProgress.textContent = s.inProgress || 0;
+      statCompleted.textContent  = s.completed || 0;
+      statLocked.textContent     = s.lockedCount || 0;
+      statPaid.textContent       = s.paidCount || 0;
+      statBudget.textContent     = formatMoney(s.totalBudget || 0);
+      statLockedAmt.textContent  = formatMoney(s.totalLocked || 0);
+      statPaidAmt.textContent    = formatMoney(s.totalPaidAmt || 0);
+      statDisputesOpen.textContent     = s.disputesOpen || 0;
+      statDisputesResolved.textContent = s.disputesResolved || 0;
+    } catch (err) {
+      console.error(err);
+      setStatus("Error loading stats: " + err.message, "error");
+    }
+  }
+
+  async function loadAllWorks() {
+    try {
+      setStatus("Loading all works...");
+      const data = await fetchJson(`${SCRIPT_URL}?action=adminListAllWorks`);
+      if (!data.ok) throw new Error(data.error || "Works error");
+      allWorks = data.works || [];
+      renderWorks();
+      setStatus("");
+    } catch (err) {
+      console.error(err);
+      worksListEl.innerHTML = `
+        <div class="py-8 text-center text-xs text-red-300">
+          Error loading works: ${err.message}
+        </div>
+      `;
+      setStatus("Error loading works: " + err.message, "error");
+    }
+  }
+
+  function normalizeStatus(st) {
+    const s = (st || "").toString().toLowerCase();
+    if (!s || s === "pending") return "pending";
+    if (s === "accepted" || s === "in progress" || s === "inprogress") return "inprogress";
+    if (s === "completed") return "completed";
+    if (s === "paid") return "paid";
+    return s;
+  }
+
+  function renderWorks() {
+    const filterBtn = document.querySelector('button[data-filter].active');
+    const activeFilter = filterBtn ? filterBtn.getAttribute("data-filter") : "all";
+    const q = (searchInput.value || "").toLowerCase();
+
+    let items = allWorks.slice();
+
+    if (activeFilter !== "all") {
+      items = items.filter(w => {
+        const st = normalizeStatus(w.Status);
+        if (activeFilter === "paid") {
+          const payStatus = (w.PaymentStatus || w.PaymentSta || w.Payment || "").toString();
+          return payStatus === "Paid";
+        }
+        return st === activeFilter;
       });
     }
 
-    function deleteBusiness(index) {
-      if (confirm("Delete this business?")) {
-        businesses.splice(index, 1);
-        localStorage.setItem("bizListings", JSON.stringify(businesses));
-        renderBusinesses();
-      }
-    }
-
-    // Load Messages
-    const msgTable = document.querySelector("#msgTable tbody");
-    const msgEmpty = document.getElementById("msgEmpty");
-    let messages = JSON.parse(localStorage.getItem("contactMessages")) || [];
-
-    function renderMessages() {
-      msgTable.innerHTML = "";
-      if (messages.length === 0) {
-        msgEmpty.style.display = "block";
-        return;
-      }
-      msgEmpty.style.display = "none";
-      messages.forEach((m, i) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${i + 1}</td>
-          <td>${m.toBusiness}</td>
-          <td>${m.fromName}</td>
-          <td>${m.fromEmail}</td>
-          <td>${m.message}</td>
-          <td>${m.date}</td>
-          <td><button class="delete" onclick="deleteMessage(${i})">Delete</button></td>
-        `;
-        msgTable.appendChild(row);
+    if (q) {
+      items = items.filter(w => {
+        const full = [
+          w.WorkID, w.Title, w.Description, w.Category,
+          w.City, w.ClientEmail, w.AssignedTo
+        ].join(" ").toLowerCase();
+        return full.includes(q);
       });
     }
 
-    function deleteMessage(index) {
-      if (confirm("Delete this message?")) {
-        messages.splice(index, 1);
-        localStorage.setItem("contactMessages", JSON.stringify(messages));
-        renderMessages();
-      }
+    worksCountLabel.textContent = `${items.length} works`;
+
+    if (!items.length) {
+      worksListEl.innerHTML = `
+        <div class="py-8 text-center text-xs text-slate-500">
+          No works for this filter / search.
+        </div>
+      `;
+      return;
     }
 
-    // Render both tables
-    renderBusinesses();
-    renderMessages();
-  </script>
+    worksListEl.innerHTML = items.map(w => {
+      const st = normalizeStatus(w.Status);
+      let chipClass = "bg-yellow-500/10 text-yellow-300";
+      let chipLabel = "Pending";
+      if (st === "inprogress") { chipClass = "bg-emerald-500/10 text-emerald-300"; chipLabel = "In Progress"; }
+      else if (st === "completed") { chipClass = "bg-sky-500/10 text-sky-300"; chipLabel = "Completed"; }
+      else if (st === "paid") { chipClass = "bg-emerald-500/10 text-emerald-300"; chipLabel = "Paid"; }
+
+      const pay = w.PaymentStatus || w.PaymentSta || w.Payment || "";
+      const lockedAmt = w.LockedAmount || w.LockAmount || "";
+      const budget = w.Budget || "";
+
+      return `
+        <article class="card-bg rounded-lg p-3">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-100">${w.Title || "Untitled work"}</h3>
+              <p class="text-[11px] text-slate-400">
+                ${w.Category || ""} · ${w.City || ""} ·
+                ID: <span class="font-mono">${w.WorkID || ""}</span>
+              </p>
+              <p class="text-[11px] text-slate-400 mt-1">
+                Owner: <span class="text-slate-200">${w.ClientEmail || ""}</span><br>
+                Assigned: <span class="text-slate-200">${w.AssignedTo || "-"}</span>
+              </p>
+            </div>
+            <div class="flex flex-col items-end gap-1">
+              <span class="px-2 py-0.5 rounded-full text-[10px] ${chipClass}">${chipLabel}</span>
+              ${
+                pay
+                  ? `<span class="chip chip-open text-[10px]">Payment: ${pay}</span>`
+                  : `<span class="chip chip-open text-[10px]">Payment: NA</span>`
+              }
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-2">
+            ${w.Description || "No description"}
+          </p>
+          <div class="flex items-center justify-between mt-2 text-[11px] text-slate-400 flex-wrap gap-2">
+            <span>Budget: <span class="text-emerald-300 font-semibold">${formatMoney(budget)}</span></span>
+            <span>Locked: <span class="text-purple-300 font-semibold">${lockedAmt ? formatMoney(lockedAmt) : "₹0"}</span></span>
+            <span>Files: <span class="text-slate-200">${w.FilesURL ? "Uploaded" : "—"}</span></span>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  async function loadDisputes() {
+    try {
+      const statusVal = disputeFilter.value || "";
+      const url = `${SCRIPT_URL}?action=adminListDisputes${statusVal ? "&status=" + encodeURIComponent(statusVal) : ""}`;
+      const data = await fetchJson(url);
+      if (!data.ok) throw new Error(data.error || "Disputes error");
+      const disputes = data.disputes || [];
+
+      if (!disputes.length) {
+        disputesListEl.innerHTML = `
+          <div class="py-8 text-center text-xs text-slate-500">
+            No disputes found for selected filter.
+          </div>
+        `;
+        return;
+      }
+
+      disputesListEl.innerHTML = disputes.map(d => {
+        const status = (d.Status || "").toString();
+        const chipClass = status === "Resolved" ? "chip-resolved" : "chip-open";
+        const ts = d.Timestamp ? new Date(d.Timestamp).toLocaleString() : "";
+        const resolved = d.ResolvedAt ? new Date(d.ResolvedAt).toLocaleString() : "";
+
+        return `
+          <article class="card-bg rounded-lg p-3" data-work-id="${d.WorkID || ""}">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-[11px] text-slate-300">
+                  WorkID: <span class="font-mono">${d.WorkID || ""}</span>
+                </p>
+                <p class="text-[11px] text-slate-400 mt-1">
+                  Owner: <span class="text-slate-200">${d.OwnerEmail || ""}</span><br>
+                  Freelancer: <span class="text-slate-200">${d.FreelancerEmail || ""}</span>
+                </p>
+              </div>
+              <span class="chip ${chipClass}">${status || "Open"}</span>
+            </div>
+
+            <p class="text-[11px] text-slate-300 mt-2">
+              <span class="font-semibold text-slate-400">Raised By:</span> ${d.RaisedBy || "-"}
+            </p>
+            <p class="text-[11px] text-slate-300 mt-1">
+              <span class="font-semibold text-slate-400">Reason:</span> ${d.Reason || "-"}
+            </p>
+            ${
+              d.ResolutionNotes
+                ? `<p class="text-[11px] text-emerald-300 mt-1">
+                     <span class="font-semibold text-emerald-400">Resolution:</span> ${d.ResolutionNotes}
+                   </p>`
+                : ""
+            }
+
+            <div class="flex items-center justify-between mt-2 text-[10px] text-slate-500">
+              <span>Created: ${ts}</span>
+              <span>${resolved ? "Resolved: " + resolved : ""}</span>
+            </div>
+
+            ${
+              status !== "Resolved"
+                ? `<div class="mt-2 flex justify-end">
+                     <button class="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-[11px]"
+                             data-action="resolve-dispute"
+                             data-work-id="${d.WorkID || ""}">
+                       Mark Resolved
+                     </button>
+                   </div>`
+                : ""
+            }
+          </article>
+        `;
+      }).join("");
+    } catch (err) {
+      console.error(err);
+      disputesListEl.innerHTML = `
+        <div class="py-8 text-center text-xs text-red-300">
+          Error loading disputes: ${err.message}
+        </div>
+      `;
+    }
+  }
+
+  async function resolveDispute(workId) {
+    const note = prompt("Resolution note / comment (optional):", "") || "";
+    if (!confirm("Mark dispute for WorkID " + workId + " as Resolved?")) return;
+    try {
+      const body = new URLSearchParams();
+      body.append("action", "resolveDispute");
+      body.append("WorkID", workId);
+      body.append("note", note);
+
+      const res = await fetch(SCRIPT_URL, { method: "POST", body });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Resolve error");
+      alert("Dispute marked as resolved.");
+      loadDisputes();
+    } catch (err) {
+      console.error(err);
+      alert("Error resolving dispute: " + err.message);
+    }
+  }
+
+  // EVENT BINDINGS
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    auth.signOut().then(() => {
+      window.location.href = "index.html";
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-filter]");
+    if (btn) {
+      document.querySelectorAll("button[data-filter]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderWorks();
+    }
+
+    const rBtn = e.target.closest("button[data-action='resolve-dispute']");
+    if (rBtn) {
+      const workId = rBtn.getAttribute("data-work-id");
+      if (workId) resolveDispute(workId);
+    }
+  });
+
+  searchInput.addEventListener("input", () => {
+    renderWorks();
+  });
+
+  disputeFilter.addEventListener("change", () => {
+    loadDisputes();
+  });
+
+  // Default filter button active = All
+  document.addEventListener("DOMContentLoaded", () => {
+    const allBtn = document.querySelector("button[data-filter='all']");
+    if (allBtn) allBtn.classList.add("active");
+  });
+
+  // AUTH GUARD
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+      alert("Please login first.");
+      window.location.href = "login.html";
+      return;
+    }
+    currentUserEmail = (user.email || "").toLowerCase();
+    document.getElementById("loggedInEmail").textContent =
+      "Logged in as: " + currentUserEmail;
+
+    const isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(currentUserEmail);
+    if (!isAdmin) {
+      alert("Yeh Admin Dashboard hai. Sirf approved admin accounts ke liye allowed hai.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    // Admin allowed → data load
+    loadAdminStats();
+    loadAllWorks();
+    loadDisputes();
+  });
+</script>
 </body>
 </html>
