@@ -577,9 +577,63 @@
       return res.json();
     }
 
+    /* ⭐ UPDATED: lockPayment – ab BidAmount priority se use hoga */
     async function lockPayment(workId, budgetValue) {
-      const amount = (budgetValue || "").toString().replace(/[^0-9.]/g, "");
-      const ok = confirm(`Is work ke liye payment lock karein? Amount: ₹${amount || "0"}`);
+      // 1) Is Work ka object nikaalo
+      const work = allWorks.find(
+        w => (w.WorkID || "").toString() === workId.toString()
+      );
+      const assigned = work ? (work.AssignedTo || "").toLowerCase() : "";
+
+      // 2) Is work + freelancer ke liye APPROVED / ACCEPTED request dhundo
+      let matchedReq = null;
+      if (ownerRequests && ownerRequests.length) {
+        matchedReq = ownerRequests.find(r => {
+          const rWork   = (r.WorkID || "").toString();
+          const rFree   = (r.FreelancerEmail || "").toLowerCase();
+          const rStatus = (r.Status || "").toLowerCase();
+
+          return (
+            rWork === workId.toString() &&
+            (!assigned || rFree === assigned) &&
+            (rStatus === "approved" || rStatus === "accepted")
+          );
+        });
+      }
+
+      // 3) BidAmount ko priority do
+      //    Priority order:
+      //    1. Request ka BidAmount (agar hai)
+      //    2. Work ka LockedAmount (agar pehle se lock kiya ho)
+      //    3. Work ka Budget
+      //    4. Function parameter budgetValue (fallback)
+      let rawAmount = "";
+
+      // Request se BidAmount (different casing handle)
+      let reqBid = null;
+      if (matchedReq) {
+        if (matchedReq.BidAmount != null && matchedReq.BidAmount !== "") {
+          reqBid = matchedReq.BidAmount;
+        } else if (matchedReq.bidAmount != null && matchedReq.bidAmount !== "") {
+          reqBid = matchedReq.bidAmount;
+        }
+      }
+
+      if (reqBid != null) {
+        rawAmount = reqBid.toString();
+      } else if (work && work.LockedAmount) {
+        rawAmount = work.LockedAmount.toString();
+      } else if (work && work.Budget) {
+        rawAmount = work.Budget.toString();
+      } else {
+        rawAmount = (budgetValue || "").toString();
+      }
+
+      const amount = rawAmount.toString().replace(/[^0-9.]/g, "");
+
+      const ok = confirm(
+        `Is work ke liye payment lock karein?\n\nAmount: ₹${amount || "0"}`
+      );
       if (!ok) return;
 
       try {
@@ -593,7 +647,9 @@
           alert("Lock error: " + (resp.error || "Unknown"));
           return;
         }
+        // Lock ke baad dono lists refresh karo
         await loadOwnerWorks();
+        await loadWorkRequests();
       } catch (err) {
         console.error(err);
         alert("Network error while locking payment.");
