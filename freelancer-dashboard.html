@@ -552,6 +552,15 @@
                        </button>`
                     : ""
                 }
+                ${
+                  // ⭐ NEW: Raise Dispute button for Completed or Paid works
+                  isCompletedOrPaid
+                    ? `<button data-action="raise-dispute" data-id="${w.WorkID}"
+                         class="px-3 py-1 rounded-md border border-red-500 text-red-300 font-semibold">
+                         Raise Dispute
+                       </button>`
+                    : ""
+                }
               </div>
               <p class="text-[10px] text-slate-500">
                 Last Update: ${lastUpdate}
@@ -755,6 +764,56 @@
     }
 
     /*****************************************
+     *  ⭐ NEW: RAISE DISPUTE (Freelancer)
+     *****************************************/
+    async function raiseDisputeUIByFreelancer(work) {
+      if (!work || !work.WorkID) {
+        alert("Work not found.");
+        return;
+      }
+      // Allow only on Completed or Paid
+      const status = (work.Status || "").toString();
+      const payStatus = (work.PaymentStatus || "").toString();
+      if (!(status === "Completed" || payStatus === "Paid")) {
+        alert("Dispute sirf Completed ya Paid works par raise kiya ja sakta hai.");
+        return;
+      }
+
+      const reason = prompt("Dispute ka reason likho (required):");
+      if (!reason || !reason.trim()) {
+        alert("Reason required.");
+        return;
+      }
+      const files = prompt("Optional file link (Google Drive / WeTransfer) - leave blank if none:");
+
+      try {
+        const resp = await apiPost({
+          action: "raiseDispute",
+          WorkID: work.WorkID,
+          RaisedByEmail: freelancerEmail,
+          RaisedByRole: "freelancer",
+          AgainstEmail: work.ClientEmail || "",
+          Reason: reason,
+          FilesURL: files || ""
+        });
+
+        if (!resp.ok) {
+          // backend returns { ok:false, error: ... }
+          alert("Error submitting dispute: " + (resp.error || JSON.stringify(resp)));
+          return;
+        }
+
+        alert("Dispute raised successfully. Admin will review and contact you.");
+        // refresh UI
+        await loadWorksForFreelancer(freelancerEmail);
+        await loadFreelancerProfile();
+      } catch (err) {
+        console.error(err);
+        alert("Network error while raising dispute.");
+      }
+    }
+
+    /*****************************************
      *  EVENT BINDINGS
      *****************************************/
     // Tabs
@@ -770,19 +829,28 @@
       renderWorkList();
     });
 
-    // Work list delegation (accept, complete, open-chat, request-payment)
+    // Work list delegation (accept, complete, open-chat, request-payment, raise-dispute)
     document.getElementById("workList").addEventListener("click", (e) => {
       const action = e.target.getAttribute("data-action");
       const workId = e.target.getAttribute("data-id");
-      if (!action || !workId) return;
+      if (!action && !e.target.closest("[data-action]")) return;
 
-      if (action === "accept") {
-        handleAccept(workId);
-      } else if (action === "complete") {
-        handleComplete(workId);
-      } else if (action === "open-chat") {
-        currentWorkId = workId;
-        const work = works.find(w => w.WorkID == workId);
+      // If clicked element is a child, find the nearest with data-action
+      let el = e.target;
+      if (!action) {
+        el = e.target.closest("[data-action]");
+      }
+      const realAction = el ? el.getAttribute("data-action") : null;
+      const realWorkId = el ? el.getAttribute("data-id") : workId;
+      if (!realAction || !realWorkId) return;
+
+      if (realAction === "accept") {
+        handleAccept(realWorkId);
+      } else if (realAction === "complete") {
+        handleComplete(realWorkId);
+      } else if (realAction === "open-chat") {
+        currentWorkId = realWorkId;
+        const work = works.find(w => w.WorkID == realWorkId);
         const chatTitle = document.getElementById("chatTitle");
         const chatSubtitle = document.getElementById("chatSubtitle");
 
@@ -791,12 +859,16 @@
           chatSubtitle.textContent = `${work.ClientEmail || "Client"} · ${work.City || ""} · ID: ${work.WorkID}`;
         } else {
           chatTitle.textContent = "Work";
-          chatSubtitle.textContent = `ID: ${workId}`;
+          chatSubtitle.textContent = `ID: ${realWorkId}`;
         }
 
-        loadChatForWork(workId);
-      } else if (action === "request-payment") {
-        handleRequestPayment(workId);
+        loadChatForWork(realWorkId);
+      } else if (realAction === "request-payment") {
+        handleRequestPayment(realWorkId);
+      } else if (realAction === "raise-dispute") {
+        // fetch work object and call raise dispute UI
+        const w = works.find(x => (x.WorkID || "").toString() === realWorkId.toString());
+        raiseDisputeUIByFreelancer(w);
       }
     });
 
