@@ -9,6 +9,9 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Razorpay Checkout -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
   <style>
     body{font-family:'Poppins',sans-serif;background:#050816;color:#e5e7eb}
     .card-bg{background:#0f172a;border:1px solid rgba(148,163,184,.35)}
@@ -219,6 +222,10 @@
     // Backward compatibility: purane code me SCRIPT_URL use ho raha hai
     const SCRIPT_URL = MAIN_SCRIPT_URL;
 
+    // Razorpay / commission config (client-side amounts are for display; createRazorOrder should handle paise)
+    const COMMISSION_PERCENT = 10; // commission charged by platform on freelancer amount
+    const GST_PERCENT = 18;       // gst on (freelancer + commission)
+
     let ownerEmail = null;
     let allWorks = [];
     let worksById = {};      // map WorkID -> work object
@@ -282,13 +289,12 @@
         const res = await fetch(url);
         const data = await res.json();
         if (data && data.ok && data.role) {
-          // thoda sync localStorage me bhi
           try {
             if (data.bizId) localStorage.setItem("bizlinkBizID", data.bizId);
             if (data.plan)  localStorage.setItem("bizlinkPlan", data.plan);
             if (data.role)  localStorage.setItem("bizlink_user_role", data.role.toLowerCase());
           } catch (e) {}
-          return data.role; // e.g. "freelancer" / "owner" / "business"
+          return data.role;
         }
         return null;
       } catch (err) {
@@ -615,14 +621,8 @@
       }
 
       // 3) BidAmount ko priority do
-      //    Priority order:
-      //    1. Request ka BidAmount (agar hai)
-      //    2. Work ka LockedAmount (agar pehle se lock kiya ho)
-      //    3. Work ka Budget
-      //    4. Function parameter budgetValue (fallback)
       let rawAmount = "";
 
-      // Request se BidAmount (different casing handle)
       let reqBid = null;
       if (matchedReq) {
         if (matchedReq.BidAmount != null && matchedReq.BidAmount !== "") {
@@ -827,7 +827,6 @@
         const cover = r.CoverNote || "";
         const portfolio = r.PortfolioURL || r.PortfolioUrl || "";
 
-        // ⭐ NEW: Bid amount (Place Bid se aaya)
         const rawBid = r.BidAmount != null ? r.BidAmount : (r.bidAmount != null ? r.bidAmount : "");
         let bidDisplay = "";
         if (rawBid !== "" && rawBid != null) {
@@ -837,7 +836,6 @@
           }
         }
 
-        // profile info (Apps Script se _freelancerProfile)
         const profile = r._freelancerProfile || {};
         const fName  = profile.Name || profile["Full Name"] || "";
         const fCity  = profile.City || "";
@@ -846,16 +844,13 @@
         const avgRating   = profile.AvgRating || profile.avgRating || null;
         const totalReviews = profile.TotalReviews || profile.ReviewsCount || 0;
 
-        // check agar ye freelancer already assigned hai is work pe
         const workObj = worksById[workId ? workId.toString() : ""];
         const alreadyAssigned = workObj && (workObj.AssignedTo || "").toLowerCase() === freelancer.toLowerCase();
 
-        // ⭐ Work ka budget compare ke liye
         const budgetDisplay = workObj && workObj.Budget ? formatBudget(workObj.Budget) : "";
 
         const ts = r.Timestamp ? new Date(r.Timestamp).toLocaleString() : "";
 
-        // Accept / Reject buttons ko disable / replace karo agar already assigned
         let actionButtons = "";
         if (alreadyAssigned || status.toLowerCase() === "accepted" || status.toLowerCase() === "approved") {
           actionButtons = `
@@ -977,12 +972,190 @@
       }).join("");
     }
 
-    async function handleAcceptRequest(workId, freelancer) {
-      const msg = `Is freelancer ko assign karein?\n\nWorkID: ${workId}\nFreelancer: ${freelancer}`;
-      if (!confirm(msg)) return;
-
+    // ---------- RAZORPAY INTEGRATION (CLIENT-SIDE helpers) ----------
+    // create order on backend — backend must create Razorpay order using secret key
+    async function createRazorOrderOnBackend(workId, amount, meta = {}) {
       try {
-        // Backend approveRequest: request row update + assignFreelancer
+        const resp = await apiPost({
+          action: 'createRazorOrder',
+          WorkID: workId,
+          amount: amount, // rupees (backend should convert to paise if needed)
+          meta: JSON.stringify(meta)
+        });
+        return resp;
+      } catch (err) {
+        console.error('createRazorOrder error', err);
+        return { ok: false, error: String(err) };
+      }
+    }
+
+    // verify payment & lock on backend
+    async function verifyRazorPaymentOnBackend(verificationPayload) {
+      try {
+        const body = Object.assign({ action: 'verifyRazorPayment' }, verificationPayload);
+        const resp = await apiPost(body);
+        return resp;
+      } catch (err) {
+        console.error('verifyRazorPayment error', err);
+        return { ok: false, error: String(err) };
+      }
+    }
+
+    // calc totals
+    function calcTotalAmounts(freelancerAmt) {
+      const fa = Number(String(freelancerAmt || '').replace(/[^0-9.]/g, '')) || 0;
+      const commission = (fa * (COMMISSION_PERCENT / 100));
+      const taxable = fa + commission;
+      const gst = taxable * (GST_PERCENT / 100);
+      const total = Math.round((fa + commission + gst) * 100) / 100;
+      return { freelancerAmount: fa, commission, gst, total };
+    }
+
+    // approve & pay flow
+    async function approveAndPayWithRazor(workId, freelancerEmail) {
+      try {
+        if (!confirm(`Freelancer assign karne ke saath payment lock karna chahte ho? WorkID: ${workId}`)) return;
+
+        // find request or work to determine amount
+        let req = null;
+        if (ownerRequests && ownerRequests.length) {
+          req = ownerRequests.find(r => (r.WorkID || '').toString() === (workId || '').toString() && (r.FreelancerEmail || '').toLowerCase() === (freelancerEmail || '').toLowerCase());
+        }
+
+        const workObj = worksById && worksById[workId] ? worksById[workId] : null;
+
+        let freelancerAmt = 0;
+        if (req && (req.BidAmount != null && req.BidAmount !== '')) freelancerAmt = req.BidAmount;
+        else if (workObj && workObj.LockedAmount) freelancerAmt = workObj.LockedAmount;
+        else if (workObj && workObj.Budget) freelancerAmt = workObj.Budget;
+        else {
+          const ask = prompt('Freelancer amount (₹) — please enter:', workObj && workObj.Budget ? workObj.Budget : '');
+          if (!ask) { alert('Amount required to proceed'); return; }
+          freelancerAmt = ask;
+        }
+
+        const amounts = calcTotalAmounts(freelancerAmt);
+        const confirmMsg = `Amount summary:\n\nFreelancer: ₹${amounts.freelancerAmount}\nCommission (${COMMISSION_PERCENT}%): ₹${amounts.commission.toFixed(2)}\nGST (${GST_PERCENT}%): ₹${amounts.gst.toFixed(2)}\n\nTotal to charge: ₹${amounts.total.toFixed(2)}\n\nProceed to payment?`;
+        if (!confirm(confirmMsg)) return;
+
+        // 1) create order on backend
+        setStatus('Creating payment order…');
+        const createResp = await createRazorOrderOnBackend(workId, amounts.total, { freelancerAmount: amounts.freelancerAmount, commission: amounts.commission, gst: amounts.gst });
+
+        if (!createResp || !createResp.ok) {
+          console.warn('createResp failed', createResp);
+          if (confirm('Payment order creation failed. Proceed to assign without payment? (NOT recommended)')) {
+            const resp = await apiPost({ action: 'approveRequest', WorkID: workId, FreelancerEmail: freelancerEmail, OwnerEmail: ownerEmail });
+            if (resp && resp.ok) {
+              alert('Freelancer assigned (no payment).');
+              await loadOwnerWorks(); await loadWorkRequests();
+            } else {
+              alert('Approve failed: ' + (resp && resp.error ? resp.error : 'Unknown'));
+            }
+          } else {
+            setStatus('');
+          }
+          return;
+        }
+
+        const order = createResp.order || createResp.data || null;
+        const keyId = createResp.key_id || createResp.key || createResp.razorpay_key || null;
+        const amountUsed = createResp.amountUsed || createResp.lockAmount || Math.round(amounts.total * 100);
+
+        if (!order || !keyId) {
+          console.warn('Incomplete order response', createResp);
+          alert('Payment setup failed (invalid order from server).');
+          setStatus('');
+          return;
+        }
+
+        setStatus('Opening payment gateway…');
+        const options = {
+          key: keyId,
+          amount: order.amount || Math.round(amounts.total * 100),
+          currency: order.currency || 'INR',
+          name: workObj && workObj.Title ? workObj.Title : 'BizLink Payment',
+          description: `Lock for WorkID ${workId}`,
+          order_id: order.id,
+          handler: async function (response) {
+            setStatus('Verifying payment…');
+
+            const verifyResp = await verifyRazorPaymentOnBackend({
+              WorkID: workId,
+              OwnerEmail: ownerEmail,
+              FreelancerEmail: freelancerEmail,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              amount: amountUsed
+            });
+
+            if (!verifyResp || !verifyResp.ok) {
+              console.error('verify failed', verifyResp);
+              alert('Payment verification failed: ' + (verifyResp && verifyResp.error ? verifyResp.error : 'Unknown'));
+              setStatus('');
+              return;
+            }
+
+            // success → approve request (assign freelancer)
+            setStatus('Finalizing assignment…');
+            const approveResp = await apiPost({
+              action: 'approveRequest',
+              WorkID: workId,
+              FreelancerEmail: freelancerEmail,
+              OwnerEmail: ownerEmail
+            });
+
+            if (!approveResp || !approveResp.ok) {
+              alert('Payment locked but assignment failed: ' + (approveResp && approveResp.error ? approveResp.error : 'Unknown'));
+            } else {
+              alert('✅ Payment successful and freelancer assigned.');
+            }
+
+            await loadOwnerWorks();
+            await loadWorkRequests();
+            setStatus('');
+          },
+          modal: {
+            ondismiss: function() {
+              setStatus('');
+            }
+          },
+          prefill: {
+            name: ownerEmail,
+            email: ownerEmail
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', function (resp) {
+          console.error('payment.failed', resp);
+          alert('Payment failed: ' + (resp.error && resp.error.description ? resp.error.description : 'Unknown'));
+          setStatus('');
+        });
+        rzp.open();
+
+      } catch (err) {
+        console.error('approveAndPayWithRazor error', err);
+        alert('Error: ' + (err && err.message ? err.message : String(err)));
+        setStatus('');
+      }
+    }
+
+    // ---------- END Razorpay helpers ----------
+
+    async function handleAcceptRequest(workId, freelancer) {
+      try {
+        // Ask owner: pay now (recommended) or assign without payment
+        const doPay = confirm('Assign and lock payment now using Razorpay? (OK = Pay now / Cancel = Assign without payment)');
+        if (doPay) {
+          await approveAndPayWithRazor(workId, freelancer);
+          return;
+        }
+
+        // fallback assign without payment
+        if (!confirm(`Aap confirm karte ho ki freelancer assign karein?\n\nWorkID: ${workId}\nFreelancer: ${freelancer}`)) return;
+
         const resp = await apiPost({
           action: "approveRequest",
           WorkID: workId,
@@ -994,7 +1167,6 @@
           return;
         }
 
-        // optional: freelancer ko chat se inform
         const infoMsg = `Hi, aapki request approve ho gayi hai. WorkID: ${workId}.`;
         await apiPost({
           action: "sendMessage",
@@ -1006,7 +1178,8 @@
 
         await loadOwnerWorks();
         await loadWorkRequests();
-        alert("✅ Freelancer assigned successfully.");
+        alert("✅ Freelancer assigned successfully (no payment).");
+
       } catch (err) {
         console.error(err);
         alert("Network error while assigning freelancer.");
@@ -1018,7 +1191,6 @@
       if (!confirm(msg)) return;
 
       try {
-        // Filhaal simple version: sirf chat me message, sheet ka Status backend se change nahi kar rahe.
         const infoMsg = `Hi, aapki request for WorkID: ${workId} is baar approve nahi ho paayi.`;
         await apiPost({
           action: "sendMessage",
@@ -1028,7 +1200,6 @@
           Message: infoMsg
         });
 
-        // Local UI me Status = Rejected mark kar dete hain
         ownerRequests = ownerRequests.map(r => {
           if ((r.WorkID || "").toString() === workId.toString()
               && (r.FreelancerEmail || "").toLowerCase() === freelancer.toLowerCase()) {
@@ -1053,7 +1224,6 @@
         alert("Work not found.");
         return;
       }
-      // Only allow on Completed or Paid - frontend check (backend also prevents duplicates)
       const st = normalizeStatus(work.Status);
       const payStatus = (work.PaymentStatus || "").toString();
       if (!(st === "completed" || payStatus === "Paid")) {
@@ -1080,13 +1250,11 @@
         });
 
         if (!resp.ok) {
-          // backend returns { ok:false, error: ... }
           alert("Error submitting dispute: " + (resp.error || JSON.stringify(resp)));
           return;
         }
 
         alert("Dispute raised successfully. Admin will review and contact you.");
-        // refresh UI
         await loadOwnerWorks();
         await loadWorkRequests();
       } catch (err) {
@@ -1144,9 +1312,7 @@
         openRatingPrompt(work);
       }
 
-      // ⭐ NEW: Raise Dispute button handling
       if (action === "raise-dispute") {
-        // call raiseDisputeUI with full work object (we pass object to prompt for against email)
         raiseDisputeUI(work);
       }
     });
