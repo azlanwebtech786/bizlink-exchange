@@ -20,6 +20,8 @@
     .scroll-y{max-height:420px;overflow-y:auto}
     .scroll-y::-webkit-scrollbar{width:6px}
     .scroll-y::-webkit-scrollbar-thumb{background:#1f2937;border-radius:999px}
+    /* small btn */
+    .btn-sm { font-size: .78rem; padding: .35rem .6rem; border-radius: .45rem; }
   </style>
 </head>
 <body class="min-h-screen">
@@ -172,7 +174,7 @@
   // 👇 yahan sirf admin emails allow kar rahe hain
   const ADMIN_EMAILS = [
     "sahilkhandadar@gmail.com",
-    "susi2@gmail.com"         // jo bhi tum chaho, apna email yahan add kar sakte ho
+    "susi2@gmail.com"
   ];
 
   const SCRIPT_URL =
@@ -383,6 +385,11 @@
         const ts = d.Timestamp ? new Date(d.Timestamp).toLocaleString() : "";
         const resolved = d.ResolvedAt ? new Date(d.ResolvedAt).toLocaleString() : "";
 
+        // admin fields
+        const adminNotesHtml = d.AdminNotes ? `<p class="text-[11px] text-slate-400 mt-1"><span class="font-semibold text-slate-400">Admin Notes:</span> ${d.AdminNotes}</p>` : "";
+        const resolutionTypeHtml = d.ResolutionType ? `<p class="text-[11px] text-emerald-300 mt-1"><span class="font-semibold text-emerald-400">Resolution Type:</span> ${d.ResolutionType}</p>` : "";
+        const refundHtml = d.RefundAmount ? `<p class="text-[11px] text-emerald-300 mt-1"><span class="font-semibold text-emerald-400">Refund:</span> ${formatMoney(d.RefundAmount)}</p>` : "";
+
         return `
           <article class="card-bg rounded-lg p-3" data-work-id="${d.WorkID || ""}">
             <div class="flex items-start justify-between gap-2">
@@ -404,13 +411,10 @@
             <p class="text-[11px] text-slate-300 mt-1">
               <span class="font-semibold text-slate-400">Reason:</span> ${d.Reason || "-"}
             </p>
-            ${
-              d.ResolutionNotes
-                ? `<p class="text-[11px] text-emerald-300 mt-1">
-                     <span class="font-semibold text-emerald-400">Resolution:</span> ${d.ResolutionNotes}
-                   </p>`
-                : ""
-            }
+
+            ${adminNotesHtml}
+            ${resolutionTypeHtml}
+            ${refundHtml}
 
             <div class="flex items-center justify-between mt-2 text-[10px] text-slate-500">
               <span>Created: ${ts}</span>
@@ -419,11 +423,21 @@
 
             ${
               status !== "Resolved"
-                ? `<div class="mt-2 flex justify-end">
-                     <button class="px-3 py-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-[11px]"
+                ? `<div class="mt-2 flex justify-end gap-2">
+                     <button class="px-3 py-1 btn-sm bg-emerald-600 hover:bg-emerald-700 text-white text-[11px]"
                              data-action="resolve-dispute"
                              data-work-id="${d.WorkID || ""}">
                        Mark Resolved
+                     </button>
+                     <button class="px-3 py-1 btn-sm border border-yellow-500 text-yellow-300 text-[11px]"
+                             data-action="partial-refund"
+                             data-work-id="${d.WorkID || ""}">
+                       Partial Refund
+                     </button>
+                     <button class="px-3 py-1 btn-sm border border-slate-600 text-slate-200 text-[11px]"
+                             data-action="add-note"
+                             data-work-id="${d.WorkID || ""}">
+                       Add Admin Note
                      </button>
                    </div>`
                 : ""
@@ -455,9 +469,68 @@
       if (!data.ok) throw new Error(data.error || "Resolve error");
       alert("Dispute marked as resolved.");
       loadDisputes();
+      loadAdminStats();
     } catch (err) {
       console.error(err);
       alert("Error resolving dispute: " + err.message);
+    }
+  }
+
+  // New: partial refund (admin note + refund amount)
+  async function partialRefund(workId) {
+    const amountRaw = prompt("Refund amount (numbers only) — example: 2500:", "");
+    if (amountRaw === null) return;
+    const amount = (amountRaw || "").toString().replace(/[^0-9.]/g, "");
+    if (!amount) {
+      alert("Valid refund amount required.");
+      return;
+    }
+    const note = prompt("Partial refund note (optional):", "") || "";
+
+    if (!confirm(`Confirm partial refund ₹${amount} for WorkID ${workId}?`)) return;
+
+    try {
+      const body = new URLSearchParams();
+      // backend should handle this action; if backend uses a different action name adjust accordingly
+      body.append("action", "partialRefund");
+      body.append("WorkID", workId);
+      body.append("RefundAmount", amount);
+      body.append("AdminNote", note);
+
+      const res = await fetch(SCRIPT_URL, { method: "POST", body });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Partial refund error");
+      alert("Partial refund recorded (note: actual payment must be processed manually).");
+      loadDisputes();
+      loadAdminStats();
+    } catch (err) {
+      console.error(err);
+      alert("Error recording partial refund: " + err.message);
+    }
+  }
+
+  // New: add admin note only
+  async function addDisputeNote(workId) {
+    const note = prompt("Add admin note for this dispute:", "");
+    if (note === null) return;
+    if (!note.trim()) {
+      alert("Note cannot be empty.");
+      return;
+    }
+    try {
+      const body = new URLSearchParams();
+      body.append("action", "addDisputeNote");
+      body.append("WorkID", workId);
+      body.append("AdminNote", note);
+
+      const res = await fetch(SCRIPT_URL, { method: "POST", body });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Add note error");
+      alert("Admin note added.");
+      loadDisputes();
+    } catch (err) {
+      console.error(err);
+      alert("Error adding note: " + err.message);
     }
   }
 
@@ -469,17 +542,33 @@
   });
 
   document.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-filter]");
-    if (btn) {
+    const btnFilter = e.target.closest("button[data-filter]");
+    if (btnFilter) {
       document.querySelectorAll("button[data-filter]").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+      btnFilter.classList.add("active");
       renderWorks();
+      return;
     }
 
     const rBtn = e.target.closest("button[data-action='resolve-dispute']");
     if (rBtn) {
       const workId = rBtn.getAttribute("data-work-id");
       if (workId) resolveDispute(workId);
+      return;
+    }
+
+    const prBtn = e.target.closest("button[data-action='partial-refund']");
+    if (prBtn) {
+      const workId = prBtn.getAttribute("data-work-id");
+      if (workId) partialRefund(workId);
+      return;
+    }
+
+    const anBtn = e.target.closest("button[data-action='add-note']");
+    if (anBtn) {
+      const workId = anBtn.getAttribute("data-work-id");
+      if (workId) addDisputeNote(workId);
+      return;
     }
   });
 
