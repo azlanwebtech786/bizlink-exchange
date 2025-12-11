@@ -429,6 +429,9 @@
         const showRateButton =
           (st === "completed") && (w.AssignedTo && w.AssignedTo.toString().trim() !== "");
 
+        // ⭐ NEW: show Raise Dispute button only when completed OR paid
+        const showRaiseDispute = (st === "completed") || isPaid;
+
         return `
           <article class="card-bg rounded-lg p-3 flex flex-col gap-2" data-work-id="${w.WorkID || ""}">
             <div class="flex items-start justify-between gap-2">
@@ -465,6 +468,16 @@
                         data-action="rate-freelancer"
                       >
                         Rate Freelancer
+                      </button>`
+                    : ""
+                }
+                ${
+                  showRaiseDispute
+                    ? `<button
+                        class="px-3 py-1 rounded-md border border-red-500 text-red-300 text-[11px] font-semibold"
+                        data-action="raise-dispute"
+                      >
+                        Raise Dispute
                       </button>`
                     : ""
                 }
@@ -1033,6 +1046,56 @@
     }
 
     /*****************************************
+     *  ⭐ NEW: RAISE DISPUTE (Owner)
+     *****************************************/
+    async function raiseDisputeUI(work) {
+      if (!work || !work.WorkID) {
+        alert("Work not found.");
+        return;
+      }
+      // Only allow on Completed or Paid - frontend check (backend also prevents duplicates)
+      const st = normalizeStatus(work.Status);
+      const payStatus = (work.PaymentStatus || "").toString();
+      if (!(st === "completed" || payStatus === "Paid")) {
+        alert("Dispute sirf Completed ya Paid works par raise kiya ja sakta hai.");
+        return;
+      }
+
+      const reason = prompt("Dispute ka reason likho (required):");
+      if (!reason || !reason.trim()) {
+        alert("Reason required.");
+        return;
+      }
+      const files = prompt("Optional file link (Google Drive / WeTransfer) - leave blank if none:");
+
+      try {
+        const resp = await apiPost({
+          action: "raiseDispute",
+          WorkID: work.WorkID,
+          RaisedByEmail: ownerEmail,
+          RaisedByRole: "owner",
+          AgainstEmail: work.AssignedTo || "",
+          Reason: reason,
+          FilesURL: files || ""
+        });
+
+        if (!resp.ok) {
+          // backend returns { ok:false, error: ... }
+          alert("Error submitting dispute: " + (resp.error || JSON.stringify(resp)));
+          return;
+        }
+
+        alert("Dispute raised successfully. Admin will review and contact you.");
+        // refresh UI
+        await loadOwnerWorks();
+        await loadWorkRequests();
+      } catch (err) {
+        console.error(err);
+        alert("Network error while raising dispute.");
+      }
+    }
+
+    /*****************************************
      *  EVENT BINDINGS
      *****************************************/
     document.getElementById("statusTabs").addEventListener("click", (e) => {
@@ -1079,6 +1142,12 @@
 
       if (action === "rate-freelancer") {
         openRatingPrompt(work);
+      }
+
+      // ⭐ NEW: Raise Dispute button handling
+      if (action === "raise-dispute") {
+        // call raiseDisputeUI with full work object (we pass object to prompt for against email)
+        raiseDisputeUI(work);
       }
     });
 
