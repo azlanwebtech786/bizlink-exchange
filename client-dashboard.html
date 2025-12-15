@@ -2,67 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>BizLink | Client Dashboard</title>
+  <title>BizLink 10X Grow Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Tailwind + Font -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-    rel="stylesheet"
-  />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 
   <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: #050816;
-      color: #e5e7eb;
-    }
-    .card-bg {
-      background: #020617;
-      border-radius: 1rem;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-    }
-    .stat-bg {
-      background: #020617;
-      border-radius: 0.75rem;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-    }
-    .button-gradient {
-      background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
-    }
-    .badge {
-      font-size: 0.7rem;
-      padding: 0.2rem 0.55rem;
-      border-radius: 999px;
-    }
-    .badge-plan-basic { background:#22c55e1a; color:#4ade80;}
-    .badge-plan-standard { background:#3b82f61a; color:#60a5fa;}
-    .badge-plan-premium { background:#f973161a; color:#fb923c;}
-    .badge-locked {
-      background: rgba(148, 163, 184, 0.12);
-      color: #9ca3af;
-    }
-    .locked {
-      opacity: 0.45;
-      position: relative;
-    }
+    body { font-family: "Poppins", sans-serif; background:#050816; color:#e5e7eb; }
+    .card { background:#020617; border:1px solid rgba(148,163,184,.35); border-radius:1rem; }
+    .stat { background:#020617; border:1px solid #1f2937; border-radius:.75rem; }
+    .grad { background:linear-gradient(90deg,#a855f7,#ec4899); }
+    .badge { font-size:.7rem; padding:.25rem .6rem; border-radius:999px; }
+    .locked { opacity:.45; position:relative; }
     .locked::after {
-      content: "Locked – Upgrade plan to use";
-      position: absolute;
-      inset: auto 0 0 0;
-      font-size: 0.65rem;
-      text-align: center;
-      padding: 0.25rem 0.75rem;
-      background: linear-gradient(
-        90deg,
-        rgba(148, 163, 184, 0.25),
-        rgba(107, 114, 128, 0.6)
-      );
-      border-radius: 0 0 1rem 1rem;
+      content:"Locked – Upgrade plan";
+      position:absolute; bottom:0; left:0; right:0;
+      background:rgba(0,0,0,.6); font-size:.65rem;
+      text-align:center; padding:.25rem; border-radius:0 0 1rem 1rem;
     }
   </style>
 
@@ -70,605 +28,184 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 </head>
+
 <body>
-  <!-- Top bar -->
-  <header
-    class="border-b border-slate-800 bg-slate-950/95 sticky top-0 z-40"
-  >
-    <div
-      class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between"
-    >
-      <div class="flex items-center space-x-3">
-        <a
-          href="index.html"
-          class="text-xs text-slate-300 hover:text-white flex items-center"
-        >
-          ← Back to Home
-        </a>
-        <h1 class="text-lg sm:text-2xl font-bold text-white">
-          BizLink <span class="text-purple-400">Client Dashboard</span>
-        </h1>
-      </div>
-      <div class="flex items-center space-x-3 text-xs sm:text-sm">
-        <span
-          id="userEmailLabel"
-          class="hidden sm:inline text-slate-300"
-        ></span>
-        <button
-          id="logoutBtn"
-          class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md text-xs font-semibold"
-        >
-          Logout
-        </button>
-      </div>
+
+<header class="border-b border-slate-800 bg-slate-950 sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-white">
+      BizLink <span class="text-purple-400">10X Grow Dashboard</span>
+    </h1>
+    <div class="flex items-center gap-3 text-xs">
+      <span id="userEmail"></span>
+      <button id="logoutBtn" class="bg-red-600 px-3 py-1.5 rounded">Logout</button>
     </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
-    <!-- Plan strip -->
-    <section class="card-bg p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div>
-        <p class="text-xs text-slate-400 mb-1">Your BizLink Growth Plan</p>
-        <h2 id="planTitle" class="text-xl font-bold text-white">
-          Loading plan…
-        </h2>
-        <p id="planSubtitle" class="text-xs text-slate-400 mt-1">
-          Please wait while we check your subscription.
-        </p>
-      </div>
-      <div class="flex flex-col items-start sm:items-end gap-2">
-        <span id="planBadge" class="badge badge-plan-basic hidden">
-          Basic
-        </span>
-        <span id="planBadgeStandard" class="badge badge-plan-standard hidden">
-          Standard
-        </span>
-        <span id="planBadgePremium" class="badge badge-plan-premium hidden">
-          Premium 10X
-        </span>
-        <span id="planBadgeNone" class="badge badge-locked hidden">
-          No active plan
-        </span>
-
-        <a
-          href="#pricing-section"
-          class="text-xs text-purple-300 hover:text-purple-100 underline"
-        >
-          View / Upgrade Plan
-        </a>
-      </div>
-    </section>
-
-    <!-- Stats row -->
-    <section class="grid sm:grid-cols-4 gap-4">
-      <div class="stat-bg px-4 py-3">
-        <p class="text-xs text-slate-400">This Month Posts</p>
-        <p id="statPosts" class="text-2xl font-bold text-emerald-400">0</p>
-        <p class="text-[11px] text-slate-500 mt-1">
-          Target depends on plan (Basic / Standard / Premium).
-        </p>
-      </div>
-      <div class="stat-bg px-4 py-3">
-        <p class="text-xs text-slate-400">Reels / Shorts</p>
-        <p id="statReels" class="text-2xl font-bold text-sky-400">0</p>
-        <p class="text-[11px] text-slate-500 mt-1">Content engine status.</p>
-      </div>
-      <div class="stat-bg px-4 py-3">
-        <p class="text-xs text-slate-400">Leads Captured</p>
-        <p id="statLeads" class="text-2xl font-bold text-purple-400">0</p>
-        <p class="text-[11px] text-slate-500 mt-1">Form + WhatsApp flows.</p>
-      </div>
-      <div class="stat-bg px-4 py-3">
-        <p class="text-xs text-slate-400">Active Ad Sets</p>
-        <p id="statAds" class="text-2xl font-bold text-pink-400">0</p>
-        <p class="text-[11px] text-slate-500 mt-1">
-          Visible only for Standard & Premium.
-        </p>
-      </div>
-    </section>
-
-    <!-- Feature blocks (plan based) -->
-    <section class="grid lg:grid-cols-3 gap-4">
-      <!-- Content Engine -->
-      <article
-        class="card-bg p-4 flex flex-col justify-between"
-        data-min-plan="basic"
-      >
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-semibold text-white">
-              Daily Content Engine
-            </h3>
-            <span class="badge bg-emerald-500/20 text-emerald-300"
-              >Included</span
-            >
-          </div>
-          <p class="text-xs text-slate-300 mb-3">
-            Posts, reels, carousels – jo plan aapne liya hai uske hisaab se
-            monthly deliverables show honge.
-          </p>
-          <ul class="text-xs text-slate-400 space-y-1">
-            <li>• Content calendar (Google Sheet / Notion link)</li>
-            <li>• Approval status: Draft / Approved / Posted</li>
-            <li>• Brand kit & reference docs</li>
-          </ul>
-        </div>
-        <div class="mt-4 flex justify-between items-center text-xs">
-          <button
-            class="button-gradient text-white px-3 py-2 rounded-lg font-semibold"
-          >
-            Open Content Board
-          </button>
-          <a href="#" class="text-slate-400 hover:text-slate-200"
-            >Upload references →</a
-          >
-        </div>
-      </article>
-
-      <!-- Ads + Funnel (Standard & Premium only) -->
-      <article
-        id="featureAds"
-        class="card-bg p-4 flex flex-col justify-between"
-        data-min-plan="standard"
-      >
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-semibold text-white">
-              Ads + Lead Funnel
-            </h3>
-            <span class="badge bg-sky-500/20 text-sky-300">Growth</span>
-          </div>
-          <p class="text-xs text-slate-300 mb-3">
-            3km hyperlocal ads, landing pages, lead forms & WhatsApp follow-ups
-            – yahan se sab track hoga.
-          </p>
-          <ul class="text-xs text-slate-400 space-y-1">
-            <li>• Active campaigns & daily budget</li>
-            <li>• Cost per lead & enquiry summary</li>
-            <li>• Funnel steps: Ad → Form → WhatsApp → Call</li>
-          </ul>
-        </div>
-        <div class="mt-4 flex justify-between items-center text-xs">
-          <button
-            class="button-gradient text-white px-3 py-2 rounded-lg font-semibold"
-          >
-            View Campaigns
-          </button>
-          <a href="#" class="text-slate-400 hover:text-slate-200"
-            >Download latest report →</a
-          >
-        </div>
-      </article>
-
-      <!-- Automation + Retention (Premium only) -->
-      <article
-        id="featureAutomation"
-        class="card-bg p-4 flex flex-col justify-between"
-        data-min-plan="premium"
-      >
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-semibold text-white">
-              Automation & Retention
-            </h3>
-            <span class="badge bg-orange-500/20 text-orange-300"
-              >Premium 10X</span
-            >
-          </div>
-          <p class="text-xs text-slate-300 mb-3">
-            CRM, chatbot, review booster & reactivation campaigns – yahin se
-            pura “money on table” capture hoga.
-          </p>
-          <ul class="text-xs text-slate-400 space-y-1">
-            <li>• WhatsApp chatbot flows</li>
-            <li>• Review & rating tracker</li>
-            <li>• Old customer reactivation campaigns</li>
-          </ul>
-        </div>
-        <div class="mt-4 flex justify-between items-center text-xs">
-          <button
-            class="button-gradient text-white px-3 py-2 rounded-lg font-semibold"
-          >
-            Open Automation Panel
-          </button>
-          <a href="#" class="text-slate-400 hover:text-slate-200"
-            >Book session with Growth Officer →</a
-          >
-        </div>
-      </article>
-    </section>
-
-    <!-- Execution Timeline -->
-    <section class="space-y-3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-semibold text-white">
-          30-Day Execution Timeline
-        </h2>
-        <p class="text-[11px] text-slate-400">
-          Day 1–2 onboarding se leke Week 4 optimization tak.
-        </p>
-      </div>
-      <div class="grid md:grid-cols-4 gap-3 text-xs">
-        <div class="card-bg p-3">
-          <p class="text-[11px] text-slate-400">Day 1–2</p>
-          <h3 class="font-semibold text-white text-sm mb-1">Audit & Strategy</h3>
-          <ul class="text-slate-400 space-y-1 list-disc list-inside">
-            <li>Business & competitor audit</li>
-            <li>Target audience + offer clarity</li>
-            <li>Assets collection (logo, photos etc.)</li>
-          </ul>
-        </div>
-        <div class="card-bg p-3">
-          <p class="text-[11px] text-slate-400">Day 3–7</p>
-          <h3 class="font-semibold text-white text-sm mb-1">
-            Brand Kit + Content Plan
-          </h3>
-          <ul class="text-slate-400 space-y-1 list-disc list-inside">
-            <li>Content calendar lock</li>
-            <li>Post / reel hooks & angles</li>
-            <li>Landing page draft</li>
-          </ul>
-        </div>
-        <div class="card-bg p-3">
-          <p class="text-[11px] text-slate-400">Week 2–3</p>
-          <h3 class="font-semibold text-white text-sm mb-1">
-            Ads & Lead System
-          </h3>
-          <ul class="text-slate-400 space-y-1 list-disc list-inside">
-            <li>Ads launch + testing</li>
-            <li>Lead form + WhatsApp flow</li>
-            <li>Team follow-up scripts</li>
-          </ul>
-        </div>
-        <div class="card-bg p-3">
-          <p class="text-[11px] text-slate-400">Week 4</p>
-          <h3 class="font-semibold text-white text-sm mb-1">
-            Optimization & Report
-          </h3>
-          <ul class="text-slate-400 space-y-1 list-disc list-inside">
-            <li>Report + key numbers</li>
-            <li>Next month growth map</li>
-            <li>Plan upgrade suggestion</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Quick actions -->
-    <section class="grid md:grid-cols-3 gap-4 text-xs">
-      <div class="card-bg p-4 flex flex-col gap-2">
-        <h3 class="font-semibold text-white text-sm">Book Strategy Call</h3>
-        <p class="text-slate-400">
-          Monthly 1:1 review call jisme hum numbers, creatives aur next month
-          ka action plan freeze karte hain.
-        </p>
-        <button
-          class="mt-auto button-gradient text-white px-3 py-2 rounded-lg font-semibold"
-        >
-          Request Strategy Call
-        </button>
-      </div>
-      <div class="card-bg p-4 flex flex-col gap-2">
-        <h3 class="font-semibold text-white text-sm">Submit Content Inputs</h3>
-        <p class="text-slate-400">
-          Offers, festival plans, new photos, testimonials – yahan se upload /
-          share karo taaki best creatives ban sake.
-        </p>
-        <button
-          class="mt-auto bg-slate-800 border border-slate-600 text-slate-100 px-3 py-2 rounded-lg font-semibold"
-        >
-          Open Input Form
-        </button>
-      </div>
-      <div class="card-bg p-4 flex flex-col gap-2">
-        <h3 class="font-semibold text-white text-sm">Reports & Invoices</h3>
-        <p class="text-slate-400">
-          Monthly performance PDF, ad spend summary aur invoices ek hi jagah.
-        </p>
-        <button
-          class="mt-auto bg-slate-800 border border-slate-600 text-slate-100 px-3 py-2 rounded-lg font-semibold"
-        >
-          View Reports
-        </button>
-      </div>
-    </section>
-
-    <!-- Pricing (same cards, sirf reference ke liye) -->
-    <section id="pricing-section" class="mt-6">
-      <h2 class="text-sm font-semibold text-white mb-3">
-        Upgrade / Change Plan
-      </h2>
-      <div class="grid md:grid-cols-3 gap-4 text-xs">
-        <!-- Basic -->
-        <div class="card-bg p-4 border border-slate-700">
-          <h3 class="text-base font-bold text-white mb-1">Basic</h3>
-          <p class="text-slate-400 mb-2">Starter visibility pack</p>
-          <p class="text-2xl font-extrabold mb-3">
-            ₹9,999
-            <span class="text-xs font-medium text-slate-400">/month</span>
-          </p>
-          <ul class="text-slate-300 space-y-1 mb-4">
-            <li>• 12 posts + 2 reels</li>
-            <li>• Google profile optimization</li>
-            <li>• Simple lead form funnel</li>
-            <li>• Monthly report</li>
-          </ul>
-          <button
-            id="btnChooseBasic"
-            class="w-full button-gradient py-2 rounded-lg font-semibold"
-          >
-            Choose Basic
-          </button>
-        </div>
-
-        <!-- Standard -->
-        <div class="card-bg p-4 border-2 border-purple-500">
-          <span
-            class="badge bg-purple-600 px-2 py-1 rounded text-white text-[10px]"
-            >Most Popular</span
-          >
-          <h3 class="text-base font-bold text-white mb-1 mt-2">Standard</h3>
-          <p class="text-slate-400 mb-2">Balanced growth pack</p>
-          <p class="text-2xl font-extrabold mb-3">
-            ₹14,999
-            <span class="text-xs font-medium text-slate-400">/month</span>
-          </p>
-          <ul class="text-slate-300 space-y-1 mb-4">
-            <li>• 30 posts + 8 reels</li>
-            <li>• 3km local ads launch</li>
-            <li>• Lead funnel + WhatsApp automation</li>
-            <li>• Weekly optimization + report</li>
-          </ul>
-          <button
-            id="btnChooseStandard"
-            class="w-full button-gradient py-2 rounded-lg font-semibold"
-          >
-            Choose Standard
-          </button>
-        </div>
-
-        <!-- Premium -->
-        <div class="card-bg p-4 border border-slate-700">
-          <h3 class="text-base font-bold text-white mb-1">Premium 10X</h3>
-          <p class="text-slate-400 mb-2">Aggressive scaling</p>
-          <p class="text-2xl font-extrabold mb-3">
-            ₹24,999
-            <span class="text-xs font-medium text-slate-400">/month</span>
-          </p>
-          <ul class="text-slate-300 space-y-1 mb-4">
-            <li>• 45 posts + 12 reels</li>
-            <li>• Ads + Retargeting + A/B tests</li>
-            <li>• CRM + chatbot + review boost</li>
-            <li>• Dedicated Growth Officer</li>
-          </ul>
-          <button
-            id="btnChoosePremium"
-            class="w-full button-gradient py-2 rounded-lg font-semibold"
-          >
-            Choose Premium 10X
-          </button>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Toast -->
-  <div
-    id="toast"
-    class="fixed bottom-4 right-4 bg-emerald-600 text-white text-xs px-4 py-2 rounded-lg shadow-lg hidden"
-  >
-    Plan updated successfully. Refreshing dashboard…
   </div>
+</header>
 
-  <script>
-    /*********** FIREBASE CONFIG (same as other pages) ***********/
-    const firebaseConfig = {
-      apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
-      authDomain: "bizlink-exchange.firebaseapp.com",
-      projectId: "bizlink-exchange",
-      storageBucket: "bizlink-exchange.firebasestorage.app",
-      messagingSenderId: "116213651971",
-      appId: "1:116213651971:web:fff60961af0c4da3448c36",
-      measurementId: "G-VQ3JM82D1N",
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+<main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
 
-    /*********** PLAN STATE ***********/
-    const PLAN_PRIORITY = {
-      none: 0,
-      basic: 1,
-      standard: 2,
-      premium: 3,
-    };
-    let currentPlanKey = "none"; // "basic" | "standard" | "premium" | "none"
-    let currentUserEmail = "";
+  <!-- PLAN -->
+  <section class="card p-4 flex justify-between items-center">
+    <div>
+      <p class="text-xs text-slate-400">Active Growth Plan</p>
+      <h2 id="planTitle" class="text-xl font-bold">Loading…</h2>
+      <p id="planSub" class="text-xs text-slate-400"></p>
+    </div>
+    <span id="planBadge" class="badge bg-purple-500/20 text-purple-300"></span>
+  </section>
 
-    // Local storage helpers – yahi se default aa raha hoga
-    function loadPlanFromLocalStorage() {
-      const v = localStorage.getItem("bizlink_current_plan");
-      if (!v) return null;
-      if (["basic", "standard", "premium"].includes(v)) return v;
-      return null;
+  <!-- STATS -->
+  <section class="grid sm:grid-cols-4 gap-4">
+    <div class="stat p-3">
+      <p class="text-xs text-slate-400">Views</p>
+      <p id="views" class="text-2xl font-bold text-sky-400">0</p>
+    </div>
+    <div class="stat p-3">
+      <p class="text-xs text-slate-400">Clicks</p>
+      <p id="clicks" class="text-2xl font-bold text-emerald-400">0</p>
+    </div>
+    <div class="stat p-3">
+      <p class="text-xs text-slate-400">Leads</p>
+      <p id="leads" class="text-2xl font-bold text-purple-400">0</p>
+    </div>
+    <div class="stat p-3">
+      <p class="text-xs text-slate-400">Active Ads</p>
+      <p id="ads" class="text-2xl font-bold text-pink-400">0</p>
+    </div>
+  </section>
+
+  <!-- AI KEYWORDS -->
+  <section class="card p-4">
+    <div class="flex justify-between mb-2">
+      <h3 class="text-sm font-semibold">AI Visibility Keywords</h3>
+      <span class="badge bg-purple-500/20 text-purple-300">Auto AI</span>
+    </div>
+    <div id="keywords" class="flex flex-wrap gap-2 text-xs"></div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="grid lg:grid-cols-3 gap-4">
+    <div class="card p-4" data-plan="basic">
+      <h3 class="font-semibold mb-2">Content Engine</h3>
+      <p class="text-xs text-slate-400">Posts & reels execution system.</p>
+    </div>
+
+    <div class="card p-4" data-plan="standard">
+      <h3 class="font-semibold mb-2">Ads + Lead Funnel</h3>
+      <p class="text-xs text-slate-400">Hyperlocal ads + WhatsApp leads.</p>
+    </div>
+
+    <div class="card p-4" data-plan="premium">
+      <h3 class="font-semibold mb-2">Automation & Retention</h3>
+      <p class="text-xs text-slate-400">CRM, chatbot, reactivation.</p>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ================= CONFIG ================= */
+const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL";
+
+/* ================= FIREBASE ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+  authDomain: "bizlink-exchange.firebaseapp.com",
+  projectId: "bizlink-exchange",
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+/* ================= PLAN PRIORITY ================= */
+const PRIORITY = { none:0, basic:1, standard:2, premium:3 };
+let currentPlan = "none";
+let email = "";
+
+/* ================= LOADERS ================= */
+async function loadPlan() {
+  const r = await fetch(`${SCRIPT_URL}?action=getClientPlan&email=${email}`);
+  const d = await r.json();
+  currentPlan = d.plan || "none";
+
+  const title = document.getElementById("planTitle");
+  const sub = document.getElementById("planSub");
+  const badge = document.getElementById("planBadge");
+
+  if (currentPlan === "basic") {
+    title.textContent = "Basic Plan";
+    sub.textContent = "Starter visibility system active";
+    badge.textContent = "Basic";
+  } else if (currentPlan === "standard") {
+    title.textContent = "Standard Plan";
+    sub.textContent = "Ads + lead system active";
+    badge.textContent = "Standard";
+  } else if (currentPlan === "premium") {
+    title.textContent = "Premium 10X";
+    sub.textContent = "Full growth engine active";
+    badge.textContent = "Premium";
+  } else {
+    title.textContent = "No Active Plan";
+    sub.textContent = "Please upgrade your plan";
+    badge.textContent = "Inactive";
+  }
+
+  lockFeatures();
+}
+
+async function loadMetrics() {
+  const r = await fetch(`${SCRIPT_URL}?action=getClientMetrics&email=${email}`);
+  const d = await r.json();
+
+  document.getElementById("views").textContent = d.views || 0;
+  document.getElementById("clicks").textContent = d.clicks || 0;
+  document.getElementById("leads").textContent = d.leads || 0;
+  document.getElementById("ads").textContent =
+    currentPlan === "basic" ? 0 : 3;
+}
+
+async function loadKeywords() {
+  const box = document.getElementById("keywords");
+  box.innerHTML = "";
+  const r = await fetch(`${SCRIPT_URL}?action=getKeywords&email=${email}`);
+  const d = await r.json();
+
+  d.keywords.forEach(k => {
+    const s = document.createElement("span");
+    s.className = "badge bg-slate-800";
+    s.textContent = k;
+    box.appendChild(s);
+  });
+}
+
+function lockFeatures() {
+  document.querySelectorAll("[data-plan]").forEach(card => {
+    const need = card.getAttribute("data-plan");
+    if (PRIORITY[currentPlan] < PRIORITY[need]) {
+      card.classList.add("locked");
+    } else {
+      card.classList.remove("locked");
     }
-    function savePlanToLocalStorage(planKey) {
-      localStorage.setItem("bizlink_current_plan", planKey);
-    }
+  });
+}
 
-    // TODO: Backend se plan laana (Apps Script)
-    async function loadPlanFromBackend(email) {
-      // Abhi ke liye simple fallback; later tum yahan Apps Script GET call
-      // laga sakte ho: ?action=getClientPlan&email=...
-      // Agar server pe koi data na mile to "none" hi rahega.
-      console.log("TODO: call Apps Script for plan of", email);
-      return null;
-    }
+/* ================= AUTH ================= */
+auth.onAuthStateChanged(async user => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  email = user.email;
+  document.getElementById("userEmail").textContent = email;
 
-    /*********** UI UPDATE ***********/
-    function applyPlanToUI() {
-      const planTitle = document.getElementById("planTitle");
-      const planSubtitle = document.getElementById("planSubtitle");
+  await loadPlan();
+  await loadMetrics();
+  await loadKeywords();
+});
 
-      const badgeBasic = document.getElementById("planBadge");
-      const badgeStandard = document.getElementById("planBadgeStandard");
-      const badgePremium = document.getElementById("planBadgePremium");
-      const badgeNone = document.getElementById("planBadgeNone");
+document.getElementById("logoutBtn")
+  .addEventListener("click", () => auth.signOut());
+</script>
 
-      // reset badges
-      [badgeBasic, badgeStandard, badgePremium, badgeNone].forEach((b) =>
-        b.classList.add("hidden")
-      );
-
-      if (currentPlanKey === "basic") {
-        planTitle.textContent = "Basic – Starter Visibility Pack";
-        planSubtitle.textContent =
-          "12 posts + 2 reels, simple funnel & monthly report included.";
-        badgeBasic.classList.remove("hidden");
-      } else if (currentPlanKey === "standard") {
-        planTitle.textContent = "Standard – Balanced Growth Pack";
-        planSubtitle.textContent =
-          "30 posts + 8 reels, local ads & automation active for your account.";
-        badgeStandard.classList.remove("hidden");
-      } else if (currentPlanKey === "premium") {
-        planTitle.textContent = "Premium 10X – Aggressive Scaling";
-        planSubtitle.textContent =
-          "Full engine active: content + ads + automation + Growth Officer support.";
-        badgePremium.classList.remove("hidden");
-      } else {
-        planTitle.textContent = "No active plan yet";
-        planSubtitle.textContent =
-          "Choose any plan below to activate BizLink Growth System.";
-        badgeNone.classList.remove("hidden");
-      }
-
-      // Stats – simple demo numbers based on plan
-      const posts = document.getElementById("statPosts");
-      const reels = document.getElementById("statReels");
-      const leads = document.getElementById("statLeads");
-      const ads = document.getElementById("statAds");
-
-      if (currentPlanKey === "basic") {
-        posts.textContent = "12";
-        reels.textContent = "2";
-        leads.textContent = "25";
-        ads.textContent = "0";
-      } else if (currentPlanKey === "standard") {
-        posts.textContent = "30";
-        reels.textContent = "8";
-        leads.textContent = "60";
-        ads.textContent = "3";
-      } else if (currentPlanKey === "premium") {
-        posts.textContent = "45";
-        reels.textContent = "12";
-        leads.textContent = "120";
-        ads.textContent = "6";
-      } else {
-        posts.textContent = "0";
-        reels.textContent = "0";
-        leads.textContent = "0";
-        ads.textContent = "0";
-      }
-
-      // Feature locking based on plan
-      document
-        .querySelectorAll("[data-min-plan]")
-        .forEach((card) => {
-          const need = card.getAttribute("data-min-plan");
-          let requiredPriority = PLAN_PRIORITY.none;
-          if (need === "basic") requiredPriority = PLAN_PRIORITY.basic;
-          if (need === "standard") requiredPriority = PLAN_PRIORITY.standard;
-          if (need === "premium") requiredPriority = PLAN_PRIORITY.premium;
-
-          const currentPriority = PLAN_PRIORITY[currentPlanKey] || 0;
-          const shouldLock = currentPriority < requiredPriority;
-
-          card.classList.toggle("locked", shouldLock);
-        });
-
-      // Pricing buttons text
-      const btnBasic = document.getElementById("btnChooseBasic");
-      const btnStandard = document.getElementById("btnChooseStandard");
-      const btnPremium = document.getElementById("btnChoosePremium");
-
-      btnBasic.textContent =
-        currentPlanKey === "basic" ? "Current Plan" : "Choose Basic";
-      btnStandard.textContent =
-        currentPlanKey === "standard" ? "Current Plan" : "Choose Standard";
-      btnPremium.textContent =
-        currentPlanKey === "premium"
-          ? "Current Plan"
-          : "Choose Premium 10X";
-    }
-
-    function showToast() {
-      const toast = document.getElementById("toast");
-      toast.classList.remove("hidden");
-      setTimeout(() => {
-        toast.classList.add("hidden");
-      }, 2500);
-    }
-
-    /*********** PLAN CHANGE (front-end only for now) ***********/
-    function setPlan(planKey) {
-      if (!["basic", "standard", "premium"].includes(planKey)) return;
-
-      // yahan baad me Apps Script POST call laga sakte ho:
-      // action=updatePlan & email=currentUserEmail & plan=planKey
-      // Abhi ke liye sirf localStorage + UI
-      currentPlanKey = planKey;
-      savePlanToLocalStorage(planKey);
-      applyPlanToUI();
-      showToast();
-    }
-
-    /*********** AUTH GUARD ***********/
-    auth.onAuthStateChanged(async (user) => {
-      if (!user) {
-        alert("Please login as Business client to access dashboard.");
-        window.location.href = "login.html";
-        return;
-      }
-
-      currentUserEmail = user.email || "";
-      const label = document.getElementById("userEmailLabel");
-      if (label) {
-        label.textContent = `Logged in as ${currentUserEmail}`;
-        label.classList.remove("hidden");
-      }
-
-      // 1) Local storage check
-      let planKey = loadPlanFromLocalStorage();
-
-      // 2) Backend (Apps Script) check – optional, override local storage
-      if (!planKey) {
-        try {
-          const backendPlan = await loadPlanFromBackend(currentUserEmail);
-          if (backendPlan) planKey = backendPlan;
-        } catch (err) {
-          console.warn("Backend plan fetch failed:", err);
-        }
-      }
-
-      currentPlanKey = planKey || "none";
-      applyPlanToUI();
-    });
-
-    document
-      .getElementById("logoutBtn")
-      .addEventListener("click", () => auth.signOut().then(() => {
-        window.location.href = "index.html";
-      }));
-
-    // Pricing buttons → plan set
-    document
-      .getElementById("btnChooseBasic")
-      .addEventListener("click", () => setPlan("basic"));
-    document
-      .getElementById("btnChooseStandard")
-      .addEventListener("click", () => setPlan("standard"));
-    document
-      .getElementById("btnChoosePremium")
-      .addEventListener("click", () => setPlan("premium"));
-  </script>
 </body>
 </html>
