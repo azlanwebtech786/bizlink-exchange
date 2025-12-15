@@ -1,106 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>BizLink 10X Grow Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<title>BizLink 10X Grow Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind + Font -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 
-  <style>
-    body { font-family: "Poppins", sans-serif; background:#050816; color:#e5e7eb; }
-    .card { background:#020617; border:1px solid rgba(148,163,184,.35); border-radius:1rem; }
-    .stat { background:#020617; border:1px solid #1f2937; border-radius:.75rem; }
-    .grad { background:linear-gradient(90deg,#a855f7,#ec4899); }
-    .badge { font-size:.7rem; padding:.25rem .6rem; border-radius:999px; }
-    .locked { opacity:.45; position:relative; }
-    .locked::after {
-      content:"Locked – Upgrade plan";
-      position:absolute; bottom:0; left:0; right:0;
-      background:rgba(0,0,0,.6); font-size:.65rem;
-      text-align:center; padding:.25rem; border-radius:0 0 1rem 1rem;
-    }
-  </style>
+<style>
+body{font-family:Poppins,sans-serif;background:#050816;color:#e5e7eb}
+.card{background:#020617;border:1px solid rgba(148,163,184,.35);border-radius:1rem}
+.stat{background:#020617;border:1px solid #1f2937;border-radius:.75rem}
+.grad{background:linear-gradient(90deg,#a855f7,#ec4899)}
+.badge{font-size:.7rem;padding:.25rem .6rem;border-radius:999px}
+.locked{opacity:.45;position:relative}
+.locked::after{
+content:"Locked – Upgrade Plan";
+position:absolute;left:0;right:0;bottom:0;
+background:rgba(0,0,0,.65);
+font-size:.65rem;text-align:center;
+padding:.25rem;border-radius:0 0 1rem 1rem}
+</style>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 </head>
 
 <body>
 
 <header class="border-b border-slate-800 bg-slate-950 sticky top-0 z-40">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-    <h1 class="text-xl font-bold text-white">
-      BizLink <span class="text-purple-400">10X Grow Dashboard</span>
-    </h1>
-    <div class="flex items-center gap-3 text-xs">
-      <span id="userEmail"></span>
-      <button id="logoutBtn" class="bg-red-600 px-3 py-1.5 rounded">Logout</button>
-    </div>
-  </div>
+<div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+<h1 class="text-xl font-bold">
+BizLink <span class="text-purple-400">10X Grow Dashboard</span>
+</h1>
+<div class="flex items-center gap-3 text-xs">
+<span id="userEmail"></span>
+<button id="logoutBtn" class="bg-red-600 px-3 py-1.5 rounded">Logout</button>
+</div>
+</div>
 </header>
 
 <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
 
-  <!-- PLAN -->
-  <section class="card p-4 flex justify-between items-center">
-    <div>
-      <p class="text-xs text-slate-400">Active Growth Plan</p>
-      <h2 id="planTitle" class="text-xl font-bold">Loading…</h2>
-      <p id="planSub" class="text-xs text-slate-400"></p>
-    </div>
-    <span id="planBadge" class="badge bg-purple-500/20 text-purple-300"></span>
-  </section>
+<!-- PLAN -->
+<section class="card p-4 flex justify-between items-center">
+<div>
+<p class="text-xs text-slate-400">Active Growth Plan</p>
+<h2 id="planTitle" class="text-xl font-bold">Loading…</h2>
+<p id="planSub" class="text-xs text-slate-400"></p>
+</div>
+<span id="planBadge" class="badge bg-purple-500/20 text-purple-300"></span>
+</section>
 
-  <!-- STATS -->
-  <section class="grid sm:grid-cols-4 gap-4">
-    <div class="stat p-3">
-      <p class="text-xs text-slate-400">Views</p>
-      <p id="views" class="text-2xl font-bold text-sky-400">0</p>
-    </div>
-    <div class="stat p-3">
-      <p class="text-xs text-slate-400">Clicks</p>
-      <p id="clicks" class="text-2xl font-bold text-emerald-400">0</p>
-    </div>
-    <div class="stat p-3">
-      <p class="text-xs text-slate-400">Leads</p>
-      <p id="leads" class="text-2xl font-bold text-purple-400">0</p>
-    </div>
-    <div class="stat p-3">
-      <p class="text-xs text-slate-400">Active Ads</p>
-      <p id="ads" class="text-2xl font-bold text-pink-400">0</p>
-    </div>
-  </section>
+<!-- STATS -->
+<section class="grid sm:grid-cols-4 gap-4">
+<div class="stat p-3"><p class="text-xs text-slate-400">Views</p><p id="views" class="text-2xl font-bold text-sky-400">0</p></div>
+<div class="stat p-3"><p class="text-xs text-slate-400">Clicks</p><p id="clicks" class="text-2xl font-bold text-emerald-400">0</p></div>
+<div class="stat p-3"><p class="text-xs text-slate-400">Leads</p><p id="leads" class="text-2xl font-bold text-purple-400">0</p></div>
+<div class="stat p-3"><p class="text-xs text-slate-400">Active Ads</p><p id="ads" class="text-2xl font-bold text-pink-400">0</p></div>
+</section>
 
-  <!-- AI KEYWORDS -->
-  <section class="card p-4">
-    <div class="flex justify-between mb-2">
-      <h3 class="text-sm font-semibold">AI Visibility Keywords</h3>
-      <span class="badge bg-purple-500/20 text-purple-300">Auto AI</span>
-    </div>
-    <div id="keywords" class="flex flex-wrap gap-2 text-xs"></div>
-  </section>
+<!-- AI KEYWORDS -->
+<section class="card p-4">
+<div class="flex justify-between mb-2">
+<h3 class="text-sm font-semibold">AI Visibility Keywords</h3>
+<span class="badge bg-purple-500/20 text-purple-300">Auto AI</span>
+</div>
+<div id="keywords" class="flex flex-wrap gap-2 text-xs"></div>
+</section>
 
-  <!-- FEATURES -->
-  <section class="grid lg:grid-cols-3 gap-4">
-    <div class="card p-4" data-plan="basic">
-      <h3 class="font-semibold mb-2">Content Engine</h3>
-      <p class="text-xs text-slate-400">Posts & reels execution system.</p>
-    </div>
+<!-- FEATURES -->
+<section class="grid lg:grid-cols-3 gap-4">
+<div class="card p-4" data-plan="basic">
+<h3 class="font-semibold mb-2">Content Engine</h3>
+<p class="text-xs text-slate-400">Daily posts & reels execution.</p>
+</div>
 
-    <div class="card p-4" data-plan="standard">
-      <h3 class="font-semibold mb-2">Ads + Lead Funnel</h3>
-      <p class="text-xs text-slate-400">Hyperlocal ads + WhatsApp leads.</p>
-    </div>
+<div class="card p-4" data-plan="standard">
+<h3 class="font-semibold mb-2">Ads + Lead Funnel</h3>
+<p class="text-xs text-slate-400">Hyperlocal ads & WhatsApp leads.</p>
+</div>
 
-    <div class="card p-4" data-plan="premium">
-      <h3 class="font-semibold mb-2">Automation & Retention</h3>
-      <p class="text-xs text-slate-400">CRM, chatbot, reactivation.</p>
-    </div>
-  </section>
+<div class="card p-4" data-plan="premium">
+<h3 class="font-semibold mb-2">Automation & Retention</h3>
+<p class="text-xs text-slate-400">CRM, chatbot & reactivation.</p>
+</div>
+</section>
+
+<!-- UPGRADE -->
+<section class="card p-4">
+<h3 class="text-sm font-semibold mb-3">Upgrade Your Plan</h3>
+<div class="grid md:grid-cols-3 gap-4 text-xs">
+
+<div class="card p-4">
+<h4 class="font-bold mb-1">Basic</h4>
+<p class="text-slate-400 mb-2">Starter visibility</p>
+<p class="text-xl font-bold mb-3">₹9,999</p>
+<button onclick="choosePlan('basic')" class="w-full grad py-2 rounded">Choose Basic</button>
+</div>
+
+<div class="card p-4 border-2 border-purple-500">
+<h4 class="font-bold mb-1">Standard</h4>
+<p class="text-slate-400 mb-2">Ads + leads</p>
+<p class="text-xl font-bold mb-3">₹14,999</p>
+<button onclick="choosePlan('standard')" class="w-full grad py-2 rounded">Choose Standard</button>
+</div>
+
+<div class="card p-4">
+<h4 class="font-bold mb-1">Premium 10X</h4>
+<p class="text-slate-400 mb-2">Full automation</p>
+<p class="text-xl font-bold mb-3">₹24,999</p>
+<button onclick="choosePlan('premium')" class="w-full grad py-2 rounded">Choose Premium</button>
+</div>
+
+</div>
+</section>
 
 </main>
 
@@ -110,101 +127,88 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw68O_zf4gCtby7PSVKX
 
 /* ================= FIREBASE ================= */
 const firebaseConfig = {
-  apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
-  authDomain: "bizlink-exchange.firebaseapp.com",
-  projectId: "bizlink-exchange",
+apiKey:"AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+authDomain:"bizlink-exchange.firebaseapp.com",
+projectId:"bizlink-exchange"
 };
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+const auth=firebase.auth();
 
-/* ================= PLAN PRIORITY ================= */
-const PRIORITY = { none:0, basic:1, standard:2, premium:3 };
-let currentPlan = "none";
-let email = "";
+/* ================= STATE ================= */
+const PRIORITY={none:0,basic:1,standard:2,premium:3};
+let currentPlan="none";
+let email="";
 
 /* ================= LOADERS ================= */
-async function loadPlan() {
-  const r = await fetch(`${SCRIPT_URL}?action=getClientPlan&email=${email}`);
-  const d = await r.json();
-  currentPlan = d.plan || "none";
+async function loadPlan(){
+const r=await fetch(`${SCRIPT_URL}?action=getClientPlan&email=${email}`);
+const d=await r.json();
+currentPlan=d.plan||"none";
 
-  const title = document.getElementById("planTitle");
-  const sub = document.getElementById("planSub");
-  const badge = document.getElementById("planBadge");
+const t=document.getElementById("planTitle");
+const s=document.getElementById("planSub");
+const b=document.getElementById("planBadge");
 
-  if (currentPlan === "basic") {
-    title.textContent = "Basic Plan";
-    sub.textContent = "Starter visibility system active";
-    badge.textContent = "Basic";
-  } else if (currentPlan === "standard") {
-    title.textContent = "Standard Plan";
-    sub.textContent = "Ads + lead system active";
-    badge.textContent = "Standard";
-  } else if (currentPlan === "premium") {
-    title.textContent = "Premium 10X";
-    sub.textContent = "Full growth engine active";
-    badge.textContent = "Premium";
-  } else {
-    title.textContent = "No Active Plan";
-    sub.textContent = "Please upgrade your plan";
-    badge.textContent = "Inactive";
-  }
+if(currentPlan==="basic"){t.textContent="Basic Plan";s.textContent="Starter visibility active";b.textContent="Basic";}
+else if(currentPlan==="standard"){t.textContent="Standard Plan";s.textContent="Ads & lead system active";b.textContent="Standard";}
+else if(currentPlan==="premium"){t.textContent="Premium 10X";s.textContent="Full growth engine active";b.textContent="Premium";}
+else{t.textContent="No Active Plan";s.textContent="Please upgrade your plan";b.textContent="Inactive";}
 
-  lockFeatures();
+lockFeatures();
 }
 
-async function loadMetrics() {
-  const r = await fetch(`${SCRIPT_URL}?action=getClientMetrics&email=${email}`);
-  const d = await r.json();
-
-  document.getElementById("views").textContent = d.views || 0;
-  document.getElementById("clicks").textContent = d.clicks || 0;
-  document.getElementById("leads").textContent = d.leads || 0;
-  document.getElementById("ads").textContent =
-    currentPlan === "basic" ? 0 : 3;
+async function loadMetrics(){
+const r=await fetch(`${SCRIPT_URL}?action=getClientMetrics&email=${email}`);
+const d=await r.json();
+views.textContent=d.views||0;
+clicks.textContent=d.clicks||0;
+leads.textContent=d.leads||0;
+ads.textContent=currentPlan==="basic"?0:3;
 }
 
-async function loadKeywords() {
-  const box = document.getElementById("keywords");
-  box.innerHTML = "";
-  const r = await fetch(`${SCRIPT_URL}?action=getKeywords&email=${email}`);
-  const d = await r.json();
-
-  d.keywords.forEach(k => {
-    const s = document.createElement("span");
-    s.className = "badge bg-slate-800";
-    s.textContent = k;
-    box.appendChild(s);
-  });
+async function loadKeywords(){
+const box=document.getElementById("keywords");
+box.innerHTML="";
+const r=await fetch(`${SCRIPT_URL}?action=getKeywords&email=${email}`);
+const d=await r.json();
+(d.keywords||[]).forEach(k=>{
+const s=document.createElement("span");
+s.className="badge bg-slate-800";
+s.textContent=k;
+box.appendChild(s);
+});
 }
 
-function lockFeatures() {
-  document.querySelectorAll("[data-plan]").forEach(card => {
-    const need = card.getAttribute("data-plan");
-    if (PRIORITY[currentPlan] < PRIORITY[need]) {
-      card.classList.add("locked");
-    } else {
-      card.classList.remove("locked");
-    }
-  });
+function lockFeatures(){
+document.querySelectorAll("[data-plan]").forEach(c=>{
+if(PRIORITY[currentPlan]<PRIORITY[c.dataset.plan])c.classList.add("locked");
+else c.classList.remove("locked");
+});
+}
+
+/* ================= PLAN CHANGE ================= */
+async function choosePlan(plan){
+const r=await fetch(SCRIPT_URL,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({action:"updatePlan",email,plan})
+});
+const d=await r.json();
+if(d.success){alert("Plan updated");await loadPlan();await loadMetrics();}
+else alert("Plan update failed");
 }
 
 /* ================= AUTH ================= */
-auth.onAuthStateChanged(async user => {
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
-  email = user.email;
-  document.getElementById("userEmail").textContent = email;
-
-  await loadPlan();
-  await loadMetrics();
-  await loadKeywords();
+auth.onAuthStateChanged(async u=>{
+if(!u){location.href="login.html";return;}
+email=u.email;
+userEmail.textContent=email;
+await loadPlan();
+await loadMetrics();
+await loadKeywords();
 });
 
-document.getElementById("logoutBtn")
-  .addEventListener("click", () => auth.signOut());
+logoutBtn.onclick=()=>auth.signOut();
 </script>
 
 </body>
