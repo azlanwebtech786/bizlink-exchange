@@ -5,20 +5,33 @@
   <title>BizLink | Client Dashboard (10X Grow Lab)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind + Font -->
+  <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
   <style>
-    body { font-family:'Poppins',sans-serif; background:#050816; color:#e5e7eb }
-    .card { background:#0f172a; border:1px solid rgba(148,163,184,.25) }
-    .btn-grad { background:linear-gradient(90deg,#a855f7,#ec4899) }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #050816;
+      color: #e5e7eb;
+    }
+    .card {
+      background: #0f172a;
+      border: 1px solid rgba(148,163,184,.25);
+    }
+    .grad {
+      background: linear-gradient(90deg,#a855f7,#ec4899);
+    }
   </style>
 </head>
 
 <body class="min-h-screen">
 
-<!-- HEADER -->
+<!-- ================= HEADER ================= -->
 <header class="sticky top-0 z-40 bg-slate-950 border-b border-slate-800">
   <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
     <h1 class="text-lg font-bold text-white">
@@ -33,13 +46,34 @@
   </div>
 </header>
 
+<!-- ================= MAIN ================= -->
 <main class="max-w-6xl mx-auto px-4 py-6">
 
-  <!-- PLAN -->
+  <!-- PLAN STATUS -->
   <section class="card rounded-xl p-5 mb-6">
     <p class="text-xs text-slate-400">Your BizLink Growth Plan</p>
     <p class="text-xl font-bold mt-1">BizLink 10X Grow Lab</p>
     <p class="text-xs text-green-400">Active</p>
+  </section>
+
+  <!-- STATS -->
+  <section class="grid sm:grid-cols-4 gap-4 mb-6">
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Posts</p>
+      <p id="statPosts" class="text-2xl font-bold">0</p>
+    </div>
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Reels</p>
+      <p id="statReels" class="text-2xl font-bold">0</p>
+    </div>
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Leads</p>
+      <p id="statLeads" class="text-2xl font-bold">0</p>
+    </div>
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Ads</p>
+      <p id="statAds" class="text-2xl font-bold">0</p>
+    </div>
   </section>
 
   <!-- DAILY TASKS -->
@@ -70,12 +104,13 @@
 
 </main>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-
+<!-- ================= SCRIPT ================= -->
 <script>
-  // 🔐 Firebase Config
+  /* ================= CONFIG ================= */
+
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbym9zde1LhNHudmh_5fRFFplJR1-9bHlDd9-WTintDzIbfW39b666s226kp2HsaOVLxhw/exec";
+
   const firebaseConfig = {
     apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
     authDomain: "bizlink-exchange.firebaseapp.com",
@@ -87,23 +122,20 @@
 
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
-</script>
 
-<script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbym9zde1LhNHudmh_5fRFFplJR1-9bHlDd9-WTintDzIbfW39b666s226kp2HsaOVLxhw/exec";
   let clientEmail = "";
 
-  // ✅ CORRECT POST FORMAT FOR APPS SCRIPT
-  async function apiPost(data) {
-    const body = new URLSearchParams();
-    Object.keys(data).forEach(k => body.append(k, data[k]));
+  /* ================= HELPERS ================= */
 
+  async function apiPost(body) {
     const res = await fetch(API_URL, {
       method: "POST",
-      body
+      body: JSON.stringify(body)
     });
     return res.json();
   }
+
+  /* ================= LOAD TASKS ================= */
 
   async function loadTodayTasks() {
     const table = document.getElementById("taskTable");
@@ -125,7 +157,15 @@
       }
 
       table.innerHTML = "";
+
+      let posts = 0, reels = 0, leads = 0, ads = 0;
+
       res.tasks.forEach(t => {
+        if (t.TaskTitle.toLowerCase().includes("reel")) reels++;
+        else if (t.TaskTitle.toLowerCase().includes("post")) posts++;
+        else if (t.TaskTitle.toLowerCase().includes("lead")) leads++;
+        else ads++;
+
         const color =
           t.Status === "Completed" ? "text-green-400" :
           t.Status === "Pending" ? "text-yellow-400" :
@@ -143,7 +183,12 @@
           </tr>`;
       });
 
-    } catch (e) {
+      document.getElementById("statPosts").textContent = posts;
+      document.getElementById("statReels").textContent = reels;
+      document.getElementById("statLeads").textContent = leads;
+      document.getElementById("statAds").textContent = ads;
+
+    } catch (err) {
       table.innerHTML = `
         <tr>
           <td colspan="3" class="px-4 py-6 text-center text-red-400">
@@ -153,7 +198,8 @@
     }
   }
 
-  // AUTH
+  /* ================= AUTH ================= */
+
   auth.onAuthStateChanged(user => {
     if (!user) {
       window.location.href = "login.html";
