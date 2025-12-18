@@ -1,172 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>BizLink | Client Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <title>BizLink | Client Dashboard (10X Grow Lab)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <!-- Tailwind -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-body{font-family:Poppins,sans-serif;background:#050816;color:#e5e7eb}
-.card-bg{background:#020617;border-radius:1rem;border:1px solid rgba(148,163,184,.4)}
-.stat-bg{background:#020617;border-radius:.75rem;border:1px solid rgba(31,41,55,.9)}
-.button-gradient{background:linear-gradient(90deg,#a855f7,#ec4899)}
-.badge{font-size:.7rem;padding:.2rem .55rem;border-radius:999px}
-.badge-plan-basic{background:#22c55e1a;color:#4ade80}
-.badge-plan-standard{background:#3b82f61a;color:#60a5fa}
-.badge-plan-premium{background:#f973161a;color:#fb923c}
-.badge-locked{background:rgba(148,163,184,.12);color:#9ca3af}
-.locked{opacity:.45;position:relative}
-.locked::after{
-content:"Locked – Upgrade plan to use";
-position:absolute;inset:auto 0 0 0;
-font-size:.65rem;text-align:center;
-padding:.25rem;background:rgba(0,0,0,.6);
-border-radius:0 0 1rem 1rem}
-</style>
-
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; background:#050816; color:#e5e7eb }
+    .card { background:#0f172a; border:1px solid rgba(148,163,184,.25) }
+    .btn-grad { background:linear-gradient(90deg,#a855f7,#ec4899); }
+  </style>
 </head>
+<body class="min-h-screen">
 
-<body>
-
-<header class="border-b border-slate-800 bg-slate-950 sticky top-0 z-40">
-<div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-<h1 class="text-lg font-bold">BizLink <span class="text-purple-400">Client Dashboard</span></h1>
-<div class="flex items-center gap-3 text-xs">
-<span id="userEmailLabel"></span>
-<button id="logoutBtn" class="bg-red-600 px-4 py-1.5 rounded">Logout</button>
-</div>
-</div>
+<!-- 🔝 TOP BAR -->
+<header class="sticky top-0 z-40 bg-slate-950 border-b border-slate-800">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    <h1 class="text-lg font-bold text-white">
+      BizLink <span class="text-purple-400">Client Dashboard</span>
+    </h1>
+    <div class="flex items-center gap-3">
+      <span id="loggedEmail" class="text-sm text-slate-300"></span>
+      <button id="logoutBtn" class="bg-red-600 px-4 py-1.5 rounded text-sm font-semibold">
+        Logout
+      </button>
+    </div>
+  </div>
 </header>
 
-<main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+<main class="max-w-6xl mx-auto px-4 py-6">
 
-<section class="card-bg p-4 flex justify-between items-center">
-<div>
-<p class="text-xs text-slate-400">Your BizLink Growth Plan</p>
-<h2 id="planTitle" class="text-xl font-bold">Loading…</h2>
-<p id="planSubtitle" class="text-xs text-slate-400"></p>
-</div>
-<div>
-<span id="planBadge" class="badge hidden"></span>
-</div>
-</section>
+  <!-- 🧾 PLAN STATUS -->
+  <section class="card rounded-xl p-5 mb-6">
+    <h2 class="text-sm text-slate-400">Your BizLink Growth Plan</h2>
+    <p id="planName" class="text-xl font-bold mt-1">No Active Plan</p>
+    <p class="text-xs text-slate-400">Please upgrade your plan</p>
+  </section>
 
-<section class="grid sm:grid-cols-4 gap-4">
-<div class="stat-bg p-3"><p class="text-xs">Posts</p><p id="statPosts" class="text-2xl font-bold">0</p></div>
-<div class="stat-bg p-3"><p class="text-xs">Reels</p><p id="statReels" class="text-2xl font-bold">0</p></div>
-<div class="stat-bg p-3"><p class="text-xs">Leads</p><p id="statLeads" class="text-2xl font-bold">0</p></div>
-<div class="stat-bg p-3"><p class="text-xs">Ads</p><p id="statAds" class="text-2xl font-bold">0</p></div>
-</section>
+  <!-- 📊 STATS -->
+  <section class="grid sm:grid-cols-4 gap-4 mb-6">
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Posts</p>
+      <p id="statPosts" class="text-2xl font-bold">0</p>
+    </div>
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Reels</p>
+      <p id="statReels" class="text-2xl font-bold">0</p>
+    </div>
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Leads</p>
+      <p id="statLeads" class="text-2xl font-bold">0</p>
+    </div>
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Ads</p>
+      <p id="statAds" class="text-2xl font-bold">0</p>
+    </div>
+  </section>
 
-<section id="pricing-section" class="card-bg p-4">
-<h3 class="font-semibold mb-3">Upgrade / Change Plan</h3>
-<div class="grid md:grid-cols-3 gap-4 text-xs">
+  <!-- 🔥 TODAY'S WORK -->
+  <section class="mb-8">
+    <h2 class="text-lg font-semibold mb-3 text-white">
+      Today’s Growth Work (BizLink 10X Grow Lab)
+    </h2>
 
-<button onclick="choosePlan('basic')" class="button-gradient py-2 rounded">Choose Basic</button>
-<button onclick="choosePlan('standard')" class="button-gradient py-2 rounded">Choose Standard</button>
-<button onclick="choosePlan('premium')" class="button-gradient py-2 rounded">Choose Premium 10X</button>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm rounded-xl overflow-hidden">
+        <thead class="bg-slate-800">
+          <tr>
+            <th class="px-4 py-3 text-left">Task</th>
+            <th class="px-4 py-3 text-left">Status</th>
+            <th class="px-4 py-3 text-left">Proof</th>
+          </tr>
+        </thead>
+        <tbody id="todayTasksTable" class="bg-slate-900">
+          <tr>
+            <td colspan="3" class="px-4 py-6 text-center text-slate-400">
+              Loading today’s tasks…
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-</div>
-</section>
+  <!-- 💳 PLAN UPGRADE -->
+  <section class="card rounded-xl p-5">
+    <h3 class="text-sm font-semibold mb-3">Upgrade / Change Plan</h3>
+    <div class="grid sm:grid-cols-3 gap-4">
+      <button class="btn-grad py-3 rounded-lg font-semibold">Choose Basic</button>
+      <button class="btn-grad py-3 rounded-lg font-semibold">Choose Standard</button>
+      <button class="btn-grad py-3 rounded-lg font-semibold">Choose Premium 10X</button>
+    </div>
+  </section>
 
 </main>
 
+<!-- 🔻 SCRIPT -->
 <script>
-/* ================= CONFIG ================= */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw68O_zf4gCtby7PSVKXGko1HvrEJl8lNHXPCkEMmhKCmKiYjGnm4G643E6g3FVJ4Q/exec";
+  const API_URL = "YOUR_APPS_SCRIPT_WEBAPP_URL";
+  let userEmail = "";
 
-/* ================= FIREBASE ================= */
-firebase.initializeApp({
-apiKey:"AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
-authDomain:"bizlink-exchange.firebaseapp.com",
-projectId:"bizlink-exchange"
-});
-const auth=firebase.auth();
+  async function apiPost(body) {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify(body)
+    });
+    return res.json();
+  }
 
-const PLAN_PRIORITY={none:0,basic:1,standard:2,premium:3};
-let currentPlanKey="none";
-let email="";
+  async function loadTodayTasks() {
+    const table = document.getElementById("todayTasksTable");
+    try {
+      const resp = await apiPost({
+        action: "getTodayTasksForClient",
+        clientEmail: userEmail
+      });
 
-/* ================= LOAD PLAN ================= */
-async function loadPlan(){
-const r=await fetch(`${SCRIPT_URL}?action=getClientPlan&email=${email}`);
-const d=await r.json();
-currentPlanKey=d.plan||"none";
+      if (!resp.ok || !resp.tasks || resp.tasks.length === 0) {
+        table.innerHTML = `
+          <tr>
+            <td colspan="3" class="px-4 py-6 text-center text-slate-400">
+              No tasks assigned for today
+            </td>
+          </tr>`;
+        return;
+      }
 
-const title=document.getElementById("planTitle");
-const sub=document.getElementById("planSubtitle");
-const badge=document.getElementById("planBadge");
+      table.innerHTML = "";
+      resp.tasks.forEach(t => {
+        const color =
+          t.Status === "Completed" ? "text-green-400" :
+          t.Status === "Pending" ? "text-yellow-400" :
+          "text-red-400";
 
-badge.className="badge";
-badge.classList.remove("hidden");
+        table.innerHTML += `
+          <tr class="border-b border-slate-800">
+            <td class="px-4 py-3">${t.TaskTitle}</td>
+            <td class="px-4 py-3 font-semibold ${color}">${t.Status}</td>
+            <td class="px-4 py-3">
+              ${t.ProofURL
+                ? `<a href="${t.ProofURL}" target="_blank" class="text-purple-400 underline">View</a>`
+                : "—"}
+            </td>
+          </tr>`;
+      });
+    } catch (e) {
+      table.innerHTML = `
+        <tr>
+          <td colspan="3" class="px-4 py-6 text-center text-red-400">
+            Error loading tasks
+          </td>
+        </tr>`;
+    }
+  }
 
-if(currentPlanKey==="basic"){
-title.textContent="Basic Plan";
-sub.textContent="Starter visibility active";
-badge.textContent="Basic";
-badge.classList.add("badge-plan-basic");
-statPosts.textContent=12;statReels.textContent=2;statLeads.textContent=25;statAds.textContent=0;
-}
-else if(currentPlanKey==="standard"){
-title.textContent="Standard Plan";
-sub.textContent="Ads & automation active";
-badge.textContent="Standard";
-badge.classList.add("badge-plan-standard");
-statPosts.textContent=30;statReels.textContent=8;statLeads.textContent=60;statAds.textContent=3;
-}
-else if(currentPlanKey==="premium"){
-title.textContent="Premium 10X";
-sub.textContent="Full growth engine active";
-badge.textContent="Premium 10X";
-badge.classList.add("badge-plan-premium");
-statPosts.textContent=45;statReels.textContent=12;statLeads.textContent=120;statAds.textContent=6;
-}
-else{
-title.textContent="No Active Plan";
-sub.textContent="Please upgrade your plan";
-badge.textContent="Inactive";
-badge.classList.add("badge-locked");
-statPosts.textContent=0;statReels.textContent=0;statLeads.textContent=0;statAds.textContent=0;
-}
+  // 🔐 AUTH (Firebase already connected in your project)
+  auth.onAuthStateChanged(async user => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+    userEmail = user.email.toLowerCase();
+    document.getElementById("loggedEmail").textContent = userEmail;
 
-lockFeatures();
-}
+    loadTodayTasks();
+  });
 
-/* ================= LOCK FEATURES ================= */
-function lockFeatures(){
-document.querySelectorAll("[data-min-plan]").forEach(card=>{
-const need=card.dataset.minPlan;
-if(PLAN_PRIORITY[currentPlanKey]<PLAN_PRIORITY[need])card.classList.add("locked");
-else card.classList.remove("locked");
-});
-}
-
-/* ================= UPDATE PLAN ================= */
-async function choosePlan(plan){
-const r=await fetch(SCRIPT_URL,{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({action:"updatePlan",email,plan})
-});
-const d=await r.json();
-if(d.success){alert("Plan updated");loadPlan();}
-else alert("Plan update failed");
-}
-
-/* ================= AUTH ================= */
-auth.onAuthStateChanged(u=>{
-if(!u){location.href="login.html";return;}
-email=u.email;
-userEmailLabel.textContent=email;
-loadPlan();
-});
-
-logoutBtn.onclick=()=>auth.signOut();
+  document.getElementById("logoutBtn").onclick = () => {
+    auth.signOut().then(() => location.href = "index.html");
+  };
 </script>
 
 </body>
