@@ -5,7 +5,7 @@
   <title>BizLink | Client Dashboard (10X Grow Lab)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind -->
+  <!-- Tailwind + Font -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -18,7 +18,7 @@
 
 <body class="min-h-screen">
 
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <header class="sticky top-0 z-40 bg-slate-950 border-b border-slate-800">
   <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
     <h1 class="text-lg font-bold text-white">
@@ -33,37 +33,16 @@
   </div>
 </header>
 
-<!-- ================= MAIN ================= -->
 <main class="max-w-6xl mx-auto px-4 py-6">
 
-  <!-- ===== PLAN STATUS ===== -->
+  <!-- PLAN -->
   <section class="card rounded-xl p-5 mb-6">
     <p class="text-xs text-slate-400">Your BizLink Growth Plan</p>
-    <p id="planName" class="text-xl font-bold mt-1">BizLink 10X Grow Lab</p>
+    <p class="text-xl font-bold mt-1">BizLink 10X Grow Lab</p>
     <p class="text-xs text-green-400">Active</p>
   </section>
 
-  <!-- ===== STATS (OPTIONAL – trust build) ===== -->
-  <section class="grid sm:grid-cols-4 gap-4 mb-6">
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Posts</p>
-      <p id="statPosts" class="text-2xl font-bold">0</p>
-    </div>
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Reels</p>
-      <p id="statReels" class="text-2xl font-bold">0</p>
-    </div>
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Leads</p>
-      <p id="statLeads" class="text-2xl font-bold">0</p>
-    </div>
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Ads</p>
-      <p id="statAds" class="text-2xl font-bold">0</p>
-    </div>
-  </section>
-
-  <!-- ===== DAILY TASKS (CORE OF 10X) ===== -->
+  <!-- DAILY TASKS -->
   <section>
     <h2 class="text-lg font-semibold mb-3 text-white">
       Today’s Growth Work (BizLink 10X Grow Lab)
@@ -91,20 +70,41 @@
 
 </main>
 
-<!-- ================= SCRIPT ================= -->
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbym9zde1LhNHudmh_5fRFFplJR1-9bHlDd9-WTintDzIbfW39b666s226kp2HsaOVLxhw/exec"; // <-- yahan apna URL
+  // 🔐 Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+    authDomain: "bizlink-exchange.firebaseapp.com",
+    projectId: "bizlink-exchange",
+    storageBucket: "bizlink-exchange.firebasestorage.app",
+    messagingSenderId: "116213651971",
+    appId: "1:116213651971:web:fff60961af0c4da3448c36"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+</script>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbym9zde1LhNHudmh_5fRFFplJR1-9bHlDd9-WTintDzIbfW39b666s226kp2HsaOVLxhw/exec";
   let clientEmail = "";
 
-  async function apiPost(body) {
+  // ✅ CORRECT POST FORMAT FOR APPS SCRIPT
+  async function apiPost(data) {
+    const body = new URLSearchParams();
+    Object.keys(data).forEach(k => body.append(k, data[k]));
+
     const res = await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify(body)
+      body
     });
     return res.json();
   }
 
-  // ===== LOAD TODAY TASKS =====
   async function loadTodayTasks() {
     const table = document.getElementById("taskTable");
 
@@ -142,7 +142,8 @@
             </td>
           </tr>`;
       });
-    } catch (err) {
+
+    } catch (e) {
       table.innerHTML = `
         <tr>
           <td colspan="3" class="px-4 py-6 text-center text-red-400">
@@ -152,7 +153,7 @@
     }
   }
 
-  // ===== AUTH GUARD =====
+  // AUTH
   auth.onAuthStateChanged(user => {
     if (!user) {
       window.location.href = "login.html";
