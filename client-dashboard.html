@@ -10,14 +10,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Poppins', sans-serif; background:#050816; color:#e5e7eb }
+    body { font-family:'Poppins',sans-serif; background:#050816; color:#e5e7eb }
     .card { background:#0f172a; border:1px solid rgba(148,163,184,.25) }
-    .btn-grad { background:linear-gradient(90deg,#a855f7,#ec4899); }
+    .btn-grad { background:linear-gradient(90deg,#a855f7,#ec4899) }
   </style>
 </head>
+
 <body class="min-h-screen">
 
-<!-- 🔝 TOP BAR -->
+<!-- ================= HEADER ================= -->
 <header class="sticky top-0 z-40 bg-slate-950 border-b border-slate-800">
   <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
     <h1 class="text-lg font-bold text-white">
@@ -32,16 +33,17 @@
   </div>
 </header>
 
+<!-- ================= MAIN ================= -->
 <main class="max-w-6xl mx-auto px-4 py-6">
 
-  <!-- 🧾 PLAN STATUS -->
+  <!-- ===== PLAN STATUS ===== -->
   <section class="card rounded-xl p-5 mb-6">
-    <h2 class="text-sm text-slate-400">Your BizLink Growth Plan</h2>
-    <p id="planName" class="text-xl font-bold mt-1">No Active Plan</p>
-    <p class="text-xs text-slate-400">Please upgrade your plan</p>
+    <p class="text-xs text-slate-400">Your BizLink Growth Plan</p>
+    <p id="planName" class="text-xl font-bold mt-1">BizLink 10X Grow Lab</p>
+    <p class="text-xs text-green-400">Active</p>
   </section>
 
-  <!-- 📊 STATS -->
+  <!-- ===== STATS (OPTIONAL – trust build) ===== -->
   <section class="grid sm:grid-cols-4 gap-4 mb-6">
     <div class="card rounded-xl p-4">
       <p class="text-xs text-slate-400">Posts</p>
@@ -61,14 +63,14 @@
     </div>
   </section>
 
-  <!-- 🔥 TODAY'S WORK -->
-  <section class="mb-8">
+  <!-- ===== DAILY TASKS (CORE OF 10X) ===== -->
+  <section>
     <h2 class="text-lg font-semibold mb-3 text-white">
       Today’s Growth Work (BizLink 10X Grow Lab)
     </h2>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm rounded-xl overflow-hidden">
+    <div class="overflow-x-auto card rounded-xl">
+      <table class="w-full text-sm">
         <thead class="bg-slate-800">
           <tr>
             <th class="px-4 py-3 text-left">Task</th>
@@ -76,10 +78,10 @@
             <th class="px-4 py-3 text-left">Proof</th>
           </tr>
         </thead>
-        <tbody id="todayTasksTable" class="bg-slate-900">
+        <tbody id="taskTable" class="bg-slate-900">
           <tr>
             <td colspan="3" class="px-4 py-6 text-center text-slate-400">
-              Loading today’s tasks…
+              Loading today’s work…
             </td>
           </tr>
         </tbody>
@@ -87,22 +89,12 @@
     </div>
   </section>
 
-  <!-- 💳 PLAN UPGRADE -->
-  <section class="card rounded-xl p-5">
-    <h3 class="text-sm font-semibold mb-3">Upgrade / Change Plan</h3>
-    <div class="grid sm:grid-cols-3 gap-4">
-      <button class="btn-grad py-3 rounded-lg font-semibold">Choose Basic</button>
-      <button class="btn-grad py-3 rounded-lg font-semibold">Choose Standard</button>
-      <button class="btn-grad py-3 rounded-lg font-semibold">Choose Premium 10X</button>
-    </div>
-  </section>
-
 </main>
 
-<!-- 🔻 SCRIPT -->
+<!-- ================= SCRIPT ================= -->
 <script>
-  const API_URL = "YOUR_APPS_SCRIPT_WEBAPP_URL";
-  let userEmail = "";
+  const API_URL = "YOUR_APPS_SCRIPT_WEBAPP_URL"; // <-- yahan apna URL
+  let clientEmail = "";
 
   async function apiPost(body) {
     const res = await fetch(API_URL, {
@@ -112,15 +104,17 @@
     return res.json();
   }
 
+  // ===== LOAD TODAY TASKS =====
   async function loadTodayTasks() {
-    const table = document.getElementById("todayTasksTable");
+    const table = document.getElementById("taskTable");
+
     try {
-      const resp = await apiPost({
+      const res = await apiPost({
         action: "getTodayTasksForClient",
-        clientEmail: userEmail
+        clientEmail: clientEmail
       });
 
-      if (!resp.ok || !resp.tasks || resp.tasks.length === 0) {
+      if (!res.ok || !res.tasks || res.tasks.length === 0) {
         table.innerHTML = `
           <tr>
             <td colspan="3" class="px-4 py-6 text-center text-slate-400">
@@ -131,11 +125,11 @@
       }
 
       table.innerHTML = "";
-      resp.tasks.forEach(t => {
+      res.tasks.forEach(t => {
         const color =
           t.Status === "Completed" ? "text-green-400" :
           t.Status === "Pending" ? "text-yellow-400" :
-          "text-red-400";
+          "text-slate-400";
 
         table.innerHTML += `
           <tr class="border-b border-slate-800">
@@ -148,7 +142,7 @@
             </td>
           </tr>`;
       });
-    } catch (e) {
+    } catch (err) {
       table.innerHTML = `
         <tr>
           <td colspan="3" class="px-4 py-6 text-center text-red-400">
@@ -158,15 +152,14 @@
     }
   }
 
-  // 🔐 AUTH (Firebase already connected in your project)
-  auth.onAuthStateChanged(async user => {
+  // ===== AUTH GUARD =====
+  auth.onAuthStateChanged(user => {
     if (!user) {
       window.location.href = "login.html";
       return;
     }
-    userEmail = user.email.toLowerCase();
-    document.getElementById("loggedEmail").textContent = userEmail;
-
+    clientEmail = user.email.toLowerCase();
+    document.getElementById("loggedEmail").textContent = clientEmail;
     loadTodayTasks();
   });
 
