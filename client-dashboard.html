@@ -5,33 +5,30 @@
   <title>BizLink | Client Dashboard (10X Grow Lab)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: #050816;
-      color: #e5e7eb;
+      background:#050816;
+      color:#e5e7eb;
     }
     .card {
-      background: #0f172a;
-      border: 1px solid rgba(148,163,184,.25);
-    }
-    .grad {
-      background: linear-gradient(90deg,#a855f7,#ec4899);
+      background:#0f172a;
+      border:1px solid rgba(148,163,184,.25);
     }
   </style>
 </head>
 
 <body class="min-h-screen">
 
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <header class="sticky top-0 z-40 bg-slate-950 border-b border-slate-800">
   <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
     <h1 class="text-lg font-bold text-white">
@@ -46,10 +43,10 @@
   </div>
 </header>
 
-<!-- ================= MAIN ================= -->
+<!-- MAIN -->
 <main class="max-w-6xl mx-auto px-4 py-6">
 
-  <!-- PLAN STATUS -->
+  <!-- PLAN -->
   <section class="card rounded-xl p-5 mb-6">
     <p class="text-xs text-slate-400">Your BizLink Growth Plan</p>
     <p class="text-xl font-bold mt-1">BizLink 10X Grow Lab</p>
@@ -76,7 +73,7 @@
     </div>
   </section>
 
-  <!-- DAILY TASKS -->
+  <!-- TASKS -->
   <section>
     <h2 class="text-lg font-semibold mb-3 text-white">
       Today’s Growth Work (BizLink 10X Grow Lab)
@@ -104,115 +101,114 @@
 
 </main>
 
-<!-- ================= SCRIPT ================= -->
 <script>
-  /* ================= CONFIG ================= */
+/* ================= CONFIG ================= */
 
-  const API_URL =
-    "https://script.google.com/macros/s/AKfycbym9zde1LhNHudmh_5fRFFplJR1-9bHlDd9-WTintDzIbfW39b666s226kp2HsaOVLxhw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbym9zde1LhNHudmh_5fRFFplJR1-9bHlDd9-WTintDzIbfW39b666s226kp2HsaOVLxhw/exec";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
-    authDomain: "bizlink-exchange.firebaseapp.com",
-    projectId: "bizlink-exchange",
-    storageBucket: "bizlink-exchange.firebasestorage.app",
-    messagingSenderId: "116213651971",
-    appId: "1:116213651971:web:fff60961af0c4da3448c36"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+  authDomain: "bizlink-exchange.firebaseapp.com",
+  projectId: "bizlink-exchange",
+  storageBucket: "bizlink-exchange.firebasestorage.app",
+  messagingSenderId: "116213651971",
+  appId: "1:116213651971:web:fff60961af0c4da3448c36"
+};
 
+if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
+}
 
-  let clientEmail = "";
+const auth = firebase.auth();
+let clientEmail = "";
 
-  /* ================= HELPERS ================= */
+/* ================= API ================= */
 
-  async function apiPost(body) {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(body)
+async function apiPost(payload) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+/* ================= LOAD TASKS ================= */
+
+async function loadTodayTasks() {
+  const table = document.getElementById("taskTable");
+  table.innerHTML = "";
+
+  try {
+    const res = await apiPost({
+      action: "getTodayTasksForClient",
+      clientEmail
     });
-    return res.json();
-  }
 
-  /* ================= LOAD TASKS ================= */
-
-  async function loadTodayTasks() {
-    const table = document.getElementById("taskTable");
-
-    try {
-      const res = await apiPost({
-        action: "getTodayTasksForClient",
-        clientEmail: clientEmail
-      });
-
-      if (!res.ok || !res.tasks || res.tasks.length === 0) {
-        table.innerHTML = `
-          <tr>
-            <td colspan="3" class="px-4 py-6 text-center text-slate-400">
-              No tasks assigned for today
-            </td>
-          </tr>`;
-        return;
-      }
-
-      table.innerHTML = "";
-
-      let posts = 0, reels = 0, leads = 0, ads = 0;
-
-      res.tasks.forEach(t => {
-        if (t.TaskTitle.toLowerCase().includes("reel")) reels++;
-        else if (t.TaskTitle.toLowerCase().includes("post")) posts++;
-        else if (t.TaskTitle.toLowerCase().includes("lead")) leads++;
-        else ads++;
-
-        const color =
-          t.Status === "Completed" ? "text-green-400" :
-          t.Status === "Pending" ? "text-yellow-400" :
-          "text-slate-400";
-
-        table.innerHTML += `
-          <tr class="border-b border-slate-800">
-            <td class="px-4 py-3">${t.TaskTitle}</td>
-            <td class="px-4 py-3 font-semibold ${color}">${t.Status}</td>
-            <td class="px-4 py-3">
-              ${t.ProofURL
-                ? `<a href="${t.ProofURL}" target="_blank" class="text-purple-400 underline">View</a>`
-                : "—"}
-            </td>
-          </tr>`;
-      });
-
-      document.getElementById("statPosts").textContent = posts;
-      document.getElementById("statReels").textContent = reels;
-      document.getElementById("statLeads").textContent = leads;
-      document.getElementById("statAds").textContent = ads;
-
-    } catch (err) {
+    if (!res || !res.tasks || res.tasks.length === 0) {
       table.innerHTML = `
         <tr>
-          <td colspan="3" class="px-4 py-6 text-center text-red-400">
-            Error loading tasks
+          <td colspan="3" class="px-4 py-6 text-center text-slate-400">
+            No tasks assigned for today
           </td>
         </tr>`;
-    }
-  }
-
-  /* ================= AUTH ================= */
-
-  auth.onAuthStateChanged(user => {
-    if (!user) {
-      window.location.href = "login.html";
       return;
     }
-    clientEmail = user.email.toLowerCase();
-    document.getElementById("loggedEmail").textContent = clientEmail;
-    loadTodayTasks();
-  });
 
-  document.getElementById("logoutBtn").onclick = () => {
-    auth.signOut().then(() => location.href = "index.html");
-  };
+    let posts=0,reels=0,leads=0,ads=0;
+
+    res.tasks.forEach(t => {
+      const title = (t.TaskTitle || "").toLowerCase();
+      if (title.includes("reel")) reels++;
+      else if (title.includes("post")) posts++;
+      else if (title.includes("lead")) leads++;
+      else ads++;
+
+      const color =
+        t.Status === "Completed" ? "text-green-400" :
+        t.Status === "Pending" ? "text-yellow-400" :
+        "text-slate-400";
+
+      table.innerHTML += `
+        <tr class="border-b border-slate-800">
+          <td class="px-4 py-3">${t.TaskTitle || "-"}</td>
+          <td class="px-4 py-3 font-semibold ${color}">${t.Status || "—"}</td>
+          <td class="px-4 py-3">
+            ${t.ProofURL ? `<a href="${t.ProofURL}" target="_blank" class="text-purple-400 underline">View</a>` : "—"}
+          </td>
+        </tr>`;
+    });
+
+    statPosts.textContent = posts;
+    statReels.textContent = reels;
+    statLeads.textContent = leads;
+    statAds.textContent = ads;
+
+  } catch (e) {
+    table.innerHTML = `
+      <tr>
+        <td colspan="3" class="px-4 py-6 text-center text-red-400">
+          Failed to load tasks
+        </td>
+      </tr>`;
+  }
+}
+
+/* ================= AUTH ================= */
+
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    location.href = "login.html";
+    return;
+  }
+  clientEmail = user.email.toLowerCase();
+  loggedEmail.textContent = clientEmail;
+  loadTodayTasks();
+});
+
+logoutBtn.onclick = () => {
+  auth.signOut().then(() => location.href = "index.html");
+};
 </script>
 
 </body>
