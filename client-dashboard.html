@@ -142,10 +142,16 @@ async function loadTodayTasks() {
   try {
     const res = await apiPost({
       action: "getTodayTasksForClient",
-      clientEmail
+      clientEmail: clientEmail
     });
 
-    if (!res || !res.tasks || res.tasks.length === 0) {
+    if (!res || res.ok === false) {
+      throw new Error(res?.error || "API Error");
+    }
+
+    const tasks = res.tasks || [];
+
+    if (!tasks.length) {
       table.innerHTML = `
         <tr>
           <td colspan="3" class="px-4 py-6 text-center text-slate-400">
@@ -157,7 +163,7 @@ async function loadTodayTasks() {
 
     let posts=0,reels=0,leads=0,ads=0;
 
-    res.tasks.forEach(t => {
+    tasks.forEach(t => {
       const title = (t.TaskTitle || "").toLowerCase();
       if (title.includes("reel")) reels++;
       else if (title.includes("post")) posts++;
@@ -184,7 +190,8 @@ async function loadTodayTasks() {
     statLeads.textContent = leads;
     statAds.textContent = ads;
 
-  } catch (e) {
+  } catch (err) {
+    console.error(err);
     table.innerHTML = `
       <tr>
         <td colspan="3" class="px-4 py-6 text-center text-red-400">
