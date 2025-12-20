@@ -132,11 +132,11 @@ async function loadTodayTasks() {
   const table = document.getElementById("taskTable");
   table.innerHTML = "";
 
-  try {
-   apiGet({
+  const res = await apiGet({
   action: "getTodayTasksForClient",
   clientEmail: clientEmail
 });
+
 
 
     console.log("TASK API RESPONSE:", res);
