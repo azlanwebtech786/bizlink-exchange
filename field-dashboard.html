@@ -88,75 +88,41 @@ Submit Proof
 </div>
 
 <script>
-/******** CONFIG ********/
 const API_URL = "https://script.google.com/macros/s/AKfycbyLVxzZR67lZ3MIFbPzVhApU_HJhuFJ1eYUpb5314ez-O_AxxaV43Jm_GqyMSvTNWCxaQ/exec";
-let currentTaskId = "";
-let execEmail = localStorage.getItem("fieldEmail") || "demo@field.com";
 
-document.getElementById("execName").innerText = execEmail;
+async function loadTasks() {
+  const fieldEmail = localStorage.getItem("fieldEmail");
 
-/******** LOAD TASKS ********/
-async function loadTasks(){
-  const res = await fetch(`${API_URL}?action=fieldTasks&email=${execEmail}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API_URL}?action=getFieldTasks&fieldEmail=${fieldEmail}`);
+    const data = await res.json();
 
-  const table = document.getElementById("taskTable");
-  table.innerHTML = "";
+    const tbody = document.getElementById("taskBody");
+    tbody.innerHTML = "";
 
-  if(!data.tasks || !data.tasks.length){
-    table.innerHTML = `
-      <tr>
-        <td colspan="4" class="px-4 py-6 text-center text-slate-400">
-          No tasks assigned today
-        </td>
-      </tr>`;
-    return;
+    if (!data.tasks || data.tasks.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4">No tasks assigned</td></tr>`;
+      return;
+    }
+
+    data.tasks.forEach(t => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${t.task}</td>
+          <td>${t.client}</td>
+          <td>${t.status}</td>
+          <td><button>Upload Proof</button></td>
+        </tr>`;
+    });
+
+  } catch (e) {
+    console.error(e);
   }
-
-  data.tasks.forEach(t=>{
-    table.innerHTML += `
-      <tr class="border-b border-slate-800">
-        <td class="px-4 py-3">${t.task}</td>
-        <td class="px-4 py-3">${t.clientId}</td>
-        <td class="px-4 py-3 text-yellow-400">${t.status}</td>
-        <td class="px-4 py-3">
-          <button onclick="openModal('${t.taskId}')"
-            class="bg-purple-600 px-3 py-1 rounded text-xs">
-            Upload Proof
-          </button>
-        </td>
-      </tr>`;
-  });
-}
-
-/******** PROOF FLOW ********/
-function openModal(taskId){
-  currentTaskId = taskId;
-  document.getElementById("proofModal").classList.remove("hidden");
-}
-
-function closeModal(){
-  document.getElementById("proofModal").classList.add("hidden");
-  document.getElementById("proofLink").value = "";
-}
-
-async function submitProof(){
-  const link = document.getElementById("proofLink").value.trim();
-  if(!link){ alert("Proof link required"); return; }
-
-  await fetch(`${API_URL}?action=submitProof&taskId=${currentTaskId}&proof=${encodeURIComponent(link)}`);
-  closeModal();
-  loadTasks();
-}
-
-/******** LOGOUT ********/
-function logout(){
-  localStorage.removeItem("fieldEmail");
-  location.href = "login.html";
 }
 
 loadTasks();
 </script>
+
 
 </body>
 </html>
