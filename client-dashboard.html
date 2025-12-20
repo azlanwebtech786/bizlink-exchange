@@ -1,150 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>BizLink 10X Grow Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>BizLink 10X Grow Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: radial-gradient(circle at top, #0b1228, #050816);
-      color: #e5e7eb;
-    }
-    .card {
-      background: linear-gradient(180deg, #0f172a, #020617);
-      border: 1px solid rgba(148,163,184,.15);
-    }
-    .locked {
-      opacity: 0.4;
-    }
-  </style>
+<style>
+body{
+  font-family:Poppins,sans-serif;
+  background:radial-gradient(circle at top,#0b1228,#050816);
+  color:#e5e7eb;
+}
+.card{
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border:1px solid rgba(148,163,184,.15);
+}
+.locked{
+  opacity:.35;
+  filter:grayscale(1);
+  pointer-events:none;
+}
+.unlock{
+  animation:unlockGlow .8s ease-out forwards;
+}
+@keyframes unlockGlow{
+  from{opacity:.3;transform:scale(.98)}
+  to{opacity:1;transform:scale(1)}
+}
+</style>
 </head>
 
 <body class="min-h-screen">
 
 <!-- HEADER -->
 <header class="sticky top-0 z-50 bg-slate-950 border-b border-slate-800">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-    <h1 class="text-lg font-bold">
-      BizLink <span class="text-purple-400">10X Grow Dashboard</span>
-    </h1>
-    <div class="flex items-center gap-4">
-      <span class="text-sm text-slate-300">susi2@gmail.com</span>
-      <button class="bg-red-600 hover:bg-red-700 px-4 py-1.5 rounded text-sm font-semibold">
-        Logout
-      </button>
-    </div>
-  </div>
+<div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<div class="flex items-center gap-4">
+<a href="index.html" class="text-sm text-slate-300 hover:text-white">← Back to Home</a>
+<h1 class="text-lg font-bold">
+BizLink <span class="text-purple-400">10X Grow</span>
+</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-sm text-slate-300">client@email.com</span>
+<button class="bg-red-600 hover:bg-red-700 px-4 py-1.5 rounded text-sm font-semibold">
+Logout
+</button>
+</div>
+</div>
 </header>
 
-<!-- MAIN -->
 <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
 
-  <!-- ACTIVE PLAN -->
-  <section class="card rounded-2xl p-6 flex justify-between items-center">
-    <div>
-      <p class="text-xs text-slate-400">Active Growth Plan</p>
-      <p class="text-2xl font-bold mt-1">No Active Plan</p>
-      <p class="text-sm text-slate-400">Please upgrade your plan to unlock growth systems</p>
-    </div>
-    <span class="text-sm font-semibold text-red-400">Inactive</span>
-  </section>
+<!-- ACTIVE PLAN -->
+<section class="card rounded-2xl p-6 flex justify-between items-center">
+<div>
+<p class="text-xs text-slate-400">Active Growth Plan</p>
+<p id="planName" class="text-2xl font-bold mt-1">No Active Plan</p>
+<p id="planNote" class="text-sm text-slate-400">Upgrade to unlock BizLink systems</p>
+</div>
+<span id="planStatus" class="text-sm font-semibold text-red-400">Inactive</span>
+</section>
 
-  <!-- STATS -->
-  <section class="grid md:grid-cols-4 gap-5">
-    <div class="card rounded-xl p-5">
-      <p class="text-xs text-slate-400">Views</p>
-      <p class="text-3xl font-bold mt-2">0</p>
-    </div>
-    <div class="card rounded-xl p-5">
-      <p class="text-xs text-slate-400">Clicks</p>
-      <p class="text-3xl font-bold mt-2">0</p>
-    </div>
-    <div class="card rounded-xl p-5">
-      <p class="text-xs text-slate-400">Leads</p>
-      <p class="text-3xl font-bold mt-2 text-purple-400">0</p>
-    </div>
-    <div class="card rounded-xl p-5">
-      <p class="text-xs text-slate-400">Active Ads</p>
-      <p class="text-3xl font-bold mt-2 text-pink-400">3</p>
-    </div>
-  </section>
+<!-- USP -->
+<section class="grid md:grid-cols-3 gap-6">
+<div class="card rounded-xl p-6">
+<h3 class="font-semibold text-lg">📍 Field Execution</h3>
+<p class="text-sm text-slate-400 mt-2">
+On-ground audit, local competitor analysis, real business visit.
+</p>
+</div>
+<div class="card rounded-xl p-6">
+<h3 class="font-semibold text-lg">🚀 Digital Growth</h3>
+<p class="text-sm text-slate-400 mt-2">
+Ads, reels, Google visibility & WhatsApp automation.
+</p>
+</div>
+<div class="card rounded-xl p-6">
+<h3 class="font-semibold text-lg">♻️ Retention System</h3>
+<p class="text-sm text-slate-400 mt-2">
+Reviews, reactivation & repeat customer flow.
+</p>
+</div>
+</section>
 
-  <!-- AI KEYWORDS -->
-  <section class="card rounded-2xl p-6 flex justify-between items-center">
-    <p class="text-lg font-semibold">AI Visibility Keywords</p>
-    <span class="text-xs px-3 py-1 rounded-full bg-purple-600/20 text-purple-300">
-      Auto AI
-    </span>
-  </section>
+<!-- STATS -->
+<section class="grid md:grid-cols-4 gap-5">
+<div class="card rounded-xl p-5"><p class="text-xs text-slate-400">Views</p><p class="text-3xl font-bold">0</p></div>
+<div class="card rounded-xl p-5"><p class="text-xs text-slate-400">Clicks</p><p class="text-3xl font-bold">0</p></div>
+<div class="card rounded-xl p-5"><p class="text-xs text-slate-400">Leads</p><p class="text-3xl font-bold text-purple-400">0</p></div>
+<div class="card rounded-xl p-5"><p class="text-xs text-slate-400">Active Ads</p><p class="text-3xl font-bold text-pink-400">0</p></div>
+</section>
 
-  <!-- MODULES -->
-  <section class="grid md:grid-cols-3 gap-6">
-    <div class="card rounded-xl p-6 locked">
-      <h3 class="font-semibold text-lg">Content Engine</h3>
-      <p class="text-sm text-slate-400 mt-2">
-        Daily posts & reels execution
-      </p>
-      <p class="text-xs mt-4 text-red-400">Locked – Upgrade Plan</p>
-    </div>
+<!-- MODULES -->
+<section class="grid md:grid-cols-3 gap-6">
+<div id="module1" class="card rounded-xl p-6 locked">
+<h3 class="font-semibold text-lg">Content Engine</h3>
+<p class="text-sm text-slate-400 mt-2">Daily posts & reels execution</p>
+</div>
+<div id="module2" class="card rounded-xl p-6 locked">
+<h3 class="font-semibold text-lg">Ads + Lead Funnel</h3>
+<p class="text-sm text-slate-400 mt-2">Hyperlocal ads & WhatsApp leads</p>
+</div>
+<div id="module3" class="card rounded-xl p-6 locked">
+<h3 class="font-semibold text-lg">Automation & Retention</h3>
+<p class="text-sm text-slate-400 mt-2">CRM, chatbot & reactivation</p>
+</div>
+</section>
 
-    <div class="card rounded-xl p-6 locked">
-      <h3 class="font-semibold text-lg">Ads + Lead Funnel</h3>
-      <p class="text-sm text-slate-400 mt-2">
-        Hyperlocal ads & WhatsApp leads
-      </p>
-      <p class="text-xs mt-4 text-red-400">Locked – Upgrade Plan</p>
-    </div>
-
-    <div class="card rounded-xl p-6 locked">
-      <h3 class="font-semibold text-lg">Automation & Retention</h3>
-      <p class="text-sm text-slate-400 mt-2">
-        CRM, chatbot & reactivation
-      </p>
-      <p class="text-xs mt-4 text-red-400">Locked – Upgrade Plan</p>
-    </div>
-  </section>
-
-  <!-- UPGRADE PLANS -->
-  <section>
-    <h2 class="text-xl font-bold mb-5">Upgrade Your Plan</h2>
-
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="card rounded-2xl p-6">
-        <h3 class="font-semibold text-lg">Basic</h3>
-        <p class="text-sm text-slate-400">Starter visibility</p>
-        <p class="text-3xl font-bold mt-4">₹9,999</p>
-        <button class="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-500 py-2 rounded-lg font-semibold">
-          Choose Basic
-        </button>
-      </div>
-
-      <div class="card rounded-2xl p-6 border-purple-500/40">
-        <h3 class="font-semibold text-lg">Standard</h3>
-        <p class="text-sm text-slate-400">Ads + leads</p>
-        <p class="text-3xl font-bold mt-4">₹14,999</p>
-        <button class="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-500 py-2 rounded-lg font-semibold">
-          Choose Standard
-        </button>
-      </div>
-
-      <div class="card rounded-2xl p-6">
-        <h3 class="font-semibold text-lg">Premium 10X</h3>
-        <p class="text-sm text-slate-400">Full automation</p>
-        <p class="text-3xl font-bold mt-4">₹24,999</p>
-        <button class="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-500 py-2 rounded-lg font-semibold">
-          Choose Premium
-        </button>
-      </div>
-    </div>
-  </section>
+<!-- UPGRADE -->
+<section>
+<h2 class="text-xl font-bold mb-5">Upgrade Your Plan</h2>
+<div class="grid md:grid-cols-3 gap-6">
+<button onclick="activatePlan('Basic')" class="card rounded-xl p-6 text-left">
+<h3 class="font-semibold">Basic</h3><p class="text-sm">₹9,999</p>
+</button>
+<button onclick="activatePlan('Standard')" class="card rounded-xl p-6 text-left">
+<h3 class="font-semibold">Standard</h3><p class="text-sm">₹14,999</p>
+</button>
+<button onclick="activatePlan('Premium 10X')" class="card rounded-xl p-6 text-left">
+<h3 class="font-semibold">Premium 10X</h3><p class="text-sm">₹24,999</p>
+</button>
+</div>
+</section>
 
 </main>
+
+<script>
+function activatePlan(plan){
+document.getElementById("planName").innerText = plan;
+document.getElementById("planNote").innerText = "Plan Active – Growth systems unlocked";
+document.getElementById("planStatus").innerText = "Active";
+document.getElementById("planStatus").classList.remove("text-red-400");
+document.getElementById("planStatus").classList.add("text-green-400");
+
+["module1","module2","module3"].forEach(id=>{
+const el=document.getElementById(id);
+el.classList.remove("locked");
+el.classList.add("unlock");
+});
+}
+</script>
 
 </body>
 </html>
