@@ -23,10 +23,13 @@
       box-shadow: 0 0 30px rgba(34,197,94,.35);
       border:1px solid rgba(34,197,94,.6);
     }
+    .slide-panel {
+      transition: transform .3s ease;
+    }
   </style>
 </head>
 
-<body class="min-h-screen">
+<body class="min-h-screen overflow-x-hidden">
 
 <!-- ================= HEADER ================= -->
 <header class="sticky top-0 z-40 bg-slate-950 border-b border-slate-800">
@@ -51,54 +54,16 @@
 
   <!-- PLAN CONTROL -->
   <section class="card glow rounded-xl p-6">
-    <p class="text-xs text-slate-400">Client Plan Control</p>
+    <p class="text-xs text-slate-400">System Control</p>
     <h2 class="text-xl font-bold mt-1 text-green-400">
       BizLink 10X Grow Lab – ACTIVE
     </h2>
-
-    <div class="flex flex-wrap items-center gap-4 mt-5">
-      <button class="bg-green-600 px-6 py-2 rounded font-semibold">
-        ▶ Activate Plan
-      </button>
-      <button class="bg-yellow-500 px-6 py-2 rounded font-semibold text-black">
-        ⏸ Pause Plan
-      </button>
-      <button class="bg-red-600 px-6 py-2 rounded font-semibold">
-        ⛔ Stop Plan
-      </button>
-    </div>
-
-    <p class="text-xs text-slate-400 mt-4">
-      ⚠ Activate = Daily Tasks + Field Execution Start  
-      ⚠ Pause = Temporary Hold  
-      ⚠ Stop = Full Shutdown (No tasks, no visits)
-    </p>
   </section>
 
-  <!-- SYSTEM OVERVIEW -->
-  <section class="grid sm:grid-cols-4 gap-4">
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Active Clients</p>
-      <p class="text-3xl font-bold">18</p>
-    </div>
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Field Executives</p>
-      <p class="text-3xl font-bold">6</p>
-    </div>
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Daily Tasks</p>
-      <p class="text-3xl font-bold">72</p>
-    </div>
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Pending Proofs</p>
-      <p class="text-3xl font-bold text-yellow-400">9</p>
-    </div>
-  </section>
-
-  <!-- ================= ALL CLIENTS MASTER VIEW ================= -->
+  <!-- ================= ALL CLIENTS ================= -->
   <section>
     <h3 class="text-lg font-semibold mb-3">
-      All Clients – 10X Grow Lab Control
+      All Clients – Master Control
     </h3>
 
     <div class="overflow-x-auto card rounded-xl">
@@ -106,110 +71,112 @@
         <thead class="bg-slate-800">
           <tr>
             <th class="px-4 py-3 text-left">Client</th>
-            <th class="px-4 py-3 text-left">Plan Status</th>
-            <th class="px-4 py-3 text-left">Assigned Team</th>
+            <th class="px-4 py-3 text-left">Plan</th>
             <th class="px-4 py-3 text-left">Progress</th>
             <th class="px-4 py-3 text-right">Action</th>
           </tr>
         </thead>
-
         <tbody class="bg-slate-900">
 
           <tr class="border-b border-slate-800">
-            <td class="px-4 py-3 font-medium text-white">
-              Sharma Electronics
+            <td class="px-4 py-3">
+              <div class="font-semibold">Sharma Electronics</div>
               <div class="text-xs text-slate-400">sharma@gmail.com</div>
             </td>
-            <td class="px-4 py-3">
-              <span class="px-2 py-1 rounded text-xs bg-green-600/20 text-green-400">
-                ACTIVE
-              </span>
-            </td>
-            <td class="px-4 py-3 text-slate-300">
-              Raj (Field), Aman (Ads)
-            </td>
-            <td class="px-4 py-3">
-              <span class="font-semibold">12</span>/<span class="text-slate-400">18 Tasks</span>
-            </td>
+            <td class="px-4 py-3 text-green-400">ACTIVE</td>
+            <td class="px-4 py-3">12 / 18 Tasks</td>
             <td class="px-4 py-3 text-right">
-              <button class="bg-purple-600 px-3 py-1 rounded text-xs">
+              <button onclick="openClientPanel('Sharma Electronics','ACTIVE','12 / 18','Raj, Aman')"
+                class="bg-purple-600 px-3 py-1 rounded text-xs">
                 View
               </button>
             </td>
           </tr>
 
           <tr>
-            <td class="px-4 py-3 font-medium text-white">
-              Khan Salon
+            <td class="px-4 py-3">
+              <div class="font-semibold">Khan Salon</div>
               <div class="text-xs text-slate-400">khan@gmail.com</div>
             </td>
-            <td class="px-4 py-3">
-              <span class="px-2 py-1 rounded text-xs bg-yellow-600/20 text-yellow-400">
-                PAUSED
-              </span>
-            </td>
-            <td class="px-4 py-3 text-slate-300">
-              Rohit (Field)
-            </td>
-            <td class="px-4 py-3">
-              <span class="font-semibold">5</span>/<span class="text-slate-400">10 Tasks</span>
-            </td>
+            <td class="px-4 py-3 text-yellow-400">PAUSED</td>
+            <td class="px-4 py-3">5 / 10 Tasks</td>
             <td class="px-4 py-3 text-right">
-              <button class="bg-purple-600 px-3 py-1 rounded text-xs">
+              <button onclick="openClientPanel('Khan Salon','PAUSED','5 / 10','Rohit')"
+                class="bg-purple-600 px-3 py-1 rounded text-xs">
                 View
               </button>
             </td>
           </tr>
 
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- TASK CONTROL TABLE -->
-  <section>
-    <h3 class="text-lg font-semibold mb-3">
-      Today’s Task Control (Admin View)
-    </h3>
-
-    <div class="overflow-x-auto card rounded-xl">
-      <table class="w-full text-sm">
-        <thead class="bg-slate-800">
-          <tr>
-            <th class="px-4 py-3 text-left">Task</th>
-            <th class="px-4 py-3 text-left">Assigned To</th>
-            <th class="px-4 py-3 text-left">Status</th>
-            <th class="px-4 py-3 text-left">Admin Action</th>
-          </tr>
-        </thead>
-        <tbody class="bg-slate-900">
-          <tr class="border-b border-slate-800">
-            <td class="px-4 py-3">Instagram Reel</td>
-            <td class="px-4 py-3">Field Exec – Raj</td>
-            <td class="px-4 py-3 text-yellow-400">Pending</td>
-            <td class="px-4 py-3">
-              <button class="bg-purple-600 px-3 py-1 rounded text-xs">
-                Reassign
-              </button>
-            </td>
-          </tr>
-
-          <tr>
-            <td class="px-4 py-3">Google Business Post</td>
-            <td class="px-4 py-3">Field Exec – Aman</td>
-            <td class="px-4 py-3 text-green-400">Completed</td>
-            <td class="px-4 py-3">
-              <button class="bg-slate-700 px-3 py-1 rounded text-xs">
-                View Proof
-              </button>
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
   </section>
 
 </main>
+
+<!-- ================= SLIDE CLIENT PANEL ================= -->
+<div id="clientPanel"
+     class="fixed top-0 right-0 w-full sm:w-[420px] h-full bg-slate-950 border-l border-slate-800 slide-panel transform translate-x-full z-50">
+
+  <div class="p-5 flex justify-between items-center border-b border-slate-800">
+    <h3 class="text-lg font-semibold text-white">Client Control</h3>
+    <button onclick="closeClientPanel()" class="text-slate-400 hover:text-white">✕</button>
+  </div>
+
+  <div class="p-5 space-y-6">
+
+    <div>
+      <p class="text-xs text-slate-400">Client</p>
+      <p id="cpName" class="text-lg font-semibold"></p>
+    </div>
+
+    <div>
+      <p class="text-xs text-slate-400">Plan Status</p>
+      <p id="cpStatus" class="font-semibold"></p>
+    </div>
+
+    <div>
+      <p class="text-xs text-slate-400">Task Progress</p>
+      <p id="cpProgress"></p>
+    </div>
+
+    <div>
+      <p class="text-xs text-slate-400">Assigned Team</p>
+      <p id="cpTeam"></p>
+    </div>
+
+    <div class="pt-4 space-y-3">
+      <button class="w-full bg-green-600 py-2 rounded font-semibold">
+        ▶ Activate Plan
+      </button>
+      <button class="w-full bg-yellow-500 py-2 rounded font-semibold text-black">
+        ⏸ Pause Plan
+      </button>
+      <button class="w-full bg-red-600 py-2 rounded font-semibold">
+        ⛔ Stop Plan
+      </button>
+    </div>
+
+    <p class="text-xs text-slate-500">
+      ⚠ Actions affect daily task generation & field execution.
+    </p>
+
+  </div>
+</div>
+
+<script>
+function openClientPanel(name,status,progress,team){
+  document.getElementById("cpName").innerText = name;
+  document.getElementById("cpStatus").innerText = status;
+  document.getElementById("cpProgress").innerText = progress;
+  document.getElementById("cpTeam").innerText = team;
+  document.getElementById("clientPanel").classList.remove("translate-x-full");
+}
+function closeClientPanel(){
+  document.getElementById("clientPanel").classList.add("translate-x-full");
+}
+</script>
 
 </body>
 </html>
