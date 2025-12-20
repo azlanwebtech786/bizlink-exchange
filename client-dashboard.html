@@ -99,7 +99,7 @@
 <script>
 /* ================= CONFIG ================= */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzNJYXFRwjtWd_MLu1kMrm5NGfn8n1sSp4yf54SX2qFnv4LQp46Ypo5V5780ULoB0T9DA/exec";
+const API_URL = "https://script.googleusercontent.com/macros/echo";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
@@ -119,11 +119,16 @@ let clientEmail = "";
 
 /* ================= API (🔥 FIXED) ================= */
 
-async function apiGet(params) {
-  const query = new URLSearchParams(params).toString();
-  const res = await fetch(`${API_URL}?${query}`);
+async function apiPost(payload) {
+  const params = new URLSearchParams(payload).toString();
+
+  const res = await fetch(`${API_URL}?${params}`, {
+    method: "GET"
+  });
+
   return res.json();
 }
+
 
 
 /* ================= LOAD TASKS ================= */
@@ -132,10 +137,11 @@ async function loadTodayTasks() {
   const table = document.getElementById("taskTable");
   table.innerHTML = "";
 
-  const res = await apiGet({
+  const res = await apiPost({
   action: "getTodayTasksForClient",
   clientEmail: clientEmail
 });
+
 
 
 
