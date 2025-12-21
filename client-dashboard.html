@@ -1,45 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>BizLink 10X Grow Lab – Client Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>BizLink 10X Grow Lab – Client Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Tailwind -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Tailwind -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background:#050816;
-      color:#e5e7eb;
-    }
-    .card {
-      background:#0f172a;
-      border:1px solid rgba(148,163,184,.25);
-    }
-    .glow {
-      box-shadow: 0 0 25px rgba(168,85,247,0.45);
-      border:1px solid rgba(168,85,247,0.8);
-    }
-  </style>
+<style>
+body{
+  font-family:Poppins,sans-serif;
+  background:#020617;
+  color:#e5e7eb;
+}
+.card{
+  background:#0b1220;
+  border:1px solid rgba(148,163,184,.25);
+}
+</style>
 </head>
 
 <body class="min-h-screen">
 
 <!-- HEADER -->
-<header class="sticky top-0 z-40 bg-slate-950 border-b border-slate-800">
+<header class="sticky top-0 bg-slate-950 border-b border-slate-800 z-40">
   <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    <h1 class="text-lg font-bold">
+      BizLink <span class="text-purple-400">10X Grow Lab</span>
+    </h1>
     <div class="flex items-center gap-3">
-      <a href="index.html" class="text-sm text-purple-400 hover:underline">← Back to Home</a>
-      <h1 class="text-lg font-bold text-white">
-        BizLink <span class="text-purple-400">Client Dashboard</span>
-      </h1>
-    </div>
-    <div class="flex items-center gap-4">
-      <span class="text-sm text-slate-300">client@email.com</span>
-      <button class="bg-red-600 px-4 py-1.5 rounded text-sm font-semibold">
+      <span id="clientEmail" class="text-sm text-slate-300"></span>
+      <button onclick="logout()" class="bg-red-600 px-4 py-1.5 rounded text-sm font-semibold">
         Logout
       </button>
     </div>
@@ -47,100 +40,116 @@
 </header>
 
 <!-- MAIN -->
-<main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+<main class="max-w-6xl mx-auto px-4 py-8 space-y-6">
 
-  <!-- ACTIVE PLAN -->
-  <section class="card glow rounded-xl p-6">
-    <p class="text-xs text-slate-400">Your Active Plan</p>
-    <h2 class="text-2xl font-bold mt-1 text-purple-400">
-      BizLink 10X Grow Lab
-    </h2>
-    <p class="text-sm text-green-400 mt-1">Status: Active & Running 🚀</p>
-  </section>
+<!-- PLAN CARD -->
+<section class="card rounded-xl p-5">
+  <p class="text-xs text-slate-400">Active Plan</p>
+  <h2 id="planName" class="text-xl font-bold mt-1">—</h2>
+  <p id="planStatus" class="text-sm text-green-400 mt-1">—</p>
+</section>
 
-  <!-- USP STRIP -->
-  <section class="grid sm:grid-cols-4 gap-4">
-    <div class="card rounded-xl p-4 text-center">
-      <p class="text-2xl">👨‍💼</p>
-      <p class="font-semibold mt-1">Field Team</p>
-      <p class="text-xs text-slate-400">On-ground business visit</p>
-    </div>
-    <div class="card rounded-xl p-4 text-center">
-      <p class="text-2xl">📊</p>
-      <p class="font-semibold mt-1">Daily Growth</p>
-      <p class="text-xs text-slate-400">Tasks executed daily</p>
-    </div>
-    <div class="card rounded-xl p-4 text-center">
-      <p class="text-2xl">📍</p>
-      <p class="font-semibold mt-1">Local Focus</p>
-      <p class="text-xs text-slate-400">Nearby audience targeting</p>
-    </div>
-    <div class="card rounded-xl p-4 text-center">
-      <p class="text-2xl">🔁</p>
-      <p class="font-semibold mt-1">Retention</p>
-      <p class="text-xs text-slate-400">Reviews & repeat sales</p>
-    </div>
-  </section>
+<!-- TASKS -->
+<section>
+<h2 class="text-lg font-semibold mb-3">Today’s Growth Tasks</h2>
 
-  <!-- STATS -->
-  <section class="grid sm:grid-cols-4 gap-4">
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Posts</p>
-      <p class="text-3xl font-bold">12</p>
-    </div>
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Reels</p>
-      <p class="text-3xl font-bold">6</p>
-    </div>
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Leads</p>
-      <p class="text-3xl font-bold">34</p>
-    </div>
-    <div class="card rounded-xl p-4">
-      <p class="text-xs text-slate-400">Ads</p>
-      <p class="text-3xl font-bold">3</p>
-    </div>
-  </section>
+<div class="card rounded-xl overflow-x-auto">
+<table class="w-full text-sm">
+<thead class="bg-slate-800">
+<tr>
+<th class="px-4 py-3 text-left">Task</th>
+<th class="px-4 py-3 text-left">Status</th>
+<th class="px-4 py-3 text-left">Proof</th>
+</tr>
+</thead>
 
-  <!-- TODAY TASKS (READ ONLY) -->
-  <section>
-    <h3 class="text-lg font-semibold mb-3 text-white">
-      Today’s Growth Work (Preview)
-    </h3>
-
-    <div class="overflow-x-auto card rounded-xl">
-      <table class="w-full text-sm">
-        <thead class="bg-slate-800">
-          <tr>
-            <th class="px-4 py-3 text-left">Task</th>
-            <th class="px-4 py-3 text-left">Status</th>
-            <th class="px-4 py-3 text-left">Proof</th>
-          </tr>
-        </thead>
-        <tbody class="bg-slate-900">
-          <tr class="border-b border-slate-800">
-            <td class="px-4 py-3">Instagram Reel</td>
-            <td class="px-4 py-3 text-yellow-400 font-semibold">Pending</td>
-            <td class="px-4 py-3">—</td>
-          </tr>
-          <tr class="border-b border-slate-800">
-            <td class="px-4 py-3">Google Business Post</td>
-            <td class="px-4 py-3 text-green-400 font-semibold">Completed</td>
-            <td class="px-4 py-3">
-              <span class="text-purple-400 underline cursor-pointer">View</span>
-            </td>
-          </tr>
-          <tr>
-            <td class="px-4 py-3">WhatsApp Broadcast</td>
-            <td class="px-4 py-3 text-yellow-400 font-semibold">Pending</td>
-            <td class="px-4 py-3">—</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+<tbody id="taskTable" class="bg-slate-900">
+<tr>
+<td colspan="3" class="px-4 py-6 text-center text-slate-400">
+Loading tasks...
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 
 </main>
+
+<script>
+/* 🔴 PASTE YOUR APPS SCRIPT WEB APP URL HERE */
+const API_URL = "https://script.google.com/macros/s/AKfycbzbw3NrLDVbgrYZOmnuwnDZ041Pb5P7du4p43ME54IRLpIjI5uOyineraqDy4U25xdGFQ/exec";
+
+/* Client email (login ke baad localStorage me hona chahiye) */
+const clientEmail = localStorage.getItem("clientEmail") || "demo@client.com";
+document.getElementById("clientEmail").innerText = clientEmail;
+
+/* LOAD DASHBOARD */
+async function loadDashboard(){
+  const table = document.getElementById("taskTable");
+
+  try{
+    const res = await fetch(
+      `${API_URL}?action=getClientDashboard&email=${encodeURIComponent(clientEmail)}`
+    );
+    const data = await res.json();
+
+    if(!data.ok){
+      table.innerHTML = `<tr>
+        <td colspan="3" class="px-4 py-6 text-center text-red-400">
+          ${data.error || "Error loading dashboard"}
+        </td></tr>`;
+      return;
+    }
+
+    /* PLAN INFO */
+    document.getElementById("planName").innerText = data.client.plan;
+    document.getElementById("planStatus").innerText = data.client.status;
+
+    table.innerHTML = "";
+
+    if(!data.todayTasks || data.todayTasks.length === 0){
+      table.innerHTML = `<tr>
+        <td colspan="3" class="px-4 py-6 text-center text-slate-400">
+          No tasks assigned for today
+        </td></tr>`;
+      return;
+    }
+
+    data.todayTasks.forEach(t=>{
+      const color =
+        t.status === "COMPLETED" ? "text-green-400" :
+        t.status === "PENDING" ? "text-yellow-400" :
+        "text-slate-400";
+
+      table.innerHTML += `
+        <tr class="border-b border-slate-800">
+          <td class="px-4 py-3">${t.task}</td>
+          <td class="px-4 py-3 font-semibold ${color}">${t.status}</td>
+          <td class="px-4 py-3">
+            ${t.proof ? `<a href="${t.proof}" target="_blank" class="text-purple-400 underline">View</a>` : "—"}
+          </td>
+        </tr>
+      `;
+    });
+
+  }catch(err){
+    console.error(err);
+    table.innerHTML = `<tr>
+      <td colspan="3" class="px-4 py-6 text-center text-red-400">
+        API Error – check deployment
+      </td></tr>`;
+  }
+}
+
+function logout(){
+  localStorage.removeItem("clientEmail");
+  window.location.href = "login.html";
+}
+
+/* AUTO LOAD */
+loadDashboard();
+</script>
 
 </body>
 </html>
