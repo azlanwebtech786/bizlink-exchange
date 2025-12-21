@@ -42,7 +42,6 @@ body{
 <!-- MAIN -->
 <main class="max-w-6xl mx-auto px-4 py-8 space-y-6">
 
-<!-- TODAY TASKS -->
 <section>
 <h2 class="text-lg font-semibold mb-3">Today’s Assigned Tasks</h2>
 
@@ -56,6 +55,7 @@ body{
 <th class="px-4 py-3 text-left">Action</th>
 </tr>
 </thead>
+
 <tbody id="taskTable" class="bg-slate-900">
 <tr>
 <td colspan="4" class="px-4 py-6 text-center text-slate-400">
@@ -63,66 +63,79 @@ Loading tasks...
 </td>
 </tr>
 </tbody>
+
 </table>
 </div>
 </section>
 
 </main>
 
-<!-- PROOF MODAL -->
-<div id="proofModal" class="fixed inset-0 hidden bg-black bg-opacity-80 z-50 flex items-center justify-center">
-<div class="card w-full max-w-md p-6 rounded-xl relative">
-<button onclick="closeModal()" class="absolute top-3 right-4 text-xl">✕</button>
-
-<h3 class="text-lg font-bold mb-4">Submit Proof</h3>
-
-<input type="text" id="proofLink"
-  placeholder="Paste proof link (Drive / Image / URL)"
-  class="w-full mb-4 px-3 py-2 rounded bg-slate-900 border border-slate-700 text-sm"/>
-
-<button onclick="submitProof()"
-  class="bg-green-600 w-full py-2 rounded font-semibold">
-Submit Proof
-</button>
-</div>
-</div>
-
 <script>
-const API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AKfycbyLVxzZR67lZ3MIFbPzVhApU_HJhuFJ1eYUpb5314ez-O_AxxaV43Jm_GqyMSvTNWCxaQ/exec";
+/* 🔥 IMPORTANT: SAHI API URL (NO /exec) */
+const API_URL =
+"https://script.googleusercontent.com/macros/echo?user_content_key=AKfycbyLVxzZR67lZ3MIFbPzVhApU_HJhuFJ1eYUpb5314ez-O_AxxaV43Jm_GqyMSvTNWCxaQ";
+
+/* Fallback email (testing ke liye) */
+const fieldEmail =
+  localStorage.getItem("fieldEmail") || "demo@field.com";
+
+document.getElementById("execName").innerText = fieldEmail;
 
 async function loadTasks() {
-  const fieldEmail = localStorage.getItem("fieldEmail");
+  const tbody = document.getElementById("taskTable");
 
   try {
-    const res = await fetch(`${API_URL}?action=getFieldTasks&fieldEmail=${fieldEmail}`);
+    const res = await fetch(
+      `${API_URL}&action=getFieldTasks&fieldEmail=${encodeURIComponent(fieldEmail)}`
+    );
+
     const data = await res.json();
 
-    const tbody = document.getElementById("taskBody");
     tbody.innerHTML = "";
 
     if (!data.tasks || data.tasks.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4">No tasks assigned</td></tr>`;
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" class="px-4 py-6 text-center text-slate-400">
+            No tasks assigned today
+          </td>
+        </tr>`;
       return;
     }
 
     data.tasks.forEach(t => {
       tbody.innerHTML += `
-        <tr>
-          <td>${t.task}</td>
-          <td>${t.client}</td>
-          <td>${t.status}</td>
-          <td><button>Upload Proof</button></td>
+        <tr class="border-b border-slate-800">
+          <td class="px-4 py-3">${t.task}</td>
+          <td class="px-4 py-3">${t.client}</td>
+          <td class="px-4 py-3 text-yellow-400">${t.status}</td>
+          <td class="px-4 py-3">
+            <button class="bg-purple-600 px-3 py-1 rounded text-xs">
+              Upload Proof
+            </button>
+          </td>
         </tr>`;
     });
 
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" class="px-4 py-6 text-center text-red-400">
+          API Error – check deployment
+        </td>
+      </tr>`;
   }
 }
 
+function logout(){
+  localStorage.removeItem("fieldEmail");
+  window.location.href = "login.html";
+}
+
+/* AUTO LOAD */
 loadTasks();
 </script>
-
 
 </body>
 </html>
