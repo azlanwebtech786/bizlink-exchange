@@ -56,7 +56,7 @@ body{
 </tr>
 </thead>
 
-<tbody id="taskTable" class="bg-slate-900">
+<tbody id="taskBody" class="bg-slate-900">
 <tr>
 <td colspan="4" class="px-4 py-6 text-center text-slate-400">
 Loading tasks...
@@ -71,24 +71,20 @@ Loading tasks...
 </main>
 
 <script>
-/* 🔥 IMPORTANT: SAHI API URL (NO /exec) */
-const API_URL =
-"https://script.googleusercontent.com/macros/echo?user_content_key=AKfycbyF8LX5W0SxKdVuT54ax7JBOkF0PhIFrxQaGpGE_zt329xutttMjMxsdNojolePIl7Afg";
+/* ✅ ONLY VALID API URL */
+const API_URL = "https://script.google.com/macros/s/AKfycbyF8LX5W0SxKdVuT54ax7JBOkF0PhIFrxQaGpGE_zt329xutttMjMxsdNojolePIl7Afg/exec";
 
-/* Fallback email (testing ke liye) */
-const fieldEmail =
-  localStorage.getItem("fieldEmail") || "demo@field.com";
-
+/* Field exec email */
+const fieldEmail = localStorage.getItem("fieldEmail") || "demo@field.com";
 document.getElementById("execName").innerText = fieldEmail;
 
 async function loadTasks() {
-  const tbody = document.getElementById("taskTable");
+  const tbody = document.getElementById("taskBody");
 
   try {
     const res = await fetch(
-      `${API_URL}&action=getFieldTasks&fieldEmail=${encodeURIComponent(fieldEmail)}`
+      `${API_URL}?action=getFieldTasks&fieldEmail=${encodeURIComponent(fieldEmail)}`
     );
-
     const data = await res.json();
 
     tbody.innerHTML = "";
@@ -133,7 +129,6 @@ function logout(){
   window.location.href = "login.html";
 }
 
-/* AUTO LOAD */
 loadTasks();
 </script>
 
