@@ -81,7 +81,8 @@ Loading tasks...
 const API_URL = "https://script.google.com/macros/s/AKfycbzbw3NrLDVbgrYZOmnuwnDZ041Pb5P7du4p43ME54IRLpIjI5uOyineraqDy4U25xdGFQ/exec";
 
 /* Client email (login ke baad localStorage me hona chahiye) */
-const clientEmail = localStorage.getItem("clientEmail") || "demo@client.com";
+const clientEmail = localStorage.getItem("email");
+
 document.getElementById("clientEmail").innerText = clientEmail;
 
 /* LOAD DASHBOARD */
