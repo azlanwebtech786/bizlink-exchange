@@ -5,13 +5,13 @@
 <title>BizLink 10X Grow Lab – Client Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Tailwind CSS -->
+<!-- Tailwind -->
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 body{
-  font-family: Poppins, sans-serif;
+  font-family:Poppins,sans-serif;
   background:#020617;
   color:#e5e7eb;
 }
@@ -24,20 +24,19 @@ body{
 
 <body class="min-h-screen">
 
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <header class="sticky top-0 bg-slate-950 border-b border-slate-800 z-40">
   <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-    <h1 class="text-lg font-bold">
-      BizLink <span class="text-purple-400">10X Grow Lab</span>
-    </h1>
-
     <div class="flex items-center gap-4">
-      <span id="clientEmail" class="text-sm text-slate-300"></span>
-
-      <button onclick="goHome()" class="bg-slate-700 px-3 py-1.5 rounded text-sm font-semibold">
-        Back to Home
+      <button onclick="goHome()" class="text-sm text-purple-400 hover:underline">
+        ← Back to Home
       </button>
-
+      <h1 class="text-lg font-bold">
+        BizLink <span class="text-purple-400">10X Grow Lab</span>
+      </h1>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="clientEmail" class="text-sm text-slate-300"></span>
       <button onclick="logout()" class="bg-red-600 px-4 py-1.5 rounded text-sm font-semibold">
         Logout
       </button>
@@ -45,7 +44,7 @@ body{
   </div>
 </header>
 
-<!-- ================= MAIN ================= -->
+<!-- MAIN -->
 <main class="max-w-6xl mx-auto px-4 py-8 space-y-6">
 
 <!-- PLAN CARD -->
@@ -83,19 +82,19 @@ Loading tasks...
 </main>
 
 <script>
-/* 🔴 YOUR APPS SCRIPT WEB APP URL */
+/* ✅ APPS SCRIPT WEB APP URL */
 const API_URL = "https://script.google.com/macros/s/AKfycbzbw3NrLDVbgrYZOmnuwnDZ041Pb5P7du4p43ME54IRLpIjI5uOyineraqDy4U25xdGFQ/exec";
 
-/* 🔐 SESSION CHECK (FINAL FIX) */
-const clientEmail = localStorage.getItem("email");
+/* ✅ SINGLE SOURCE OF TRUTH */
+const email = localStorage.getItem("email");
 
-if (!clientEmail) {
-  alert("Session expired. Please login again.");
+/* 🚨 NOT LOGGED IN */
+if (!email) {
   window.location.href = "login.html";
 }
 
-/* Show logged in email */
-document.getElementById("clientEmail").innerText = clientEmail;
+/* SHOW EMAIL */
+document.getElementById("clientEmail").innerText = email;
 
 /* LOAD DASHBOARD */
 async function loadDashboard(){
@@ -103,7 +102,7 @@ async function loadDashboard(){
 
   try{
     const res = await fetch(
-      `${API_URL}?action=getClientDashboard&email=${encodeURIComponent(clientEmail)}`
+      `${API_URL}?action=getClientDashboard&email=${encodeURIComponent(email)}`
     );
     const data = await res.json();
 
@@ -111,15 +110,15 @@ async function loadDashboard(){
       table.innerHTML = `
         <tr>
           <td colspan="3" class="px-4 py-6 text-center text-red-400">
-            ${data.error || "Client not found"}
+            ${data.error || "Unable to load dashboard"}
           </td>
         </tr>`;
       return;
     }
 
     /* PLAN INFO */
-    document.getElementById("planName").innerText = data.client.plan || "—";
-    document.getElementById("planStatus").innerText = data.client.status || "—";
+    document.getElementById("planName").innerText = data.client.plan;
+    document.getElementById("planStatus").innerText = data.client.status;
 
     table.innerHTML = "";
 
@@ -155,18 +154,19 @@ async function loadDashboard(){
     table.innerHTML = `
       <tr>
         <td colspan="3" class="px-4 py-6 text-center text-red-400">
-          API Error – check Apps Script deployment
+          API Error – check deployment
         </td>
       </tr>`;
   }
 }
 
-/* NAVIGATION */
+/* LOGOUT */
 function logout(){
-  localStorage.clear();
+  localStorage.removeItem("email");
   window.location.href = "login.html";
 }
 
+/* HOME */
 function goHome(){
   window.location.href = "index.html";
 }
