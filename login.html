@@ -193,12 +193,11 @@
         const cred = await auth.signInWithEmailAndPassword(email, password);
         const user = cred.user;
 
-       const authEmail = (user.email || "").toLowerCase();
+        const authEmail = (user.email || "").toLowerCase();
 
-// 🔥 FIX – DONO KEYS ME SAVE
-localStorage.setItem("email", authEmail);
-localStorage.setItem("bizlink_user_email", authEmail);
-
+        // Save email in localStorage for other pages (owner-dashboard, profile, etc.)
+        try {
+          localStorage.setItem("bizlink_user_email", authEmail);
         } catch (e) {}
 
         setStatus("Login successful. Profile check ho raha hai…");
