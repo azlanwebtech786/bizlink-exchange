@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta name="google-site-verification" content="GBKwckk6Rv-B-vidv23MEaY7SX9abgfVHWhraAvC3JI"/>
@@ -15,7 +15,7 @@
   <meta name="keywords" content="BizLink, freelance marketplace, business growth, 10X growth, local business marketing, reels, hyperlocal ads" />
 
   <style>
-    body{font-family:'Poppins',sans-serif;background:#0b0d1e;color:#e0e0e0}
+    body{font-family:'Poppins',sans-serif;background:#000000;color:#000000}
     .bg-gradient-hero{background:linear-gradient(135deg,#6a11cb 0%,#2575fc 100%)}
     .card-bg{background:#1a1e3a;border:1px solid rgba(255,255,255,.1)}
     .input-dark{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff}
@@ -42,7 +42,7 @@
     "name":"BizLink Exchange",
     "url":"https://your-domain.example/",
     "description":"Freelance Marketplace + 10X Grow Lab for local businesses.",
-    "sameAs":["https://instagram.com/mrkwellnessofficial"],
+    "sameAs":[""],
     "logo":"/logo.png"
   }
   </script>
@@ -50,23 +50,61 @@
 <body class="text-gray-200">
 
   <!-- Header -->
-  <header class="sticky top-0 bg-opacity-90 bg-[#0b0d1e] z-50 shadow-lg">
+  <header class="sticky top-0 bg-opacity-5 bg-[#0b0d1e] z-50 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex-shrink-0">
-          <h1 class="text-2xl font-bold text-white">BizLink <span class="text-purple">Exchange</span></h1>
+          <h1 class="text-2xl font-bold text-white">BizLink <span class="text-purple">Ecosystem</span></h1>
         </div>
         <nav class="hidden md:flex space-x-6 items-center">
           <a href="index.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
           <a href="#" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Events</a>
-          <a href="post-work.html" class="hover:text-purple font-semibold transition text-white px-3 py-2 rounded-md text-sm font-medium">Post a Work</a>
 
-          <!-- Freelancer Dashboard link (Desktop) -->
-          <a href="freelancer-dashboard.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
+          <!-- Owner / Business only -->
+          <a href="post-work.html"
+             data-role-required="owner"
+             class="hover:text-purple font-semibold transition text-white px-3 py-2 rounded-md text-sm font-medium">
+            Post a Work
+          </a>
+ <!-- Owner / Business only -->
+          <a href="client-dashboard.html"
+             data-role-required="owner"
+             class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
+            10X Grow Dashboard
+          </a>
+          <!-- Freelancer only -->
+          <a href="freelancer-dashboard.html"
+             data-role-required="freelancer"
+             class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
             Freelancer Dashboard
           </a>
 
-          <a href="get-listed.html" class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">Get Listed</a>
+          <!-- Owner / Business only -->
+          <a href="owner-dashboard.html"
+             data-role-required="owner"
+             class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
+            Work Dashboard
+          </a>
+
+          <a href="profile.html"
+             data-role-required="owner"
+             class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
+            My Profile
+          </a>
+          <!-- Freelancer only (Direct Work requests) -->
+          <a href="direct-work.html"
+             data-role-required="freelancer"
+             class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
+            Get Direct Work
+          </a>
+
+          <!-- Owner / Business only (10X Grow Lab / Business) -->
+          <a href="get-listed.html"
+             data-role-required="business"
+             class="hover:text-purple transition text-white px-3 py-2 rounded-md text-sm font-medium">
+            Get Listed
+          </a>
+
           <a id="loginLinkDesktop" href="login.html" class="button-gradient text-white px-4 py-2 rounded-md font-medium hover:opacity-90 text-sm">Login</a>
           <a id="signupLinkDesktop" href="signup.html" class="bg-gray-700 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-600 text-sm">Sign Up</a>
           <button id="logoutButtonDesktop" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 text-sm">Logout</button>
@@ -83,16 +121,59 @@
     </div>
     <div class="md:hidden hidden" id="mobile-menu">
       <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <!-- Freelancer Dashboard link (Mobile) -->
-        <a href="freelancer-dashboard.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">
+        <!-- Freelancer Dashboard (mobile) -->
+        <a href="freelancer-dashboard.html"
+           data-role-required="freelancer"
+           class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">
           Freelancer Dashboard
         </a>
 
+        <!-- Work Dashboard (owner/business) -->
+        <a href="owner-dashboard.html"
+           data-role-required="owner"
+           class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
+          Work Dashboard
+        </a>
+ <!-- Work Dashboard (owner/business) -->
+        <a href="client-dashboard.html"
+           data-role-required="owner"
+           class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
+          10X Grow Dashboard
+        </a>
+        <!-- Direct Work (freelancer) -->
+        <a href="direct-work.html"
+           data-role-required="freelancer"
+           class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
+          Get Direct Work
+        </a>
+
+        <!-- Business Owner Dashboard (business/owner) -->
+        <a href="client-dashboard.html"
+           data-role-required="business"
+           class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
+          Business Owner Dashboard 
+        </a>
+
+        <a href="profile.html"
+           data-role-required="business"
+           class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-gray-700">
+          My Profile
+        </a>
         <a href="#home" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
         <a href="#growlab" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">10X Grow Lab</a>
         <a href="#pricing" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Pricing</a>
-        <a href="post-work.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Post a Work</a>
-        <a href="get-listed.html" class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">Get Listed</a>
+
+        <!-- Post work / Get listed (owner/business) -->
+        <a href="post-work.html"
+           data-role-required="owner"
+           class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">
+          Post a Work
+        </a>
+        <a href="get-listed.html"
+           data-role-required="business"
+           class="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium">
+          Get Listed
+        </a>
       </div>
       <div class="pt-4 pb-3 border-t border-gray-700 px-2 sm:px-3">
         <a id="loginLinkMobile" href="login.html" class="block w-full text-left button-gradient text-white px-3 py-2 rounded-md font-medium hover:opacity-90 mb-2">Login</a>
@@ -105,8 +186,8 @@
   <!-- HERO -->
   <section id="home" class="bg-gradient-hero text-white text-center py-20 px-6 relative overflow-hidden">
     <div class="relative z-10 max-w-4xl mx-auto">
-      <h2 class="text-4xl md:text-5xl font-bold mb-4">UrbanClap for Business × Fiverr × Growth Academy</h2>
-      <p class="text-gray-100 max-w-2xl mx-auto mb-6">Field + Digital hybrid model to 10X local businesses: Daily content, 3km hyperlocal ads, lead funnels, retention systems.</p>
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">UrbanClap for Business + Fiverr + Growth Academy = Bizlink Ecosystem</h2>
+      <p class="text-gray-100 max-w-2xl mx-auto mb-6">Field Growth officer + Digital hybrid model to 10X local businesses: Daily content, 3-10km hyperlocal ads, lead funnels, retention systems.</p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
         <button id="btnDemo" class="button-gradient px-6 py-3 rounded-full font-semibold">₹999 • 3-Day Demo (Refundable)</button>
         <a href="#pricing" class="px-6 py-3 rounded-full font-semibold border border-white hover:bg-white hover:text-black transition">30-Day Trial Plans</a>
@@ -172,7 +253,7 @@
       <div class="card-bg rounded-xl p-6">
         <span class="badge inline-block bg-blue-600 px-2 py-1 rounded text-white">Hybrid</span>
         <h4 class="text-xl font-semibold mt-2">Field + Digital Model</h4>
-        <p class="text-gray-300 text-sm mt-2">On-ground audit + online execution. Salon/Restaurant/Gym – sab ke liye practical growth.</p>
+        <p class="text-gray-300 text-sm mt-2">On-ground audit + online execution. Salon/Restaurant/Gym/Hotel – sab ke liye practical growth.</p>
       </div>
       <div class="card-bg rounded-xl p-6">
         <span class="badge inline-block bg-green-600 px-2 py-1 rounded text-white">Daily</span>
@@ -211,7 +292,7 @@
     <div class="grid md:grid-cols-3 gap-6">
       <div class="card-bg rounded-xl p-6">
         <span class="badge inline-block bg-purple-600 px-2 py-1 rounded text-white">Hybrid Power</span>
-        <h4 class="text-xl font-semibold mt-2">Field + Digital Combo</h4>
+        <h4 class="text-xl font-semibold mt-2">Field Growth + Digital Growth Combo</h4>
         <p class="text-gray-300 text-sm mt-2">
           Market me koi platform field team + digital execution ek saath nahi deta. BizLink ka system dono combine karta hai for 10X results.
         </p>
@@ -227,7 +308,7 @@
 
       <div class="card-bg rounded-xl p-6">
         <span class="badge inline-block bg-green-600 px-2 py-1 rounded text-white">Hyperlocal</span>
-        <h4 class="text-xl font-semibold mt-2">3 KM Targeting System</h4>
+        <h4 class="text-xl font-semibold mt-2">3-10 KM Targeting System</h4>
         <p class="text-gray-300 text-sm mt-2">
           Ham sirf nearby audience ko target karte hain, jisse real footfall & enquiries milti hain – not random people.
         </p>
@@ -258,17 +339,6 @@
           We promise visible improvements in 30 days – traffic, enquiries, branding & positioning.
         </p>
       </div>
-    </div>
-  </section>
-
-  <!-- Process -->
-  <section class="max-w-6xl mx-auto px-4 section">
-    <h3 class="text-3xl md:text-4xl font-bold mb-6">Execution Timeline (First 7–10 Days)</h3>
-    <div class="grid md:grid-cols-4 gap-6">
-      <div class="card-bg rounded-xl p-5"><h4 class="font-semibold">Day 1–2</h4><p class="text-sm text-gray-300">Business audit, ICP, competitors, assets collection</p></div>
-      <div class="card-bg rounded-xl p-5"><h4 class="font-semibold">Day 3–5</h4><p class="text-sm text-gray-300">Brand kit, Google profile, landing page, content plan</p></div>
-      <div class="card-bg rounded-xl p-5"><h4 class="font-semibold">Day 6–7</h4><p class="text-sm text-gray-300">30 posts + 8 reels creation, lead funnel & automation</p></div>
-      <div class="card-bg rounded-xl p-5"><h4 class="font-semibold">Week 2</h4><p class="text-sm text-gray-300">Local ads launch, weekly optimization, report</p></div>
     </div>
   </section>
 
@@ -352,7 +422,7 @@
 
   <!-- Data + Auth Scripts -->
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxQicJPq2Y-WgV78QlLUPDXt_n5jbHzuTohGMklWpyjliimAzBezgtM0wNXPKWS-7WFeg/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzNJYXFRwjtWd_MLu1kMrm5NGfn8n1sSp4yf54SX2qFnv4LQp46Ypo5V5780ULoB0T9DA/exec";
     // Stored datasets
     let startupProfilesData = [], smallBusinessProfilesData = [], corporateProfilesData = [], freelancerProfilesData = [], worksData = [];
 
@@ -512,17 +582,42 @@
     const firebaseConfig={ apiKey:"AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I", authDomain:"bizlink-exchange.firebaseapp.com", projectId:"bizlink-exchange", storageBucket:"bizlink-exchange.firebasestorage.app", messagingSenderId:"116213651971", appId:"1:116213651971:web:fff60961af0c4da3448c36", measurementId:"G-VQ3JM82D1N" };
     firebase.initializeApp(firebaseConfig);
     const auth=firebase.auth();
-    const loginLinkDesktop=document.getElementById('loginLinkDesktop'), signupLinkDesktop=document.getElementById('signupLinkDesktop'), logoutButtonDesktop=document.getElementById('logoutButtonDesktop'), loginLinkMobile=document.getElementById('loginLinkMobile'), signupLinkMobile=document.getElementById('signupLinkMobile'), logoutButtonMobile=document.getElementById('logoutButtonMobile');
+    const loginLinkDesktop=document.getElementById('loginLinkDesktop'),
+          signupLinkDesktop=document.getElementById('signupLinkDesktop'),
+          logoutButtonDesktop=document.getElementById('logoutButtonDesktop'),
+          loginLinkMobile=document.getElementById('loginLinkMobile'),
+          signupLinkMobile=document.getElementById('signupLinkMobile'),
+          logoutButtonMobile=document.getElementById('logoutButtonMobile');
+
     auth.onAuthStateChanged(user=>{
       const loggedIn=!!user;
-      loginLinkDesktop?.classList.toggle('hidden',loggedIn); signupLinkDesktop?.classList.toggle('hidden',loggedIn); logoutButtonDesktop?.classList.toggle('hidden',!loggedIn);
-      loginLinkMobile?.classList.toggle('hidden',loggedIn); signupLinkMobile?.classList.toggle('hidden',loggedIn); logoutButtonMobile?.classList.toggle('hidden',!loggedIn);
+      loginLinkDesktop?.classList.toggle('hidden',loggedIn);
+      signupLinkDesktop?.classList.toggle('hidden',loggedIn);
+      logoutButtonDesktop?.classList.toggle('hidden',!loggedIn);
+      loginLinkMobile?.classList.toggle('hidden',loggedIn);
+      signupLinkMobile?.classList.toggle('hidden',loggedIn);
+      logoutButtonMobile?.classList.toggle('hidden',!loggedIn);
+
+      try{
+        if(user && user.email){
+          localStorage.setItem('bizlink_user_email', user.email.toLowerCase());
+        }
+      }catch(e){}
     });
-    function handleLogout(){ auth.signOut().then(()=>{ alert("Logged out."); location.href='index.html'; }).catch(e=>console.error('Logout Error:',e)); }
-    logoutButtonDesktop?.addEventListener('click',handleLogout); logoutButtonMobile?.addEventListener('click',handleLogout);
+
+    function handleLogout(){
+      auth.signOut().then(()=>{
+        localStorage.removeItem('bizlink_user_role');
+        localStorage.removeItem('bizlink_user_email');
+        alert("Logged out.");
+        location.href='index.html';
+      }).catch(e=>console.error('Logout Error:',e));
+    }
+    logoutButtonDesktop?.addEventListener('click',handleLogout);
+    logoutButtonMobile?.addEventListener('click',handleLogout);
   </script>
 
-  <!-- Mobile menu + Lead modal JS -->
+  <!-- Mobile menu + Lead modal + PLAN SYSTEM -->
   <script>
     // Mobile menu
     const menuButton=document.getElementById('mobile-menu-button'), mobileMenu=document.getElementById('mobile-menu');
@@ -541,25 +636,189 @@
     const leadModal=document.getElementById('leadModal');
     const closeLeadModal=document.getElementById('closeLeadModal');
     const planSelect=document.getElementById('planSelect');
+
     document.querySelectorAll('.open-lead-modal').forEach(btn=>{
-      btn.addEventListener('click',()=>{ planSelect.value=btn.dataset.plan; leadModal.classList.remove('hidden'); });
+      btn.addEventListener('click',()=>{
+        planSelect.value = btn.dataset.plan || 'Standard';
+        leadModal.classList.remove('hidden');
+      });
     });
-    btnDemo?.addEventListener('click',()=>{ planSelect.value='₹999 Demo (Refundable)'; leadModal.classList.remove('hidden'); });
+    btnDemo?.addEventListener('click',()=>{
+      planSelect.value='₹999 Demo (Refundable)';
+      leadModal.classList.remove('hidden');
+    });
     closeLeadModal?.addEventListener('click',()=>leadModal.classList.add('hidden'));
 
-    // Lead form submit → Google Sheet (sheet: leads)
+    // ---------------- PLAN SYSTEM (front-end) ----------------
+    const PLAN_ORDER = ['Basic','Standard','Premium 10X'];
+
+    function getStoredPlan(){
+      try{
+        return localStorage.getItem('bizlinkPlan') || null;
+      }catch(e){
+        return null;
+      }
+    }
+    function storePlan(plan){
+      if(!plan) return;
+      try{
+        localStorage.setItem('bizlinkPlan', plan);
+      }catch(e){}
+    }
+
+    function updatePlanUI(){
+      const currentPlan = getStoredPlan();
+      if(!currentPlan) return;
+
+      // Fixed badge bottom-left
+      let badge = document.getElementById('fixedPlanBadge');
+      if(!badge){
+        badge = document.createElement('div');
+        badge.id = 'fixedPlanBadge';
+        badge.className = 'fixed bottom-4 left-4 bg-purple-700 text-white text-xs px-3 py-1 rounded-full shadow-lg z-40';
+        document.body.appendChild(badge);
+      }
+      badge.textContent = 'Your Plan: ' + currentPlan;
+
+      // Pricing buttons text / disable current plan
+      document.querySelectorAll('.open-lead-modal').forEach(btn=>{
+        const plan = btn.dataset.plan;
+        if(!plan) return;
+
+        btn.disabled = false;
+        btn.classList.remove('opacity-60','cursor-default');
+
+        if(plan === currentPlan){
+          btn.textContent = 'Current Plan';
+          btn.disabled = true;
+          btn.classList.add('opacity-60','cursor-default');
+          return;
+        }
+
+        const idxCurrent = PLAN_ORDER.indexOf(currentPlan);
+        const idxBtn = PLAN_ORDER.indexOf(plan);
+        if(idxCurrent !== -1 && idxBtn !== -1 && idxBtn > idxCurrent){
+          btn.textContent = 'Upgrade to ' + plan;
+        }else{
+          btn.textContent = 'Choose ' + plan;
+        }
+      });
+    }
+
+    // Lead form submit → Google Sheet (sheet: leads) + plan save
     const leadForm=document.getElementById('leadForm');
     const leadStatus=document.getElementById('leadStatus');
     leadForm.addEventListener('submit',async(e)=>{
       e.preventDefault();
       leadStatus.classList.remove('hidden');
+      leadStatus.textContent = 'Submitting…';
+
+      const chosenPlan = planSelect.value;
       const fd=new FormData(leadForm);
       fd.append('sheet','leads');
+
       try{
         const res=await fetch(scriptURL,{method:'POST',body:fd});
-        if(res.ok){ leadStatus.textContent='Thanks! Our Growth Officer will call you in 24–48 hrs.'; leadForm.reset(); setTimeout(()=>leadModal.classList.add('hidden'),1200); }
-        else{ leadStatus.textContent='Submission failed. Try again.'; }
-      }catch(err){ leadStatus.textContent='Network error. Try again.'; }
+        if(res.ok){
+          leadStatus.textContent='Thanks! Our Growth Officer will call you in 24–48 hrs.';
+          leadForm.reset();
+          leadModal.classList.add('hidden');
+
+          // Plan locally save + UI refresh
+          storePlan(chosenPlan);
+          updatePlanUI();
+        }else{
+          leadStatus.textContent='Submission failed. Try again.';
+        }
+      }catch(err){
+        leadStatus.textContent='Network error. Try again.';
+      }
+    });
+
+    // Page load pe agar pehle se plan save hai to show karo
+    updatePlanUI();
+  </script>
+
+  <!-- ⭐ ROLE-BASED NAV LOCK (FINAL FIXED) -->
+  <script>
+    // localStorage se raw role text nikaalna
+    function getRawRole(){
+      try{
+        const keys = ['bizlink_user_role','bizlink_role','user_role','role','bizRole'];
+        for(const k of keys){
+          const v = localStorage.getItem(k);
+          if(v) return v;
+        }
+        return null;
+      }catch(e){
+        return null;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      document.querySelectorAll('[data-role-required]').forEach(function(link){
+        link.addEventListener('click', function(e){
+          const required = (link.getAttribute('data-role-required') || '').toLowerCase();
+          const rawRole = getRawRole();
+          const user = (typeof auth !== 'undefined') ? auth.currentUser : null;
+
+          // 1) login hi nahi hai
+          if(!user){
+            e.preventDefault();
+            alert('Pehle login / signup kijiye, phir yeh section use kar sakte ho.');
+            window.location.href = 'login.html';
+            return;
+          }
+
+          // role normalise
+          if(!rawRole){
+            // old users → sab allowed, guard skip
+            console.warn('Role missing, skipping role guard.');
+            return;
+          }
+
+          const roleStr = rawRole.toLowerCase();
+
+          // ✅ FINAL MAPPING
+          const isFreelancer = roleStr.includes('free');                 // "freelancer"
+          const isOwner      = roleStr.includes('owner') || roleStr.includes('project'); // "Work Owner (Project Owner)"
+          const isBusiness10x= roleStr.includes('business') ||
+                               roleStr.includes('10x') ||
+                               roleStr.includes('grow');                 // "10X Grow Lab"
+
+          // 3) OWNER SECTIONS: Post a Work, Work Dashboard
+          //    allowed: owner + 10X business
+          if(required === 'owner'){
+            if(!(isOwner || isBusiness10x)){
+              e.preventDefault();
+              alert('Yeh tab aapke account type ke liye nahi hai. Sirf Work Owner ya 10X Grow Lab Business use kar sakte hain.');
+              return;
+            }
+          }
+
+          // 4) BUSINESS / 10X SECTIONS: Get Listed, Client Dashboard
+          //    allowed: sirf 10X business
+          if(required === 'business'){
+            if(!isBusiness10x){
+              e.preventDefault();
+              alert('Yeh tab sirf 10X Grow Lab / Business users ke liye hai.');
+              return;
+            }
+          }
+
+          // 5) FREELANCER SECTIONS: Freelancer Dashboard, Direct Work
+          //    allowed: sirf freelancers
+          if(required === 'freelancer'){
+            if(!isFreelancer){
+              e.preventDefault();
+              alert('Yeh tab sirf Freelancers ke liye hai.');
+              return;
+            }
+          }
+
+          // sab clear → normal navigation
+        });
+      });
     });
   </script>
 </body>
