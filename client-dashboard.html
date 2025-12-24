@@ -5,13 +5,13 @@
 <title>BizLink 10X Grow Lab – Client Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Tailwind -->
+<!-- Tailwind CSS -->
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 body{
-  font-family:Poppins,sans-serif;
+  font-family: Poppins, sans-serif;
   background:#020617;
   color:#e5e7eb;
 }
@@ -24,17 +24,20 @@ body{
 
 <body class="min-h-screen">
 
-<!-- HEADER -->
+<!-- ================= HEADER ================= -->
 <header class="sticky top-0 bg-slate-950 border-b border-slate-800 z-40">
   <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
     <h1 class="text-lg font-bold">
       BizLink <span class="text-purple-400">10X Grow Lab</span>
     </h1>
+
     <div class="flex items-center gap-4">
-      <button onclick="goHome()" class="text-sm text-slate-300 hover:text-white">
-        ← Back to Home
+      <span id="clientEmail" class="text-sm text-slate-300"></span>
+
+      <button onclick="goHome()" class="bg-slate-700 px-3 py-1.5 rounded text-sm font-semibold">
+        Back to Home
       </button>
-      <span id="clientEmail" class="text-sm text-slate-400"></span>
+
       <button onclick="logout()" class="bg-red-600 px-4 py-1.5 rounded text-sm font-semibold">
         Logout
       </button>
@@ -42,7 +45,7 @@ body{
   </div>
 </header>
 
-<!-- MAIN -->
+<!-- ================= MAIN ================= -->
 <main class="max-w-6xl mx-auto px-4 py-8 space-y-6">
 
 <!-- PLAN CARD -->
@@ -83,16 +86,16 @@ Loading tasks...
 /* 🔴 YOUR APPS SCRIPT WEB APP URL */
 const API_URL = "https://script.google.com/macros/s/AKfycbzbw3NrLDVbgrYZOmnuwnDZ041Pb5P7du4p43ME54IRLpIjI5uOyineraqDy4U25xdGFQ/exec";
 
-/* ✅ SINGLE SOURCE OF TRUTH */
-const email = localStorage.getItem("email");
+/* 🔐 SESSION CHECK (FINAL FIX) */
+const clientEmail = localStorage.getItem("email");
 
-/* SESSION CHECK */
-if(!email){
+if (!clientEmail) {
   alert("Session expired. Please login again.");
   window.location.href = "login.html";
 }
 
-document.getElementById("clientEmail").innerText = email;
+/* Show logged in email */
+document.getElementById("clientEmail").innerText = clientEmail;
 
 /* LOAD DASHBOARD */
 async function loadDashboard(){
@@ -100,7 +103,7 @@ async function loadDashboard(){
 
   try{
     const res = await fetch(
-      `${API_URL}?action=getClientDashboard&email=${encodeURIComponent(email)}`
+      `${API_URL}?action=getClientDashboard&email=${encodeURIComponent(clientEmail)}`
     );
     const data = await res.json();
 
@@ -108,7 +111,7 @@ async function loadDashboard(){
       table.innerHTML = `
         <tr>
           <td colspan="3" class="px-4 py-6 text-center text-red-400">
-            ${data.error || "Dashboard error"}
+            ${data.error || "Client not found"}
           </td>
         </tr>`;
       return;
@@ -141,11 +144,10 @@ async function loadDashboard(){
           <td class="px-4 py-3">${t.task}</td>
           <td class="px-4 py-3 font-semibold ${color}">${t.status}</td>
           <td class="px-4 py-3">
-            ${t.proof
-              ? `<a href="${t.proof}" target="_blank" class="text-purple-400 underline">View</a>`
-              : "—"}
+            ${t.proof ? `<a href="${t.proof}" target="_blank" class="text-purple-400 underline">View</a>` : "—"}
           </td>
-        </tr>`;
+        </tr>
+      `;
     });
 
   }catch(err){
@@ -153,14 +155,15 @@ async function loadDashboard(){
     table.innerHTML = `
       <tr>
         <td colspan="3" class="px-4 py-6 text-center text-red-400">
-          API Error – check deployment
+          API Error – check Apps Script deployment
         </td>
       </tr>`;
   }
 }
 
+/* NAVIGATION */
 function logout(){
-  localStorage.removeItem("email");
+  localStorage.clear();
   window.location.href = "login.html";
 }
 
@@ -168,6 +171,7 @@ function goHome(){
   window.location.href = "index.html";
 }
 
+/* AUTO LOAD */
 loadDashboard();
 </script>
 
