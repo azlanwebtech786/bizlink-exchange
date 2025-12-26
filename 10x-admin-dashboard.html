@@ -10,10 +10,12 @@
 
 <style>
 body{font-family:Poppins;background:#050816;color:#e5e7eb}
-.card{background:#0f172a;border:1px solid rgba(148,163,184,.2)}
-.modal-bg{background:rgba(2,6,23,.85)}
+.card{background:#0f172a;border:1px solid rgba(148,163,184,.25)}
+.modal-bg{background:rgba(2,6,23,.9)}
 .modal{background:#020617}
 .btn{padding:.6rem 1.2rem;border-radius:.5rem;font-weight:600}
+.tab{padding:.5rem 1rem;border-radius:.4rem}
+.tab-active{background:#7c3aed}
 </style>
 </head>
 
@@ -23,10 +25,7 @@ body{font-family:Poppins;background:#050816;color:#e5e7eb}
 <header class="sticky top-0 bg-slate-950 border-b border-slate-800 z-40">
   <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
     <h1 class="font-bold text-lg text-purple-400">BizLink 10X – SUPER ADMIN</h1>
-    <div class="flex items-center gap-4">
-      <span class="text-sm text-slate-400">admin@bizlink.in</span>
-      <button class="bg-red-600 px-4 py-1.5 rounded text-sm">Logout</button>
-    </div>
+    <button onclick="logout()" class="bg-red-600 px-4 py-1.5 rounded text-sm">Logout</button>
   </div>
 </header>
 
@@ -34,34 +33,30 @@ body{font-family:Poppins;background:#050816;color:#e5e7eb}
 
 <!-- STATS -->
 <section class="grid sm:grid-cols-4 gap-4">
-<div class="card p-4 rounded">Clients<br><b class="text-2xl">18</b></div>
-<div class="card p-4 rounded">Freelancers<br><b class="text-2xl">6</b></div>
-<div class="card p-4 rounded">Daily Tasks<br><b class="text-2xl">72</b></div>
-<div class="card p-4 rounded">Pending Proofs<br><b class="text-2xl text-yellow-400">9</b></div>
+  <div class="card p-4 rounded">Clients<br><b id="statClients" class="text-2xl">—</b></div>
+  <div class="card p-4 rounded">Freelancers<br><b id="statFreelancers" class="text-2xl">—</b></div>
+  <div class="card p-4 rounded">Today Tasks<br><b id="statTasks" class="text-2xl">—</b></div>
+  <div class="card p-4 rounded">Pending Proofs<br><b id="statProofs" class="text-2xl text-yellow-400">—</b></div>
 </section>
 
-<!-- CLIENT TABLE -->
+<!-- CLIENT MASTER TABLE -->
 <section>
-<h2 class="text-lg font-semibold mb-3">All Clients – Master Control</h2>
+<h2 class="text-lg font-semibold mb-3">Clients – Master Control</h2>
+
 <div class="card rounded overflow-hidden">
 <table class="w-full text-sm">
 <thead class="bg-slate-800">
 <tr>
 <th class="p-3 text-left">Client</th>
+<th class="p-3">Plan</th>
 <th class="p-3">Status</th>
 <th class="p-3">Progress</th>
 <th class="p-3">Action</th>
 </tr>
 </thead>
-<tbody>
-<tr class="border-t border-slate-800">
-<td class="p-3">Sharma Electronics<br><span class="text-xs text-slate-400">sharma@gmail.com</span></td>
-<td class="p-3 text-green-400">ACTIVE</td>
-<td class="p-3">12 / 18</td>
-<td class="p-3">
-<button onclick="openClient()" class="bg-purple-600 px-3 py-1 rounded text-xs">View Full Control</button>
-</td>
-</tr>
+
+<tbody id="clientTable" class="bg-slate-900">
+<!-- injected -->
 </tbody>
 </table>
 </div>
@@ -69,61 +64,155 @@ body{font-family:Poppins;background:#050816;color:#e5e7eb}
 
 </main>
 
-<!-- CLIENT MODAL -->
+<!-- ================= CLIENT CONTROL MODAL ================= -->
 <div id="clientModal" class="fixed inset-0 hidden modal-bg flex items-center justify-center z-50">
-<div class="modal w-full max-w-3xl rounded-xl p-6 relative">
+<div class="modal w-full max-w-4xl rounded-xl p-6 relative">
 
 <button onclick="closeClient()" class="absolute top-3 right-4 text-xl">✕</button>
 
-<h3 class="text-xl font-bold mb-1">Client Control – Sharma Electronics</h3>
-<p class="text-xs text-slate-400 mb-4">sharma@gmail.com</p>
+<h3 id="mClientName" class="text-xl font-bold mb-1">—</h3>
+<p id="mClientEmail" class="text-xs text-slate-400 mb-4">—</p>
 
+<!-- PLAN CONTROL -->
 <div class="grid sm:grid-cols-3 gap-4 mb-4">
-<div class="card p-3 rounded">Plan<br><b class="text-green-400">ACTIVE</b></div>
-<div class="card p-3 rounded">Tasks<br><b>12 / 18</b></div>
-<div class="card p-3 rounded">Team<br><b>Raj, Aman</b></div>
+  <div class="card p-3 rounded">Plan<br><b id="mPlan" class="text-purple-400">—</b></div>
+  <div class="card p-3 rounded">Tasks Today<br><b id="mTasks">—</b></div>
+  <div class="card p-3 rounded">Assigned Team<br><b id="mTeam">—</b></div>
 </div>
 
-<div class="flex gap-3 mb-5">
-<button class="btn bg-green-600 w-full">Activate</button>
-<button class="btn bg-yellow-500 text-black w-full">Pause</button>
-<button class="btn bg-red-600 w-full">Stop</button>
+<div class="flex gap-3 mb-6">
+  <button class="btn bg-green-600 w-full">Activate</button>
+  <button class="btn bg-yellow-500 text-black w-full">Pause</button>
+  <button class="btn bg-red-600 w-full">Stop</button>
 </div>
 
-<h4 class="font-semibold mb-2">Tasks & Proofs</h4>
-<div class="card rounded overflow-hidden mb-4">
+<!-- PLAN TASK SETUP -->
+<h4 class="font-semibold mb-2">Plan Task Structure</h4>
+
+<div class="flex gap-2 mb-3">
+  <button class="tab tab-active" onclick="switchPlan('basic')">Basic</button>
+  <button class="tab bg-slate-800" onclick="switchPlan('standard')">Standard</button>
+  <button class="tab bg-slate-800" onclick="switchPlan('premium')">Premium / 10X</button>
+</div>
+
+<div class="card rounded overflow-hidden mb-5">
 <table class="w-full text-sm">
-<tr class="border-b border-slate-800">
-<td class="p-3">Instagram Reel</td>
-<td class="p-3">Raj</td>
-<td class="p-3 text-purple-400 cursor-pointer">View Proof</td>
-<td class="p-3 flex gap-2">
-<button class="bg-green-600 px-2 py-1 rounded text-xs">Approve</button>
-<button class="bg-red-600 px-2 py-1 rounded text-xs">Reject</button>
-</td>
+<thead class="bg-slate-800">
+<tr>
+<th class="p-3 text-left">Task</th>
+<th class="p-3">Qty / Month</th>
+<th class="p-3">Assigned Freelancer</th>
 </tr>
+</thead>
+<tbody id="planTaskTable" class="bg-slate-900"></tbody>
 </table>
 </div>
-
-<h4 class="font-semibold mb-2">Plan History</h4>
-<ul class="text-xs text-slate-400 list-disc ml-5">
-<li>Activated – 10 Dec 2025</li>
-<li>Paused – 15 Dec 2025</li>
-<li>Re-Activated – 18 Dec 2025</li>
-</ul>
 
 </div>
 </div>
 
 <script>
-function openClient(){
-document.getElementById('clientModal').classList.remove('hidden')
-document.body.style.overflow='hidden'
+/* ================= STATE ================= */
+let activePlan = "basic";
+let currentClient = null;
+
+/* 🔥 DEMO DATA – Apps Script se replace hoga */
+const clients = [
+  {
+    id:"C101",
+    name:"Sharma Electronics",
+    email:"sharma@gmail.com",
+    plan:"premium",
+    status:"ACTIVE",
+    progress:"12 / 18",
+    team:["Raj","Aman"]
+  }
+];
+
+const planTasks = {
+  basic:[
+    {task:"Google Business Post",qty:30,freelancer:""},
+  ],
+  standard:[
+    {task:"Instagram Reel",qty:8,freelancer:""},
+    {task:"Google Business Post",qty:30,freelancer:""}
+  ],
+  premium:[
+    {task:"Instagram Reel",qty:12,freelancer:"Raj"},
+    {task:"Ads Lead Campaign",qty:2,freelancer:"Aman"},
+    {task:"WhatsApp Follow-up",qty:30,freelancer:""}
+  ]
+};
+
+/* ================= LOAD CLIENT TABLE ================= */
+function loadClients(){
+  const tb=document.getElementById("clientTable");
+  tb.innerHTML="";
+  clients.forEach(c=>{
+    tb.innerHTML+=`
+    <tr class="border-t border-slate-800">
+      <td class="p-3">${c.name}<br><span class="text-xs text-slate-400">${c.email}</span></td>
+      <td class="p-3 text-purple-400">${c.plan.toUpperCase()}</td>
+      <td class="p-3 text-green-400">${c.status}</td>
+      <td class="p-3">${c.progress}</td>
+      <td class="p-3">
+        <button onclick="openClient('${c.id}')" class="bg-purple-600 px-3 py-1 rounded text-xs">
+          Full Control
+        </button>
+      </td>
+    </tr>`;
+  });
 }
+
+/* ================= CLIENT MODAL ================= */
+function openClient(id){
+  currentClient = clients.find(c=>c.id===id);
+  document.getElementById("clientModal").classList.remove("hidden");
+  document.body.style.overflow="hidden";
+
+  document.getElementById("mClientName").innerText=currentClient.name;
+  document.getElementById("mClientEmail").innerText=currentClient.email;
+  document.getElementById("mPlan").innerText=currentClient.plan.toUpperCase();
+  document.getElementById("mTasks").innerText=currentClient.progress;
+  document.getElementById("mTeam").innerText=currentClient.team.join(", ");
+
+  activePlan=currentClient.plan;
+  renderPlanTasks();
+}
+
 function closeClient(){
-document.getElementById('clientModal').classList.add('hidden')
-document.body.style.overflow='auto'
+  document.getElementById("clientModal").classList.add("hidden");
+  document.body.style.overflow="auto";
 }
+
+/* ================= PLAN TASK RENDER ================= */
+function switchPlan(p){
+  activePlan=p;
+  renderPlanTasks();
+}
+
+function renderPlanTasks(){
+  const tb=document.getElementById("planTaskTable");
+  tb.innerHTML="";
+  planTasks[activePlan].forEach(t=>{
+    tb.innerHTML+=`
+    <tr class="border-t border-slate-800">
+      <td class="p-3">${t.task}</td>
+      <td class="p-3 text-center">${t.qty}</td>
+      <td class="p-3">
+        <input value="${t.freelancer}" placeholder="Assign Freelancer"
+        class="w-full bg-slate-800 px-2 py-1 rounded text-sm">
+      </td>
+    </tr>`;
+  });
+}
+
+function logout(){
+  window.location.href="login.html";
+}
+
+/* INIT */
+loadClients();
 </script>
 
 </body>
