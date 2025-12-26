@@ -2,209 +2,176 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BizLink 10X – Super Admin Dashboard</title>
+<title>BizLink Admin – 10X Grow Lab</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Tailwind -->
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{font-family:Poppins;background:#050816;color:#e5e7eb}
-.card{background:#0f172a;border:1px solid rgba(148,163,184,.25)}
-.modal-bg{background:rgba(2,6,23,.9)}
-.modal{background:#020617}
-.btn{padding:.6rem 1.2rem;border-radius:.5rem;font-weight:600}
-.tab{padding:.5rem 1rem;border-radius:.4rem}
-.tab-active{background:#7c3aed}
+body{
+  font-family:Poppins,sans-serif;
+  background:#020617;
+  color:#e5e7eb;
+}
+.card{
+  background:#0b1220;
+  border:1px solid rgba(148,163,184,.25);
+}
+.tab-active{
+  background:#7c3aed;
+}
 </style>
 </head>
 
 <body class="min-h-screen">
 
 <!-- HEADER -->
-<header class="sticky top-0 bg-slate-950 border-b border-slate-800 z-40">
-  <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-    <h1 class="font-bold text-lg text-purple-400">BizLink 10X – SUPER ADMIN</h1>
-    <button onclick="logout()" class="bg-red-600 px-4 py-1.5 rounded text-sm">Logout</button>
+<header class="bg-slate-950 border-b border-slate-800">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between">
+    <h1 class="font-bold text-lg">BizLink <span class="text-purple-400">Admin Panel</span></h1>
+    <button onclick="logout()" class="bg-red-600 px-4 py-1 rounded text-sm">Logout</button>
   </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+<main class="max-w-7xl mx-auto px-4 py-6 space-y-8">
 
-<!-- STATS -->
-<section class="grid sm:grid-cols-4 gap-4">
-  <div class="card p-4 rounded">Clients<br><b id="statClients" class="text-2xl">—</b></div>
-  <div class="card p-4 rounded">Freelancers<br><b id="statFreelancers" class="text-2xl">—</b></div>
-  <div class="card p-4 rounded">Today Tasks<br><b id="statTasks" class="text-2xl">—</b></div>
-  <div class="card p-4 rounded">Pending Proofs<br><b id="statProofs" class="text-2xl text-yellow-400">—</b></div>
+<!-- ================= PLAN TASK SETUP ================= -->
+<section class="card rounded-xl p-5">
+  <h2 class="text-lg font-semibold mb-4">Plan Task Setup</h2>
+
+  <!-- TABS -->
+  <div class="flex gap-2 mb-4">
+    <button onclick="switchPlan('basic')" id="tab-basic" class="px-4 py-2 rounded tab-active">Basic</button>
+    <button onclick="switchPlan('standard')" id="tab-standard" class="px-4 py-2 rounded bg-slate-800">Standard</button>
+    <button onclick="switchPlan('premium')" id="tab-premium" class="px-4 py-2 rounded bg-slate-800">Premium / 10X</button>
+  </div>
+
+  <!-- TASK TABLE -->
+  <table class="w-full text-sm">
+    <thead class="bg-slate-800">
+      <tr>
+        <th class="px-3 py-2 text-left">Task Name</th>
+        <th class="px-3 py-2 text-left">Qty / Month</th>
+        <th class="px-3 py-2 text-left">Active</th>
+      </tr>
+    </thead>
+    <tbody id="planTasks" class="bg-slate-900"></tbody>
+  </table>
+
+  <button onclick="addTaskRow()" class="mt-3 bg-purple-600 px-4 py-2 rounded text-sm">
+    + Add Task
+  </button>
 </section>
 
-<!-- CLIENT MASTER TABLE -->
-<section>
-<h2 class="text-lg font-semibold mb-3">Clients – Master Control</h2>
+<!-- ================= TASK ASSIGNMENT ================= -->
+<section class="card rounded-xl p-5">
+  <h2 class="text-lg font-semibold mb-4">Task Assignment (One-Time)</h2>
 
-<div class="card rounded overflow-hidden">
-<table class="w-full text-sm">
-<thead class="bg-slate-800">
-<tr>
-<th class="p-3 text-left">Client</th>
-<th class="p-3">Plan</th>
-<th class="p-3">Status</th>
-<th class="p-3">Progress</th>
-<th class="p-3">Action</th>
-</tr>
-</thead>
+  <!-- CLIENT SELECT -->
+  <div class="mb-4">
+    <label class="text-xs text-slate-400">Select Client</label>
+    <select id="clientSelect" class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded">
+      <option value="">-- Select Client --</option>
+    </select>
+  </div>
 
-<tbody id="clientTable" class="bg-slate-900">
-<!-- injected -->
-</tbody>
-</table>
-</div>
+  <!-- ASSIGN TABLE -->
+  <table class="w-full text-sm">
+    <thead class="bg-slate-800">
+      <tr>
+        <th class="px-3 py-2 text-left">Task</th>
+        <th class="px-3 py-2 text-left">Assign Freelancer</th>
+      </tr>
+    </thead>
+    <tbody id="assignTable" class="bg-slate-900"></tbody>
+  </table>
+
+  <button onclick="saveAssignments()" class="mt-4 bg-green-600 px-4 py-2 rounded text-sm">
+    Save Assignment
+  </button>
 </section>
 
 </main>
 
-<!-- ================= CLIENT CONTROL MODAL ================= -->
-<div id="clientModal" class="fixed inset-0 hidden modal-bg flex items-center justify-center z-50">
-<div class="modal w-full max-w-4xl rounded-xl p-6 relative">
-
-<button onclick="closeClient()" class="absolute top-3 right-4 text-xl">✕</button>
-
-<h3 id="mClientName" class="text-xl font-bold mb-1">—</h3>
-<p id="mClientEmail" class="text-xs text-slate-400 mb-4">—</p>
-
-<!-- PLAN CONTROL -->
-<div class="grid sm:grid-cols-3 gap-4 mb-4">
-  <div class="card p-3 rounded">Plan<br><b id="mPlan" class="text-purple-400">—</b></div>
-  <div class="card p-3 rounded">Tasks Today<br><b id="mTasks">—</b></div>
-  <div class="card p-3 rounded">Assigned Team<br><b id="mTeam">—</b></div>
-</div>
-
-<div class="flex gap-3 mb-6">
-  <button class="btn bg-green-600 w-full">Activate</button>
-  <button class="btn bg-yellow-500 text-black w-full">Pause</button>
-  <button class="btn bg-red-600 w-full">Stop</button>
-</div>
-
-<!-- PLAN TASK SETUP -->
-<h4 class="font-semibold mb-2">Plan Task Structure</h4>
-
-<div class="flex gap-2 mb-3">
-  <button class="tab tab-active" onclick="switchPlan('basic')">Basic</button>
-  <button class="tab bg-slate-800" onclick="switchPlan('standard')">Standard</button>
-  <button class="tab bg-slate-800" onclick="switchPlan('premium')">Premium / 10X</button>
-</div>
-
-<div class="card rounded overflow-hidden mb-5">
-<table class="w-full text-sm">
-<thead class="bg-slate-800">
-<tr>
-<th class="p-3 text-left">Task</th>
-<th class="p-3">Qty / Month</th>
-<th class="p-3">Assigned Freelancer</th>
-</tr>
-</thead>
-<tbody id="planTaskTable" class="bg-slate-900"></tbody>
-</table>
-</div>
-
-</div>
-</div>
-
 <script>
 /* ================= STATE ================= */
-let activePlan = "basic";
-let currentClient = null;
+let currentPlan = "basic";
 
-/* 🔥 DEMO DATA – Apps Script se replace hoga */
-const clients = [
-  {
-    id:"C101",
-    name:"Sharma Electronics",
-    email:"sharma@gmail.com",
-    plan:"premium",
-    status:"ACTIVE",
-    progress:"12 / 18",
-    team:["Raj","Aman"]
-  }
-];
-
-const planTasks = {
-  basic:[
-    {task:"Google Business Post",qty:30,freelancer:""},
-  ],
-  standard:[
-    {task:"Instagram Reel",qty:8,freelancer:""},
-    {task:"Google Business Post",qty:30,freelancer:""}
-  ],
-  premium:[
-    {task:"Instagram Reel",qty:12,freelancer:"Raj"},
-    {task:"Ads Lead Campaign",qty:2,freelancer:"Aman"},
-    {task:"WhatsApp Follow-up",qty:30,freelancer:""}
-  ]
+const planData = {
+  basic: [],
+  standard: [],
+  premium: []
 };
 
-/* ================= LOAD CLIENT TABLE ================= */
-function loadClients(){
-  const tb=document.getElementById("clientTable");
-  tb.innerHTML="";
-  clients.forEach(c=>{
-    tb.innerHTML+=`
-    <tr class="border-t border-slate-800">
-      <td class="p-3">${c.name}<br><span class="text-xs text-slate-400">${c.email}</span></td>
-      <td class="p-3 text-purple-400">${c.plan.toUpperCase()}</td>
-      <td class="p-3 text-green-400">${c.status}</td>
-      <td class="p-3">${c.progress}</td>
-      <td class="p-3">
-        <button onclick="openClient('${c.id}')" class="bg-purple-600 px-3 py-1 rounded text-xs">
-          Full Control
-        </button>
-      </td>
-    </tr>`;
+/* ================= PLAN TASK UI ================= */
+function switchPlan(plan){
+  currentPlan = plan;
+  document.querySelectorAll("[id^='tab-']").forEach(t=>{
+    t.classList.remove("tab-active");
+    t.classList.add("bg-slate-800");
   });
-}
-
-/* ================= CLIENT MODAL ================= */
-function openClient(id){
-  currentClient = clients.find(c=>c.id===id);
-  document.getElementById("clientModal").classList.remove("hidden");
-  document.body.style.overflow="hidden";
-
-  document.getElementById("mClientName").innerText=currentClient.name;
-  document.getElementById("mClientEmail").innerText=currentClient.email;
-  document.getElementById("mPlan").innerText=currentClient.plan.toUpperCase();
-  document.getElementById("mTasks").innerText=currentClient.progress;
-  document.getElementById("mTeam").innerText=currentClient.team.join(", ");
-
-  activePlan=currentClient.plan;
-  renderPlanTasks();
-}
-
-function closeClient(){
-  document.getElementById("clientModal").classList.add("hidden");
-  document.body.style.overflow="auto";
-}
-
-/* ================= PLAN TASK RENDER ================= */
-function switchPlan(p){
-  activePlan=p;
+  document.getElementById("tab-"+plan).classList.add("tab-active");
   renderPlanTasks();
 }
 
 function renderPlanTasks(){
-  const tb=document.getElementById("planTaskTable");
-  tb.innerHTML="";
-  planTasks[activePlan].forEach(t=>{
-    tb.innerHTML+=`
-    <tr class="border-t border-slate-800">
-      <td class="p-3">${t.task}</td>
-      <td class="p-3 text-center">${t.qty}</td>
-      <td class="p-3">
-        <input value="${t.freelancer}" placeholder="Assign Freelancer"
-        class="w-full bg-slate-800 px-2 py-1 rounded text-sm">
-      </td>
-    </tr>`;
+  const tbody = document.getElementById("planTasks");
+  tbody.innerHTML = "";
+
+  planData[currentPlan].forEach((t,i)=>{
+    tbody.innerHTML += `
+      <tr class="border-b border-slate-800">
+        <td class="px-3 py-2">
+          <input value="${t.name}" class="bg-slate-800 px-2 py-1 rounded w-full">
+        </td>
+        <td class="px-3 py-2">
+          <input value="${t.qty}" type="number" class="bg-slate-800 px-2 py-1 rounded w-full">
+        </td>
+        <td class="px-3 py-2 text-center">
+          <input type="checkbox" ${t.active ? "checked" : ""}>
+        </td>
+      </tr>`;
   });
+}
+
+function addTaskRow(){
+  planData[currentPlan].push({name:"",qty:1,active:true});
+  renderPlanTasks();
+}
+
+/* ================= TASK ASSIGNMENT UI ================= */
+function loadDummyClients(){
+  const c = document.getElementById("clientSelect");
+  ["BZ101 - Aayu (Premium)","BZ102 - Salon (Standard)"].forEach(v=>{
+    const o=document.createElement("option");
+    o.textContent=v;
+    c.appendChild(o);
+  });
+}
+
+function loadAssignmentTasks(){
+  const tbody = document.getElementById("assignTable");
+  tbody.innerHTML="";
+  planData[currentPlan].forEach(t=>{
+    tbody.innerHTML += `
+      <tr class="border-b border-slate-800">
+        <td class="px-3 py-2">${t.name}</td>
+        <td class="px-3 py-2">
+          <select class="bg-slate-800 px-2 py-1 rounded w-full">
+            <option>Ramesh (Reels)</option>
+            <option>Suresh (Ads)</option>
+          </select>
+        </td>
+      </tr>`;
+  });
+}
+
+document.getElementById("clientSelect").addEventListener("change",loadAssignmentTasks);
+
+function saveAssignments(){
+  alert("Assignments saved. Future daily tasks auto-assign honge.");
 }
 
 function logout(){
@@ -212,7 +179,8 @@ function logout(){
 }
 
 /* INIT */
-loadClients();
+switchPlan("basic");
+loadDummyClients();
 </script>
 
 </body>
