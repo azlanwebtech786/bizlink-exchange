@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BizLink 10X – Super Admin Dashboard</title>
+<title>BizLink 10X Grow Lab – Admin Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Tailwind -->
@@ -10,9 +10,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{font-family:Poppins;background:#020617;color:#e5e7eb}
-.card{background:#0b1220;border:1px solid rgba(148,163,184,.25)}
-.btn{padding:.5rem 1.1rem;border-radius:.45rem;font-weight:600}
+body{font-family:Poppins;background:#050816;color:#e5e7eb}
+.card{background:#0f172a;border:1px solid rgba(148,163,184,.25)}
+.btn{padding:.55rem 1.1rem;border-radius:.5rem;font-weight:600}
 .modal-bg{background:rgba(2,6,23,.85)}
 .modal{background:#020617}
 </style>
@@ -23,7 +23,7 @@ body{font-family:Poppins;background:#020617;color:#e5e7eb}
 <!-- HEADER -->
 <header class="sticky top-0 bg-slate-950 border-b border-slate-800 z-40">
   <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-    <h1 class="font-bold text-lg text-purple-400">BizLink 10X – Admin Control</h1>
+    <h1 class="text-lg font-bold text-purple-400">BizLink 10X – ADMIN PANEL</h1>
     <div class="flex items-center gap-4">
       <span class="text-sm text-slate-400">admin@bizlink.in</span>
       <button class="bg-red-600 px-4 py-1.5 rounded text-sm">Logout</button>
@@ -36,45 +36,46 @@ body{font-family:Poppins;background:#020617;color:#e5e7eb}
 <!-- STATS -->
 <section class="grid sm:grid-cols-4 gap-4">
   <div class="card p-4 rounded">Active Clients<br><b class="text-2xl">18</b></div>
-  <div class="card p-4 rounded">Freelancers<br><b class="text-2xl">6</b></div>
+  <div class="card p-4 rounded">Freelancers<br><b class="text-2xl">7</b></div>
   <div class="card p-4 rounded">Today Tasks<br><b class="text-2xl">72</b></div>
   <div class="card p-4 rounded">Pending Proofs<br><b class="text-2xl text-yellow-400">9</b></div>
 </section>
 
-<!-- PLAN TEMPLATES -->
+<!-- PLAN RULES -->
 <section>
-<h2 class="text-lg font-semibold mb-3">Plan Templates (Master Rules)</h2>
-<div class="card p-4 rounded space-y-3">
+<h2 class="text-lg font-semibold mb-3">Plan Task Rules (Auto Assignment)</h2>
 
-<div class="grid grid-cols-4 gap-3 text-sm font-semibold text-slate-300">
-<span>Plan</span><span>Task</span><span>Frequency</span><span>Freelancer</span>
-</div>
+<div class="card rounded overflow-hidden">
+<table class="w-full text-sm">
+<thead class="bg-slate-800">
+<tr>
+<th class="p-3 text-left">Plan</th>
+<th class="p-3">Task</th>
+<th class="p-3">Frequency</th>
+<th class="p-3">Assigned Freelancer</th>
+<th class="p-3">Action</th>
+</tr>
+</thead>
 
-<div class="grid grid-cols-4 gap-3 text-sm">
-<span>10X Grow Lab</span>
-<span>Instagram Reel</span>
-<span>Daily</span>
-<select class="bg-slate-900 border border-slate-700 rounded px-2 py-1">
-<option>Raj</option><option>Aman</option><option>Neha</option>
-</select>
-</div>
-
-<div class="grid grid-cols-4 gap-3 text-sm">
-<span>10X Grow Lab</span>
-<span>Google Business Post</span>
-<span>Daily</span>
-<select class="bg-slate-900 border border-slate-700 rounded px-2 py-1">
-<option>Aman</option><option>Raj</option>
-</select>
-</div>
-
-<button class="btn bg-purple-600 mt-3">Save Plan Rules</button>
+<tbody class="divide-y divide-slate-800">
+<tr>
+<td class="p-3">10X Grow Lab</td>
+<td class="p-3">Instagram Reel</td>
+<td class="p-3">Daily</td>
+<td class="p-3">raj@gmail.com</td>
+<td class="p-3">
+<button class="bg-purple-600 px-3 py-1 rounded text-xs">Edit</button>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 
-<!-- CLIENT LIST -->
+<!-- CLIENT MASTER -->
 <section>
-<h2 class="text-lg font-semibold mb-3">All Clients – Master Control</h2>
+<h2 class="text-lg font-semibold mb-3">Client Master Control</h2>
+
 <div class="card rounded overflow-hidden">
 <table class="w-full text-sm">
 <thead class="bg-slate-800">
@@ -87,18 +88,18 @@ body{font-family:Poppins;background:#020617;color:#e5e7eb}
 </tr>
 </thead>
 
-<tbody>
-<tr class="border-t border-slate-800">
+<tbody class="divide-y divide-slate-800">
+<tr>
 <td class="p-3">
-Sharma Electronics<br>
-<span class="text-xs text-slate-400">sharma@gmail.com</span>
+Sharma Electronics  
+<div class="text-xs text-slate-400">sharma@gmail.com</div>
 </td>
-<td class="p-3 text-purple-400">10X Grow Lab</td>
+<td class="p-3">10X Grow Lab</td>
 <td class="p-3 text-green-400">ACTIVE</td>
 <td class="p-3">12 / 18</td>
 <td class="p-3">
 <button onclick="openClient()" class="bg-purple-600 px-3 py-1 rounded text-xs">
-Full Control
+View Control
 </button>
 </td>
 </tr>
@@ -118,64 +119,44 @@ Full Control
 <h3 class="text-xl font-bold mb-1">Client Control – Sharma Electronics</h3>
 <p class="text-xs text-slate-400 mb-4">sharma@gmail.com</p>
 
-<div class="grid sm:grid-cols-4 gap-4 mb-4">
-<div class="card p-3 rounded">Plan<br><b>10X Grow Lab</b></div>
-<div class="card p-3 rounded">Status<br><b class="text-green-400">ACTIVE</b></div>
-<div class="card p-3 rounded">Tasks Today<br><b>12 / 18</b></div>
-<div class="card p-3 rounded">Team<br><b>Raj, Aman</b></div>
+<div class="grid sm:grid-cols-3 gap-4 mb-4">
+<div class="card p-3 rounded">Plan<br><b class="text-green-400">10X Grow Lab</b></div>
+<div class="card p-3 rounded">Tasks Today<br><b>4</b></div>
+<div class="card p-3 rounded">Freelancers<br><b>Raj, Aman</b></div>
 </div>
 
-<div class="flex gap-3 mb-5">
+<div class="flex gap-3 mb-6">
 <button class="btn bg-green-600 w-full">Activate</button>
 <button class="btn bg-yellow-500 text-black w-full">Pause</button>
 <button class="btn bg-red-600 w-full">Stop</button>
 </div>
 
-<h4 class="font-semibold mb-2">Task → Freelancer Mapping</h4>
-<div class="space-y-2 text-sm">
-<div class="flex justify-between items-center">
-<span>Instagram Reel</span>
-<select class="bg-slate-900 border border-slate-700 rounded px-2 py-1">
-<option>Raj</option><option>Aman</option>
-</select>
-</div>
-<div class="flex justify-between items-center">
-<span>Google Business Post</span>
-<select class="bg-slate-900 border border-slate-700 rounded px-2 py-1">
-<option>Aman</option><option>Raj</option>
-</select>
-</div>
-<button class="btn bg-purple-600 mt-2">Save Assignment</button>
-</div>
-
-<h4 class="font-semibold mt-5 mb-2">Today Tasks & Proof</h4>
-<div class="card rounded p-3 text-sm flex justify-between items-center">
-<span>Instagram Reel – Raj</span>
-<span class="text-yellow-400">PENDING</span>
-<div class="flex gap-2">
+<h4 class="font-semibold mb-2">Today Tasks & Proofs</h4>
+<div class="card rounded overflow-hidden">
+<table class="w-full text-sm">
+<tr class="border-b border-slate-800">
+<td class="p-3">Instagram Reel</td>
+<td class="p-3">Raj</td>
+<td class="p-3 text-purple-400 cursor-pointer">View Proof</td>
+<td class="p-3 flex gap-2">
 <button class="bg-green-600 px-2 py-1 rounded text-xs">Approve</button>
 <button class="bg-red-600 px-2 py-1 rounded text-xs">Reject</button>
+</td>
+</tr>
+</table>
 </div>
-</div>
-
-<h4 class="font-semibold mt-5 mb-2">Plan History</h4>
-<ul class="text-xs text-slate-400 list-disc ml-5">
-<li>Activated – 10 Dec 2025</li>
-<li>Paused – 15 Dec 2025</li>
-<li>Re-Activated – 18 Dec 2025</li>
-</ul>
 
 </div>
 </div>
 
 <script>
 function openClient(){
-  document.getElementById('clientModal').classList.remove('hidden')
-  document.body.style.overflow='hidden'
+  document.getElementById('clientModal').classList.remove('hidden');
+  document.body.style.overflow='hidden';
 }
 function closeClient(){
-  document.getElementById('clientModal').classList.add('hidden')
-  document.body.style.overflow='auto'
+  document.getElementById('clientModal').classList.add('hidden');
+  document.body.style.overflow='auto';
 }
 </script>
 
