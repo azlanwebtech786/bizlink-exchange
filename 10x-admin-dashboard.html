@@ -11,7 +11,8 @@
 <style>
 body{font-family:Poppins;background:#050816;color:#e5e7eb}
 .card{background:#0f172a;border:1px solid rgba(148,163,184,.2)}
-.modal-bg{background:rgba(2,6,23,.9)}
+.btn{padding:.5rem 1rem;border-radius:.4rem;font-weight:600}
+.modal-bg{background:rgba(2,6,23,.85)}
 .modal{background:#020617}
 </style>
 </head>
@@ -29,51 +30,56 @@ body{font-family:Poppins;background:#050816;color:#e5e7eb}
   </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-4 py-8 space-y-10">
+<main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
 
 <!-- STATS -->
-<section class="grid md:grid-cols-4 gap-4">
-  <div class="card p-4 rounded">Active Clients<br><b id="statClients" class="text-2xl">—</b></div>
-  <div class="card p-4 rounded">Freelancers<br><b id="statFreelancers" class="text-2xl">—</b></div>
-  <div class="card p-4 rounded">Today Tasks<br><b id="statTasks" class="text-2xl">—</b></div>
-  <div class="card p-4 rounded">Pending Proofs<br><b id="statPending" class="text-2xl text-yellow-400">—</b></div>
+<section class="grid sm:grid-cols-4 gap-4">
+  <div class="card p-4 rounded">Active Clients<br><b id="statClients" class="text-2xl">–</b></div>
+  <div class="card p-4 rounded">Freelancers<br><b id="statFreelancers" class="text-2xl">–</b></div>
+  <div class="card p-4 rounded">Today Tasks<br><b id="statTasks" class="text-2xl">–</b></div>
+  <div class="card p-4 rounded">Pending Proofs<br><b id="statProofs" class="text-2xl text-yellow-400">–</b></div>
 </section>
 
 <!-- PLAN RULES -->
 <section>
 <h2 class="text-lg font-semibold mb-3">Plan Task Rules (Auto Assignment)</h2>
+
+<div class="card p-4 rounded mb-4 grid sm:grid-cols-5 gap-3">
+  <select id="planSelect" class="bg-slate-800 p-2 rounded">
+    <option>10X Grow Lab</option>
+  </select>
+
+  <select id="taskSelect" class="bg-slate-800 p-2 rounded">
+    <option>Instagram Reel</option>
+    <option>Google Business Post</option>
+    <option>WhatsApp Follow-up</option>
+    <option>Review Collection</option>
+  </select>
+
+  <select id="freqSelect" class="bg-slate-800 p-2 rounded">
+    <option>Daily</option>
+  </select>
+
+  <select id="freelancerSelect" class="bg-slate-800 p-2 rounded">
+    <option>raj@gmail.com</option>
+    <option>aman@gmail.com</option>
+  </select>
+
+  <button onclick="saveRule()" class="bg-purple-600 btn">Save Rule</button>
+</div>
+
 <div class="card rounded overflow-hidden">
 <table class="w-full text-sm">
 <thead class="bg-slate-800">
 <tr>
-<th class="p-3">Plan</th>
+<th class="p-3 text-left">Plan</th>
 <th class="p-3">Task</th>
 <th class="p-3">Frequency</th>
 <th class="p-3">Freelancer</th>
-<th class="p-3">Action</th>
 </tr>
 </thead>
 <tbody id="planRulesBody"></tbody>
 </table>
-</div>
-
-<div class="grid md:grid-cols-5 gap-3 mt-4">
-<select id="rulePlan" class="p-2 bg-slate-900 rounded">
-  <option>10X Grow Lab</option>
-</select>
-<select id="ruleTask" class="p-2 bg-slate-900 rounded">
-  <option>Instagram Reel</option>
-  <option>Google Business Post</option>
-  <option>WhatsApp Follow-up</option>
-  <option>Review Collection</option>
-</select>
-<select id="ruleFrequency" class="p-2 bg-slate-900 rounded">
-  <option>Daily</option>
-</select>
-<select id="ruleFreelancer" class="p-2 bg-slate-900 rounded"></select>
-<button onclick="savePlanRule()" class="bg-purple-600 rounded px-4 py-2 font-semibold">
-Save Rule
-</button>
 </div>
 </section>
 
@@ -84,7 +90,7 @@ Save Rule
 <table class="w-full text-sm">
 <thead class="bg-slate-800">
 <tr>
-<th class="p-3">Client</th>
+<th class="p-3 text-left">Client</th>
 <th class="p-3">Plan</th>
 <th class="p-3">Status</th>
 <th class="p-3">Progress</th>
@@ -100,164 +106,121 @@ Save Rule
 
 <!-- CLIENT MODAL -->
 <div id="clientModal" class="fixed inset-0 hidden modal-bg flex items-center justify-center z-50">
-<div class="modal w-full max-w-3xl rounded-xl p-6 relative">
-
+<div class="modal w-full max-w-2xl rounded-xl p-6 relative">
 <button onclick="closeClient()" class="absolute top-3 right-4 text-xl">✕</button>
 
-<h3 id="modalClientName" class="text-xl font-bold"></h3>
-<p id="modalClientEmail" class="text-xs text-slate-400 mb-4"></p>
-
-<div class="card rounded overflow-hidden">
-<table class="w-full text-sm">
-<thead class="bg-slate-800">
-<tr>
-<th class="p-3">Task</th>
-<th class="p-3">Freelancer</th>
-<th class="p-3">Status</th>
-<th class="p-3">Action</th>
-</tr>
-</thead>
-<tbody id="clientTaskBody"></tbody>
-</table>
-</div>
-
+<h3 class="text-xl font-bold mb-4">Client Tasks & Proof</h3>
+<div id="clientTasks" class="space-y-3"></div>
 </div>
 </div>
 
 <script>
+/* 🔥 PASTE YOUR WEB APP URL HERE */
 const API_URL = "https://script.google.com/macros/s/AKfycbyCKg6L51ayJOendAiK_FEWwC4v_Cm4oETucMJcApPj5qCFZuJPY4HOfDI0M3dD1bfOGg/exec";
 
-/* ===============================
-   1️⃣ LOAD ADMIN STATS
-================================ */
-async function loadStats() {
-  const res = await fetch(`${API_URL}?action=getAdminStats`);
-  const data = await res.json();
-
-  document.getElementById("statClients").innerText = data.clients;
-  document.getElementById("statFreelancers").innerText = data.freelancers;
-  document.getElementById("statTasks").innerText = data.todayTasks;
-  document.getElementById("statProofs").innerText = data.pendingProofs;
+/* LOAD STATS */
+async function loadStats(){
+  const r = await fetch(`${API_URL}?action=getAdminStats`);
+  const d = await r.json();
+  statClients.innerText = d.clients;
+  statFreelancers.innerText = d.freelancers;
+  statTasks.innerText = d.todayTasks;
+  statProofs.innerText = d.pendingProofs;
 }
 
-/* ===============================
-   2️⃣ LOAD PLAN → TASK RULES
-================================ */
-async function loadPlanRules() {
-  const res = await fetch(`${API_URL}?action=getPlanRules`);
-  const data = await res.json();
-
-  const tbody = document.getElementById("planRulesBody");
-  tbody.innerHTML = "";
-
-  data.rules.forEach(r => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${r.plan}</td>
-        <td>${r.task}</td>
-        <td>${r.frequency}</td>
-        <td>${r.freelancer}</td>
-        <td>
-          <button onclick="editRule('${r.id}')" class="btn btn-sm">Edit</button>
-        </td>
+/* LOAD PLAN RULES */
+async function loadPlanRules(){
+  const r = await fetch(`${API_URL}?action=getPlanRules`);
+  const d = await r.json();
+  planRulesBody.innerHTML = "";
+  d.rules.forEach(x=>{
+    planRulesBody.innerHTML += `
+      <tr class="border-t border-slate-800">
+        <td class="p-3">${x.plan}</td>
+        <td class="p-3">${x.task}</td>
+        <td class="p-3">${x.frequency}</td>
+        <td class="p-3">${x.freelancer}</td>
       </tr>`;
   });
 }
 
-/* ===============================
-   3️⃣ SAVE / UPDATE PLAN RULE
-================================ */
-async function saveRule() {
-  const payload = {
-    action: "savePlanRule",
-    plan: planSelect.value,
-    task: taskSelect.value,
-    frequency: freqSelect.value,
-    freelancer: freelancerSelect.value
-  };
-
-  await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify(payload)
+/* SAVE RULE */
+async function saveRule(){
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"savePlanRule",
+      plan:planSelect.value,
+      task:taskSelect.value,
+      frequency:freqSelect.value,
+      freelancer:freelancerSelect.value
+    })
   });
-
-  alert("Rule saved");
+  alert("Rule Saved");
   loadPlanRules();
 }
 
-/* ===============================
-   4️⃣ LOAD CLIENT LIST
-================================ */
-async function loadClients() {
-  const res = await fetch(`${API_URL}?action=getClients`);
-  const data = await res.json();
-
-  const tbody = document.getElementById("clientTableBody");
-  tbody.innerHTML = "";
-
-  data.clients.forEach(c => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${c.name}<br><small>${c.email}</small></td>
-        <td>${c.plan}</td>
-        <td class="${c.status === 'ACTIVE' ? 'text-green' : 'text-red'}">${c.status}</td>
-        <td>${c.completed}/${c.total}</td>
-        <td>
-          <button onclick="openClient('${c.clientId}')" class="btn btn-sm">
-            View Control
+/* LOAD CLIENTS */
+async function loadClients(){
+  const r = await fetch(`${API_URL}?action=getClients`);
+  const d = await r.json();
+  clientTableBody.innerHTML="";
+  d.clients.forEach(c=>{
+    clientTableBody.innerHTML+=`
+      <tr class="border-t border-slate-800">
+        <td class="p-3">${c.name}<br><small>${c.email}</small></td>
+        <td class="p-3">${c.plan}</td>
+        <td class="p-3 text-green-400">${c.status}</td>
+        <td class="p-3">${c.completed}/${c.total}</td>
+        <td class="p-3">
+          <button onclick="openClient('${c.clientId}')" class="bg-purple-600 px-3 py-1 rounded text-xs">
+            View
           </button>
         </td>
       </tr>`;
   });
 }
 
-/* ===============================
-   5️⃣ CLIENT TASKS + APPROVE / REJECT
-================================ */
-async function openClient(clientId) {
-  const res = await fetch(`${API_URL}?action=getClientTasks&clientId=${clientId}`);
-  const data = await res.json();
-
-  const list = document.getElementById("clientTasks");
-  list.innerHTML = "";
-
-  data.tasks.forEach(t => {
-    list.innerHTML += `
-      <div class="task-row">
-        <b>${t.task}</b> – ${t.freelancer}
-        <span class="status">${t.status}</span>
-        <button onclick="approveTask('${t.taskId}')">Approve</button>
-        <button onclick="rejectTask('${t.taskId}')">Reject</button>
+/* CLIENT TASKS */
+async function openClient(id){
+  const r = await fetch(`${API_URL}?action=getClientTasks&clientId=${id}`);
+  const d = await r.json();
+  clientTasks.innerHTML="";
+  d.tasks.forEach(t=>{
+    clientTasks.innerHTML+=`
+      <div class="card p-3 rounded flex justify-between items-center">
+        <div>
+          <b>${t.task}</b><br>
+          <small>${t.freelancer}</small>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="approveTask('${t.taskId}')" class="bg-green-600 px-2 py-1 rounded text-xs">Approve</button>
+          <button onclick="rejectTask('${t.taskId}')" class="bg-red-600 px-2 py-1 rounded text-xs">Reject</button>
+        </div>
       </div>`;
   });
-
-  document.getElementById("clientModal").classList.remove("hidden");
+  clientModal.classList.remove("hidden");
 }
 
-async function approveTask(taskId) {
-  await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({ action:"approveTask", taskId })
-  });
+function closeClient(){ clientModal.classList.add("hidden"); }
+
+/* APPROVE / REJECT */
+async function approveTask(id){
+  await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"approveTask",taskId:id})});
   alert("Approved");
 }
-
-async function rejectTask(taskId) {
-  await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({ action:"rejectTask", taskId })
-  });
+async function rejectTask(id){
+  await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"rejectTask",taskId:id})});
   alert("Rejected");
 }
 
-/* ===============================
-   INIT LOAD
-================================ */
-window.onload = () => {
+/* INIT */
+window.onload=()=>{
   loadStats();
   loadPlanRules();
   loadClients();
 };
 </script>
+
 </body>
 </html>
