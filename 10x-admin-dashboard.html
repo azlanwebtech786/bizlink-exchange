@@ -125,127 +125,139 @@ Save Rule
 </div>
 
 <script>
-/* 🔥 API URL */
 const API_URL = "https://script.google.com/macros/s/AKfycbyCKg6L51ayJOendAiK_FEWwC4v_Cm4oETucMJcApPj5qCFZuJPY4HOfDI0M3dD1bfOGg/exec";
 
-/* ===== STATS ===== */
-async function loadAdminStats(){
-  const r = await fetch(`${API_URL}?action=getAdminStats`);
-  const d = await r.json();
-  statClients.innerText = d.clients;
-  statFreelancers.innerText = d.freelancers;
-  statTasks.innerText = d.todayTasks;
-  statPending.innerText = d.pendingProofs;
+/* ===============================
+   1️⃣ LOAD ADMIN STATS
+================================ */
+async function loadStats() {
+  const res = await fetch(`${API_URL}?action=getAdminStats`);
+  const data = await res.json();
+
+  document.getElementById("statClients").innerText = data.clients;
+  document.getElementById("statFreelancers").innerText = data.freelancers;
+  document.getElementById("statTasks").innerText = data.todayTasks;
+  document.getElementById("statProofs").innerText = data.pendingProofs;
 }
 
-/* ===== FREELANCERS ===== */
-async function loadFreelancers(){
-  const r = await fetch(`${API_URL}?action=getFreelancers`);
-  const d = await r.json();
-  ruleFreelancer.innerHTML = "";
-  d.freelancers.forEach(f=>{
-    ruleFreelancer.innerHTML += `<option value="${f.email}">${f.email}</option>`;
+/* ===============================
+   2️⃣ LOAD PLAN → TASK RULES
+================================ */
+async function loadPlanRules() {
+  const res = await fetch(`${API_URL}?action=getPlanRules`);
+  const data = await res.json();
+
+  const tbody = document.getElementById("planRulesBody");
+  tbody.innerHTML = "";
+
+  data.rules.forEach(r => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${r.plan}</td>
+        <td>${r.task}</td>
+        <td>${r.frequency}</td>
+        <td>${r.freelancer}</td>
+        <td>
+          <button onclick="editRule('${r.id}')" class="btn btn-sm">Edit</button>
+        </td>
+      </tr>`;
   });
 }
 
-/* ===== PLAN RULES ===== */
-async function loadPlanRules(){
-  const r = await fetch(`${API_URL}?action=getPlanRules`);
-  const d = await r.json();
-  planRulesBody.innerHTML="";
-  d.rules.forEach(r=>{
-    planRulesBody.innerHTML += `
-    <tr>
-      <td class="p-3">${r.plan}</td>
-      <td class="p-3">${r.task}</td>
-      <td class="p-3">${r.frequency}</td>
-      <td class="p-3">${r.freelancer}</td>
-      <td class="p-3">—</td>
-    </tr>`;
-  });
-}
+/* ===============================
+   3️⃣ SAVE / UPDATE PLAN RULE
+================================ */
+async function saveRule() {
+  const payload = {
+    action: "savePlanRule",
+    plan: planSelect.value,
+    task: taskSelect.value,
+    frequency: freqSelect.value,
+    freelancer: freelancerSelect.value
+  };
 
-async function savePlanRule(){
-  await fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"savePlanRule",
-      plan:rulePlan.value,
-      task:ruleTask.value,
-      frequency:ruleFrequency.value,
-      freelancerEmail:ruleFreelancer.value
-    })
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(payload)
   });
+
   alert("Rule saved");
   loadPlanRules();
 }
 
-/* ===== CLIENTS ===== */
-async function loadClients(){
-  const r = await fetch(`${API_URL}?action=getAllClients`);
-  const d = await r.json();
-  clientTableBody.innerHTML="";
-  d.clients.forEach(c=>{
-    clientTableBody.innerHTML+=`
-    <tr>
-      <td class="p-3">${c.name}<br><span class="text-xs">${c.email}</span></td>
-      <td class="p-3">${c.plan}</td>
-      <td class="p-3 text-green-400">${c.status}</td>
-      <td class="p-3">${c.progress}</td>
-      <td class="p-3">
-        <button onclick="openClient('${c.clientId}')" class="bg-purple-600 px-3 py-1 rounded text-xs">
-        View
-        </button>
-      </td>
-    </tr>`;
+/* ===============================
+   4️⃣ LOAD CLIENT LIST
+================================ */
+async function loadClients() {
+  const res = await fetch(`${API_URL}?action=getClients`);
+  const data = await res.json();
+
+  const tbody = document.getElementById("clientTableBody");
+  tbody.innerHTML = "";
+
+  data.clients.forEach(c => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${c.name}<br><small>${c.email}</small></td>
+        <td>${c.plan}</td>
+        <td class="${c.status === 'ACTIVE' ? 'text-green' : 'text-red'}">${c.status}</td>
+        <td>${c.completed}/${c.total}</td>
+        <td>
+          <button onclick="openClient('${c.clientId}')" class="btn btn-sm">
+            View Control
+          </button>
+        </td>
+      </tr>`;
   });
 }
 
-/* ===== CLIENT MODAL ===== */
-async function openClient(id){
-  const r = await fetch(`${API_URL}?action=getClientAdminView&clientId=${id}`);
-  const d = await r.json();
+/* ===============================
+   5️⃣ CLIENT TASKS + APPROVE / REJECT
+================================ */
+async function openClient(clientId) {
+  const res = await fetch(`${API_URL}?action=getClientTasks&clientId=${clientId}`);
+  const data = await res.json();
 
-  modalClientName.innerText = d.client.name;
-  modalClientEmail.innerText = d.client.email;
-  clientTaskBody.innerHTML="";
+  const list = document.getElementById("clientTasks");
+  list.innerHTML = "";
 
-  d.tasks.forEach(t=>{
-    clientTaskBody.innerHTML+=`
-    <tr>
-      <td class="p-3">${t.task}</td>
-      <td class="p-3">${t.freelancer}</td>
-      <td class="p-3">${t.status}</td>
-      <td class="p-3">
-        <button onclick="approveTask('${t.taskId}')" class="bg-green-600 px-2 py-1 text-xs rounded">Approve</button>
-        <button onclick="rejectTask('${t.taskId}')" class="bg-red-600 px-2 py-1 text-xs rounded">Reject</button>
-      </td>
-    </tr>`;
+  data.tasks.forEach(t => {
+    list.innerHTML += `
+      <div class="task-row">
+        <b>${t.task}</b> – ${t.freelancer}
+        <span class="status">${t.status}</span>
+        <button onclick="approveTask('${t.taskId}')">Approve</button>
+        <button onclick="rejectTask('${t.taskId}')">Reject</button>
+      </div>`;
   });
 
-  clientModal.classList.remove("hidden");
+  document.getElementById("clientModal").classList.remove("hidden");
 }
 
-function closeClient(){ clientModal.classList.add("hidden"); }
-
-async function approveTask(id){
-  await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"approveTask",taskId:id})});
+async function approveTask(taskId) {
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ action:"approveTask", taskId })
+  });
   alert("Approved");
 }
 
-async function rejectTask(id){
-  await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"rejectTask",taskId:id})});
+async function rejectTask(taskId) {
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ action:"rejectTask", taskId })
+  });
   alert("Rejected");
 }
 
-/* INIT */
-window.onload=()=>{
-  loadAdminStats();
-  loadFreelancers();
+/* ===============================
+   INIT LOAD
+================================ */
+window.onload = () => {
+  loadStats();
   loadPlanRules();
   loadClients();
 };
 </script>
-
 </body>
 </html>
