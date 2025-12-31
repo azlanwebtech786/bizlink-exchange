@@ -1,179 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BizLink 10X Grow Lab – Client Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Tailwind -->
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-<style>
-body{
-  font-family:Poppins,sans-serif;
-  background:#020617;
-  color:#e5e7eb;
-}
-.card{
-  background:#0b1220;
-  border:1px solid rgba(148,163,184,.25);
-}
-</style>
+  <meta charset="UTF-8">
+  <title>BizLink Client Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f0f14;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      padding: 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+    .card {
+      background: #161622;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .col {
+      flex: 1;
+      min-width: 220px;
+    }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      background: #ffaa00;
+      display: inline-block;
+    }
+    ul {
+      padding-left: 18px;
+      margin: 0;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 14px;
+      background: #6a5cff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+  </style>
 </head>
+<body>
 
-<body class="min-h-screen">
+<div class="container">
 
-<!-- HEADER -->
-<header class="sticky top-0 bg-slate-950 border-b border-slate-800 z-40">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-    <div class="flex items-center gap-4">
-      <button onclick="goHome()" class="text-sm text-purple-400 hover:underline">
-        ← Back to Home
-      </button>
-      <h1 class="text-lg font-bold">
-        BizLink <span class="text-purple-400">10X Grow Lab</span>
-      </h1>
-    </div>
-    <div class="flex items-center gap-3">
-      <span id="clientEmail" class="text-sm text-slate-300"></span>
-      <button onclick="logout()" class="bg-red-600 px-4 py-1.5 rounded text-sm font-semibold">
-        Logout
-      </button>
+  <!-- TOP BUSINESS INFO -->
+  <div class="card">
+    <h2>🏢 Business Overview</h2>
+    <p><strong>Business Name:</strong> ABC Auto Service</p>
+    <p><strong>Current Plan:</strong> BizLink 10X Starter</p>
+    <p><strong>Growth Manager:</strong> Rahul Sharma</p>
+    <p><strong>Status:</strong> <span class="badge">In Progress</span></p>
+  </div>
+
+  <!-- TODAY WORK -->
+  <div class="card">
+    <h2>📅 Aaj ka Kaam</h2>
+    <ul>
+      <li>✅ Google Business Profile Optimization</li>
+      <li>⏳ Instagram Page Setup</li>
+      <li>📅 WhatsApp Automation – Kal Start</li>
+    </ul>
+  </div>
+
+  <!-- SERVICES CHECKLIST -->
+  <div class="card">
+    <h2>⚙️ Services Activated</h2>
+    <ul>
+      <li>☑ Google Business Profile</li>
+      <li>☑ Social Media Setup</li>
+      <li>☐ Paid Ads</li>
+      <li>☐ Automation & CRM</li>
+    </ul>
+  </div>
+
+  <!-- LEADS SNAPSHOT -->
+  <div class="card">
+    <h2>📊 Leads Snapshot</h2>
+    <div class="row">
+      <div class="col">
+        <p><strong>Total Leads:</strong> 12</p>
+      </div>
+      <div class="col">
+        <p><strong>Calls:</strong> 5</p>
+      </div>
+      <div class="col">
+        <p><strong>WhatsApp:</strong> 7</p>
+      </div>
     </div>
   </div>
-</header>
 
-<!-- MAIN -->
-<main class="max-w-6xl mx-auto px-4 py-8 space-y-6">
+  <!-- FILES & LINKS -->
+  <div class="card">
+    <h2>📁 Files & Links</h2>
+    <ul>
+      <li><a href="#" class="btn">Social Media Creatives</a></li>
+      <li><a href="#" class="btn">Ad Copies</a></li>
+      <li><a href="#" class="btn">Automation Preview</a></li>
+    </ul>
+  </div>
 
-<!-- PLAN CARD -->
-<section class="card rounded-xl p-5">
-  <p class="text-xs text-slate-400">Active Plan</p>
-  <h2 id="planName" class="text-xl font-bold mt-1">—</h2>
-  <p id="planStatus" class="text-sm text-green-400 mt-1">—</p>
-</section>
+  <!-- SUPPORT -->
+  <div class="card">
+    <h2>📞 Support</h2>
+    <a href="#" class="btn">Call Growth Manager</a>
+    <a href="#" class="btn" style="margin-left:10px;">WhatsApp Support</a>
+  </div>
 
-<!-- TASKS -->
-<section>
-<h2 class="text-lg font-semibold mb-3">Today’s Growth Tasks</h2>
-
-<div class="card rounded-xl overflow-x-auto">
-<table class="w-full text-sm">
-<thead class="bg-slate-800">
-<tr>
-<th class="px-4 py-3 text-left">Task</th>
-<th class="px-4 py-3 text-left">Status</th>
-<th class="px-4 py-3 text-left">Proof</th>
-</tr>
-</thead>
-
-<tbody id="daily_tasks" class="bg-slate-900">
-<tr>
-<td colspan="3" class="px-4 py-6 text-center text-slate-400">
-Loading tasks...
-</td>
-</tr>
-</tbody>
-</table>
 </div>
-</section>
-
-</main>
-
-<script>
-/* ✅ APPS SCRIPT WEB APP URL */
-const API_URL = "https://script.google.com/macros/s/AKfycbzVzT1y0uSX2wmI1uKqUq81RGmbfuWcG_6V7JV2_1vcGGJ_YE2kBs42mN0VENsRcmp94w/exec";
-
-/* ✅ SINGLE SOURCE OF TRUTH */
-const email = localStorage.getItem("email");
-
-/* 🚨 NOT LOGGED IN */
-if (!email) {
-  window.location.href = "login.html";
-}
-
-/* SHOW EMAIL */
-document.getElementById("clientEmail").innerText = email;
-
-/* LOAD DASHBOARD */
-async function loadDashboard(){
-  const table = document.getElementById("daily_tasks");
-
-  try{
-    const res = await fetch(
-      `${API_URL}?action=getClientDashboard&email=${encodeURIComponent(email)}`
-    );
-    const data = await res.json();
-
-    if(!data.ok){
-      table.innerHTML = `
-        <tr>
-          <td colspan="3" class="px-4 py-6 text-center text-red-400">
-            ${data.error || "Unable to load dashboard"}
-          </td>
-        </tr>`;
-      return;
-    }
-
-    /* PLAN INFO */
-    document.getElementById("planName").innerText = data.client.plan;
-    document.getElementById("planStatus").innerText = data.client.status;
-
-    table.innerHTML = "";
-
-    if(!data.todayTasks || data.todayTasks.length === 0){
-      table.innerHTML = `
-        <tr>
-          <td colspan="3" class="px-4 py-6 text-center text-slate-400">
-            No tasks assigned for today
-          </td>
-        </tr>`;
-      return;
-    }
-
-    data.todayTasks.forEach(t=>{
-      const color =
-        t.status === "COMPLETED" ? "text-green-400" :
-        t.status === "PENDING" ? "text-yellow-400" :
-        "text-slate-400";
-
-      table.innerHTML += `
-        <tr class="border-b border-slate-800">
-          <td class="px-4 py-3">${t.task}</td>
-          <td class="px-4 py-3 font-semibold ${color}">${t.status}</td>
-          <td class="px-4 py-3">
-            ${t.proof ? `<a href="${t.proof}" target="_blank" class="text-purple-400 underline">View</a>` : "—"}
-          </td>
-        </tr>
-      `;
-    });
-
-  }catch(err){
-    console.error(err);
-    table.innerHTML = `
-      <tr>
-        <td colspan="3" class="px-4 py-6 text-center text-red-400">
-          API Error – check deployment
-        </td>
-      </tr>`;
-  }
-}
-
-/* LOGOUT */
-function logout(){
-  localStorage.removeItem("email");
-  window.location.href = "login.html";
-}
-
-/* HOME */
-function goHome(){
-  window.location.href = "index.html";
-}
-
-/* AUTO LOAD */
-loadDashboard();
-</script>
 
 </body>
 </html>
