@@ -1,255 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>BizLink Client Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>BizLink Client Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top, #1a1a2e, #0f0f14);
-      color: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
-
-    /* HEADER */
-    .header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: linear-gradient(180deg, #141420, #0f0f14);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .header h1 {
-      font-size: 16px;
-      margin: 0;
-      letter-spacing: 0.5px;
-    }
-
-    .back-btn {
-      padding: 8px 14px;
-      background: linear-gradient(90deg, #444, #666);
-      color: #fff;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .container {
-      padding: 20px;
-      max-width: 1100px;
-      margin: auto;
-      padding-bottom: 40px;
-    }
-
-    .card {
-      background: linear-gradient(180deg, #1b1b2a, #141420);
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 18px;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.45);
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 18px;
-    }
-
-    p {
-      margin: 6px 0;
-      font-size: 14px;
-    }
-
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .col {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .badge {
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
-      background: linear-gradient(90deg, #ff9800, #ffc107);
-      color: #000;
-      display: inline-block;
-      margin-left: 6px;
-    }
-
-    ul {
-      padding-left: 18px;
-      margin: 0;
-    }
-
-    li {
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 10px 16px;
-      background: linear-gradient(90deg, #6a5cff, #8a7cff);
-      color: #fff;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 4px 14px rgba(106,92,255,0.45);
-      margin: 6px 6px 0 0;
-    }
-
-    .loading {
-      opacity: 0.6;
-      font-size: 14px;
-    }
-
-    @media (max-width: 600px) {
-      .btn { width: 100%; text-align: center; }
-      .header h1 { font-size: 15px; }
-    }
-    
-    .task-item {
-  padding: 12px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.04);
-  margin-bottom: 10px;
-}
-
-.task-title {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.task-status {
-  font-size: 12px;
-  opacity: 0.85;
-}
-
-.proof-box {
-  margin-top: 6px;
-  font-size: 13px;
-}
-
-.proof-link {
-  color: #8a7cff;
-  text-decoration: underline;
-}
-
-  </style>
+<style>
+body{margin:0;font-family:Arial;background:#0f0f14;color:#fff}
+.header{display:flex;justify-content:space-between;align-items:center;
+padding:14px 20px;background:#111}
+.back-btn{color:#fff;text-decoration:none;background:#444;
+padding:6px 12px;border-radius:6px;font-size:13px}
+.container{max-width:1100px;margin:auto;padding:20px}
+.card{background:#1a1a2a;border-radius:12px;padding:18px;margin-bottom:16px}
+.badge{background:#ffb300;color:#000;padding:5px 12px;border-radius:20px;font-size:12px}
+.task-item{background:#222;padding:12px;border-radius:8px;margin-bottom:10px}
+.task-title{font-weight:600}
+.task-status{font-size:12px;opacity:.8}
+.proof-link{color:#8a7cff}
+</style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
-  <a href="index.html" class="back-btn">⬅ Back to Home</a>
-  <h1>BizLink Client Dashboard</h1>
+  <a href="index.html" class="back-btn">⬅ Back</a>
+  <b>BizLink Client Dashboard</b>
 </div>
 
 <div class="container">
 
-  <!-- BUSINESS OVERVIEW -->
-  <div class="card">
-    <h2>🏢 Business Overview</h2>
-    <p><strong>Business Name:</strong> <span id="businessName" class="loading">Loading...</span></p>
-    <p><strong>Current Plan:</strong> <span id="plan"></span></p>
-    <p><strong>Status:</strong> <span class="badge" id="status"></span></p>
-  </div>
-
- <!-- TODAY TASK + PROOF -->
 <div class="card">
-  <h2>📅 Today’s Tasks</h2>
-
-  <div id="taskList" class="loading">
-    Loading tasks...
-  </div>
+  <p><b>Business:</b> <span id="businessName">Loading…</span></p>
+  <p><b>Plan:</b> <span id="plan"></span></p>
+  <p><b>Status:</b> <span class="badge" id="status"></span></p>
 </div>
 
-  <!-- LEADS (PHASE-2 READY) -->
-  <div class="card">
-    <h2>📊 Leads Snapshot</h2>
-    <p style="opacity:0.7">Leads analytics Phase-2 me enable hoga</p>
-  </div>
-
-  <!-- SUPPORT -->
-  <div class="card">
-    <h2>📞 Support</h2>
-    <a href="#" class="btn">WhatsApp Support</a>
-  </div>
+<div class="card">
+  <h3>📅 Today’s Tasks</h3>
+  <div id="taskList">Loading…</div>
+</div>
 
 </div>
 
-<!-- ================= API CONNECT ================= -->
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxKYVXUB8yabwmAf1jjFn2HGFzox_nVr1cIApeZZhsFQslRdX66odhrDTYZWOZLq5hG/exec";
-const CLIENT_ID = "CL001";
+const WEB_APP_URL = "PASTE_NEW_WEB_APP_URL_HERE";
+const CLIENT_ID = new URLSearchParams(window.location.search).get("client_id") || "CL001";
 
 fetch(`${WEB_APP_URL}?action=getClientDashboardById&client_id=${CLIENT_ID}`)
-  .then(res => res.json())
-  .then(data => {
-    if (!data.ok) {
-      alert(data.error);
-      return;
-    }
+.then(r=>r.json())
+.then(d=>{
+  if(!d.ok){alert(d.error);return;}
+  businessName.innerText=d.client.name;
+  plan.innerText=d.client.plan;
+  status.innerText=d.client.status;
 
-    document.getElementById("businessName").innerText = data.client.name;
-    document.getElementById("plan").innerText = data.client.plan;
-    document.getElementById("status").innerText = data.client.status;
-
-    const box = document.getElementById("taskList");
-    box.innerHTML = "";
-
-    if (!data.todayTasks.length) {
-      box.innerHTML = "<p>No task assigned today</p>";
-      return;
-    }
-
-    data.todayTasks.forEach(t => {
-      let statusLabel = "⏳ In Progress";
-      if (t.status === "SUBMITTED") statusLabel = "📤 Proof Submitted";
-      if (t.status === "DONE") statusLabel = "✅ Completed";
-
-      box.innerHTML += `
-        <div class="task-item">
-          <div class="task-title">${t.task}</div>
-          <div class="task-status">${statusLabel}</div>
-          ${
-            t.proof
-              ? `<div class="proof-box">
-                   📎 <a href="${t.proof}" target="_blank" class="proof-link">
-                   View Proof</a>
-                 </div>`
-              : `<div class="proof-box">No proof uploaded yet</div>`
-          }
-        </div>
-      `;
-    });
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Failed to load tasks");
+  taskList.innerHTML="";
+  if(!d.todayTasks.length){
+    taskList.innerHTML="<p>No task today</p>";return;
+  }
+  d.todayTasks.forEach(t=>{
+    taskList.innerHTML+=`
+      <div class="task-item">
+        <div class="task-title">${t.task}</div>
+        <div class="task-status">${t.status}</div>
+        ${t.proof?`<a href="${t.proof}" target="_blank" class="proof-link">View Proof</a>`:""}
+      </div>`;
   });
+})
+.catch(e=>{
+  console.error(e);
+  alert("API connection failed");
+});
 </script>
-
-
 
 </body>
 </html>
