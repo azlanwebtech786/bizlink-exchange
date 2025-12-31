@@ -4,74 +4,123 @@
   <meta charset="UTF-8">
   <title>BizLink Client Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background: #0f0f14;
+      background: radial-gradient(circle at top, #1a1a2e, #0f0f14);
       color: #ffffff;
       margin: 0;
       padding: 0;
     }
+
     .container {
       padding: 20px;
       max-width: 1100px;
       margin: auto;
+      padding-bottom: 40px;
     }
+
     .card {
-      background: #161622;
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 16px;
+      background: linear-gradient(180deg, #1b1b2a, #141420);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.04);
     }
+
     h2 {
-      margin: 0 0 10px;
+      margin: 0 0 12px;
       font-size: 18px;
+      letter-spacing: 0.3px;
     }
+
+    p {
+      margin: 6px 0;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
     .row {
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
     }
+
     .col {
       flex: 1;
-      min-width: 220px;
+      min-width: 200px;
     }
+
     .badge {
-      padding: 4px 10px;
+      padding: 6px 14px;
       border-radius: 20px;
       font-size: 12px;
-      background: #ffaa00;
+      font-weight: bold;
+      background: linear-gradient(90deg, #ff9800, #ffc107);
+      color: #000;
       display: inline-block;
+      margin-left: 6px;
     }
+
     ul {
       padding-left: 18px;
       margin: 0;
     }
+
     li {
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      font-size: 14px;
     }
+
     .btn {
       display: inline-block;
-      padding: 10px 14px;
-      background: #6a5cff;
+      padding: 10px 16px;
+      background: linear-gradient(90deg, #6a5cff, #8a7cff);
       color: #fff;
       text-decoration: none;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(106,92,255,0.45);
+      margin: 6px 6px 0 0;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Mobile polish */
+    @media (max-width: 600px) {
+      h2 {
+        font-size: 17px;
+      }
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
     }
   </style>
 </head>
+
 <body>
 
 <div class="container">
 
-  <!-- TOP BUSINESS INFO -->
+  <!-- BUSINESS OVERVIEW -->
   <div class="card">
     <h2>🏢 Business Overview</h2>
     <p><strong>Business Name:</strong> ABC Auto Service</p>
     <p><strong>Current Plan:</strong> BizLink 10X Starter</p>
     <p><strong>Growth Manager:</strong> Rahul Sharma</p>
-    <p><strong>Status:</strong> <span class="badge">In Progress</span></p>
+    <p><strong>Status:</strong>
+      <span class="badge">In Progress</span>
+    </p>
   </div>
 
   <!-- TODAY WORK -->
@@ -84,7 +133,7 @@
     </ul>
   </div>
 
-  <!-- SERVICES CHECKLIST -->
+  <!-- SERVICES -->
   <div class="card">
     <h2>⚙️ Services Activated</h2>
     <ul>
@@ -95,7 +144,7 @@
     </ul>
   </div>
 
-  <!-- LEADS SNAPSHOT -->
+  <!-- LEADS -->
   <div class="card">
     <h2>📊 Leads Snapshot</h2>
     <div class="row">
@@ -111,21 +160,19 @@
     </div>
   </div>
 
-  <!-- FILES & LINKS -->
+  <!-- FILES -->
   <div class="card">
     <h2>📁 Files & Links</h2>
-    <ul>
-      <li><a href="#" class="btn">Social Media Creatives</a></li>
-      <li><a href="#" class="btn">Ad Copies</a></li>
-      <li><a href="#" class="btn">Automation Preview</a></li>
-    </ul>
+    <a href="#" class="btn">Social Media Creatives</a>
+    <a href="#" class="btn">Ad Copies</a>
+    <a href="#" class="btn">Automation Preview</a>
   </div>
 
   <!-- SUPPORT -->
   <div class="card">
     <h2>📞 Support</h2>
     <a href="#" class="btn">Call Growth Manager</a>
-    <a href="#" class="btn" style="margin-left:10px;">WhatsApp Support</a>
+    <a href="#" class="btn">WhatsApp Support</a>
   </div>
 
 </div>
