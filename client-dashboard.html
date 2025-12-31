@@ -125,6 +125,34 @@
       .btn { width: 100%; text-align: center; }
       .header h1 { font-size: 15px; }
     }
+    
+    .task-item {
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  margin-bottom: 10px;
+}
+
+.task-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.task-status {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.proof-box {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.proof-link {
+  color: #8a7cff;
+  text-decoration: underline;
+}
+
   </style>
 </head>
 
@@ -146,13 +174,14 @@
     <p><strong>Status:</strong> <span class="badge" id="status"></span></p>
   </div>
 
-  <!-- TODAY WORK -->
-  <div class="card">
-    <h2>📅 Todya Task</h2>
-    <ul id="todayTasks">
-      <li class="loading">Loading tasks...</li>
-    </ul>
+ <!-- TODAY TASK + PROOF -->
+<div class="card">
+  <h2>📅 Today’s Tasks</h2>
+
+  <div id="taskList" class="loading">
+    Loading tasks...
   </div>
+</div>
 
   <!-- LEADS (PHASE-2 READY) -->
   <div class="card">
@@ -171,7 +200,7 @@
 <!-- ================= API CONNECT ================= -->
 <script>
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxpCMXoMjm1Q23YLLaB0JNFnRjLOt4JEET_I2x7tCMmyqeGcbkzCczMO8g7M7DX58uYHg/exec";
-const CLIENT_ID = "CL001"; // login / URL se aayega later
+const CLIENT_ID = "CL001";
 
 fetch(`${WEB_APP_URL}?action=getClientDashboardById&client_id=${CLIENT_ID}`)
   .then(res => res.json())
@@ -185,24 +214,41 @@ fetch(`${WEB_APP_URL}?action=getClientDashboardById&client_id=${CLIENT_ID}`)
     document.getElementById("plan").innerText = data.client.plan;
     document.getElementById("status").innerText = data.client.status;
 
-    const ul = document.getElementById("todayTasks");
-    ul.innerHTML = "";
+    const box = document.getElementById("taskList");
+    box.innerHTML = "";
 
     if (!data.todayTasks.length) {
-      ul.innerHTML = "<li>No task assigned today</li>";
-    } else {
-      data.todayTasks.forEach(t => {
-        const li = document.createElement("li");
-        li.innerText = `• ${t.task} (${t.status})`;
-        ul.appendChild(li);
-      });
+      box.innerHTML = "<p>No task assigned today</p>";
+      return;
     }
+
+    data.todayTasks.forEach(t => {
+      let statusLabel = "⏳ In Progress";
+      if (t.status === "SUBMITTED") statusLabel = "📤 Proof Submitted";
+      if (t.status === "DONE") statusLabel = "✅ Completed";
+
+      box.innerHTML += `
+        <div class="task-item">
+          <div class="task-title">${t.task}</div>
+          <div class="task-status">${statusLabel}</div>
+          ${
+            t.proof
+              ? `<div class="proof-box">
+                   📎 <a href="${t.proof}" target="_blank" class="proof-link">
+                   View Proof</a>
+                 </div>`
+              : `<div class="proof-box">No proof uploaded yet</div>`
+          }
+        </div>
+      `;
+    });
   })
   .catch(err => {
-    alert("API Error");
     console.error(err);
+    alert("Failed to load tasks");
   });
 </script>
+
 
 
 </body>
