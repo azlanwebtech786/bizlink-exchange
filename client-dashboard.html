@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: Arial, sans-serif;
@@ -16,6 +14,35 @@
       color: #ffffff;
       margin: 0;
       padding: 0;
+    }
+
+    /* HEADER */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: linear-gradient(180deg, #141420, #0f0f14);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .header h1 {
+      font-size: 16px;
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .back-btn {
+      padding: 8px 14px;
+      background: linear-gradient(90deg, #444, #666);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
     }
 
     .container {
@@ -37,13 +64,11 @@
     h2 {
       margin: 0 0 12px;
       font-size: 18px;
-      letter-spacing: 0.3px;
     }
 
     p {
       margin: 6px 0;
       font-size: 14px;
-      opacity: 0.95;
     }
 
     .row {
@@ -91,91 +116,95 @@
       margin: 6px 6px 0 0;
     }
 
-    .btn:active {
-      transform: scale(0.97);
+    .loading {
+      opacity: 0.6;
+      font-size: 14px;
     }
 
-    /* Mobile polish */
     @media (max-width: 600px) {
-      h2 {
-        font-size: 17px;
-      }
-      .btn {
-        width: 100%;
-        text-align: center;
-      }
+      .btn { width: 100%; text-align: center; }
+      .header h1 { font-size: 15px; }
     }
   </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
+<div class="header">
+  <a href="index.html" class="back-btn">⬅ Back to Home</a>
+  <h1>BizLink Client Dashboard</h1>
+</div>
+
 <div class="container">
 
   <!-- BUSINESS OVERVIEW -->
   <div class="card">
     <h2>🏢 Business Overview</h2>
-    <p><strong>Business Name:</strong> ABC Auto Service</p>
-    <p><strong>Current Plan:</strong> BizLink 10X Starter</p>
-    <p><strong>Growth Manager:</strong> Rahul Sharma</p>
-    <p><strong>Status:</strong>
-      <span class="badge">In Progress</span>
-    </p>
+    <p><strong>Business Name:</strong> <span id="businessName" class="loading">Loading...</span></p>
+    <p><strong>Current Plan:</strong> <span id="plan"></span></p>
+    <p><strong>Status:</strong> <span class="badge" id="status"></span></p>
   </div>
 
   <!-- TODAY WORK -->
   <div class="card">
-    <h2>📅 Aaj ka Kaam</h2>
-    <ul>
-      <li>✅ Google Business Profile Optimization</li>
-      <li>⏳ Instagram Page Setup</li>
-      <li>📅 WhatsApp Automation – Kal Start</li>
+    <h2>📅 Todya Task</h2>
+    <ul id="todayTasks">
+      <li class="loading">Loading tasks...</li>
     </ul>
   </div>
 
-  <!-- SERVICES -->
-  <div class="card">
-    <h2>⚙️ Services Activated</h2>
-    <ul>
-      <li>☑ Google Business Profile</li>
-      <li>☑ Social Media Setup</li>
-      <li>☐ Paid Ads</li>
-      <li>☐ Automation & CRM</li>
-    </ul>
-  </div>
-
-  <!-- LEADS -->
+  <!-- LEADS (PHASE-2 READY) -->
   <div class="card">
     <h2>📊 Leads Snapshot</h2>
-    <div class="row">
-      <div class="col">
-        <p><strong>Total Leads:</strong> 12</p>
-      </div>
-      <div class="col">
-        <p><strong>Calls:</strong> 5</p>
-      </div>
-      <div class="col">
-        <p><strong>WhatsApp:</strong> 7</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- FILES -->
-  <div class="card">
-    <h2>📁 Files & Links</h2>
-    <a href="#" class="btn">Social Media Creatives</a>
-    <a href="#" class="btn">Ad Copies</a>
-    <a href="#" class="btn">Automation Preview</a>
+    <p style="opacity:0.7">Leads analytics Phase-2 me enable hoga</p>
   </div>
 
   <!-- SUPPORT -->
   <div class="card">
     <h2>📞 Support</h2>
-    <a href="#" class="btn">Call Growth Manager</a>
     <a href="#" class="btn">WhatsApp Support</a>
   </div>
 
 </div>
+
+<!-- ================= API CONNECT ================= -->
+<script>
+/* 🔥 CONFIG */
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxpCMXoMjm1Q23YLLaB0JNFnRjLOt4JEET_I2x7tCMmyqeGcbkzCczMO8g7M7DX58uYHg/exec";
+const CLIENT_EMAIL = "aayu12345@gmail.com"; // login se aayega later
+
+/* FETCH DASHBOARD DATA */
+fetch(`${WEB_APP_URL}?action=getClientDashboard&email=${encodeURIComponent(CLIENT_EMAIL)}`)
+  .then(res => res.json())
+  .then(data => {
+    if (!data.ok) {
+      alert(data.error || "Dashboard load failed");
+      return;
+    }
+
+    document.getElementById("businessName").innerText = data.client.name;
+    document.getElementById("plan").innerText = data.client.plan;
+    document.getElementById("status").innerText = data.client.status;
+
+    const ul = document.getElementById("todayTasks");
+    ul.innerHTML = "";
+
+    if (!data.todayTasks.length) {
+      ul.innerHTML = "<li>No task assigned today</li>";
+    } else {
+      data.todayTasks.forEach(t => {
+        const li = document.createElement("li");
+        li.innerText = `• ${t.task} (${t.status})`;
+        ul.appendChild(li);
+      });
+    }
+  })
+  .catch(err => {
+    alert("API Error");
+    console.error(err);
+  });
+</script>
 
 </body>
 </html>
