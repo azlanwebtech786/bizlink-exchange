@@ -170,16 +170,14 @@
 
 <!-- ================= API CONNECT ================= -->
 <script>
-/* 🔥 CONFIG */
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxpCMXoMjm1Q23YLLaB0JNFnRjLOt4JEET_I2x7tCMmyqeGcbkzCczMO8g7M7DX58uYHg/exec";
-const CLIENT_EMAIL = "aayu12345@gmail.com"; // login se aayega later
+const CLIENT_ID = "CL001"; // login / URL se aayega later
 
-/* FETCH DASHBOARD DATA */
-fetch(`${WEB_APP_URL}?action=getClientDashboard&email=${encodeURIComponent(CLIENT_EMAIL)}`)
+fetch(`${WEB_APP_URL}?action=getClientDashboardById&client_id=${CLIENT_ID}`)
   .then(res => res.json())
   .then(data => {
     if (!data.ok) {
-      alert(data.error || "Dashboard load failed");
+      alert(data.error);
       return;
     }
 
@@ -205,6 +203,7 @@ fetch(`${WEB_APP_URL}?action=getClientDashboard&email=${encodeURIComponent(CLIEN
     console.error(err);
   });
 </script>
+
 
 </body>
 </html>
