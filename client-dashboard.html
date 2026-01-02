@@ -1,189 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BizLink 10X Grow Lab | Client Overview</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>BizLink | Client Dashboard (10X Grow Lab)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-*{
-  box-sizing:border-box;
-  font-family: Arial, Helvetica, sans-serif;
-}
-body{
-  margin:0;
-  background:#0f1115;
-  color:#fff;
-}
-.container{
-  max-width:1100px;
-  margin:auto;
-  padding:20px;
-}
-.top-card{
-  background:#161a22;
-  padding:20px;
-  border-radius:12px;
-  margin-bottom:20px;
-}
-.top-card h2{
-  margin:0;
-  font-size:26px;
-}
-.top-card p{
-  margin:6px 0 16px;
-  color:#aaa;
-}
-.summary{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:15px;
-}
-.summary-box{
-  background:#1e2330;
-  padding:15px;
-  border-radius:10px;
-}
-.summary-box span{
-  font-size:12px;
-  color:#aaa;
-}
-.summary-box strong{
-  display:block;
-  font-size:18px;
-  margin-top:6px;
-}
-.actions{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-  margin:20px 0;
-}
-.actions button{
-  padding:18px;
-  font-size:16px;
-  border-radius:10px;
-  border:none;
-  cursor:pointer;
-  background:#6a5cff;
-  color:#fff;
-}
-.actions button:hover{
-  background:#584ae6;
-}
-.system-msg{
-  background:#121621;
-  padding:15px;
-  border-left:4px solid #6a5cff;
-  border-radius:6px;
-  margin-bottom:20px;
-  color:#ccc;
-}
-#dynamicContent{
-  background:#161a22;
-  padding:20px;
-  border-radius:12px;
-  min-height:120px;
-}
-.loading{
-  color:#aaa;
-}
-</style>
+  <!-- Tailwind -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background:#050816;
+      color:#e5e7eb;
+    }
+    .card {
+      background:#0f172a;
+      border:1px solid rgba(148,163,184,.25);
+    }
+  </style>
 </head>
 
-<body>
+<body class="min-h-screen">
 
-<div class="container">
-
-  <!-- TOP OVERVIEW -->
-  <div class="top-card">
-    <h2 id="clientName">Loading...</h2>
-    <p id="businessName"></p>
-
-    <div class="summary">
-      <div class="summary-box">
-        <span>Active Plan</span>
-        <strong id="planName">—</strong>
-      </div>
-      <div class="summary-box">
-        <span>Current Phase</span>
-        <strong id="currentPhase">—</strong>
-      </div>
-      <div class="summary-box">
-        <span>Status</span>
-        <strong id="systemStatus">—</strong>
-      </div>
+<!-- HEADER -->
+<header class="sticky top-0 z-40 bg-slate-950 border-b border-slate-800">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    <h1 class="text-lg font-bold text-white">
+      BizLink <span class="text-purple-400">Client Dashboard</span>
+    </h1>
+    <div class="flex items-center gap-3">
+      <span id="loggedEmail" class="text-sm text-slate-300"></span>
+      <button id="logoutBtn" class="bg-red-600 px-4 py-1.5 rounded text-sm font-semibold">
+        Logout
+      </button>
     </div>
   </div>
+</header>
 
-  <!-- ACTION BUTTONS -->
-  <div class="actions">
-    <button onclick="loadSection('getTodayTasks')">📋 Today’s Tasks</button>
-    <button onclick="loadSection('getClientProgress')">📈 Progress Report</button>
-    <button onclick="loadSection('getClientFreelancers')">👥 Active Freelancers</button>
-    <button onclick="loadSection('getClientHistory')">🕘 History / Logs</button>
-  </div>
+<!-- MAIN -->
+<main class="max-w-6xl mx-auto px-4 py-6">
 
-  <!-- SYSTEM MESSAGE -->
-  <div class="system-msg" id="systemMessage">
-    System loading...
-  </div>
+  <!-- PLAN -->
+  <section class="card rounded-xl p-5 mb-6">
+    <p class="text-xs text-slate-400">Your BizLink Growth Plan</p>
+    <p class="text-xl font-bold mt-1">BizLink 10X Grow Lab</p>
+    <p class="text-xs text-green-400">Active</p>
+  </section>
 
-  <!-- DYNAMIC CONTENT -->
-  <div id="dynamicContent" class="loading">
-    Select any section above
-  </div>
+  <!-- STATS -->
+  <section class="grid sm:grid-cols-4 gap-4 mb-6">
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Posts</p>
+      <p id="statPosts" class="text-2xl font-bold">0</p>
+    </div>
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Reels</p>
+      <p id="statReels" class="text-2xl font-bold">0</p>
+    </div>
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Leads</p>
+      <p id="statLeads" class="text-2xl font-bold">0</p>
+    </div>
+    <div class="card rounded-xl p-4">
+      <p class="text-xs text-slate-400">Ads</p>
+      <p id="statAds" class="text-2xl font-bold">0</p>
+    </div>
+  </section>
 
-</div>
+  <!-- TASKS -->
+  <section>
+    <h2 class="text-lg font-semibold mb-3 text-white">
+      Today’s Growth Work (BizLink 10X Grow Lab)
+    </h2>
+
+    <div class="overflow-x-auto card rounded-xl">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-800">
+          <tr>
+            <th class="px-4 py-3 text-left">Task</th>
+            <th class="px-4 py-3 text-left">Status</th>
+            <th class="px-4 py-3 text-left">Proof</th>
+          </tr>
+        </thead>
+        <tbody id="taskTable" class="bg-slate-900">
+          <tr>
+            <td colspan="3" class="px-4 py-6 text-center text-slate-400">
+              Loading today’s work…
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
 
 <script>
-/* =========================
-   CONFIG
-========================= */
-const API_BASE = "https://script.google.com/macros/s/AKfycbzJvUnmkM7wUuvNt0XaSHE7YEn1FnLqQ2XX-Fues2h4q53MuGtRkoU0iGJ1auI1lSqoRQ/exec";
-const clientId = localStorage.getItem("clientId") || "demo";
+/* ================= CONFIG ================= */
 
-/* =========================
-   LOAD OVERVIEW
-========================= */
-document.addEventListener("DOMContentLoaded", loadOverview);
+const API_URL = "https://script.google.com/macros/s/AKfycbzJvUnmkM7wUuvNt0XaSHE7YEn1FnLqQ2XX-Fues2h4q53MuGtRkoU0iGJ1auI1lSqoRQ/exec";
 
-function loadOverview(){
-  fetch(`${API_BASE}?action=getClientBasicOverview&clientId=${clientId}`)
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById("clientName").innerText = data.clientName || "Client";
-      document.getElementById("businessName").innerText = data.businessName || "";
-      document.getElementById("planName").innerText = data.plan || "-";
-      document.getElementById("currentPhase").innerText = data.phase || "-";
-      document.getElementById("systemStatus").innerText = data.status || "-";
-      document.getElementById("systemMessage").innerText =
-        data.message || "Your growth system is active.";
-    })
-    .catch(()=>{
-      document.getElementById("systemMessage").innerText =
-        "⚠️ Overview load nahi ho pa raha. Refresh karein.";
-    });
+const firebaseConfig = {
+  apiKey: "AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
+  authDomain: "bizlink-exchange.firebaseapp.com",
+  projectId: "bizlink-exchange",
+  storageBucket: "bizlink-exchange.firebasestorage.app",
+  messagingSenderId: "116213651971",
+  appId: "1:116213651971:web:fff60961af0c4da3448c36"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
 }
 
-/* =========================
-   LOAD OTHER SECTIONS
-========================= */
-function loadSection(action){
-  const box = document.getElementById("dynamicContent");
-  box.classList.add("loading");
-  box.innerHTML = "Loading...";
+const auth = firebase.auth();
+let clientEmail = "";
 
-  fetch(`${API_BASE}?action=${action}&clientId=${clientId}`)
-    .then(res => res.text())
-    .then(html => {
-      box.classList.remove("loading");
-      box.innerHTML = html;
-    })
-    .catch(()=>{
-      box.innerHTML = "⚠️ Data load failed.";
-    });
+/* ================= API ================= */
+
+async function apiPost(payload) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  return res.json();
 }
+
+/* ================= LOAD TASKS ================= */
+
+async function loadTodayTasks() {
+  const table = document.getElementById("taskTable");
+  table.innerHTML = "";
+
+  try {
+    const res = await apiPost({
+      action: "getTodayTasksForClient",
+      clientEmail
+    });
+
+    if (!res || !res.tasks || res.tasks.length === 0) {
+      table.innerHTML = `
+        <tr>
+          <td colspan="3" class="px-4 py-6 text-center text-slate-400">
+            No tasks assigned for today
+          </td>
+        </tr>`;
+      return;
+    }
+
+    let posts=0,reels=0,leads=0,ads=0;
+
+    res.tasks.forEach(t => {
+      const title = (t.TaskTitle || "").toLowerCase();
+      if (title.includes("reel")) reels++;
+      else if (title.includes("post")) posts++;
+      else if (title.includes("lead")) leads++;
+      else ads++;
+
+      const color =
+        t.Status === "Completed" ? "text-green-400" :
+        t.Status === "Pending" ? "text-yellow-400" :
+        "text-slate-400";
+
+      table.innerHTML += `
+        <tr class="border-b border-slate-800">
+          <td class="px-4 py-3">${t.TaskTitle || "-"}</td>
+          <td class="px-4 py-3 font-semibold ${color}">${t.Status || "—"}</td>
+          <td class="px-4 py-3">
+            ${t.ProofURL ? `<a href="${t.ProofURL}" target="_blank" class="text-purple-400 underline">View</a>` : "—"}
+          </td>
+        </tr>`;
+    });
+
+    statPosts.textContent = posts;
+    statReels.textContent = reels;
+    statLeads.textContent = leads;
+    statAds.textContent = ads;
+
+  } catch (e) {
+    table.innerHTML = `
+      <tr>
+        <td colspan="3" class="px-4 py-6 text-center text-red-400">
+          Failed to load tasks
+        </td>
+      </tr>`;
+  }
+}
+
+/* ================= AUTH ================= */
+
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    location.href = "login.html";
+    return;
+  }
+  clientEmail = user.email.toLowerCase();
+  loggedEmail.textContent = clientEmail;
+  loadTodayTasks();
+});
+
+logoutBtn.onclick = () => {
+  auth.signOut().then(() => location.href = "index.html");
+};
 </script>
 
 </body>
