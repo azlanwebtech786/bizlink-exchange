@@ -2,203 +2,188 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BizLink Client Dashboard</title>
+<title>BizLink 10X Grow Lab | Client Overview</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #1a1a2e, #0f0f14);
-  color: #fff;
+*{
+  box-sizing:border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
-
-/* HEADER */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: #0f0f14;
-  padding: 14px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+body{
+  margin:0;
+  background:#0f1115;
+  color:#fff;
 }
-.header h1 {
-  margin: 0;
-  font-size: 16px;
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
 }
-.back-btn {
-  text-decoration: none;
-  color: #fff;
-  background: #444;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
+.top-card{
+  background:#161a22;
+  padding:20px;
+  border-radius:12px;
+  margin-bottom:20px;
 }
-
-/* LAYOUT */
-.container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 20px;
+.top-card h2{
+  margin:0;
+  font-size:26px;
 }
-.card {
-  background: linear-gradient(180deg, #1b1b2a, #141420);
-  border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 18px;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.45);
+.top-card p{
+  margin:6px 0 16px;
+  color:#aaa;
 }
-h2 {
-  margin: 0 0 12px;
-  font-size: 18px;
+.summary{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
 }
-p {
-  margin: 6px 0;
-  font-size: 14px;
+.summary-box{
+  background:#1e2330;
+  padding:15px;
+  border-radius:10px;
 }
-.badge {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: bold;
-  background: linear-gradient(90deg, #ff9800, #ffc107);
-  color: #000;
+.summary-box span{
+  font-size:12px;
+  color:#aaa;
 }
-
-/* TASKS */
-.task-item {
-  padding: 12px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.05);
-  margin-bottom: 10px;
+.summary-box strong{
+  display:block;
+  font-size:18px;
+  margin-top:6px;
 }
-.task-title {
-  font-weight: 600;
-  margin-bottom: 4px;
+.actions{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+  margin:20px 0;
 }
-.task-status {
-  font-size: 12px;
-  opacity: 0.85;
+.actions button{
+  padding:18px;
+  font-size:16px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  background:#6a5cff;
+  color:#fff;
 }
-.proof-box {
-  margin-top: 6px;
-  font-size: 13px;
+.actions button:hover{
+  background:#584ae6;
 }
-.proof-link {
-  color: #8a7cff;
-  text-decoration: underline;
+.system-msg{
+  background:#121621;
+  padding:15px;
+  border-left:4px solid #6a5cff;
+  border-radius:6px;
+  margin-bottom:20px;
+  color:#ccc;
 }
-
-/* SUPPORT */
-.btn {
-  display: inline-block;
-  padding: 10px 16px;
-  background: linear-gradient(90deg, #6a5cff, #8a7cff);
-  color: #fff;
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+#dynamicContent{
+  background:#161a22;
+  padding:20px;
+  border-radius:12px;
+  min-height:120px;
+}
+.loading{
+  color:#aaa;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <a href="index.html" class="back-btn">⬅ Back</a>
-  <h1>BizLink Client Dashboard</h1>
-</div>
-
 <div class="container">
 
-  <!-- BUSINESS OVERVIEW -->
-  <div class="card">
-    <h2>🏢 Business Overview</h2>
-    <p><strong>Business:</strong> <span id="businessName">Loading…</span></p>
-    <p><strong>Plan:</strong> <span id="plan">—</span></p>
-    <p><strong>Status:</strong> <span id="status" class="badge">—</span></p>
+  <!-- TOP OVERVIEW -->
+  <div class="top-card">
+    <h2 id="clientName">Loading...</h2>
+    <p id="businessName"></p>
+
+    <div class="summary">
+      <div class="summary-box">
+        <span>Active Plan</span>
+        <strong id="planName">—</strong>
+      </div>
+      <div class="summary-box">
+        <span>Current Phase</span>
+        <strong id="currentPhase">—</strong>
+      </div>
+      <div class="summary-box">
+        <span>Status</span>
+        <strong id="systemStatus">—</strong>
+      </div>
+    </div>
   </div>
 
-  <!-- TODAY TASKS -->
-  <div class="card">
-    <h2>📅 Today’s Tasks</h2>
-    <div id="taskList">Loading tasks…</div>
+  <!-- ACTION BUTTONS -->
+  <div class="actions">
+    <button onclick="loadSection('getTodayTasks')">📋 Today’s Tasks</button>
+    <button onclick="loadSection('getClientProgress')">📈 Progress Report</button>
+    <button onclick="loadSection('getClientFreelancers')">👥 Active Freelancers</button>
+    <button onclick="loadSection('getClientHistory')">🕘 History / Logs</button>
   </div>
 
-  <!-- SUPPORT -->
-  <div class="card">
-    <h2>📞 Support</h2>
-    <a href="https://wa.me/91XXXXXXXXXX" class="btn" target="_blank">
-      WhatsApp Support
-    </a>
+  <!-- SYSTEM MESSAGE -->
+  <div class="system-msg" id="systemMessage">
+    System loading...
+  </div>
+
+  <!-- DYNAMIC CONTENT -->
+  <div id="dynamicContent" class="loading">
+    Select any section above
   </div>
 
 </div>
 
 <script>
-/* ================= CONFIG ================= */
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzJvUnmkM7wUuvNt0XaSHE7YEn1FnLqQ2XX-Fues2h4q53MuGtRkoU0iGJ1auI1lSqoRQ/exec";
+/* =========================
+   CONFIG
+========================= */
+const API_BASE = "https://script.google.com/macros/s/AKfycbzJvUnmkM7wUuvNt0XaSHE7YEn1FnLqQ2XX-Fues2h4q53MuGtRkoU0iGJ1auI1lSqoRQ/exec";
+const clientId = localStorage.getItem("clientId") || "demo";
 
-/* client_id URL se lo: ?client_id=CL001 */
-const params = new URLSearchParams(window.location.search);
-const CLIENT_ID = params.get("client_id") || "CL001";
+/* =========================
+   LOAD OVERVIEW
+========================= */
+document.addEventListener("DOMContentLoaded", loadOverview);
 
-/* ================= API CALL ================= */
-fetch(`${WEB_APP_URL}?action=getClientDashboardById&client_id=${CLIENT_ID}`)
-  .then(res => res.json())
-  .then(data => {
-    if (!data.ok) {
-      alert(data.error || "API error");
-      console.error(data);
-      return;
-    }
-
-    /* BUSINESS INFO */
-    document.getElementById("businessName").innerText = data.client.name;
-    document.getElementById("plan").innerText = data.client.plan;
-    document.getElementById("status").innerText = data.client.status;
-
-    /* TASKS */
-    const box = document.getElementById("taskList");
-    box.innerHTML = "";
-
-    if (!data.todayTasks || data.todayTasks.length === 0) {
-      box.innerHTML = "<p style='opacity:0.7'>No task today</p>";
-      return;
-    }
-
-    data.todayTasks.forEach(t => {
-      let statusLabel = "⏳ In Progress";
-      if (t.status === "SUBMITTED") statusLabel = "📤 Proof Submitted";
-      if (t.status === "DONE") statusLabel = "✅ Completed";
-
-      box.innerHTML += `
-        <div class="task-item">
-          <div class="task-title">${t.task}</div>
-          <div class="task-status">${statusLabel}</div>
-          ${
-            t.proof
-              ? `<div class="proof-box">
-                   📎 <a href="${t.proof}" target="_blank" class="proof-link">
-                   View Proof</a>
-                 </div>`
-              : `<div class="proof-box">No proof uploaded yet</div>`
-          }
-        </div>
-      `;
+function loadOverview(){
+  fetch(`${API_BASE}?action=getClientBasicOverview&clientId=${clientId}`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("clientName").innerText = data.clientName || "Client";
+      document.getElementById("businessName").innerText = data.businessName || "";
+      document.getElementById("planName").innerText = data.plan || "-";
+      document.getElementById("currentPhase").innerText = data.phase || "-";
+      document.getElementById("systemStatus").innerText = data.status || "-";
+      document.getElementById("systemMessage").innerText =
+        data.message || "Your growth system is active.";
+    })
+    .catch(()=>{
+      document.getElementById("systemMessage").innerText =
+        "⚠️ Overview load nahi ho pa raha. Refresh karein.";
     });
-  })
-  .catch(err => {
-    console.error("FETCH ERROR:", err);
-    alert("Failed to load dashboard data");
-  });
+}
+
+/* =========================
+   LOAD OTHER SECTIONS
+========================= */
+function loadSection(action){
+  const box = document.getElementById("dynamicContent");
+  box.classList.add("loading");
+  box.innerHTML = "Loading...";
+
+  fetch(`${API_BASE}?action=${action}&clientId=${clientId}`)
+    .then(res => res.text())
+    .then(html => {
+      box.classList.remove("loading");
+      box.innerHTML = html;
+    })
+    .catch(()=>{
+      box.innerHTML = "⚠️ Data load failed.";
+    });
+}
 </script>
 
 </body>
