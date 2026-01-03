@@ -148,6 +148,7 @@ body{
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxCibTktQTIzYwhTqPxCZRoyNOwU3Nd0I2dy-9u9DxqSir14Ew6U0kR8Jwyuv4eSicHeQ/exec";
 
+// ---- GET EMAIL FROM URL ----
 const params = new URLSearchParams(window.location.search);
 const email = params.get("email");
 
@@ -156,43 +157,52 @@ if (!email) {
   throw new Error("Email missing");
 }
 
-fetch(`${API}?action=getClientDashboard&email=${encodeURIComponent(email)}`)
+// ---- FETCH CLIENT DASHBOARD DATA ----
+fetch(`${API_URL}?action=getClientDashboard&email=${encodeURIComponent(email)}`)
   .then(res => res.json())
   .then(data => {
+
     if (!data.ok) {
       alert(data.error || "Client not found");
       return;
     }
 
-    // BASIC INFO
-    document.getElementById("clientName").innerText = data.client.name;
-    document.getElementById("city").innerText = data.client.city || "-";
-    document.getElementById("plan").innerText = data.client.plan;
+    // ===== BASIC INFO =====
+    document.getElementById("clientName").innerText = data.client.name || "-";
+    document.getElementById("clientCity").innerText = data.client.city || "-";
+    document.getElementById("clientPlan").innerText = data.client.plan || "-";
+    document.getElementById("planName").innerText = data.client.plan || "-";
 
-    // METRICS
-    document.getElementById("todayTasks").innerText = data.metrics.todayTasks;
-    document.getElementById("completed").innerText = data.metrics.completed;
-    document.getElementById("pending").innerText = data.metrics.pending;
+    // ===== METRICS (TODAY) =====
+    document.getElementById("leads").innerText = data.metrics.todayTasks || 0;
+    document.getElementById("posts").innerText = data.metrics.completed || 0;
+    document.getElementById("reels").innerText = data.metrics.pending || 0;
+    document.getElementById("adSpend").innerText = 0;
 
-    // TASKS TABLE (optional)
-    const tbody = document.getElementById("taskBody");
-    tbody.innerHTML = "";
+    // ===== CONTENT ENGINE STATUS =====
+    document.getElementById("donePosts").innerText = data.metrics.completed || 0;
+    document.getElementById("totalPosts").innerText = data.metrics.todayTasks || 0;
 
-    if (data.tasks.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4">No tasks today</td></tr>`;
-      return;
+    document.getElementById("doneReels").innerText = 0;
+    document.getElementById("totalReels").innerText = 0;
+
+    let statusText = "In Progress";
+    if (data.metrics.pending === 0 && data.metrics.todayTasks > 0) {
+      statusText = "Completed";
+    }
+    if (data.metrics.todayTasks === 0) {
+      statusText = "No Tasks Today";
     }
 
-    data.tasks.forEach(t => {
-      tbody.innerHTML += `
-        <tr>
-          <td>${t.task}</td>
-          <td>${t.freelancer || "-"}</td>
-          <td>${t.status}</td>
-          <td>${t.proof || "-"}</td>
-        </tr>
-      `;
-    });
+    document.getElementById("contentStatus").innerText = statusText;
+
+    // ===== DAYS LEFT (OPTIONAL – STATIC FOR NOW) =====
+    document.getElementById("daysLeft").innerText = 30;
+
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Dashboard load failed. Please try again.");
   });
 </script>
 
