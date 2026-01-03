@@ -148,30 +148,52 @@ body{
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxCibTktQTIzYwhTqPxCZRoyNOwU3Nd0I2dy-9u9DxqSir14Ew6U0kR8Jwyuv4eSicHeQ/exec";
 
-const email = new URLSearchParams(window.location.search).get("email");
+const params = new URLSearchParams(window.location.search);
+const email = params.get("email");
 
-fetch(`${API_URL}?action=getClientDashboard&email=${email}`)
-.then(r=>r.json())
-.then(d=>{
-  if(!d.ok){alert("Client not found");return;}
+if (!email) {
+  alert("Client email missing in URL");
+  throw new Error("Email missing");
+}
 
-  document.getElementById("clientName").innerText = d.client.name;
-  document.getElementById("clientCity").innerText = d.client.city || "-";
-  document.getElementById("clientPlan").innerText = d.client.plan;
-  document.getElementById("planName").innerText = d.client.plan;
-  document.getElementById("daysLeft").innerText = d.client.daysRemaining || 0;
+fetch(`${API}?action=getClientDashboard&email=${encodeURIComponent(email)}`)
+  .then(res => res.json())
+  .then(data => {
+    if (!data.ok) {
+      alert(data.error || "Client not found");
+      return;
+    }
 
-  document.getElementById("leads").innerText = d.metrics.leads;
-  document.getElementById("posts").innerText = d.metrics.posts;
-  document.getElementById("reels").innerText = d.metrics.reels;
-  document.getElementById("adSpend").innerText = d.metrics.adSpend;
+    // BASIC INFO
+    document.getElementById("clientName").innerText = data.client.name;
+    document.getElementById("city").innerText = data.client.city || "-";
+    document.getElementById("plan").innerText = data.client.plan;
 
-  document.getElementById("donePosts").innerText = d.content.donePosts;
-  document.getElementById("totalPosts").innerText = d.content.plannedPosts;
-  document.getElementById("doneReels").innerText = d.content.doneReels;
-  document.getElementById("totalReels").innerText = d.content.plannedReels;
-  document.getElementById("contentStatus").innerText = d.content.status;
-});
+    // METRICS
+    document.getElementById("todayTasks").innerText = data.metrics.todayTasks;
+    document.getElementById("completed").innerText = data.metrics.completed;
+    document.getElementById("pending").innerText = data.metrics.pending;
+
+    // TASKS TABLE (optional)
+    const tbody = document.getElementById("taskBody");
+    tbody.innerHTML = "";
+
+    if (data.tasks.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4">No tasks today</td></tr>`;
+      return;
+    }
+
+    data.tasks.forEach(t => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${t.task}</td>
+          <td>${t.freelancer || "-"}</td>
+          <td>${t.status}</td>
+          <td>${t.proof || "-"}</td>
+        </tr>
+      `;
+    });
+  });
 </script>
 
 </body>
