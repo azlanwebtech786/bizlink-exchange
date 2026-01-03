@@ -2,114 +2,45 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BizLink 10X Grow Lab | Client Overview</title>
+<title>BizLink 10X Grow Lab – Client Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
 body{
   margin:0;
-  background:radial-gradient(circle at top,#14162a,#070a14);
-  color:#fff;
+  font-family:Poppins;
+  background:linear-gradient(180deg,#050816,#020617);
+  color:#e5e7eb;
 }
-.container{
-  max-width:1000px;
-  margin:auto;
-  padding:30px 20px;
-}
+.container{max-width:1200px;margin:auto;padding:24px}
 .card{
-  background:linear-gradient(180deg,#1a1e36,#0f1325);
-  border-radius:16px;
-  padding:25px;
-  box-shadow:0 20px 40px rgba(0,0,0,.4);
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border:1px solid rgba(148,163,184,.15);
+  border-radius:14px;
+  padding:20px;
 }
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:20px;
-  flex-wrap:wrap;
-}
-h1{
-  margin:0;
-  font-size:28px;
-}
-.sub{
-  color:#aab;
-  margin-top:6px;
-}
-.plan-box{
-  text-align:right;
-}
-.plan{
-  display:inline-block;
-  background:#6a5cff;
-  padding:6px 14px;
-  border-radius:20px;
-  font-size:14px;
-  margin-bottom:8px;
-}
-.days{
-  color:#aaa;
-  font-size:13px;
-}
-.grid{
-  margin-top:30px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:18px;
-}
-.stat{
-  background:#12162c;
-  padding:18px;
-  border-radius:12px;
-}
-.stat span{
-  color:#aaa;
-  font-size:13px;
-}
-.stat strong{
-  display:block;
-  margin-top:6px;
-  font-size:20px;
-}
-.status{
-  margin-top:30px;
-  padding:18px;
-  border-left:5px solid #6a5cff;
-  background:#0f1328;
-  border-radius:10px;
-  color:#cfd3ff;
-}
-.actions{
-  margin-top:30px;
-  display:flex;
-  gap:15px;
-  flex-wrap:wrap;
-}
-.actions button{
-  flex:1;
-  min-width:220px;
-  padding:16px;
-  font-size:16px;
-  border-radius:12px;
+.grid{display:grid;gap:20px}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.grid-2{grid-template-columns:2fr 1fr}
+.small{font-size:13px;color:#94a3b8}
+.big{font-size:26px;font-weight:700}
+.btn{
+  background:linear-gradient(90deg,#8b5cf6,#ec4899);
   border:none;
-  cursor:pointer;
-  background:linear-gradient(135deg,#6a5cff,#8a7bff);
+  padding:12px 18px;
+  border-radius:10px;
   color:#fff;
+  cursor:pointer;
 }
-.actions button:hover{
-  opacity:.9;
+.badge{
+  background:#7c3aed;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
 }
-.logout{
-  background:#ff4d4d!important;
-}
-footer{
-  text-align:center;
-  margin-top:40px;
-  color:#666;
-  font-size:13px;
-}
+.lock{opacity:.5}
 </style>
 </head>
 
@@ -117,86 +48,130 @@ footer{
 
 <div class="container">
 
-  <div class="card">
-    <div class="header">
-      <div>
-        <h1 id="clientName">Loading...</h1>
-        <div class="sub" id="cityName"></div>
-      </div>
-
-      <div class="plan-box">
-        <div class="plan" id="planName">—</div>
-        <div class="days" id="daysLeft">—</div>
-      </div>
+  <!-- HEADER -->
+  <div class="card grid grid-2">
+    <div>
+      <div class="small">Client Dashboard</div>
+      <h2 id="clientName">Loading...</h2>
+      <div class="small">City: <span id="clientCity">—</span></div>
+      <span class="badge" id="clientPlan">—</span>
     </div>
-
-    <div class="grid">
-      <div class="stat">
-        <span>Current Phase</span>
-        <strong id="phase">—</strong>
-      </div>
-      <div class="stat">
-        <span>System Status</span>
-        <strong id="status">—</strong>
-      </div>
-    </div>
-
-    <div class="status" id="systemMessage">
-      Loading system status…
-    </div>
-
-    <div class="actions">
-      <button onclick="openDashboard()">🚀 Open Growth Dashboard</button>
-      <button class="logout" onclick="logout()">Logout</button>
+    <div style="text-align:right">
+      <div class="small">Current Plan</div>
+      <div class="big" id="planName">—</div>
+      <div class="small"><span id="daysLeft">0</span> days remaining</div><br>
+      <button class="btn">Upgrade / Change Plan</button>
     </div>
   </div>
 
-  <footer>
-    BizLink Ecosystem • Growth systems, not just services
-  </footer>
+  <br>
+
+  <!-- METRICS -->
+  <div class="grid grid-4">
+    <div class="card"><div class="small">Leads this month</div><div class="big" id="leads">0</div></div>
+    <div class="card"><div class="small">Posts published</div><div class="big" id="posts">0</div></div>
+    <div class="card"><div class="small">Reels produced</div><div class="big" id="reels">0</div></div>
+    <div class="card"><div class="small">Ad Spend (₹)</div><div class="big" id="adSpend">0</div></div>
+  </div>
+
+  <br>
+
+  <!-- CONTENT ENGINE -->
+  <div class="card">
+    <h3>Content Engine (Posts + Reels)</h3>
+    <div class="grid grid-4">
+      <div>
+        <div class="small">Planned Posts</div>
+        <div class="big"><span id="donePosts">0</span> / <span id="totalPosts">0</span></div>
+      </div>
+      <div>
+        <div class="small">Reels</div>
+        <div class="big"><span id="doneReels">0</span> / <span id="totalReels">0</span></div>
+      </div>
+      <div>
+        <div class="small">Status</div>
+        <div class="big" id="contentStatus">—</div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- ADS -->
+  <div class="card">
+    <h3>Ads & 3km Targeting</h3>
+    <div class="grid grid-4">
+      <div><div class="small">Campaigns Running</div><div class="big">0</div></div>
+      <div><div class="small">Leads from Ads</div><div class="big">0</div></div>
+      <div><div class="small">Avg CPL</div><div class="big">₹0</div></div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- AUTOMATION -->
+  <div class="card">
+    <h3>Automation & CRM</h3>
+    <div class="grid grid-4">
+      <div><div class="small">Active Flows</div><div class="big">0</div></div>
+      <div><div class="small">Leads in Pipeline</div><div class="big">0</div></div>
+      <div><div class="small">Follow-up Tasks</div><div class="big">0</div></div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- PLAN SUMMARY -->
+  <div class="card">
+    <h3>Your Plan Summary</h3>
+    <ul class="small">
+      <li>30 posts + 8 reels / month</li>
+      <li>3 km hyperlocal ad campaigns</li>
+      <li>WhatsApp lead funnel & automation</li>
+    </ul>
+    <div class="lock small">
+      🔒 Advanced retention & scaling (Premium only)
+    </div>
+  </div>
+
+  <br>
+
+  <!-- GROWTH OFFICER -->
+  <div class="card">
+    <h3>Growth Officer Contact</h3>
+    <p class="small">Aapka dedicated Growth Officer aapke plan ke according kaam karta hai.</p>
+    <button class="btn">Talk to Growth Officer</button>
+  </div>
 
 </div>
 
 <script>
-/* ================= CONFIG ================= */
-const API_BASE = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
-const clientId = localStorage.getItem("clientId");
+const API_URL = "https://script.google.com/macros/s/AKfycbzJvUnmkM7wUuvNt0XaSHE7YEn1FnLqQ2XX-Fues2h4q53MuGtRkoU0iGJ1auI1lSqoRQ/exec";
 
-/* ================= LOAD OVERVIEW ================= */
-document.addEventListener("DOMContentLoaded", ()=>{
-  if(!clientId){
-    alert("Session expired. Please login again.");
-    logout();
-    return;
-  }
+const email = new URLSearchParams(window.location.search).get("email");
 
-  fetch(`${API_BASE}?action=getClientBasicOverview&clientId=${clientId}`)
-    .then(res=>res.json())
-    .then(d=>{
-      document.getElementById("clientName").innerText = d.clientName || "Client";
-      document.getElementById("cityName").innerText = d.city || "";
-      document.getElementById("planName").innerText = d.plan || "-";
-      document.getElementById("daysLeft").innerText = d.daysLeft ? d.daysLeft+" days remaining" : "";
-      document.getElementById("phase").innerText = d.phase || "-";
-      document.getElementById("status").innerText = d.status || "-";
-      document.getElementById("systemMessage").innerText =
-        d.message || "Your growth system is active and monitored.";
-    })
-    .catch(()=>{
-      document.getElementById("systemMessage").innerText =
-        "⚠️ Unable to load overview. Please refresh.";
-    });
+fetch(`${API_URL}?action=getClientDashboard&email=${email}`)
+.then(r=>r.json())
+.then(d=>{
+  if(!d.ok){alert("Client not found");return;}
+
+  document.getElementById("clientName").innerText = d.client.name;
+  document.getElementById("clientCity").innerText = d.client.city || "-";
+  document.getElementById("clientPlan").innerText = d.client.plan;
+  document.getElementById("planName").innerText = d.client.plan;
+  document.getElementById("daysLeft").innerText = d.client.daysRemaining || 0;
+
+  document.getElementById("leads").innerText = d.metrics.leads;
+  document.getElementById("posts").innerText = d.metrics.posts;
+  document.getElementById("reels").innerText = d.metrics.reels;
+  document.getElementById("adSpend").innerText = d.metrics.adSpend;
+
+  document.getElementById("donePosts").innerText = d.content.donePosts;
+  document.getElementById("totalPosts").innerText = d.content.plannedPosts;
+  document.getElementById("doneReels").innerText = d.content.doneReels;
+  document.getElementById("totalReels").innerText = d.content.plannedReels;
+  document.getElementById("contentStatus").innerText = d.content.status;
 });
-
-/* ================= ACTIONS ================= */
-function openDashboard(){
-  window.location.href = "client-dashboard.html";
-}
-
-function logout(){
-  localStorage.clear();
-  window.location.href = "login.html";
-}
 </script>
 
 </body>
