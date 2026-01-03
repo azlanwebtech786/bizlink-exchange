@@ -1,512 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>BizLink | Client Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>BizLink 10X Grow Lab | Client Overview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Tailwind & Fonts -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    body{
-      font-family:'Poppins',sans-serif;
-      background:#0b0d1e;
-      color:#e5e7eb;
-    }
-    .card-bg{
-      background:#1a1e3a;
-      border:1px solid rgba(255,255,255,.1);
-    }
-    .button-gradient{
-      background:linear-gradient(90deg,#a855f7 0%,#ec4899 100%);
-    }
-    .text-purple{color:#a855f7}
-    .badge{
-      font-size:.7rem;
-      padding:.15rem .55rem;
-      border-radius:999px;
-    }
-    .badge-plan-basic{background:#0369a1;}
-    .badge-plan-standard{background:#7c3aed;}
-    .badge-plan-premium{background:#ea580c;}
-    .badge-locked{
-      background:#4b5563;
-    }
-    .section-title{
-      font-size:1rem;
-      font-weight:600;
-    }
-  </style>
-
-  <!-- Firebase (same as index.html) -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey:"AIzaSyBtle51gX5kHufuWZ_YVOIQdDR05kbCE5I",
-      authDomain:"bizlink-exchange.firebaseapp.com",
-      projectId:"bizlink-exchange",
-      storageBucket:"bizlink-exchange.firebasestorage.app",
-      messagingSenderId:"116213651971",
-      appId:"1:116213651971:web:fff60961af0c4da3448c36",
-      measurementId:"G-VQ3JM82D1N"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
+<style>
+*{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
+body{
+  margin:0;
+  background:radial-gradient(circle at top,#14162a,#070a14);
+  color:#fff;
+}
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:30px 20px;
+}
+.card{
+  background:linear-gradient(180deg,#1a1e36,#0f1325);
+  border-radius:16px;
+  padding:25px;
+  box-shadow:0 20px 40px rgba(0,0,0,.4);
+}
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+  flex-wrap:wrap;
+}
+h1{
+  margin:0;
+  font-size:28px;
+}
+.sub{
+  color:#aab;
+  margin-top:6px;
+}
+.plan-box{
+  text-align:right;
+}
+.plan{
+  display:inline-block;
+  background:#6a5cff;
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:14px;
+  margin-bottom:8px;
+}
+.days{
+  color:#aaa;
+  font-size:13px;
+}
+.grid{
+  margin-top:30px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:18px;
+}
+.stat{
+  background:#12162c;
+  padding:18px;
+  border-radius:12px;
+}
+.stat span{
+  color:#aaa;
+  font-size:13px;
+}
+.stat strong{
+  display:block;
+  margin-top:6px;
+  font-size:20px;
+}
+.status{
+  margin-top:30px;
+  padding:18px;
+  border-left:5px solid #6a5cff;
+  background:#0f1328;
+  border-radius:10px;
+  color:#cfd3ff;
+}
+.actions{
+  margin-top:30px;
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+}
+.actions button{
+  flex:1;
+  min-width:220px;
+  padding:16px;
+  font-size:16px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(135deg,#6a5cff,#8a7bff);
+  color:#fff;
+}
+.actions button:hover{
+  opacity:.9;
+}
+.logout{
+  background:#ff4d4d!important;
+}
+footer{
+  text-align:center;
+  margin-top:40px;
+  color:#666;
+  font-size:13px;
+}
+</style>
 </head>
-<body class="min-h-screen flex flex-col">
 
-  <!-- HEADER (same style as index) -->
-  <header class="sticky top-0 bg-opacity-90 bg-[#0b0d1e] z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex-shrink-0">
-          <a href="index.html" class="text-xl font-bold text-white">
-            BizLink <span class="text-purple">Exchange</span>
-          </a>
-        </div>
-        <nav class="hidden md:flex space-x-6 items-center">
-          <a href="index.html" class="hover:text-purple transition text-white text-sm font-medium">Home</a>
-          <a href="post-work.html" class="hover:text-purple transition text-white text-sm font-medium">Post a Work</a>
-          <a href="freelancer-dashboard.html" class="hover:text-purple transition text-white text-sm font-medium">Freelancer Dashboard</a>
-          <a href="client-dashboard.html" class="hover:text-purple transition text-white text-sm font-medium">Client Dashboard</a>
+<body>
 
-          <a id="loginLinkDesktop" href="login.html" class="button-gradient text-white px-4 py-2 rounded-md font-medium hover:opacity-90 text-sm">Login</a>
-          <a id="signupLinkDesktop" href="signup.html" class="bg-gray-700 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-600 text-sm">Sign Up</a>
-          <button id="logoutButtonDesktop" class="hidden bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 text-sm">Logout</button>
-        </nav>
-      </div>
-    </div>
-  </header>
+<div class="container">
 
-  <main class="flex-1 max-w-6xl mx-auto px-4 py-6">
-
-    <!-- TOP SUMMARY -->
-    <section class="mb-6">
-      <div class="card-bg rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <p class="text-xs text-gray-400 mb-1">Client Dashboard</p>
-          <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-            <span id="businessName">Your Business Name</span>
-            <span id="planBadge" class="badge badge-plan-standard">Standard Plan</span>
-          </h1>
-          <p id="businessCity" class="text-sm text-gray-300 mt-1">City: Not set</p>
-        </div>
-        <div class="text-right">
-          <p class="text-xs text-gray-400">Current Plan</p>
-          <p id="planNameDisplay" class="text-lg font-semibold text-white">Standard</p>
-          <p id="planDaysLeft" class="text-xs text-emerald-400 mt-1">27 days remaining</p>
-          <button id="upgradeBtn" class="mt-3 button-gradient px-4 py-2 rounded-lg text-xs font-semibold">
-            Upgrade / Change Plan
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- KPIs -->
-    <section class="grid md:grid-cols-4 gap-4 mb-8">
-      <div class="card-bg rounded-xl p-4">
-        <p class="text-xs text-gray-400">Leads this month</p>
-        <p id="kpiLeads" class="text-2xl font-bold text-emerald-400">0</p>
-      </div>
-      <div class="card-bg rounded-xl p-4">
-        <p class="text-xs text-gray-400">Posts published</p>
-        <p id="kpiPosts" class="text-2xl font-bold text-sky-400">0</p>
-      </div>
-      <div class="card-bg rounded-xl p-4">
-        <p class="text-xs text-gray-400">Reels produced</p>
-        <p id="kpiReels" class="text-2xl font-bold text-pink-400">0</p>
-      </div>
-      <div class="card-bg rounded-xl p-4">
-        <p class="text-xs text-gray-400">Ad spend (₹)</p>
-        <p id="kpiAdSpend" class="text-2xl font-bold text-yellow-300">0</p>
-      </div>
-    </section>
-
-    <div class="grid lg:grid-cols-3 gap-6 mb-10">
-      <!-- LEFT: FEATURES -->
-      <div class="lg:col-span-2 space-y-5">
-
-        <!-- CONTENT ENGINE -->
-        <div class="card-bg rounded-xl p-4 relative feature-block" data-feature="content">
-          <div class="flex justify-between items-center mb-2">
-            <h2 class="section-title">Content Engine (Posts + Reels)</h2>
-            <span class="text-xs text-gray-400">Daily Output</span>
-          </div>
-          <p class="text-xs text-gray-400 mb-3">
-            Monthly content calendar, creatives, reels, copywriting – sab yahan track hoga.
-          </p>
-          <div class="grid sm:grid-cols-3 gap-3 text-sm">
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Planned Posts</p>
-              <p id="contentPlanned" class="text-lg font-semibold text-white">0 / 30</p>
-            </div>
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Reels</p>
-              <p id="contentReels" class="text-lg font-semibold text-white">0 / 8</p>
-            </div>
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Status</p>
-              <p id="contentStatus" class="text-sm text-emerald-400">Not started</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- ADS & TARGETING -->
-        <div class="card-bg rounded-xl p-4 relative feature-block" data-feature="ads">
-          <div class="flex justify-between items-center mb-2">
-            <h2 class="section-title">Ads & 3km Targeting</h2>
-            <span class="text-xs text-gray-400">Hyperlocal Ads</span>
-          </div>
-          <p class="text-xs text-gray-400 mb-3">
-            Facebook + Instagram hyperlocal campaigns, 3 km radius targeting.
-          </p>
-          <div class="grid sm:grid-cols-3 gap-3 text-sm">
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Campaigns Running</p>
-              <p id="adsCampaigns" class="text-lg font-semibold text-white">0</p>
-            </div>
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Leads from Ads</p>
-              <p id="adsLeads" class="text-lg font-semibold text-emerald-400">0</p>
-            </div>
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Avg. CPL</p>
-              <p id="adsCpl" class="text-lg font-semibold text-yellow-300">₹0</p>
-            </div>
-          </div>
-          <div class="locked-tag hidden absolute top-3 right-3">
-            <span class="badge badge-locked text-xs">Locked – Upgrade to Standard</span>
-          </div>
-        </div>
-
-        <!-- AUTOMATION & CRM -->
-        <div class="card-bg rounded-xl p-4 relative feature-block" data-feature="automation">
-          <div class="flex justify-between items-center mb-2">
-            <h2 class="section-title">Automation & CRM</h2>
-            <span class="text-xs text-gray-400">WhatsApp & Funnels</span>
-          </div>
-          <p class="text-xs text-gray-400 mb-3">
-            WhatsApp flows, chatbot, lead stages, follow-up system.
-          </p>
-          <div class="grid sm:grid-cols-3 gap-3 text-sm">
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Active Flows</p>
-              <p id="autoFlows" class="text-lg font-semibold text-white">0</p>
-            </div>
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Leads in pipeline</p>
-              <p id="autoPipeline" class="text-lg font-semibold text-emerald-400">0</p>
-            </div>
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Follow-up Tasks</p>
-              <p id="autoTasks" class="text-lg font-semibold text-sky-400">0</p>
-            </div>
-          </div>
-          <div class="locked-tag hidden absolute top-3 right-3">
-            <span class="badge badge-locked text-xs">Locked – Upgrade plan</span>
-          </div>
-        </div>
-
-        <!-- REVIEWS & RETENTION -->
-        <div class="card-bg rounded-xl p-4 relative feature-block" data-feature="retention">
-          <div class="flex justify-between items-center mb-2">
-            <h2 class="section-title">Reviews & Retention</h2>
-            <span class="text-xs text-gray-400">Loyalty / Reactivation</span>
-          </div>
-          <p class="text-xs text-gray-400 mb-3">
-            Google reviews push, old customer reactivation campaigns, loyalty.
-          </p>
-          <div class="grid sm:grid-cols-3 gap-3 text-sm">
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Reviews Added</p>
-              <p id="revCount" class="text-lg font-semibold text-white">0</p>
-            </div>
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Reactivation Campaigns</p>
-              <p id="revCampaigns" class="text-lg font-semibold text-emerald-400">0</p>
-            </div>
-            <div class="bg-black bg-opacity-20 rounded-lg p-3">
-              <p class="text-xs text-gray-400">Repeat Customers</p>
-              <p id="revRepeat" class="text-lg font-semibold text-yellow-300">0</p>
-            </div>
-          </div>
-          <div class="locked-tag hidden absolute top-3 right-3">
-            <span class="badge badge-locked text-xs">Locked – Premium 10X only</span>
-          </div>
-        </div>
-
+  <div class="card">
+    <div class="header">
+      <div>
+        <h1 id="clientName">Loading...</h1>
+        <div class="sub" id="cityName"></div>
       </div>
 
-      <!-- RIGHT: PLAN SUMMARY / UPGRADE -->
-      <div class="space-y-5">
-        <div class="card-bg rounded-xl p-4">
-          <h2 class="section-title mb-2">Your Plan Summary</h2>
-          <p id="planSummaryText" class="text-xs text-gray-300 mb-3">
-            Loading plan details…
-          </p>
-
-          <div class="border-t border-gray-700 pt-3 text-xs">
-            <p class="font-semibold text-gray-200 mb-1">In your plan:</p>
-            <ul id="planIncluded" class="space-y-1 text-emerald-400">
-              <!-- JS fill -->
-            </ul>
-          </div>
-
-          <div class="border-t border-gray-700 pt-3 mt-3 text-xs">
-            <p class="font-semibold text-gray-200 mb-1">Available if you upgrade:</p>
-            <ul id="planLocked" class="space-y-1 text-gray-400">
-              <!-- JS fill -->
-            </ul>
-          </div>
-        </div>
-
-        <div class="card-bg rounded-xl p-4">
-          <h2 class="section-title mb-2">Growth Officer Contact</h2>
-          <p class="text-xs text-gray-300 mb-3">
-            Aapka dedicated Growth Officer aapke plan ke according strategy banayega.
-          </p>
-          <a id="contactGrowth" href="mailto:hello@bizlink.exchange?subject=Plan%20Upgrade%20Query" class="button-gradient block text-center text-sm font-semibold rounded-lg py-2">
-            Talk to Growth Officer
-          </a>
-        </div>
+      <div class="plan-box">
+        <div class="plan" id="planName">—</div>
+        <div class="days" id="daysLeft">—</div>
       </div>
     </div>
 
-  </main>
-
-  <!-- UPGRADE MODAL -->
-  <div id="upgradeModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
-    <div class="card-bg rounded-2xl p-6 w-full max-w-md relative">
-      <button id="closeUpgradeModal" class="absolute top-3 right-3 text-gray-300 hover:text-white">✕</button>
-      <h3 class="text-xl font-bold mb-2">Change / Upgrade Plan</h3>
-      <p id="upgradeCurrentPlan" class="text-xs text-gray-400 mb-4">Current: -</p>
-
-      <div class="space-y-3 text-sm">
-        <button data-newplan="Standard" class="w-full button-gradient px-4 py-2 rounded-lg font-semibold">
-          Switch to Standard
-        </button>
-        <button data-newplan="Premium 10X" class="w-full bg-gray-800 border border-purple-500 px-4 py-2 rounded-lg font-semibold hover:bg-gray-700">
-          Switch to Premium 10X
-        </button>
+    <div class="grid">
+      <div class="stat">
+        <span>Current Phase</span>
+        <strong id="phase">—</strong>
       </div>
+      <div class="stat">
+        <span>System Status</span>
+        <strong id="status">—</strong>
+      </div>
+    </div>
 
-      <p class="text-[11px] text-gray-400 mt-4">
-        Note: Abhi yeh sirf demo frontend hai. Real upgrade ke liye aapko Growth Officer se
-        call / WhatsApp par confirm karna hoga. Future version me yahaan payment gateway + auto-activation hoga.
-      </p>
+    <div class="status" id="systemMessage">
+      Loading system status…
+    </div>
+
+    <div class="actions">
+      <button onclick="openDashboard()">🚀 Open Growth Dashboard</button>
+      <button class="logout" onclick="logout()">Logout</button>
     </div>
   </div>
 
-  <!-- AUTH UI CONTROL -->
-  <script>
-    const auth = firebase.auth();
-    const loginLinkDesktop = document.getElementById('loginLinkDesktop');
-    const signupLinkDesktop = document.getElementById('signupLinkDesktop');
-    const logoutButtonDesktop = document.getElementById('logoutButtonDesktop');
+  <footer>
+    BizLink Ecosystem • Growth systems, not just services
+  </footer>
 
-    auth.onAuthStateChanged(user => {
-      const loggedIn = !!user;
-      if (loginLinkDesktop) loginLinkDesktop.classList.toggle('hidden', loggedIn);
-      if (signupLinkDesktop) signupLinkDesktop.classList.toggle('hidden', loggedIn);
-      if (logoutButtonDesktop) logoutButtonDesktop.classList.toggle('hidden', !loggedIn);
-      // future: yahin se client ka business name, city, plan sheet se laa sakte ho
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const API_BASE = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+const clientId = localStorage.getItem("clientId");
+
+/* ================= LOAD OVERVIEW ================= */
+document.addEventListener("DOMContentLoaded", ()=>{
+  if(!clientId){
+    alert("Session expired. Please login again.");
+    logout();
+    return;
+  }
+
+  fetch(`${API_BASE}?action=getClientBasicOverview&clientId=${clientId}`)
+    .then(res=>res.json())
+    .then(d=>{
+      document.getElementById("clientName").innerText = d.clientName || "Client";
+      document.getElementById("cityName").innerText = d.city || "";
+      document.getElementById("planName").innerText = d.plan || "-";
+      document.getElementById("daysLeft").innerText = d.daysLeft ? d.daysLeft+" days remaining" : "";
+      document.getElementById("phase").innerText = d.phase || "-";
+      document.getElementById("status").innerText = d.status || "-";
+      document.getElementById("systemMessage").innerText =
+        d.message || "Your growth system is active and monitored.";
+    })
+    .catch(()=>{
+      document.getElementById("systemMessage").innerText =
+        "⚠️ Unable to load overview. Please refresh.";
     });
+});
 
-    function handleLogout(){
-      auth.signOut().then(()=>{
-        alert("Logged out.");
-        location.href='index.html';
-      }).catch(e=>console.error('Logout Error:',e));
-    }
-    if (logoutButtonDesktop) logoutButtonDesktop.addEventListener('click', handleLogout);
-  </script>
+/* ================= ACTIONS ================= */
+function openDashboard(){
+  window.location.href = "client-dashboard.html";
+}
 
-  <!-- PLAN LOGIC + FEATURE VISIBILITY -->
-  <script>
-    // ---------- PLAN CONFIG ----------
-    const planConfig = {
-      "Basic": {
-        label: "Basic",
-        badgeClass: "badge-plan-basic",
-        summary: "Starter visibility pack – basic content only. Ads, automation & retention features locked.",
-        features: {
-          content: true,
-          ads: false,
-          automation: false,
-          retention: false
-        },
-        included: [
-          "Monthly content calendar (limited)",
-          "Basic posts design",
-          "Simple reporting"
-        ],
-        locked: [
-          "Hyperlocal ad campaigns",
-          "WhatsApp automation & CRM",
-          "Review & retention system"
-        ]
-      },
-      "Standard": {
-        label: "Standard",
-        badgeClass: "badge-plan-standard",
-        summary: "Balanced growth pack – content + hyperlocal ads + basic automation.",
-        features: {
-          content: true,
-          ads: true,
-          automation: true,
-          retention: false
-        },
-        included: [
-          "30 posts + 8 reels / month",
-          "3 km hyperlocal ad campaigns",
-          "WhatsApp lead funnel & basic automation"
-        ],
-        locked: [
-          "Advanced retention & reactivation campaigns",
-          "Premium-level experimentation & scaling"
-        ]
-      },
-      "Premium 10X": {
-        label: "Premium 10X",
-        badgeClass: "badge-plan-premium",
-        summary: "Aggressive scaling – full system: content, ads, automation, retention, experiments.",
-        features: {
-          content: true,
-          ads: true,
-          automation: true,
-          retention: true
-        },
-        included: [
-          "45 posts + 12 reels / month",
-          "Ads + Retargeting + A/B tests",
-          "Full WhatsApp automation & CRM",
-          "Review boost + retention campaigns",
-          "Dedicated Growth Officer"
-        ],
-        locked: []
-      }
-    };
+function logout(){
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+</script>
 
-    // ---------- READ PLAN FROM URL ----------
-    const params = new URLSearchParams(window.location.search);
-    const urlPlan = params.get("plan");
-    let currentPlan = planConfig[urlPlan] ? urlPlan : "Standard";
-
-    // ---------- DOM ELEMENTS ----------
-    const businessNameEl   = document.getElementById("businessName");
-    const businessCityEl   = document.getElementById("businessCity");
-    const planBadgeEl      = document.getElementById("planBadge");
-    const planNameDisplay  = document.getElementById("planNameDisplay");
-    const planDaysLeftEl   = document.getElementById("planDaysLeft");
-    const planSummaryText  = document.getElementById("planSummaryText");
-    const planIncludedList = document.getElementById("planIncluded");
-    const planLockedList   = document.getElementById("planLocked");
-
-    // Dummy business values (future: replace from sheet)
-    businessNameEl.textContent = "Demo Salon / Restaurant";
-    businessCityEl.textContent = "City: Jaipur";
-
-    function randomDaysLeft(){
-      return Math.floor(Math.random()*20)+10; // 10–30
-    }
-
-    function renderPlanUI(){
-      const config = planConfig[currentPlan];
-
-      // Plan badge & name
-      planBadgeEl.textContent = config.label + " Plan";
-      planBadgeEl.classList.remove("badge-plan-basic","badge-plan-standard","badge-plan-premium");
-      planBadgeEl.classList.add(config.badgeClass);
-      planNameDisplay.textContent = config.label;
-
-      // Days left
-      planDaysLeftEl.textContent = randomDaysLeft() + " days remaining";
-
-      // Plan summary
-      planSummaryText.textContent = config.summary;
-
-      // Included features list
-      planIncludedList.innerHTML = "";
-      config.included.forEach(item=>{
-        const li=document.createElement("li");
-        li.textContent = "• " + item;
-        planIncludedList.appendChild(li);
-      });
-
-      // Locked list
-      planLockedList.innerHTML = "";
-      if(config.locked.length===0){
-        const li=document.createElement("li");
-        li.textContent = "All features unlocked in this plan.";
-        planLockedList.appendChild(li);
-      }else{
-        config.locked.forEach(item=>{
-          const li=document.createElement("li");
-          li.textContent = "🔒 " + item;
-          planLockedList.appendChild(li);
-        });
-      }
-
-      // Features visibility
-      document.querySelectorAll(".feature-block").forEach(block=>{
-        const featureKey = block.getAttribute("data-feature");
-        const enabled = !!config.features[featureKey];
-
-        const lockedTag = block.querySelector(".locked-tag");
-        if(enabled){
-          block.classList.remove("opacity-40");
-          block.classList.remove("pointer-events-none");
-          if(lockedTag) lockedTag.classList.add("hidden");
-        }else{
-          block.classList.add("opacity-40");
-          block.classList.add("pointer-events-none");
-          if(lockedTag) lockedTag.classList.remove("hidden");
-        }
-      });
-    }
-
-    renderPlanUI();
-
-    // ---------- UPGRADE MODAL LOGIC ----------
-    const upgradeBtn = document.getElementById("upgradeBtn");
-    const upgradeModal = document.getElementById("upgradeModal");
-    const closeUpgradeModal = document.getElementById("closeUpgradeModal");
-    const upgradeCurrentPlan = document.getElementById("upgradeCurrentPlan");
-
-    if(upgradeBtn && upgradeModal){
-      upgradeBtn.addEventListener("click", ()=>{
-        upgradeCurrentPlan.textContent = "Current: " + (planConfig[currentPlan].label || currentPlan);
-        upgradeModal.classList.remove("hidden");
-      });
-    }
-    if(closeUpgradeModal){
-      closeUpgradeModal.addEventListener("click", ()=>{
-        upgradeModal.classList.add("hidden");
-      });
-    }
-
-    // Plan change buttons (frontend only – URL update)
-    upgradeModal?.querySelectorAll("[data-newplan]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const newPlanLabel = btn.getAttribute("data-newplan");
-        // Find matching key
-        let targetKey = null;
-        Object.keys(planConfig).forEach(k=>{
-          if(planConfig[k].label === newPlanLabel) targetKey = k;
-        });
-        if(!targetKey){
-          alert("Plan not recognized.");
-          return;
-        }
-        currentPlan = targetKey;
-        renderPlanUI();
-        upgradeModal.classList.add("hidden");
-        alert("Demo: plan changed to " + planConfig[currentPlan].label + " (frontend only).");
-      });
-    });
-  </script>
 </body>
 </html>
