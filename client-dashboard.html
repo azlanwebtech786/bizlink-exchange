@@ -1,113 +1,210 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BizLink 10X | Client Dashboard</title>
+<title>BizLink 10X Grow Lab – Client Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{font-family:Poppins;background:#050816;color:#e5e7eb}
-.card{background:#0f172a;border:1px solid rgba(148,163,184,.3)}
-.badge-ok{color:#22c55e}
-.badge-warn{color:#facc15}
-.badge-bad{color:#ef4444}
+body{
+  margin:0;
+  font-family:Poppins;
+  background:linear-gradient(180deg,#050816,#020617);
+  color:#e5e7eb;
+}
+.container{max-width:1200px;margin:auto;padding:24px}
+.card{
+  background:linear-gradient(180deg,#0f172a,#020617);
+  border:1px solid rgba(148,163,184,.15);
+  border-radius:14px;
+  padding:20px;
+}
+.grid{display:grid;gap:20px}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.grid-2{grid-template-columns:2fr 1fr}
+.small{font-size:13px;color:#94a3b8}
+.big{font-size:26px;font-weight:700}
+.btn{
+  background:linear-gradient(90deg,#8b5cf6,#ec4899);
+  border:none;
+  padding:12px 18px;
+  border-radius:10px;
+  color:#fff;
+  cursor:pointer;
+}
+.badge{
+  background:#7c3aed;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+}
+.lock{opacity:.5}
 </style>
 </head>
 
-<body class="min-h-screen">
+<body>
 
-<header class="bg-slate-950 border-b border-slate-800">
-  <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">
-      BizLink <span class="text-purple-400">10X Client Dashboard</span>
-    </h1>
-    <span id="clientEmail" class="text-xs text-slate-400"></span>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="card grid grid-2">
+    <div>
+      <div class="small">Client Dashboard</div>
+      <h2 id="clientName">Loading...</h2>
+      <div class="small">City: <span id="clientCity">—</span></div>
+      <span class="badge" id="clientPlan">—</span>
+    </div>
+    <div style="text-align:right">
+      <div class="small">Current Plan</div>
+      <div class="big" id="planName">—</div>
+      <div class="small"><span id="daysLeft">0</span> days remaining</div><br>
+      <button class="btn">Upgrade / Change Plan</button>
+    </div>
   </div>
-</header>
 
-<main class="max-w-6xl mx-auto px-6 py-6 space-y-6">
+  <br>
 
-<!-- TOP METRICS -->
-<section class="grid sm:grid-cols-4 gap-4">
-  <div class="card p-4 rounded-xl">
-    <p class="text-xs text-slate-400">Total Leads</p>
-    <p id="mLeads" class="text-2xl font-bold text-emerald-400">0</p>
+  <!-- METRICS -->
+  <div class="grid grid-4">
+    <div class="card"><div class="small">Leads this month</div><div class="big" id="leads">0</div></div>
+    <div class="card"><div class="small">Posts published</div><div class="big" id="posts">0</div></div>
+    <div class="card"><div class="small">Reels produced</div><div class="big" id="reels">0</div></div>
+    <div class="card"><div class="small">Ad Spend (₹)</div><div class="big" id="adSpend">0</div></div>
   </div>
-  <div class="card p-4 rounded-xl">
-    <p class="text-xs text-slate-400">Total Sales</p>
-    <p id="mSales" class="text-2xl font-bold text-sky-400">0</p>
-  </div>
-  <div class="card p-4 rounded-xl">
-    <p class="text-xs text-slate-400">Conversion %</p>
-    <p id="mConv" class="text-2xl font-bold text-yellow-300">0%</p>
-  </div>
-  <div class="card p-4 rounded-xl">
-    <p class="text-xs text-slate-400">Growth Status</p>
-    <p id="mStatus" class="text-lg font-semibold badge-ok">On Track</p>
-  </div>
-</section>
 
-<!-- PIPELINE -->
-<section class="card p-4 rounded-xl">
-  <h2 class="text-sm font-semibold mb-3">10X Growth Pipeline</h2>
-  <div id="pipeline" class="grid sm:grid-cols-6 gap-3 text-xs"></div>
-</section>
+  <br>
 
-<!-- TEAM -->
-<section class="card p-4 rounded-xl">
-  <h2 class="text-sm font-semibold mb-3">Assigned BizLink Team</h2>
-  <div id="teamList" class="space-y-2 text-xs"></div>
-</section>
+  <!-- CONTENT ENGINE -->
+  <div class="card">
+    <h3>Content Engine (Posts + Reels)</h3>
+    <div class="grid grid-4">
+      <div>
+        <div class="small">Planned Posts</div>
+        <div class="big"><span id="donePosts">0</span> / <span id="totalPosts">0</span></div>
+      </div>
+      <div>
+        <div class="small">Reels</div>
+        <div class="big"><span id="doneReels">0</span> / <span id="totalReels">0</span></div>
+      </div>
+      <div>
+        <div class="small">Status</div>
+        <div class="big" id="contentStatus">—</div>
+      </div>
+    </div>
+  </div>
 
-</main>
+  <br>
+
+  <!-- ADS -->
+  <div class="card">
+    <h3>Ads & 3km Targeting</h3>
+    <div class="grid grid-4">
+      <div><div class="small">Campaigns Running</div><div class="big">0</div></div>
+      <div><div class="small">Leads from Ads</div><div class="big">0</div></div>
+      <div><div class="small">Avg CPL</div><div class="big">₹0</div></div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- AUTOMATION -->
+  <div class="card">
+    <h3>Automation & CRM</h3>
+    <div class="grid grid-4">
+      <div><div class="small">Active Flows</div><div class="big">0</div></div>
+      <div><div class="small">Leads in Pipeline</div><div class="big">0</div></div>
+      <div><div class="small">Follow-up Tasks</div><div class="big">0</div></div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- PLAN SUMMARY -->
+  <div class="card">
+    <h3>Your Plan Summary</h3>
+    <ul class="small">
+      <li>30 posts + 8 reels / month</li>
+      <li>3 km hyperlocal ad campaigns</li>
+      <li>WhatsApp lead funnel & automation</li>
+    </ul>
+    <div class="lock small">
+      🔒 Advanced retention & scaling (Premium only)
+    </div>
+  </div>
+
+  <br>
+
+  <!-- GROWTH OFFICER -->
+  <div class="card">
+    <h3>Growth Officer Contact</h3>
+    <p class="small">Aapka dedicated Growth Officer aapke plan ke according kaam karta hai.</p>
+    <button class="btn">Talk to Growth Officer</button>
+  </div>
+
+</div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxCibTktQTIzYwhTqPxCZRoyNOwU3Nd0I2dy-9u9DxqSir14Ew6U0kR8Jwyuv4eSicHeQ/exec";
 
-const email = localStorage.getItem("clientEmail") || "";
-document.getElementById("clientEmail").textContent = email;
+// ---- GET EMAIL FROM URL ----
+const params = new URLSearchParams(window.location.search);
+const email = params.get("email");
 
-// LOAD OVERVIEW
-fetch(`${API_URL}?action=biz10xClientOverview&email=${email}`)
-.then(r=>r.json())
-.then(d=>{
-  document.getElementById("mLeads").textContent = d.Leads || 0;
-  document.getElementById("mSales").textContent = d.Sales || 0;
-  document.getElementById("mConv").textContent = (d.Conversion || 0) + "%";
-  const st = document.getElementById("mStatus");
-  st.textContent = d.GrowthStatus || "On Track";
-});
+if (!email) {
+  alert("Client email missing in URL");
+  throw new Error("Email missing");
+}
 
-// PIPELINE
-fetch(`${API_URL}?action=biz10xPipeline&email=${email}`)
-.then(r=>r.json())
-.then(list=>{
-  document.getElementById("pipeline").innerHTML =
-    list.map(p=>`
-      <div class="p-3 rounded-lg bg-slate-900 text-center">
-        <p class="font-semibold">${p.Stage}</p>
-        <p class="${p.Status=='Completed'?'badge-ok':p.Status=='In Progress'?'badge-warn':'badge-bad'}">
-          ${p.Status}
-        </p>
-      </div>
-    `).join("");
-});
+// ---- FETCH CLIENT DASHBOARD DATA ----
+fetch(`${API_URL}?action=getClientDashboard&email=${encodeURIComponent(email)}`)
+  .then(res => res.json())
+  .then(data => {
 
-// TEAM
-fetch(`${API_URL}?action=biz10xTeam&email=${email}`)
-.then(r=>r.json())
-.then(list=>{
-  document.getElementById("teamList").innerHTML =
-    list.map(t=>`
-      <div class="flex justify-between">
-        <span>${t.Role}</span>
-        <span class="text-slate-300">${t.Name}</span>
-      </div>
-    `).join("");
-});
+    if (!data.ok) {
+      alert(data.error || "Client not found");
+      return;
+    }
+
+    // ===== BASIC INFO =====
+    document.getElementById("clientName").innerText = data.client.name || "-";
+    document.getElementById("clientCity").innerText = data.client.city || "-";
+    document.getElementById("clientPlan").innerText = data.client.plan || "-";
+    document.getElementById("planName").innerText = data.client.plan || "-";
+
+    // ===== METRICS (TODAY) =====
+    document.getElementById("leads").innerText = data.metrics.todayTasks || 0;
+    document.getElementById("posts").innerText = data.metrics.completed || 0;
+    document.getElementById("reels").innerText = data.metrics.pending || 0;
+    document.getElementById("adSpend").innerText = 0;
+
+    // ===== CONTENT ENGINE STATUS =====
+    document.getElementById("donePosts").innerText = data.metrics.completed || 0;
+    document.getElementById("totalPosts").innerText = data.metrics.todayTasks || 0;
+
+    document.getElementById("doneReels").innerText = 0;
+    document.getElementById("totalReels").innerText = 0;
+
+    let statusText = "In Progress";
+    if (data.metrics.pending === 0 && data.metrics.todayTasks > 0) {
+      statusText = "Completed";
+    }
+    if (data.metrics.todayTasks === 0) {
+      statusText = "No Tasks Today";
+    }
+
+    document.getElementById("contentStatus").innerText = statusText;
+
+    // ===== DAYS LEFT (OPTIONAL – STATIC FOR NOW) =====
+    document.getElementById("daysLeft").innerText = 30;
+
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Dashboard load failed. Please try again.");
+  });
 </script>
 
 </body>
