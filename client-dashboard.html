@@ -163,22 +163,32 @@ fetch(`${API_URL}?action=getClientDashboard&email=${encodeURIComponent(email)}`)
   .then(res => res.json())
   .then(data => {
 
-    if (!data.ok) {
-      alert(data.error || "Client not found");
+  if (!data.ok) {
+
+    if (data.locked) {
+      document.body.innerHTML = `
+        <div style="padding:80px;text-align:center;color:white">
+          <h2>🔒 Account Locked</h2>
+          <p>${data.message}</p>
+        </div>`;
       return;
     }
 
-    // ===== BASIC INFO =====
-    document.getElementById("clientName").innerText = data.client.name || "-";
-    document.getElementById("clientCity").innerText = data.client.city || "-";
-    document.getElementById("clientPlan").innerText = data.client.plan || "-";
-    document.getElementById("planName").innerText = data.client.plan || "-";
+    alert(data.error);
+    return;
+  }
 
-    // ===== METRICS (TODAY) =====
-    document.getElementById("leads").innerText = data.metrics.todayTasks || 0;
-    document.getElementById("posts").innerText = data.metrics.completed || 0;
-    document.getElementById("reels").innerText = data.metrics.pending || 0;
-    document.getElementById("adSpend").innerText = 0;
+  // ✅ ACTIVE CLIENT
+  document.getElementById("clientName").innerText = data.client.name;
+  document.getElementById("clientCity").innerText = data.client.city;
+  document.getElementById("clientPlan").innerText = data.client.plan;
+  document.getElementById("planName").innerText = data.client.plan;
+
+  document.getElementById("leads").innerText = data.metrics.todayTasks;
+  document.getElementById("posts").innerText = data.metrics.completed;
+  document.getElementById("reels").innerText = data.metrics.pending;
+});
+
 
     // ===== CONTENT ENGINE STATUS =====
     document.getElementById("donePosts").innerText = data.metrics.completed || 0;
