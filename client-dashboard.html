@@ -1,11 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BizLink 10X Grow Lab – Client Dashboard</title>
+<title>BizLink 10X Grow Lab – Client Work Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -27,195 +25,136 @@ body{
 .grid-2{grid-template-columns:2fr 1fr}
 .small{font-size:13px;color:#94a3b8}
 .big{font-size:26px;font-weight:700}
-.btn{
-  background:linear-gradient(90deg,#8b5cf6,#ec4899);
-  border:none;
-  padding:12px 18px;
+.badge{background:#7c3aed;padding:4px 10px;border-radius:999px;font-size:12px}
+.progress-bar{
+  background:#020617;
   border-radius:10px;
-  color:#fff;
-  cursor:pointer;
+  overflow:hidden;
+  height:10px;
 }
-.badge{
-  background:#7c3aed;
-  padding:4px 10px;
-  border-radius:999px;
-  font-size:12px;
+.progress-fill{
+  background:linear-gradient(90deg,#8b5cf6,#ec4899);
+  height:100%;
 }
-.lock{opacity:.5}
+ul{padding-left:18px}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
-  <!-- HEADER -->
-  <div class="card grid grid-2">
-    <div>
-      <div class="small">Client Dashboard</div>
-      <h2 id="clientName">Loading...</h2>
-      <div class="small">City: <span id="clientCity">—</span></div>
-      <span class="badge" id="clientPlan">—</span>
-    </div>
-    <div style="text-align:right">
-      <div class="small">Current Plan</div>
-      <div class="big" id="planName">—</div>
-      <div class="small"><span id="daysLeft">0</span> days remaining</div><br>
-      <button class="btn">Upgrade / Change Plan</button>
+<!-- HEADER -->
+<div class="card grid grid-2">
+  <div>
+    <div class="small">Client Work Dashboard</div>
+    <h2 id="clientName">Loading…</h2>
+    <div class="small">City: <span id="clientCity">—</span></div>
+    <span class="badge" id="clientPlan">—</span>
+  </div>
+  <div>
+    <div class="small">Overall Progress</div>
+    <div class="big"><span id="overallPercent">0</span>% Complete</div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
     </div>
   </div>
+</div>
 
-  <br>
+<br>
 
-  <!-- METRICS -->
+<!-- WORK STATUS -->
+<div class="card">
+  <h3>Work Status Timeline</h3>
+  <ul class="small" id="timeline"></ul>
+</div>
+
+<br>
+
+<!-- CONTENT -->
+<div class="card">
+  <h3>Content Engine</h3>
   <div class="grid grid-4">
-    <div class="card"><div class="small">Leads this month</div><div class="big" id="leads">0</div></div>
-    <div class="card"><div class="small">Posts published</div><div class="big" id="posts">0</div></div>
-    <div class="card"><div class="small">Reels produced</div><div class="big" id="reels">0</div></div>
-    <div class="card"><div class="small">Ad Spend (₹)</div><div class="big" id="adSpend">0</div></div>
+    <div>Posts: <b id="postsDone">0</b> / <span id="postsTotal">0</span></div>
+    <div>Reels: <b id="reelsDone">0</b> / <span id="reelsTotal">0</span></div>
   </div>
+</div>
 
-  <br>
+<br>
 
-  <!-- CONTENT ENGINE -->
-  <div class="card">
-    <h3>Content Engine (Posts + Reels)</h3>
-    <div class="grid grid-4">
-      <div>
-        <div class="small">Planned Posts</div>
-        <div class="big"><span id="donePosts">0</span> / <span id="totalPosts">0</span></div>
-      </div>
-      <div>
-        <div class="small">Reels</div>
-        <div class="big"><span id="doneReels">0</span> / <span id="totalReels">0</span></div>
-      </div>
-      <div>
-        <div class="small">Status</div>
-        <div class="big" id="contentStatus">—</div>
-      </div>
-    </div>
+<!-- ADS -->
+<div class="card">
+  <h3>Ads Performance</h3>
+  <div class="grid grid-4">
+    <div>Reach<br><b id="reach">0</b></div>
+    <div>Spend<br><b>₹<span id="spend">0</span></b></div>
+    <div>Leads<br><b id="adLeads">0</b></div>
+    <div>Avg CPL<br><b>₹<span id="cpl">0</span></b></div>
   </div>
+</div>
 
-  <br>
+<br>
 
-  <!-- ADS -->
-  <div class="card">
-    <h3>Ads & 3km Targeting</h3>
-    <div class="grid grid-4">
-      <div><div class="small">Campaigns Running</div><div class="big">0</div></div>
-      <div><div class="small">Leads from Ads</div><div class="big">0</div></div>
-      <div><div class="small">Avg CPL</div><div class="big">₹0</div></div>
-    </div>
+<!-- FUNNEL -->
+<div class="card">
+  <h3>Leads → Sales Funnel</h3>
+  <div class="grid grid-4">
+    <div>Leads<br><b id="fLeads">0</b></div>
+    <div>Contacted<br><b id="fContacted">0</b></div>
+    <div>Sales<br><b id="fSales">0</b></div>
+    <div>Revenue<br><b>₹<span id="fRevenue">0</span></b></div>
   </div>
+</div>
 
-  <br>
+<br>
 
-  <!-- AUTOMATION -->
-  <div class="card">
-    <h3>Automation & CRM</h3>
-    <div class="grid grid-4">
-      <div><div class="small">Active Flows</div><div class="big">0</div></div>
-      <div><div class="small">Leads in Pipeline</div><div class="big">0</div></div>
-      <div><div class="small">Follow-up Tasks</div><div class="big">0</div></div>
-    </div>
-  </div>
-
-  <br>
-
-  <!-- PLAN SUMMARY -->
-  <div class="card">
-    <h3>Your Plan Summary</h3>
-    <ul class="small">
-      <li>30 posts + 8 reels / month</li>
-      <li>3 km hyperlocal ad campaigns</li>
-      <li>WhatsApp lead funnel & automation</li>
-    </ul>
-    <div class="lock small">
-      🔒 Advanced retention & scaling (Premium only)
-    </div>
-  </div>
-
-  <br>
-
-  <!-- GROWTH OFFICER -->
-  <div class="card">
-    <h3>Growth Officer Contact</h3>
-    <p class="small">Aapka dedicated Growth Officer aapke plan ke according kaam karta hai.</p>
-    <button class="btn">Talk to Growth Officer</button>
-  </div>
+<!-- PENDING -->
+<div class="card">
+  <h3>Pending / Upcoming Tasks</h3>
+  <ul class="small" id="pendingList"></ul>
+</div>
 
 </div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycby5Wbc76phTOPO81L3K_yMPR5bUnzJTscxVi1gL_mBRTLTozHnV0vkIght1dW1oybAwRw/exec";
+const email = new URLSearchParams(window.location.search).get("email");
 
-// ---- GET EMAIL FROM URL ----
-const params = new URLSearchParams(window.location.search);
-const email = params.get("email");
-
-if (!email) {
-  alert("Client email missing in URL");
-  throw new Error("Email missing");
-}
-
-// ---- FETCH CLIENT DASHBOARD DATA ----
-fetch(`${API_URL}?action=getClientDashboard&email=${encodeURIComponent(email)}`)
-  .then(res => res.json())
-  .then(data => {
-
-  if (!data.ok) {
-
-    if (data.locked) {
-      document.body.innerHTML = `
-        <div style="padding:80px;text-align:center;color:white">
-          <h2>🔒 Account Locked</h2>
-          <p>${data.message}</p>
-        </div>`;
-      return;
-    }
-
-    alert(data.error);
-    return;
-  }
-
-  // ✅ ACTIVE CLIENT
+fetch(`${API_URL}?action=getClientDashboard&email=${email}`)
+.then(res=>res.json())
+.then(data=>{
   document.getElementById("clientName").innerText = data.client.name;
   document.getElementById("clientCity").innerText = data.client.city;
   document.getElementById("clientPlan").innerText = data.client.plan;
-  document.getElementById("planName").innerText = data.client.plan;
 
-  document.getElementById("leads").innerText = data.metrics.todayTasks;
-  document.getElementById("posts").innerText = data.metrics.completed;
-  document.getElementById("reels").innerText = data.metrics.pending;
+  document.getElementById("overallPercent").innerText = data.progress.overall;
+  document.getElementById("progressFill").style.width = data.progress.overall+"%";
+
+  const timeline = document.getElementById("timeline");
+  timeline.innerHTML = `
+    <li>Onboarding: ${data.progress.onboarding ? "✅" : "⏳"}</li>
+    <li>Content: ${data.progress.content ? "✅" : "⏳"}</li>
+    <li>Ads: ${data.progress.ads}</li>
+    <li>Leads: ${data.progress.leads}</li>
+    <li>Sales Tracking: ${data.progress.sales}</li>
+  `;
+
+  postsDone.innerText=data.content.postsDone;
+  postsTotal.innerText=data.content.postsTotal;
+  reelsDone.innerText=data.content.reelsDone;
+  reelsTotal.innerText=data.content.reelsTotal;
+
+  reach.innerText=data.ads.reach;
+  spend.innerText=data.ads.spend;
+  adLeads.innerText=data.ads.leads;
+  cpl.innerText=data.ads.cpl;
+
+  fLeads.innerText=data.funnel.leads;
+  fContacted.innerText=data.funnel.contacted;
+  fSales.innerText=data.funnel.sales;
+  fRevenue.innerText=data.funnel.revenue;
+
+  pendingList.innerHTML=data.pending.map(p=>`<li>${p}</li>`).join("");
 });
-
-
-    // ===== CONTENT ENGINE STATUS =====
-    document.getElementById("donePosts").innerText = data.metrics.completed || 0;
-    document.getElementById("totalPosts").innerText = data.metrics.todayTasks || 0;
-
-    document.getElementById("doneReels").innerText = 0;
-    document.getElementById("totalReels").innerText = 0;
-
-    let statusText = "In Progress";
-    if (data.metrics.pending === 0 && data.metrics.todayTasks > 0) {
-      statusText = "Completed";
-    }
-    if (data.metrics.todayTasks === 0) {
-      statusText = "No Tasks Today";
-    }
-
-    document.getElementById("contentStatus").innerText = statusText;
-
-    // ===== DAYS LEFT (OPTIONAL – STATIC FOR NOW) =====
-    document.getElementById("daysLeft").innerText = 30;
-
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Dashboard load failed. Please try again.");
-  });
 </script>
-
 </body>
 </html>
