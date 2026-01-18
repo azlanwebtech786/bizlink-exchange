@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>BizLink 10X Grow Lab – Client Work Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -21,33 +22,34 @@ body{
   padding:20px;
 }
 .grid{display:grid;gap:20px}
-.grid-4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .grid-2{grid-template-columns:2fr 1fr}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .small{font-size:13px;color:#94a3b8}
 .big{font-size:26px;font-weight:700}
 .badge{background:#7c3aed;padding:4px 10px;border-radius:999px;font-size:12px}
 .progress-bar{
-  background:#020617;
-  border-radius:10px;
-  overflow:hidden;
   height:10px;
+  background:#020617;
+  border-radius:999px;
+  overflow:hidden;
 }
 .progress-fill{
-  background:linear-gradient(90deg,#8b5cf6,#ec4899);
   height:100%;
+  background:linear-gradient(90deg,#8b5cf6,#ec4899);
 }
 ul{padding-left:18px}
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
 <!-- HEADER -->
 <div class="card grid grid-2">
   <div>
     <div class="small">Client Work Dashboard</div>
-    <h2 id="clientName">Loading…</h2>
+    <h2 id="clientName">Loading...</h2>
     <div class="small">City: <span id="clientCity">—</span></div>
     <span class="badge" id="clientPlan">—</span>
   </div>
@@ -74,8 +76,8 @@ ul{padding-left:18px}
 <div class="card">
   <h3>Content Engine</h3>
   <div class="grid grid-4">
-    <div>Posts: <b id="postsDone">0</b> / <span id="postsTotal">0</span></div>
-    <div>Reels: <b id="reelsDone">0</b> / <span id="reelsTotal">0</span></div>
+    <div>Posts<br><b id="postsDone">0</b> / <span id="postsTotal">0</span></div>
+    <div>Reels<br><b id="reelsDone">0</b> / <span id="reelsTotal">0</span></div>
   </div>
 </div>
 
@@ -116,20 +118,42 @@ ul{padding-left:18px}
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyjzwD5T4KMgWG9OIJIRaS4Wh5DYJmryfcxLOAdL0KAEK7MokIHw0CPqUNYaN62yolaNA/exec";
-const email = new URLSearchParams(window.location.search).get("email");
+/************ CONFIG ************/
+const API_URL = "PASTE_YOUR_APPS_SCRIPT_WEBAPP_URL_HERE";
 
-fetch(`${API_URL}?action=getClientDashboard&email=${email}`)
+/************ GET EMAIL ************/
+const email = new URLSearchParams(window.location.search).get("email");
+if(!email){
+  alert("Client email missing in URL");
+}
+
+/************ FETCH DATA ************/
+fetch(`${API_URL}?action=getClientDashboard&email=${encodeURIComponent(email)}`)
 .then(res=>res.json())
 .then(data=>{
-  document.getElementById("clientName").innerText = data.client.name;
-  document.getElementById("clientCity").innerText = data.client.city;
-  document.getElementById("clientPlan").innerText = data.client.plan;
 
-  document.getElementById("overallPercent").innerText = data.progress.overall;
-  document.getElementById("progressFill").style.width = data.progress.overall+"%";
+  if(!data.ok){
+    if(data.locked){
+      document.body.innerHTML = `
+        <div style="padding:80px;text-align:center">
+          <h2>🔒 Account Locked</h2>
+          <p>${data.message}</p>
+        </div>`;
+      return;
+    }
+    alert(data.error);
+    return;
+  }
 
-  const timeline = document.getElementById("timeline");
+  // CLIENT
+  clientName.innerText = data.client.name;
+  clientCity.innerText = data.client.city;
+  clientPlan.innerText = data.client.plan;
+
+  // PROGRESS
+  overallPercent.innerText = data.progress.overall;
+  progressFill.style.width = data.progress.overall + "%";
+
   timeline.innerHTML = `
     <li>Onboarding: ${data.progress.onboarding ? "✅" : "⏳"}</li>
     <li>Content: ${data.progress.content ? "✅" : "⏳"}</li>
@@ -138,23 +162,35 @@ fetch(`${API_URL}?action=getClientDashboard&email=${email}`)
     <li>Sales Tracking: ${data.progress.sales}</li>
   `;
 
-  postsDone.innerText=data.content.postsDone;
-  postsTotal.innerText=data.content.postsTotal;
-  reelsDone.innerText=data.content.reelsDone;
-  reelsTotal.innerText=data.content.reelsTotal;
+  // CONTENT
+  postsDone.innerText = data.content.postsDone;
+  postsTotal.innerText = data.content.postsTotal;
+  reelsDone.innerText = data.content.reelsDone;
+  reelsTotal.innerText = data.content.reelsTotal;
 
-  reach.innerText=data.ads.reach;
-  spend.innerText=data.ads.spend;
-  adLeads.innerText=data.ads.leads;
-  cpl.innerText=data.ads.cpl;
+  // ADS
+  reach.innerText = data.ads.reach;
+  spend.innerText = data.ads.spend;
+  adLeads.innerText = data.ads.leads;
+  cpl.innerText = data.ads.cpl;
 
-  fLeads.innerText=data.funnel.leads;
-  fContacted.innerText=data.funnel.contacted;
-  fSales.innerText=data.funnel.sales;
-  fRevenue.innerText=data.funnel.revenue;
+  // FUNNEL
+  fLeads.innerText = data.funnel.leads;
+  fContacted.innerText = data.funnel.contacted;
+  fSales.innerText = data.funnel.sales;
+  fRevenue.innerText = data.funnel.revenue;
 
-  pendingList.innerHTML=data.pending.map(p=>`<li>${p}</li>`).join("");
+  // PENDING
+  pendingList.innerHTML = data.pending.length
+    ? data.pending.map(t=>`<li>${t}</li>`).join("")
+    : "<li>No pending tasks 🎉</li>";
+
+})
+.catch(err=>{
+  console.error(err);
+  alert("Dashboard load failed");
 });
 </script>
+
 </body>
 </html>
