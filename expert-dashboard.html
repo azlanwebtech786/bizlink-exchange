@@ -48,12 +48,8 @@ label{
   display:grid;
   gap:16px;
 }
-.grid-2{
-  grid-template-columns:1fr 1fr;
-}
-.grid-4{
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-}
+.grid-2{ grid-template-columns:1fr 1fr; }
+.grid-4{ grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
 .tabs{
   display:flex;
   gap:10px;
@@ -64,25 +60,37 @@ label{
   border-radius:999px;
   background:#020617;
   font-size:13px;
-  cursor:pointer;
 }
-.tab.active{
-  background:#7c3aed;
-}
+.tab.active{ background:#7c3aed; }
 button{
   background:linear-gradient(90deg,#8b5cf6,#ec4899);
   cursor:pointer;
   font-weight:600;
 }
-.small{
-  font-size:13px;
-  color:#94a3b8;
+.small{ font-size:13px;color:#94a3b8; }
+
+/* ===== WORK STATUS ===== */
+.work-table{
+  width:100%;
+  border-collapse:collapse;
 }
+.work-table th,.work-table td{
+  padding:12px;
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+.status{
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+}
+.pending{ background:#3f1d1d;color:#f87171; }
+.processing{ background:#3b2f12;color:#facc15; }
+.completed{ background:#163c2a;color:#4ade80; }
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
 <!-- TOP BAR -->
@@ -105,108 +113,91 @@ button{
 
 <!-- CLIENT SNAPSHOT -->
 <div class="card grid grid-4">
-  <div><b>Client:</b><br>ABC School</div>
-  <div><b>Plan:</b><br>Premium 10X</div>
-  <div><b>Month:</b><br>January 2026</div>
-  <div><b>Status:</b><br>Active ✅</div>
+  <div><b>Client</b><br>ABC School</div>
+  <div><b>Plan</b><br>Premium 10X</div>
+  <div><b>Month</b><br>January 2026</div>
+  <div><b>Status</b><br>Active ✅</div>
 </div>
 
-<!-- TABS -->
+<!-- 🔥 ALL WORK STATUS (NEW ADD-ON) -->
+<div class="card">
+  <h3>📌 All Work Status (Live)</h3>
+  <div class="small">Old + new work with real-time status</div><br>
+
+  <table class="work-table">
+    <thead>
+      <tr>
+        <th>Work Name</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="workList">
+      <tr>
+        <td>Social Media Post</td>
+        <td><span class="status processing">🟡 Processing</span></td>
+      </tr>
+      <tr>
+        <td>Instagram Reel</td>
+        <td><span class="status pending">🔴 Pending</span></td>
+      </tr>
+      <tr>
+        <td>Ads Setup</td>
+        <td><span class="status completed">🟢 Completed</span></td>
+      </tr>
+      <tr>
+        <td>Google Profile Optimization</td>
+        <td><span class="status processing">🟡 Processing</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ADD NEW WORK -->
+  <div class="grid grid-2" style="margin-top:14px;">
+    <input id="newWork" placeholder="New work name (e.g. WhatsApp Automation)">
+    <select id="newStatus">
+      <option value="pending">Pending</option>
+      <option value="processing">Processing</option>
+      <option value="completed">Completed</option>
+    </select>
+  </div>
+  <button style="margin-top:10px" onclick="addWork()">+ Add Work</button>
+</div>
+
+<!-- TABS (Existing) -->
 <div class="card">
   <div class="tabs">
     <div class="tab active">Social</div>
     <div class="tab">Ads</div>
     <div class="tab">Leads & Sales</div>
     <div class="tab">Reports</div>
-    <div class="tab">+ Add New</div>
   </div>
 
-  <!-- SOCIAL TAB -->
   <div class="grid grid-2">
     <div>
-      <label>Instagram Posts (This Month)</label>
+      <label>Instagram Posts</label>
       <input value="10 / 20">
     </div>
     <div>
-      <label>Instagram Reels (This Month)</label>
+      <label>Instagram Reels</label>
       <input value="6 / 12">
-    </div>
-    <div>
-      <label>Facebook Posts</label>
-      <input value="5 / 10">
-    </div>
-    <div>
-      <label>Work Status</label>
-      <select>
-        <option>Active</option>
-        <option>Pending</option>
-      </select>
     </div>
   </div>
 </div>
 
 <!-- ADS -->
 <div class="card grid grid-4">
-  <div>
-    <label>Reach</label>
-    <input value="48200">
-  </div>
-  <div>
-    <label>Spend (₹)</label>
-    <input value="7500">
-  </div>
-  <div>
-    <label>Leads</label>
-    <input value="124">
-  </div>
-  <div>
-    <label>Avg CPL (₹)</label>
-    <input value="60">
-  </div>
+  <div><label>Reach</label><input value="48200"></div>
+  <div><label>Spend (₹)</label><input value="7500"></div>
+  <div><label>Leads</label><input value="124"></div>
+  <div><label>Avg CPL</label><input value="60"></div>
 </div>
 
-<!-- LEADS TO SALES -->
+<!-- SALES -->
 <div class="card grid grid-4">
-  <div>
-    <label>Total Leads</label>
-    <input value="124">
-  </div>
-  <div>
-    <label>Contacted</label>
-    <input value="98">
-  </div>
-  <div>
-    <label>Sales</label>
-    <input value="12">
-  </div>
-  <div>
-    <label>Revenue (₹)</label>
-    <input value="360000">
-  </div>
-</div>
-
-<!-- REPORTS -->
-<div class="card grid grid-2">
-  <div>
-    <h4>Monthly Report (Auto)</h4>
-    <div class="small">
-      Spend: ₹7,500<br>
-      Leads: 124<br>
-      Sales: 12<br>
-      Revenue: ₹3,60,000
-    </div>
-  </div>
-  <div>
-    <h4>Next Month Planning</h4>
-    <label>Posts</label>
-    <input value="20">
-    <label>Reels</label>
-    <input value="10">
-    <label>Ads Budget (₹)</label>
-    <input value="10000">
-    <label>Target Leads</label>
-    <input value="150">
-  </div>
+  <div><label>Total Leads</label><input value="124"></div>
+  <div><label>Contacted</label><input value="98"></div>
+  <div><label>Sales</label><input value="12"></div>
+  <div><label>Revenue</label><input value="360000"></div>
 </div>
 
 <!-- SAVE -->
@@ -215,6 +206,25 @@ button{
 </div>
 
 </div>
+
+<script>
+function addWork(){
+  const work = document.getElementById("newWork").value;
+  const status = document.getElementById("newStatus").value;
+  if(!work){ alert("Enter work name"); return; }
+
+  const map={
+    pending:'🔴 Pending',
+    processing:'🟡 Processing',
+    completed:'🟢 Completed'
+  };
+
+  const tr=document.createElement("tr");
+  tr.innerHTML=`<td>${work}</td><td><span class="status ${status}">${map[status]}</span></td>`;
+  document.getElementById("workList").appendChild(tr);
+  document.getElementById("newWork").value="";
+}
+</script>
 
 </body>
 </html>
