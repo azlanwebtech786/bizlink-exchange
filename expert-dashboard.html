@@ -1,90 +1,220 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Bizlink Expert Team Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<title>Bizlink 10X – Expert Team Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
 body{
+  margin:0;
   font-family:Poppins;
   background:#020617;
   color:#e5e7eb;
-  padding:20px
+}
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:24px;
 }
 .card{
   background:#0f172a;
-  padding:20px;
+  border:1px solid rgba(148,163,184,.15);
   border-radius:14px;
-  margin-bottom:20px
+  padding:20px;
+  margin-bottom:20px;
 }
-input,button{
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+select,input,button{
   width:100%;
-  padding:12px;
+  padding:10px;
   border-radius:10px;
   border:none;
-  margin-top:10px
+  margin-top:8px;
+  background:#020617;
+  color:white;
+}
+label{
+  font-size:13px;
+  color:#94a3b8;
+}
+.grid{
+  display:grid;
+  gap:16px;
+}
+.grid-2{
+  grid-template-columns:1fr 1fr;
+}
+.grid-4{
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+}
+.tabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
+}
+.tab{
+  padding:8px 14px;
+  border-radius:999px;
+  background:#020617;
+  font-size:13px;
+  cursor:pointer;
+}
+.tab.active{
+  background:#7c3aed;
 }
 button{
   background:linear-gradient(90deg,#8b5cf6,#ec4899);
-  color:#fff;
-  cursor:pointer
+  cursor:pointer;
+  font-weight:600;
+}
+.small{
+  font-size:13px;
+  color:#94a3b8;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🚀 Bizlink Expert Team Panel</h2>
+<div class="container">
 
-<div class="card">
-  <h3>Add Task</h3>
-  <input id="clientId" placeholder="Client ID">
-  <input id="task" placeholder="Task description">
-  <button onclick="addTask()">Add Task</button>
+<!-- TOP BAR -->
+<div class="card topbar">
+  <div>
+    <h2>Bizlink 10X – Expert Team Panel</h2>
+    <div class="small">Date: Today | Role: Expert Team</div>
+  </div>
 </div>
 
+<!-- CLIENT SELECT -->
 <div class="card">
-  <h3>Update Metrics</h3>
-  <input id="reach" placeholder="Reach">
-  <input id="adSpend" placeholder="Ad Spend">
-  <input id="adLeads" placeholder="Ad Leads">
-  <input id="cpl" placeholder="CPL">
-  <input id="sales" placeholder="Sales">
-  <input id="revenue" placeholder="Revenue">
-  <button onclick="updateMetrics()">Save Metrics</button>
+  <label>Select Client</label>
+  <select>
+    <option>ABC School – Alwar</option>
+    <option>XYZ Property – Jaipur</option>
+    <option>Pride Academy – Ramgarh</option>
+  </select>
 </div>
 
-<script>
-const API = "YOUR_WEBAPP_URL";
+<!-- CLIENT SNAPSHOT -->
+<div class="card grid grid-4">
+  <div><b>Client:</b><br>ABC School</div>
+  <div><b>Plan:</b><br>Premium 10X</div>
+  <div><b>Month:</b><br>January 2026</div>
+  <div><b>Status:</b><br>Active ✅</div>
+</div>
 
-function addTask(){
-  fetch(API,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"addTask",
-      clientId:clientId.value,
-      task:task.value
-    })
-  }).then(r=>r.json()).then(()=>alert("Task added"));
-}
+<!-- TABS -->
+<div class="card">
+  <div class="tabs">
+    <div class="tab active">Social</div>
+    <div class="tab">Ads</div>
+    <div class="tab">Leads & Sales</div>
+    <div class="tab">Reports</div>
+    <div class="tab">+ Add New</div>
+  </div>
 
-function updateMetrics(){
-  fetch(API,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"updateMetrics",
-      clientId:clientId.value,
-      reach:reach.value,
-      adSpend:adSpend.value,
-      adLeads:adLeads.value,
-      cpl:cpl.value,
-      sales:sales.value,
-      revenue:revenue.value
-    })
-  }).then(r=>r.json()).then(()=>alert("Metrics updated"));
-}
-</script>
+  <!-- SOCIAL TAB -->
+  <div class="grid grid-2">
+    <div>
+      <label>Instagram Posts (This Month)</label>
+      <input value="10 / 20">
+    </div>
+    <div>
+      <label>Instagram Reels (This Month)</label>
+      <input value="6 / 12">
+    </div>
+    <div>
+      <label>Facebook Posts</label>
+      <input value="5 / 10">
+    </div>
+    <div>
+      <label>Work Status</label>
+      <select>
+        <option>Active</option>
+        <option>Pending</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ADS -->
+<div class="card grid grid-4">
+  <div>
+    <label>Reach</label>
+    <input value="48200">
+  </div>
+  <div>
+    <label>Spend (₹)</label>
+    <input value="7500">
+  </div>
+  <div>
+    <label>Leads</label>
+    <input value="124">
+  </div>
+  <div>
+    <label>Avg CPL (₹)</label>
+    <input value="60">
+  </div>
+</div>
+
+<!-- LEADS TO SALES -->
+<div class="card grid grid-4">
+  <div>
+    <label>Total Leads</label>
+    <input value="124">
+  </div>
+  <div>
+    <label>Contacted</label>
+    <input value="98">
+  </div>
+  <div>
+    <label>Sales</label>
+    <input value="12">
+  </div>
+  <div>
+    <label>Revenue (₹)</label>
+    <input value="360000">
+  </div>
+</div>
+
+<!-- REPORTS -->
+<div class="card grid grid-2">
+  <div>
+    <h4>Monthly Report (Auto)</h4>
+    <div class="small">
+      Spend: ₹7,500<br>
+      Leads: 124<br>
+      Sales: 12<br>
+      Revenue: ₹3,60,000
+    </div>
+  </div>
+  <div>
+    <h4>Next Month Planning</h4>
+    <label>Posts</label>
+    <input value="20">
+    <label>Reels</label>
+    <input value="10">
+    <label>Ads Budget (₹)</label>
+    <input value="10000">
+    <label>Target Leads</label>
+    <input value="150">
+  </div>
+</div>
+
+<!-- SAVE -->
+<div class="card">
+  <button>Save & Update Dashboard</button>
+</div>
+
+</div>
 
 </body>
 </html>
