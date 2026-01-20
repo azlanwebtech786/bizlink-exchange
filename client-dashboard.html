@@ -2,194 +2,174 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BizLink 10X Grow Lab – Client Work Dashboard</title>
+<title>Bizlink 10X – Client Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 body{
   margin:0;
   font-family:Poppins;
-  background:linear-gradient(180deg,#050816,#020617);
+  background:#020617;
   color:#e5e7eb;
 }
 .container{max-width:1200px;margin:auto;padding:24px}
 .card{
-  background:linear-gradient(180deg,#0f172a,#020617);
+  background:#0f172a;
   border:1px solid rgba(148,163,184,.15);
   border-radius:14px;
   padding:20px;
+  margin-bottom:20px;
 }
-.grid{display:grid;gap:20px}
-.grid-2{grid-template-columns:2fr 1fr}
-.grid-4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.topbar{display:flex;justify-content:space-between;align-items:center}
 .small{font-size:13px;color:#94a3b8}
-.big{font-size:26px;font-weight:700}
-.badge{background:#7c3aed;padding:4px 10px;border-radius:999px;font-size:12px}
-.progress-bar{
-  height:10px;
-  background:#020617;
+
+.grid{display:grid;gap:16px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+
+.work-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:12px;
+}
+.work-table th,.work-table td{
+  padding:12px;
+  border-bottom:1px solid rgba(148,163,184,.12);
+}
+
+.status{
+  padding:6px 12px;
   border-radius:999px;
-  overflow:hidden;
+  font-size:12px;
+  font-weight:600;
 }
-.progress-fill{
-  height:100%;
+.processing{background:#3b2f12;color:#facc15}
+.live{background:#1e3a8a;color:#93c5fd}
+.completed{background:#163c2a;color:#4ade80}
+.paused{background:#3f1d1d;color:#f87171}
+
+input,button{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  background:#020617;
+  color:#fff;
+  margin-top:8px;
+}
+button{
   background:linear-gradient(90deg,#8b5cf6,#ec4899);
+  font-weight:600;
+  cursor:pointer;
 }
-ul{padding-left:18px}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
-<!-- HEADER -->
-<div class="card grid grid-2">
+<!-- TOP BAR -->
+<div class="card topbar">
   <div>
-    <div class="small">Client Work Dashboard</div>
-    <h2 id="clientName">Loading...</h2>
-    <div class="small">City: <span id="clientCity">—</span></div>
-    <span class="badge" id="clientPlan">—</span>
-  </div>
-  <div>
-    <div class="small">Overall Progress</div>
-    <div class="big"><span id="overallPercent">0</span>% Complete</div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill" style="width:0%"></div>
-    </div>
+    <h2>Bizlink 10X – Client Dashboard</h2>
+    <div class="small">Read-Only Progress View</div>
   </div>
 </div>
 
-<br>
+<!-- CLIENT ID -->
+<div class="card">
+  <label class="small">Enter Your Client ID</label>
+  <input id="clientIdInput" placeholder="e.g. SCH001 / REST002">
+  <button onclick="loadClient()">View My Dashboard</button>
+</div>
+
+<!-- SNAPSHOT -->
+<div class="card grid grid-4">
+  <div><b>Client ID</b><br><span id="clientLabel">—</span></div>
+  <div><b>Plan</b><br>Premium 10X</div>
+  <div><b>Month</b><br>Current Month</div>
+  <div><b>Status</b><br>Active ✅</div>
+</div>
 
 <!-- WORK STATUS -->
 <div class="card">
-  <h3>Work Status Timeline</h3>
-  <ul class="small" id="timeline"></ul>
+  <h3>📌 Work Progress</h3>
+
+  <table class="work-table">
+    <thead>
+      <tr>
+        <th>Work Name</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="workList"></tbody>
+  </table>
 </div>
 
-<br>
-
-<!-- CONTENT -->
+<!-- ADS PERFORMANCE -->
 <div class="card">
-  <h3>Content Engine</h3>
+  <h3>📢 Ads Performance</h3>
   <div class="grid grid-4">
-    <div>Posts<br><b id="postsDone">0</b> / <span id="postsTotal">0</span></div>
-    <div>Reels<br><b id="reelsDone">0</b> / <span id="reelsTotal">0</span></div>
+    <div><label>Reach</label><input disabled></div>
+    <div><label>Spend (₹)</label><input disabled></div>
+    <div><label>Leads</label><input disabled></div>
+    <div><label>Avg CPL (₹)</label><input disabled></div>
   </div>
 </div>
 
-<br>
-
-<!-- ADS -->
+<!-- SALES IMPACT -->
 <div class="card">
-  <h3>Ads Performance</h3>
-  <div class="grid grid-4">
-    <div>Reach<br><b id="reach">0</b></div>
-    <div>Spend<br><b>₹<span id="spend">0</span></b></div>
-    <div>Leads<br><b id="adLeads">0</b></div>
-    <div>Avg CPL<br><b>₹<span id="cpl">0</span></b></div>
+  <h3>💰 Sales Impact</h3>
+  <div class="grid grid-3">
+    <div><label>Sales</label><input disabled></div>
+    <div><label>Revenue (₹)</label><input disabled></div>
+    <div><label>Growth Impact</label><input disabled></div>
   </div>
 </div>
 
-<br>
-
-<!-- FUNNEL -->
+<!-- MONTHLY REPORT -->
 <div class="card">
-  <h3>Leads → Sales Funnel</h3>
-  <div class="grid grid-4">
-    <div>Leads<br><b id="fLeads">0</b></div>
-    <div>Contacted<br><b id="fContacted">0</b></div>
-    <div>Sales<br><b id="fSales">0</b></div>
-    <div>Revenue<br><b>₹<span id="fRevenue">0</span></b></div>
-  </div>
-</div>
-
-<br>
-
-<!-- PENDING -->
-<div class="card">
-  <h3>Pending / Upcoming Tasks</h3>
-  <ul class="small" id="pendingList"></ul>
+  <h3>📊 Monthly Report</h3>
+  <ul id="reportList" class="small"></ul>
 </div>
 
 </div>
 
 <script>
-/************ CONFIG ************/
-const API_URL = "PASTE_YOUR_APPS_SCRIPT_WEBAPP_URL_HERE";
+function loadClient(){
+  const cid = document.getElementById("clientIdInput").value;
+  if(!cid) return alert("Enter Client ID");
 
-/************ GET EMAIL ************/
-const email = new URLSearchParams(window.location.search).get("email");
-if(!email){
-  alert("Client email missing in URL");
+  const saved = localStorage.getItem("bizlinkClientStore");
+  if(!saved) return alert("No data found");
+
+  const store = JSON.parse(saved);
+  if(!store[cid]) return alert("Client data not found");
+
+  document.getElementById("clientLabel").innerText = cid;
+
+  const tbody = document.getElementById("workList");
+  const report = document.getElementById("reportList");
+  tbody.innerHTML = "";
+  report.innerHTML = "";
+
+  store[cid].works.forEach(w=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${w.name}</td>
+      <td><span class="status ${w.status.toLowerCase()}">${w.status}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  store[cid].report.forEach(r=>{
+    const li=document.createElement("li");
+    li.innerText="✔ "+r;
+    report.appendChild(li);
+  });
 }
-
-/************ FETCH DATA ************/
-fetch(`${API_URL}?action=getClientDashboard&email=${encodeURIComponent(email)}`)
-.then(res=>res.json())
-.then(data=>{
-
-  if(!data.ok){
-    if(data.locked){
-      document.body.innerHTML = `
-        <div style="padding:80px;text-align:center">
-          <h2>🔒 Account Locked</h2>
-          <p>${data.message}</p>
-        </div>`;
-      return;
-    }
-    alert(data.error);
-    return;
-  }
-
-  // CLIENT
-  clientName.innerText = data.client.name;
-  clientCity.innerText = data.client.city;
-  clientPlan.innerText = data.client.plan;
-
-  // PROGRESS
-  overallPercent.innerText = data.progress.overall;
-  progressFill.style.width = data.progress.overall + "%";
-
-  timeline.innerHTML = `
-    <li>Onboarding: ${data.progress.onboarding ? "✅" : "⏳"}</li>
-    <li>Content: ${data.progress.content ? "✅" : "⏳"}</li>
-    <li>Ads: ${data.progress.ads}</li>
-    <li>Leads: ${data.progress.leads}</li>
-    <li>Sales Tracking: ${data.progress.sales}</li>
-  `;
-
-  // CONTENT
-  postsDone.innerText = data.content.postsDone;
-  postsTotal.innerText = data.content.postsTotal;
-  reelsDone.innerText = data.content.reelsDone;
-  reelsTotal.innerText = data.content.reelsTotal;
-
-  // ADS
-  reach.innerText = data.ads.reach;
-  spend.innerText = data.ads.spend;
-  adLeads.innerText = data.ads.leads;
-  cpl.innerText = data.ads.cpl;
-
-  // FUNNEL
-  fLeads.innerText = data.funnel.leads;
-  fContacted.innerText = data.funnel.contacted;
-  fSales.innerText = data.funnel.sales;
-  fRevenue.innerText = data.funnel.revenue;
-
-  // PENDING
-  pendingList.innerHTML = data.pending.length
-    ? data.pending.map(t=>`<li>${t}</li>`).join("")
-    : "<li>No pending tasks 🎉</li>";
-
-})
-.catch(err=>{
-  console.error(err);
-  alert("Dashboard load failed");
-});
 </script>
 
 </body>
