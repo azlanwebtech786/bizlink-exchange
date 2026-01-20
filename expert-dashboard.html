@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Bizlink 10X – Expert Team Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -14,11 +13,7 @@ body{
   background:#020617;
   color:#e5e7eb;
 }
-.container{
-  max-width:1200px;
-  margin:auto;
-  padding:24px;
-}
+.container{max-width:1200px;margin:auto;padding:24px}
 .card{
   background:#0f172a;
   border:1px solid rgba(148,163,184,.15);
@@ -26,67 +21,48 @@ body{
   padding:20px;
   margin-bottom:20px;
 }
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-select,input,button{
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.small{font-size:13px;color:#94a3b8}
+
+input,select,button{
   width:100%;
   padding:10px;
   border-radius:10px;
   border:none;
+  background:#020617;
+  color:#fff;
   margin-top:8px;
-  background:#020617;
-  color:white;
 }
-label{
-  font-size:13px;
-  color:#94a3b8;
-}
-.grid{
-  display:grid;
-  gap:16px;
-}
-.grid-2{ grid-template-columns:1fr 1fr; }
-.grid-4{ grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
-.tabs{
-  display:flex;
-  gap:10px;
-  margin-bottom:10px;
-}
-.tab{
-  padding:8px 14px;
-  border-radius:999px;
-  background:#020617;
-  font-size:13px;
-}
-.tab.active{ background:#7c3aed; }
 button{
   background:linear-gradient(90deg,#8b5cf6,#ec4899);
-  cursor:pointer;
   font-weight:600;
+  cursor:pointer;
 }
-.small{ font-size:13px;color:#94a3b8; }
 
-/* ===== WORK STATUS ===== */
+.grid{display:grid;gap:16px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+
 .work-table{
   width:100%;
   border-collapse:collapse;
+  margin-top:12px;
 }
 .work-table th,.work-table td{
   padding:12px;
   border-bottom:1px solid rgba(148,163,184,.12);
 }
+
 .status{
   padding:6px 12px;
   border-radius:999px;
   font-size:12px;
   font-weight:600;
 }
-.pending{ background:#3f1d1d;color:#f87171; }
-.processing{ background:#3b2f12;color:#facc15; }
-.completed{ background:#163c2a;color:#4ade80; }
+.processing{background:#3b2f12;color:#facc15}
+.live{background:#1e3a8a;color:#93c5fd}
+.completed{background:#163c2a;color:#4ade80}
+.paused{background:#3f1d1d;color:#f87171}
 </style>
 </head>
 
@@ -96,22 +72,21 @@ button{
 <!-- TOP BAR -->
 <div class="card topbar">
   <div>
-    <h2>Bizlink 10X – Expert Team Panel</h2>
-    <div class="small">Date: Today | Role: Expert Team</div>
+    <h2>Bizlink 10X – Expert Team Dashboard</h2>
+    <div class="small">Execution Panel | Expert Team</div>
   </div>
 </div>
 
 <!-- CLIENT SELECT -->
 <div class="card">
-  <label>Select Client</label>
+  <label class="small">Select Client</label>
   <select>
     <option>ABC School – Alwar</option>
     <option>XYZ Property – Jaipur</option>
-    <option>Pride Academy – Ramgarh</option>
   </select>
 </div>
 
-<!-- CLIENT SNAPSHOT -->
+<!-- SNAPSHOT -->
 <div class="card grid grid-4">
   <div><b>Client</b><br>ABC School</div>
   <div><b>Plan</b><br>Premium 10X</div>
@@ -119,85 +94,88 @@ button{
   <div><b>Status</b><br>Active ✅</div>
 </div>
 
-<!-- 🔥 ALL WORK STATUS (NEW ADD-ON) -->
+<!-- ALL WORK STATUS -->
 <div class="card">
-  <h3>📌 All Work Status (Live)</h3>
-  <div class="small">Old + new work with real-time status</div><br>
+  <h3>📌 All Work Status (Running + History)</h3>
+  <div class="small">Every work stays till completed</div>
 
   <table class="work-table">
     <thead>
       <tr>
         <th>Work Name</th>
         <th>Status</th>
+        <th>Change Status</th>
       </tr>
     </thead>
     <tbody id="workList">
       <tr>
-        <td>Social Media Post</td>
-        <td><span class="status processing">🟡 Processing</span></td>
+        <td>Social Media Posts (30)</td>
+        <td><span class="status processing">Processing</span></td>
+        <td>
+          <select onchange="updateStatus(this)">
+            <option>Processing</option>
+            <option>Live</option>
+            <option>Completed</option>
+          </select>
+        </td>
       </tr>
+
       <tr>
-        <td>Instagram Reel</td>
-        <td><span class="status pending">🔴 Pending</span></td>
-      </tr>
-      <tr>
-        <td>Ads Setup</td>
-        <td><span class="status completed">🟢 Completed</span></td>
-      </tr>
-      <tr>
-        <td>Google Profile Optimization</td>
-        <td><span class="status processing">🟡 Processing</span></td>
+        <td>Facebook Ads – January</td>
+        <td><span class="status live">Live</span></td>
+        <td>
+          <select onchange="updateStatus(this)">
+            <option>Processing</option>
+            <option selected>Live</option>
+            <option>Completed</option>
+            <option>Paused</option>
+          </select>
+        </td>
       </tr>
     </tbody>
   </table>
 
   <!-- ADD NEW WORK -->
-  <div class="grid grid-2" style="margin-top:14px;">
-    <input id="newWork" placeholder="New work name (e.g. WhatsApp Automation)">
+  <div class="grid grid-2" style="margin-top:16px">
+    <input id="newWork" placeholder="New work name (Ads Setup / SEO / Reel)">
     <select id="newStatus">
-      <option value="pending">Pending</option>
-      <option value="processing">Processing</option>
-      <option value="completed">Completed</option>
+      <option>Processing</option>
+      <option>Live</option>
+      <option>Completed</option>
     </select>
   </div>
   <button style="margin-top:10px" onclick="addWork()">+ Add Work</button>
 </div>
 
-<!-- TABS (Existing) -->
+<!-- ADS PERFORMANCE -->
 <div class="card">
-  <div class="tabs">
-    <div class="tab active">Social</div>
-    <div class="tab">Ads</div>
-    <div class="tab">Leads & Sales</div>
-    <div class="tab">Reports</div>
-  </div>
-
-  <div class="grid grid-2">
-    <div>
-      <label>Instagram Posts</label>
-      <input value="10 / 20">
-    </div>
-    <div>
-      <label>Instagram Reels</label>
-      <input value="6 / 12">
-    </div>
+  <h3>📢 Ads Performance (when status = Live / Completed)</h3>
+  <div class="grid grid-4">
+    <div><label>Reach</label><input value="48200"></div>
+    <div><label>Spend (₹)</label><input value="7500"></div>
+    <div><label>Leads</label><input value="124"></div>
+    <div><label>Avg CPL (₹)</label><input value="60"></div>
   </div>
 </div>
 
-<!-- ADS -->
-<div class="card grid grid-4">
-  <div><label>Reach</label><input value="48200"></div>
-  <div><label>Spend (₹)</label><input value="7500"></div>
-  <div><label>Leads</label><input value="124"></div>
-  <div><label>Avg CPL</label><input value="60"></div>
+<!-- SALES IMPACT -->
+<div class="card">
+  <h3>💰 Sales Impact from Ads</h3>
+  <div class="grid grid-4">
+    <div><label>Sales</label><input value="12"></div>
+    <div><label>Revenue (₹)</label><input value="360000"></div>
+    <div><label>Growth Impact</label><input value="+210%"></div>
+  </div>
 </div>
 
-<!-- SALES -->
-<div class="card grid grid-4">
-  <div><label>Total Leads</label><input value="124"></div>
-  <div><label>Contacted</label><input value="98"></div>
-  <div><label>Sales</label><input value="12"></div>
-  <div><label>Revenue</label><input value="360000"></div>
+<!-- MONTHLY REPORT -->
+<div class="card">
+  <h3>📊 Monthly Report (Auto from Completed Work)</h3>
+  <div class="small">
+    ✔ Social Media Posts – Completed<br>
+    ✔ Facebook Ads – Completed<br>
+    ⏳ SEO – In Progress
+  </div>
 </div>
 
 <!-- SAVE -->
@@ -209,20 +187,33 @@ button{
 
 <script>
 function addWork(){
-  const work = document.getElementById("newWork").value;
-  const status = document.getElementById("newStatus").value;
-  if(!work){ alert("Enter work name"); return; }
+  const name=document.getElementById("newWork").value;
+  const status=document.getElementById("newStatus").value;
+  if(!name) return alert("Enter work name");
 
-  const map={
-    pending:'🔴 Pending',
-    processing:'🟡 Processing',
-    completed:'🟢 Completed'
-  };
-
+  const cls = status.toLowerCase();
   const tr=document.createElement("tr");
-  tr.innerHTML=`<td>${work}</td><td><span class="status ${status}">${map[status]}</span></td>`;
+  tr.innerHTML=`
+    <td>${name}</td>
+    <td><span class="status ${cls}">${status}</span></td>
+    <td>
+      <select onchange="updateStatus(this)">
+        <option>Processing</option>
+        <option>Live</option>
+        <option>Completed</option>
+        <option>Paused</option>
+      </select>
+    </td>
+  `;
   document.getElementById("workList").appendChild(tr);
   document.getElementById("newWork").value="";
+}
+
+function updateStatus(sel){
+  const status=sel.value;
+  const badge=sel.parentElement.previousElementSibling.querySelector(".status");
+  badge.className="status "+status.toLowerCase();
+  badge.innerText=status;
 }
 </script>
 
