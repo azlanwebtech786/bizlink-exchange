@@ -41,6 +41,7 @@ button{
 
 .grid{display:grid;gap:16px}
 .grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:repeat(3,1fr)}
 .grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
 
 .work-table{
@@ -132,7 +133,7 @@ button{
 <!-- SALES IMPACT -->
 <div class="card">
   <h3>💰 Sales Impact</h3>
-  <div class="grid grid-4">
+  <div class="grid grid-3">
     <div><label>Sales</label><input></div>
     <div><label>Revenue (₹)</label><input></div>
     <div><label>Growth Impact</label><input placeholder="+120%"></div>
@@ -205,7 +206,9 @@ function addWork(){
   if(!name) return alert("Enter work name");
 
   clientStore[activeClient].works.push({name,status});
-  if(status==="Completed") clientStore[activeClient].report.push(name);
+  if(status==="Completed"){
+    clientStore[activeClient].report.push(name);
+  }
   document.getElementById("newWork").value="";
   renderClient();
 }
