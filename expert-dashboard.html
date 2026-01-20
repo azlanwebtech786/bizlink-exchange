@@ -80,8 +80,8 @@ button{
 <!-- 🔥 CLIENT ID ADD-ON (ONLY ADD) -->
 <div class="card">
   <label class="small">Enter Client ID</label>
-  <input id="clientId" placeholder="e.g. SCH001 / REST002">
-  <button onclick="loadClient()">Load Client Data</button>
+  <input id="clientIdInput" placeholder="e.g. SCH001 / REST002">
+  <button onclick="loadClient()">Load Client</button>
 </div>
 
 <!-- SNAPSHOT -->
@@ -95,6 +95,7 @@ button{
 <!-- ALL WORK STATUS -->
 <div class="card">
   <h3>📌 All Work Status (Running + History)</h3>
+  <div class="small">Every work stays till completed</div>
 
   <table class="work-table">
     <thead>
@@ -115,7 +116,7 @@ button{
       <option>Completed</option>
     </select>
   </div>
-  <button onclick="addWork()">+ Add Work</button>
+  <button style="margin-top:10px" onclick="addWork()">+ Add Work</button>
 </div>
 
 <!-- MONTHLY REPORT -->
@@ -125,34 +126,36 @@ button{
 
   <div class="grid grid-2" style="margin-top:12px">
     <button onclick="downloadReport()">⬇ Download Report</button>
-    <input type="file" onchange="uploadReport(this)">
+    <input type="file">
   </div>
-
-  <div id="uploadedFile" class="small"></div>
 </div>
 
 </div>
 
 <script>
-const store = {};
+/* ===== CLIENT ID STORE (ADD-ON ONLY) ===== */
+const clientStore = {};
 let activeClient = null;
 
 function loadClient(){
-  const cid = document.getElementById("clientId").value;
+  const cid = document.getElementById("clientIdInput").value;
   if(!cid) return alert("Enter Client ID");
 
-  if(!store[cid]) store[cid]={works:[],report:[]};
+  if(!clientStore[cid]){
+    clientStore[cid] = { works: [], report: [] };
+  }
   activeClient = cid;
   document.getElementById("clientLabel").innerText = cid;
-  render();
+  renderClient();
 }
 
-function render(){
-  const tbody=document.getElementById("workList");
-  const report=document.getElementById("reportList");
-  tbody.innerHTML=""; report.innerHTML="";
+function renderClient(){
+  const tbody = document.getElementById("workList");
+  const report = document.getElementById("reportList");
+  tbody.innerHTML = "";
+  report.innerHTML = "";
 
-  store[activeClient].works.forEach(w=>{
+  clientStore[activeClient].works.forEach(w=>{
     const tr=document.createElement("tr");
     tr.innerHTML=`
       <td>${w.name}</td>
@@ -168,52 +171,51 @@ function render(){
     tbody.appendChild(tr);
   });
 
-  store[activeClient].report.forEach(r=>{
+  clientStore[activeClient].report.forEach(r=>{
     const li=document.createElement("li");
     li.innerText="✔ "+r;
     report.appendChild(li);
   });
 }
 
+/* ===== EXISTING LOGIC (SAME, JUST CLIENT-AWARE) ===== */
 function addWork(){
   if(!activeClient) return alert("Load Client ID first");
+
   const name=document.getElementById("newWork").value;
   const status=document.getElementById("newStatus").value;
-  if(!name) return;
+  if(!name) return alert("Enter work name");
 
-  store[activeClient].works.push({name,status});
-  if(status==="Completed") store[activeClient].report.push(name);
+  clientStore[activeClient].works.push({name,status});
+  if(status==="Completed"){
+    clientStore[activeClient].report.push(name);
+  }
   document.getElementById("newWork").value="";
-  render();
+  renderClient();
 }
 
 function updateStatus(sel,name){
   const status=sel.value;
-  store[activeClient].works.forEach(w=>{
+  clientStore[activeClient].works.forEach(w=>{
     if(w.name===name) w.status=status;
   });
-  if(status==="Completed" && !store[activeClient].report.includes(name)){
-    store[activeClient].report.push(name);
+  if(status==="Completed" && !clientStore[activeClient].report.includes(name)){
+    clientStore[activeClient].report.push(name);
   }
-  render();
+  renderClient();
 }
 
 function downloadReport(){
   if(!activeClient) return;
-  let text="Monthly Report – "+activeClient+"\n\n";
-  store[activeClient].report.forEach(r=>text+="- "+r+"\n");
+  let text="Bizlink 10X – Monthly Report ("+activeClient+")\n\n";
+  clientStore[activeClient].report.forEach(r=>{
+    text+="- "+r+"\n";
+  });
   const blob=new Blob([text],{type:"text/plain"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
-  a.download=activeClient+"-report.txt";
+  a.download=activeClient+"-Monthly-Report.txt";
   a.click();
-}
-
-function uploadReport(input){
-  if(input.files.length){
-    document.getElementById("uploadedFile").innerText =
-      "📎 Uploaded: "+input.files[0].name;
-  }
 }
 </script>
 
