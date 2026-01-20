@@ -157,6 +157,21 @@ button{
 const clientStore = {};
 let activeClient = null;
 
+/* 🔒 LOAD DATA FROM LOCAL STORAGE */
+window.onload = function(){
+  const saved = localStorage.getItem("bizlinkClientStore");
+  if(saved){
+    Object.assign(clientStore, JSON.parse(saved));
+  }
+};
+
+function saveToLocal(){
+  localStorage.setItem(
+    "bizlinkClientStore",
+    JSON.stringify(clientStore)
+  );
+}
+
 function loadClient(){
   const cid=document.getElementById("clientIdInput").value;
   if(!cid) return alert("Enter Client ID");
@@ -167,6 +182,7 @@ function loadClient(){
   activeClient=cid;
   document.getElementById("clientLabel").innerText=cid;
   renderClient();
+  saveToLocal();
 }
 
 function renderClient(){
@@ -211,6 +227,7 @@ function addWork(){
   }
   document.getElementById("newWork").value="";
   renderClient();
+  saveToLocal();
 }
 
 function updateStatus(sel,name){
@@ -222,6 +239,7 @@ function updateStatus(sel,name){
     clientStore[activeClient].report.push(name);
   }
   renderClient();
+  saveToLocal();
 }
 
 function downloadReport(){
