@@ -119,19 +119,6 @@ button{
           </select>
         </td>
       </tr>
-
-      <tr>
-        <td>Facebook Ads – January</td>
-        <td><span class="status live">Live</span></td>
-        <td>
-          <select onchange="updateStatus(this)">
-            <option>Processing</option>
-            <option selected>Live</option>
-            <option>Completed</option>
-            <option>Paused</option>
-          </select>
-        </td>
-      </tr>
     </tbody>
   </table>
 
@@ -149,32 +136,33 @@ button{
 
 <!-- ADS PERFORMANCE -->
 <div class="card">
-  <h3>📢 Ads Performance (when status = Live / Completed)</h3>
+  <h3>📢 Ads Performance</h3>
   <div class="grid grid-4">
-    <div><label>Reach</label><input value="48200"></div>
-    <div><label>Spend (₹)</label><input value="7500"></div>
-    <div><label>Leads</label><input value="124"></div>
-    <div><label>Avg CPL (₹)</label><input value="60"></div>
+    <div><label>Reach</label><input></div>
+    <div><label>Spend (₹)</label><input></div>
+    <div><label>Leads</label><input></div>
+    <div><label>Avg CPL (₹)</label><input></div>
   </div>
 </div>
 
 <!-- SALES IMPACT -->
 <div class="card">
-  <h3>💰 Sales Impact from Ads</h3>
+  <h3>💰 Sales Impact</h3>
   <div class="grid grid-4">
-    <div><label>Sales</label><input value="12"></div>
-    <div><label>Revenue (₹)</label><input value="360000"></div>
-    <div><label>Growth Impact</label><input value="+210%"></div>
+    <div><label>Sales</label><input></div>
+    <div><label>Revenue (₹)</label><input></div>
+    <div><label>Growth Impact</label><input></div>
   </div>
 </div>
 
 <!-- MONTHLY REPORT -->
 <div class="card">
-  <h3>📊 Monthly Report (Auto from Completed Work)</h3>
-  <div class="small">
-    ✔ Social Media Posts – Completed<br>
-    ✔ Facebook Ads – Completed<br>
-    ⏳ SEO – In Progress
+  <h3>📊 Monthly Report</h3>
+  <ul id="reportList" class="small"></ul>
+
+  <div class="grid grid-2" style="margin-top:12px">
+    <button onclick="downloadReport()">⬇ Download Report</button>
+    <input type="file">
   </div>
 </div>
 
@@ -191,7 +179,7 @@ function addWork(){
   const status=document.getElementById("newStatus").value;
   if(!name) return alert("Enter work name");
 
-  const cls = status.toLowerCase();
+  const cls=status.toLowerCase();
   const tr=document.createElement("tr");
   tr.innerHTML=`
     <td>${name}</td>
@@ -203,8 +191,7 @@ function addWork(){
         <option>Completed</option>
         <option>Paused</option>
       </select>
-    </td>
-  `;
+    </td>`;
   document.getElementById("workList").appendChild(tr);
   document.getElementById("newWork").value="";
 }
@@ -214,6 +201,29 @@ function updateStatus(sel){
   const badge=sel.parentElement.previousElementSibling.querySelector(".status");
   badge.className="status "+status.toLowerCase();
   badge.innerText=status;
+
+  if(status==="Completed"){
+    const workName=sel.parentElement.parentElement.children[0].innerText;
+    addToReport(workName);
+  }
+}
+
+function addToReport(work){
+  const li=document.createElement("li");
+  li.innerText="✔ "+work;
+  document.getElementById("reportList").appendChild(li);
+}
+
+function downloadReport(){
+  let text="Bizlink 10X – Monthly Report\n\n";
+  document.querySelectorAll("#reportList li").forEach(li=>{
+    text+=li.innerText+"\n";
+  });
+  const blob=new Blob([text],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="Bizlink-Monthly-Report.txt";
+  a.click();
 }
 </script>
 
