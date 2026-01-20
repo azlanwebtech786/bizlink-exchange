@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Bizlink 10X – Client Dashboard</title>
+<title>Bizlink 10X Grow Lab – Client Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -21,22 +21,37 @@ body{
   padding:20px;
   margin-bottom:20px;
 }
-.topbar{display:flex;justify-content:space-between;align-items:center}
+.topbar{margin-bottom:20px}
 .small{font-size:13px;color:#94a3b8}
+
+input,button{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  background:#020617;
+  color:#fff;
+  margin-top:8px;
+}
+button{
+  background:linear-gradient(90deg,#8b5cf6,#ec4899);
+  font-weight:600;
+  cursor:pointer;
+}
 
 .grid{display:grid;gap:16px}
 .grid-2{grid-template-columns:1fr 1fr}
 .grid-3{grid-template-columns:repeat(3,1fr)}
 .grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
 
-.work-table{
+table{
   width:100%;
   border-collapse:collapse;
-  margin-top:12px;
+  margin-top:10px;
 }
-.work-table th,.work-table td{
+th,td{
   padding:12px;
-  border-bottom:1px solid rgba(148,163,184,.12);
+  border-bottom:1px solid rgba(148,163,184,.15);
 }
 
 .status{
@@ -49,62 +64,44 @@ body{
 .live{background:#1e3a8a;color:#93c5fd}
 .completed{background:#163c2a;color:#4ade80}
 .paused{background:#3f1d1d;color:#f87171}
-
-input,button{
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  background:#020617;
-  color:#fff;
-  margin-top:8px;
-}
-button{
-  background:linear-gradient(90deg,#8b5cf6,#ec4899);
-  font-weight:600;
-  cursor:pointer;
-}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<!-- TOP BAR -->
+<!-- HEADER -->
 <div class="card topbar">
-  <div>
-    <h2>Bizlink 10X – Client Dashboard</h2>
-    <div class="small">Read-Only Progress View</div>
-  </div>
+  <h2>Bizlink 10X – Client Dashboard</h2>
+  <div class="small">Read-Only Progress View</div>
 </div>
 
-<!-- CLIENT ID -->
+<!-- CLIENT ID INPUT -->
 <div class="card">
   <label class="small">Enter Your Client ID</label>
-  <input id="clientIdInput" placeholder="e.g. SCH001 / REST002">
-  <button onclick="loadClient()">View My Dashboard</button>
+  <input id="clientIdInput" placeholder="e.g. SCH001">
+  <button onclick="loadDashboard()">View My Dashboard</button>
 </div>
 
 <!-- SNAPSHOT -->
 <div class="card grid grid-4">
-  <div><b>Client ID</b><br><span id="clientLabel">—</span></div>
-  <div><b>Plan</b><br>Premium 10X</div>
-  <div><b>Month</b><br>Current Month</div>
-  <div><b>Status</b><br>Active ✅</div>
+  <div><b>Client</b><br><span id="clientName">—</span></div>
+  <div><b>Plan</b><br><span id="clientPlan">—</span></div>
+  <div><b>Month</b><br><span id="clientMonth">Current</span></div>
+  <div><b>Status</b><br><span id="clientStatus">—</span></div>
 </div>
 
-<!-- WORK STATUS -->
+<!-- WORK PROGRESS -->
 <div class="card">
   <h3>📌 Work Progress</h3>
-
-  <table class="work-table">
+  <table>
     <thead>
       <tr>
         <th>Work Name</th>
         <th>Status</th>
       </tr>
     </thead>
-    <tbody id="workList"></tbody>
+    <tbody id="workTable"></tbody>
   </table>
 </div>
 
@@ -112,10 +109,10 @@ button{
 <div class="card">
   <h3>📢 Ads Performance</h3>
   <div class="grid grid-4">
-    <div><label>Reach</label><input disabled></div>
-    <div><label>Spend (₹)</label><input disabled></div>
-    <div><label>Leads</label><input disabled></div>
-    <div><label>Avg CPL (₹)</label><input disabled></div>
+    <div><label>Reach</label><input id="reach" disabled></div>
+    <div><label>Spend (₹)</label><input id="spend" disabled></div>
+    <div><label>Leads</label><input id="leads" disabled></div>
+    <div><label>Avg CPL (₹)</label><input id="cpl" disabled></div>
   </div>
 </div>
 
@@ -123,9 +120,9 @@ button{
 <div class="card">
   <h3>💰 Sales Impact</h3>
   <div class="grid grid-3">
-    <div><label>Sales</label><input disabled></div>
-    <div><label>Revenue (₹)</label><input disabled></div>
-    <div><label>Growth Impact</label><input disabled></div>
+    <div><label>Sales</label><input id="sales" disabled></div>
+    <div><label>Revenue (₹)</label><input id="revenue" disabled></div>
+    <div><label>Growth Impact</label><input id="growth" disabled></div>
   </div>
 </div>
 
@@ -138,37 +135,64 @@ button{
 </div>
 
 <script>
-function loadClient(){
-  const cid = document.getElementById("clientIdInput").value;
-  if(!cid) return alert("Enter Client ID");
+/* 🔗 APPS SCRIPT API URL */
+const API_URL = "https://script.google.com/macros/s/AKfycbyphTkoh0ldOvtEMjQMfexF61QHQpfNsYHwNcRh7yu9wvrxspXk0pkDY9EjRSuWwAvZ/exec";
 
-  const saved = localStorage.getItem("bizlinkClientStore");
-  if(!saved) return alert("No data found");
+/* LOAD DASHBOARD */
+function loadDashboard(){
+  const clientId=document.getElementById("clientIdInput").value;
+  if(!clientId) return alert("Enter Client ID");
 
-  const store = JSON.parse(saved);
-  if(!store[cid]) return alert("Client data not found");
+  fetch(API_URL+"?clientId="+clientId)
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.error){
+        alert("Client not found");
+        return;
+      }
 
-  document.getElementById("clientLabel").innerText = cid;
+      // Client snapshot
+      document.getElementById("clientName").innerText=data.client.name || clientId;
+      document.getElementById("clientPlan").innerText=data.client.plan || "-";
+      document.getElementById("clientStatus").innerText=data.client.status || "-";
 
-  const tbody = document.getElementById("workList");
-  const report = document.getElementById("reportList");
-  tbody.innerHTML = "";
-  report.innerHTML = "";
+      // Works
+      const tbody=document.getElementById("workTable");
+      tbody.innerHTML="";
+      data.works.forEach(w=>{
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td>${w.name}</td>
+          <td><span class="status ${w.status.toLowerCase()}">${w.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
 
-  store[cid].works.forEach(w=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${w.name}</td>
-      <td><span class="status ${w.status.toLowerCase()}">${w.status}</span></td>
-    `;
-    tbody.appendChild(tr);
-  });
+      // Ads
+      document.getElementById("reach").value=data.ads.reach || "";
+      document.getElementById("spend").value=data.ads.spend || "";
+      document.getElementById("leads").value=data.ads.leads || "";
+      document.getElementById("cpl").value=data.ads.cpl || "";
 
-  store[cid].report.forEach(r=>{
-    const li=document.createElement("li");
-    li.innerText="✔ "+r;
-    report.appendChild(li);
-  });
+      // Sales
+      document.getElementById("sales").value=data.sales.sales || "";
+      document.getElementById("revenue").value=data.sales.revenue || "";
+      document.getElementById("growth").value=data.sales.growth || "";
+
+      // Report
+      const report=document.getElementById("reportList");
+      report.innerHTML="";
+      data.works
+        .filter(w=>w.status==="Completed")
+        .forEach(w=>{
+          const li=document.createElement("li");
+          li.innerText="✔ "+w.name;
+          report.appendChild(li);
+        });
+    })
+    .catch(()=>{
+      alert("Server error. Try again later.");
+    });
 }
 </script>
 
