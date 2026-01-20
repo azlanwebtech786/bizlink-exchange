@@ -77,7 +77,7 @@ button{
   </div>
 </div>
 
-<!-- 🔥 CLIENT ID ADD-ON -->
+<!-- CLIENT ID -->
 <div class="card">
   <label class="small">Enter Client ID</label>
   <input id="clientIdInput" placeholder="e.g. SCH001 / REST002">
@@ -92,7 +92,7 @@ button{
   <div><b>Status</b><br>Active ✅</div>
 </div>
 
-<!-- ALL WORK STATUS -->
+<!-- WORK STATUS -->
 <div class="card">
   <h3>📌 All Work Status (Running + History)</h3>
 
@@ -118,6 +118,27 @@ button{
   <button style="margin-top:10px" onclick="addWork()">+ Add Work</button>
 </div>
 
+<!-- ADS PERFORMANCE -->
+<div class="card">
+  <h3>📢 Ads Performance</h3>
+  <div class="grid grid-4">
+    <div><label>Reach</label><input></div>
+    <div><label>Spend (₹)</label><input></div>
+    <div><label>Leads</label><input></div>
+    <div><label>Avg CPL (₹)</label><input></div>
+  </div>
+</div>
+
+<!-- SALES IMPACT -->
+<div class="card">
+  <h3>💰 Sales Impact</h3>
+  <div class="grid grid-4">
+    <div><label>Sales</label><input></div>
+    <div><label>Revenue (₹)</label><input></div>
+    <div><label>Growth Impact</label><input placeholder="+120%"></div>
+  </div>
+</div>
+
 <!-- MONTHLY REPORT -->
 <div class="card">
   <h3>📊 Monthly Report</h3>
@@ -132,19 +153,18 @@ button{
 </div>
 
 <script>
-/* ===== CLIENT ID STORE (ADD-ON ONLY) ===== */
 const clientStore = {};
 let activeClient = null;
 
 function loadClient(){
-  const cid = document.getElementById("clientIdInput").value;
+  const cid=document.getElementById("clientIdInput").value;
   if(!cid) return alert("Enter Client ID");
 
   if(!clientStore[cid]){
-    clientStore[cid] = { works: [], report: [] };
+    clientStore[cid]={works:[],report:[]};
   }
-  activeClient = cid;
-  document.getElementById("clientLabel").innerText = cid;
+  activeClient=cid;
+  document.getElementById("clientLabel").innerText=cid;
   renderClient();
 }
 
@@ -177,7 +197,6 @@ function renderClient(){
   });
 }
 
-/* ===== EXISTING LOGIC (CLIENT AWARE) ===== */
 function addWork(){
   if(!activeClient) return alert("Load Client ID first");
 
@@ -186,9 +205,7 @@ function addWork(){
   if(!name) return alert("Enter work name");
 
   clientStore[activeClient].works.push({name,status});
-  if(status==="Completed"){
-    clientStore[activeClient].report.push(name);
-  }
+  if(status==="Completed") clientStore[activeClient].report.push(name);
   document.getElementById("newWork").value="";
   renderClient();
 }
