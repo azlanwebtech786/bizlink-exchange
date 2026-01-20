@@ -77,18 +77,16 @@ button{
   </div>
 </div>
 
-<!-- CLIENT SELECT -->
+<!-- 🔥 CLIENT ID ADD-ON (ONLY ADD) -->
 <div class="card">
-  <label class="small">Select Client</label>
-  <select>
-    <option>ABC School – Alwar</option>
-    <option>XYZ Property – Jaipur</option>
-  </select>
+  <label class="small">Enter Client ID</label>
+  <input id="clientId" placeholder="e.g. SCH001 / REST002">
+  <button onclick="loadClient()">Load Client Data</button>
 </div>
 
 <!-- SNAPSHOT -->
 <div class="card grid grid-4">
-  <div><b>Client</b><br>ABC School</div>
+  <div><b>Client</b><br><span id="clientLabel">—</span></div>
   <div><b>Plan</b><br>Premium 10X</div>
   <div><b>Month</b><br>January 2026</div>
   <div><b>Status</b><br>Active ✅</div>
@@ -97,7 +95,6 @@ button{
 <!-- ALL WORK STATUS -->
 <div class="card">
   <h3>📌 All Work Status (Running + History)</h3>
-  <div class="small">Every work stays till completed</div>
 
   <table class="work-table">
     <thead>
@@ -107,22 +104,9 @@ button{
         <th>Change Status</th>
       </tr>
     </thead>
-    <tbody id="workList">
-      <tr>
-        <td>Social Media Posts (30)</td>
-        <td><span class="status processing">Processing</span></td>
-        <td>
-          <select onchange="updateStatus(this)">
-            <option>Processing</option>
-            <option>Live</option>
-            <option>Completed</option>
-          </select>
-        </td>
-      </tr>
-    </tbody>
+    <tbody id="workList"></tbody>
   </table>
 
-  <!-- ADD NEW WORK -->
   <div class="grid grid-2" style="margin-top:16px">
     <input id="newWork" placeholder="New work name (Ads Setup / SEO / Reel)">
     <select id="newStatus">
@@ -131,28 +115,7 @@ button{
       <option>Completed</option>
     </select>
   </div>
-  <button style="margin-top:10px" onclick="addWork()">+ Add Work</button>
-</div>
-
-<!-- ADS PERFORMANCE -->
-<div class="card">
-  <h3>📢 Ads Performance</h3>
-  <div class="grid grid-4">
-    <div><label>Reach</label><input></div>
-    <div><label>Spend (₹)</label><input></div>
-    <div><label>Leads</label><input></div>
-    <div><label>Avg CPL (₹)</label><input></div>
-  </div>
-</div>
-
-<!-- SALES IMPACT -->
-<div class="card">
-  <h3>💰 Sales Impact</h3>
-  <div class="grid grid-4">
-    <div><label>Sales</label><input></div>
-    <div><label>Revenue (₹)</label><input></div>
-    <div><label>Growth Impact</label><input></div>
-  </div>
+  <button onclick="addWork()">+ Add Work</button>
 </div>
 
 <!-- MONTHLY REPORT -->
@@ -162,68 +125,95 @@ button{
 
   <div class="grid grid-2" style="margin-top:12px">
     <button onclick="downloadReport()">⬇ Download Report</button>
-    <input type="file">
+    <input type="file" onchange="uploadReport(this)">
   </div>
-</div>
 
-<!-- SAVE -->
-<div class="card">
-  <button>Save & Update Dashboard</button>
+  <div id="uploadedFile" class="small"></div>
 </div>
 
 </div>
 
 <script>
+const store = {};
+let activeClient = null;
+
+function loadClient(){
+  const cid = document.getElementById("clientId").value;
+  if(!cid) return alert("Enter Client ID");
+
+  if(!store[cid]) store[cid]={works:[],report:[]};
+  activeClient = cid;
+  document.getElementById("clientLabel").innerText = cid;
+  render();
+}
+
+function render(){
+  const tbody=document.getElementById("workList");
+  const report=document.getElementById("reportList");
+  tbody.innerHTML=""; report.innerHTML="";
+
+  store[activeClient].works.forEach(w=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${w.name}</td>
+      <td><span class="status ${w.status.toLowerCase()}">${w.status}</span></td>
+      <td>
+        <select onchange="updateStatus(this,'${w.name}')">
+          <option>Processing</option>
+          <option>Live</option>
+          <option>Completed</option>
+          <option>Paused</option>
+        </select>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  store[activeClient].report.forEach(r=>{
+    const li=document.createElement("li");
+    li.innerText="✔ "+r;
+    report.appendChild(li);
+  });
+}
+
 function addWork(){
+  if(!activeClient) return alert("Load Client ID first");
   const name=document.getElementById("newWork").value;
   const status=document.getElementById("newStatus").value;
-  if(!name) return alert("Enter work name");
+  if(!name) return;
 
-  const cls=status.toLowerCase();
-  const tr=document.createElement("tr");
-  tr.innerHTML=`
-    <td>${name}</td>
-    <td><span class="status ${cls}">${status}</span></td>
-    <td>
-      <select onchange="updateStatus(this)">
-        <option>Processing</option>
-        <option>Live</option>
-        <option>Completed</option>
-        <option>Paused</option>
-      </select>
-    </td>`;
-  document.getElementById("workList").appendChild(tr);
+  store[activeClient].works.push({name,status});
+  if(status==="Completed") store[activeClient].report.push(name);
   document.getElementById("newWork").value="";
+  render();
 }
 
-function updateStatus(sel){
+function updateStatus(sel,name){
   const status=sel.value;
-  const badge=sel.parentElement.previousElementSibling.querySelector(".status");
-  badge.className="status "+status.toLowerCase();
-  badge.innerText=status;
-
-  if(status==="Completed"){
-    const workName=sel.parentElement.parentElement.children[0].innerText;
-    addToReport(workName);
+  store[activeClient].works.forEach(w=>{
+    if(w.name===name) w.status=status;
+  });
+  if(status==="Completed" && !store[activeClient].report.includes(name)){
+    store[activeClient].report.push(name);
   }
-}
-
-function addToReport(work){
-  const li=document.createElement("li");
-  li.innerText="✔ "+work;
-  document.getElementById("reportList").appendChild(li);
+  render();
 }
 
 function downloadReport(){
-  let text="Bizlink 10X – Monthly Report\n\n";
-  document.querySelectorAll("#reportList li").forEach(li=>{
-    text+=li.innerText+"\n";
-  });
+  if(!activeClient) return;
+  let text="Monthly Report – "+activeClient+"\n\n";
+  store[activeClient].report.forEach(r=>text+="- "+r+"\n");
   const blob=new Blob([text],{type:"text/plain"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
-  a.download="Bizlink-Monthly-Report.txt";
+  a.download=activeClient+"-report.txt";
   a.click();
+}
+
+function uploadReport(input){
+  if(input.files.length){
+    document.getElementById("uploadedFile").innerText =
+      "📎 Uploaded: "+input.files[0].name;
+  }
 }
 </script>
 
