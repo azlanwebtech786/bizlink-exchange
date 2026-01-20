@@ -7,59 +7,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  font-family:Poppins;
-  background:#020617;
-  color:#e5e7eb;
-}
+body{margin:0;font-family:Poppins;background:#020617;color:#e5e7eb}
 .container{max-width:1200px;margin:auto;padding:24px}
-.card{
-  background:#0f172a;
-  border:1px solid rgba(148,163,184,.15);
-  border-radius:14px;
-  padding:20px;
-  margin-bottom:20px;
-}
+.card{background:#0f172a;border:1px solid rgba(148,163,184,.15);border-radius:14px;padding:20px;margin-bottom:20px}
 .topbar{display:flex;justify-content:space-between;align-items:center}
 .small{font-size:13px;color:#94a3b8}
-
-input,select,button{
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  background:#020617;
-  color:#fff;
-  margin-top:8px;
-}
-button{
-  background:linear-gradient(90deg,#8b5cf6,#ec4899);
-  font-weight:600;
-  cursor:pointer;
-}
-
+input,select,button{width:100%;padding:10px;border-radius:10px;border:none;background:#020617;color:#fff;margin-top:8px}
+button{background:linear-gradient(90deg,#8b5cf6,#ec4899);font-weight:600;cursor:pointer}
 .grid{display:grid;gap:16px}
 .grid-2{grid-template-columns:1fr 1fr}
 .grid-3{grid-template-columns:repeat(3,1fr)}
 .grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
-
-.work-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:12px;
-}
-.work-table th,.work-table td{
-  padding:12px;
-  border-bottom:1px solid rgba(148,163,184,.12);
-}
-
-.status{
-  padding:6px 12px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:600;
-}
+.work-table{width:100%;border-collapse:collapse;margin-top:12px}
+.work-table th,.work-table td{padding:12px;border-bottom:1px solid rgba(148,163,184,.12)}
+.status{padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600}
 .processing{background:#3b2f12;color:#facc15}
 .live{background:#1e3a8a;color:#93c5fd}
 .completed{background:#163c2a;color:#4ade80}
@@ -70,7 +31,6 @@ button{
 <body>
 <div class="container">
 
-<!-- TOP BAR -->
 <div class="card topbar">
   <div>
     <h2>Bizlink 10X – Expert Team Dashboard</h2>
@@ -78,183 +38,162 @@ button{
   </div>
 </div>
 
-<!-- CLIENT ID -->
 <div class="card">
   <label class="small">Enter Client ID</label>
-  <input id="clientIdInput" placeholder="e.g. SCH001 / REST002">
+  <input id="clientIdInput" placeholder="e.g. SCH001">
   <button onclick="loadClient()">Load Client</button>
 </div>
 
-<!-- SNAPSHOT -->
 <div class="card grid grid-4">
   <div><b>Client</b><br><span id="clientLabel">—</span></div>
   <div><b>Plan</b><br>Premium 10X</div>
-  <div><b>Month</b><br>January 2026</div>
+  <div><b>Month</b><br>Current</div>
   <div><b>Status</b><br>Active ✅</div>
 </div>
 
-<!-- WORK STATUS -->
 <div class="card">
-  <h3>📌 All Work Status (Running + History)</h3>
+<h3>📌 All Work Status</h3>
+<table class="work-table">
+<thead>
+<tr><th>Work</th><th>Status</th><th>Change</th></tr>
+</thead>
+<tbody id="workList"></tbody>
+</table>
 
-  <table class="work-table">
-    <thead>
-      <tr>
-        <th>Work Name</th>
-        <th>Status</th>
-        <th>Change Status</th>
-      </tr>
-    </thead>
-    <tbody id="workList"></tbody>
-  </table>
-
-  <div class="grid grid-2" style="margin-top:16px">
-    <input id="newWork" placeholder="New work name (Ads Setup / SEO / Reel)">
-    <select id="newStatus">
-      <option>Processing</option>
-      <option>Live</option>
-      <option>Completed</option>
-    </select>
-  </div>
-  <button style="margin-top:10px" onclick="addWork()">+ Add Work</button>
+<div class="grid grid-2">
+<input id="newWork" placeholder="Ads / SEO / Reel">
+<select id="newStatus">
+<option>Processing</option>
+<option>Live</option>
+<option>Completed</option>
+</select>
+</div>
+<button onclick="addWork()">+ Add Work</button>
 </div>
 
-<!-- ADS PERFORMANCE -->
 <div class="card">
-  <h3>📢 Ads Performance</h3>
-  <div class="grid grid-4">
-    <div><label>Reach</label><input></div>
-    <div><label>Spend (₹)</label><input></div>
-    <div><label>Leads</label><input></div>
-    <div><label>Avg CPL (₹)</label><input></div>
-  </div>
+<h3>📢 Ads Performance</h3>
+<div class="grid grid-4">
+<input id="adsReach" placeholder="Reach">
+<input id="adsSpend" placeholder="Spend">
+<input id="adsLeads" placeholder="Leads">
+<input id="adsCpl" placeholder="Avg CPL">
+</div>
+<button onclick="saveAds()">Save Ads</button>
 </div>
 
-<!-- SALES IMPACT -->
 <div class="card">
-  <h3>💰 Sales Impact</h3>
-  <div class="grid grid-3">
-    <div><label>Sales</label><input></div>
-    <div><label>Revenue (₹)</label><input></div>
-    <div><label>Growth Impact</label><input placeholder="+120%"></div>
-  </div>
+<h3>💰 Sales Impact</h3>
+<div class="grid grid-3">
+<input id="sales" placeholder="Sales">
+<input id="revenue" placeholder="Revenue">
+<input id="growth" placeholder="Growth %">
+</div>
+<button onclick="saveSales()">Save Sales</button>
 </div>
 
-<!-- MONTHLY REPORT -->
 <div class="card">
-  <h3>📊 Monthly Report</h3>
-  <ul id="reportList" class="small"></ul>
-
-  <div class="grid grid-2" style="margin-top:12px">
-    <button onclick="downloadReport()">⬇ Download Report</button>
-    <input type="file">
-  </div>
+<h3>📊 Monthly Report</h3>
+<ul id="reportList"></ul>
+<button onclick="downloadReport()">⬇ Download Report</button>
 </div>
 
 </div>
 
 <script>
-const clientStore = {};
-let activeClient = null;
+const API_URL = "https://script.google.com/macros/s/AKfycbyphTkoh0ldOvtEMjQMfexF61QHQpfNsYHwNcRh7yu9wvrxspXk0pkDY9EjRSuWwAvZ/exec";
+let activeClient=null;
 
-/* 🔒 LOAD DATA FROM LOCAL STORAGE */
-window.onload = function(){
-  const saved = localStorage.getItem("bizlinkClientStore");
-  if(saved){
-    Object.assign(clientStore, JSON.parse(saved));
-  }
-};
-
-function saveToLocal(){
-  localStorage.setItem(
-    "bizlinkClientStore",
-    JSON.stringify(clientStore)
-  );
+async function loadClient(){
+  const id=document.getElementById("clientIdInput").value;
+  if(!id) return alert("Client ID missing");
+  activeClient=id;
+  const res=await fetch(API_URL+"?clientId="+id);
+  const data=await res.json();
+  document.getElementById("clientLabel").innerText=id;
+  renderWorks(data.works||[]);
+  renderReport(data.works||[]);
 }
 
-function loadClient(){
-  const cid=document.getElementById("clientIdInput").value;
-  if(!cid) return alert("Enter Client ID");
-
-  if(!clientStore[cid]){
-    clientStore[cid]={works:[],report:[]};
-  }
-  activeClient=cid;
-  document.getElementById("clientLabel").innerText=cid;
-  renderClient();
-  saveToLocal();
-}
-
-function renderClient(){
-  const tbody=document.getElementById("workList");
-  const report=document.getElementById("reportList");
-  tbody.innerHTML="";
-  report.innerHTML="";
-
-  clientStore[activeClient].works.forEach(w=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
+function renderWorks(works){
+  const tb=document.getElementById("workList");
+  tb.innerHTML="";
+  works.forEach(w=>{
+    tb.innerHTML+=`
+    <tr>
       <td>${w.name}</td>
       <td><span class="status ${w.status.toLowerCase()}">${w.status}</span></td>
       <td>
-        <select onchange="updateStatus(this,'${w.name}')">
+        <select onchange="updateWork('${w.name}',this.value)">
           <option>Processing</option>
           <option>Live</option>
           <option>Completed</option>
-          <option>Paused</option>
         </select>
-      </td>`;
-    tbody.appendChild(tr);
-  });
-
-  clientStore[activeClient].report.forEach(r=>{
-    const li=document.createElement("li");
-    li.innerText="✔ "+r;
-    report.appendChild(li);
+      </td>
+    </tr>`;
   });
 }
 
-function addWork(){
-  if(!activeClient) return alert("Load Client ID first");
-
-  const name=document.getElementById("newWork").value;
-  const status=document.getElementById("newStatus").value;
-  if(!name) return alert("Enter work name");
-
-  clientStore[activeClient].works.push({name,status});
-  if(status==="Completed"){
-    clientStore[activeClient].report.push(name);
-  }
-  document.getElementById("newWork").value="";
-  renderClient();
-  saveToLocal();
+function renderReport(works){
+  const ul=document.getElementById("reportList");
+  ul.innerHTML="";
+  works.filter(w=>w.status==="Completed").forEach(w=>{
+    ul.innerHTML+=`<li>✔ ${w.name}</li>`;
+  });
 }
 
-function updateStatus(sel,name){
-  const status=sel.value;
-  clientStore[activeClient].works.forEach(w=>{
-    if(w.name===name) w.status=status;
+async function addWork(){
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"addWork",
+      clientId:activeClient,
+      workName:newWork.value,
+      status:newStatus.value
+    })
   });
-  if(status==="Completed" && !clientStore[activeClient].report.includes(name)){
-    clientStore[activeClient].report.push(name);
-  }
-  renderClient();
-  saveToLocal();
+  loadClient();
+}
+
+async function updateWork(name,status){
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"updateWork",
+      clientId:activeClient,
+      workName:name,
+      status
+    })
+  });
+  loadClient();
+}
+
+async function saveAds(){
+  await fetch(API_URL,{method:"POST",body:JSON.stringify({
+    action:"updateAds",
+    clientId:activeClient,
+    reach:adsReach.value,
+    spend:adsSpend.value,
+    leads:adsLeads.value,
+    cpl:adsCpl.value
+  })});
+  alert("Ads Saved");
+}
+
+async function saveSales(){
+  await fetch(API_URL,{method:"POST",body:JSON.stringify({
+    action:"updateSales",
+    clientId:activeClient,
+    sales:sales.value,
+    revenue:revenue.value,
+    growth:growth.value
+  })});
+  alert("Sales Saved");
 }
 
 function downloadReport(){
-  if(!activeClient) return;
-  let text="Bizlink 10X – Monthly Report ("+activeClient+")\n\n";
-  clientStore[activeClient].report.forEach(r=>{
-    text+="- "+r+"\n";
-  });
-  const blob=new Blob([text],{type:"text/plain"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download=activeClient+"-Monthly-Report.txt";
-  a.click();
+  alert("Report auto synced from backend");
 }
 </script>
-
 </body>
 </html>
