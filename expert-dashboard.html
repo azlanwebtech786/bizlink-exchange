@@ -146,6 +146,7 @@ async function addWork(){
   await fetch(API_URL,{
     method:"POST",
     body:JSON.stringify({
+      apiKey: "BIZLINK_10X_SECRET_2026",
       action:"addWork",
       clientId:activeClient,
       workName:newWork.value,
@@ -159,6 +160,7 @@ async function updateWork(name,status){
   await fetch(API_URL,{
     method:"POST",
     body:JSON.stringify({
+      apiKey: "BIZLINK_10X_SECRET_2026",
       action:"updateWork",
       clientId:activeClient,
       workName:name,
@@ -170,6 +172,7 @@ async function updateWork(name,status){
 
 async function saveAds(){
   await fetch(API_URL,{method:"POST",body:JSON.stringify({
+    apiKey: "BIZLINK_10X_SECRET_2026",
     action:"updateAds",
     clientId:activeClient,
     reach:adsReach.value,
@@ -182,6 +185,7 @@ async function saveAds(){
 
 async function saveSales(){
   await fetch(API_URL,{method:"POST",body:JSON.stringify({
+    apiKey: "BIZLINK_10X_SECRET_2026",
     action:"updateSales",
     clientId:activeClient,
     sales:sales.value,
