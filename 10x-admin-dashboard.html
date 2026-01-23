@@ -1,216 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>BizLink 10X – Admin Panel</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<title>Bizlink 10X – Admin Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
 <style>
-body{font-family:Poppins;background:#050816;color:#e5e7eb}
-.card{background:#0f172a;border:1px solid rgba(148,163,184,.2)}
-.btn{padding:.5rem 1rem;border-radius:.5rem;font-weight:600}
+body{
+  margin:0;
+  font-family:Poppins;
+  background:#020617;
+  color:#e5e7eb;
+}
+.container{max-width:1000px;margin:auto;padding:24px}
+.card{
+  background:#0f172a;
+  border:1px solid rgba(148,163,184,.15);
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:20px;
+}
+input,select,button{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+}
+button{
+  background:linear-gradient(90deg,#8b5cf6,#ec4899);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+.grid{display:grid;gap:16px}
+.grid-2{grid-template-columns:1fr 1fr}
+.small{font-size:13px;color:#94a3b8}
 </style>
 </head>
 
-<body class="min-h-screen">
+<body>
+<div class="container">
 
-<header class="bg-slate-950 border-b border-slate-800">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-    <h1 class="text-purple-400 font-bold text-lg">BizLink 10X – ADMIN PANEL</h1>
-    <div class="flex gap-3 items-center">
-      <span class="text-sm text-slate-400">admin@bizlink.in</span>
-      <button class="bg-red-600 px-4 py-1.5 rounded text-sm">Logout</button>
+<div class="card">
+  <h2>Bizlink 10X – Admin Control Room</h2>
+  <div class="small">Create & Manage Clients</div>
+</div>
+
+<div class="card">
+  <h3>Create New Client</h3>
+
+  <div class="grid grid-2">
+    <div>
+      <label>Client Name</label>
+      <input id="clientName" placeholder="ABC School">
+    </div>
+
+    <div>
+      <label>Client Type</label>
+      <select id="clientType">
+        <option value="SCH">School</option>
+        <option value="REST">Restaurant</option>
+        <option value="PROP">Property</option>
+        <option value="BUS">Business</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Plan</label>
+      <select id="plan">
+        <option>Starter</option>
+        <option>Premium 10X</option>
+        <option>Elite</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Assign Expert</label>
+      <input id="expert" placeholder="Ravi / Mohit">
     </div>
   </div>
-</header>
 
-<main class="max-w-7xl mx-auto px-6 py-8 space-y-10">
+  <button onclick="createClient()">Create Client</button>
 
-<!-- STATS -->
-<section class="grid sm:grid-cols-4 gap-4">
-  <div class="card p-4 rounded">Active Clients<br><b id="statClients" class="text-2xl">0</b></div>
-  <div class="card p-4 rounded">Freelancers<br><b id="statFreelancers" class="text-2xl">0</b></div>
-  <div class="card p-4 rounded">Today Tasks<br><b id="statTasks" class="text-2xl">0</b></div>
-  <div class="card p-4 rounded">Pending Proofs<br><b id="statProofs" class="text-2xl text-yellow-400">0</b></div>
-</section>
-
-<!-- PLAN RULES -->
-<section>
-<h2 class="text-lg font-semibold mb-3">Plan Task Rules (Auto Assignment)</h2>
-
-<div class="card p-4 rounded mb-4 grid sm:grid-cols-5 gap-3">
-  <select id="plan" class="bg-slate-800 p-2 rounded">
-    <option>10X Grow Lab</option>
-  </select>
-
-  <select id="task" class="bg-slate-800 p-2 rounded">
-    <option>Instagram Reel</option>
-    <option>Google Business Post</option>
-    <option>WhatsApp Follow-up</option>
-    <option>Review Collection</option>
-  </select>
-
-  <select id="frequency" class="bg-slate-800 p-2 rounded">
-    <option>Daily</option>
-  </select>
-
-  <input id="freelancer" placeholder="freelancer@gmail.com"
-    class="bg-slate-800 p-2 rounded"/>
-
-  <button onclick="saveRule()" class="bg-purple-600 rounded">Save Rule</button>
+  <div id="result" style="margin-top:15px;font-weight:600"></div>
 </div>
 
-<div class="card rounded overflow-hidden">
-<table class="w-full text-sm">
-<thead class="bg-slate-800">
-<tr>
-<th class="p-3 text-left">Plan</th>
-<th class="p-3">Task</th>
-<th class="p-3">Frequency</th>
-<th class="p-3">Freelancer</th>
-</tr>
-</thead>
-<tbody id="rulesTable"></tbody>
-</table>
-</div>
-</section>
-
-<!-- CLIENTS -->
-<section>
-<h2 class="text-lg font-semibold mb-3">Client Master Control</h2>
-<div class="card rounded overflow-hidden">
-<table class="w-full text-sm">
-<thead class="bg-slate-800">
-<tr>
-<th class="p-3 text-left">Client</th>
-<th class="p-3">Plan</th>
-<th class="p-3">Status</th>
-<th class="p-3">Action</th>
-</tr>
-</thead>
-<tbody id="clientsTable"></tbody>
-</table>
-</div>
-</section>
-
-</main>
-
-<!-- CLIENT MODAL -->
-<div id="clientModal" class="fixed inset-0 hidden bg-black bg-opacity-80 flex items-center justify-center">
-<div class="bg-slate-900 p-6 rounded-xl w-full max-w-2xl relative">
-
-<button onclick="closeModal()" class="absolute top-3 right-4 text-xl">✕</button>
-
-<h3 class="font-bold text-lg mb-3">Client Tasks</h3>
-
-<div class="card rounded overflow-hidden">
-<table class="w-full text-sm">
-<thead class="bg-slate-800">
-<tr>
-<th class="p-3 text-left">Task</th>
-<th class="p-3">Freelancer</th>
-<th class="p-3">Status</th>
-<th class="p-3">Proof</th>
-</tr>
-</thead>
-<tbody id="clientTasks"></tbody>
-</table>
-</div>
-
-</div>
 </div>
 
 <script>
-const API_BASE = "https://script.google.com/macros/s/AKfycbzJvUnmkM7wUuvNt0XaSHE7YEn1FnLqQ2XX-Fues2h4q53MuGtRkoU0iGJ1auI1lSqoRQ/exec";
+const API = "https://script.google.com/macros/s/AKfycbx4Jxr9d1jt2G97Rihos3P18GqCmZECAI7joBfDmxou5S16BhoXZldzKZxMINPq8X_azA/exec";
+const API_KEY = "BIZLINK_10X_SECRET_2026";
 
-/* ---------- LOAD STATS ---------- */
-fetch(API_BASE + "?action=getAdminStats")
-.then(r=>r.json())
-.then(d=>{
-  statClients.innerText = d.activeClients;
-  statFreelancers.innerText = d.freelancers;
-  statTasks.innerText = d.todayTasks;
-  statProofs.innerText = d.pendingProofs;
-});
+let counter = 1;
 
-/* ---------- LOAD PLAN RULES ---------- */
-function loadRules(){
-fetch(API_BASE + "?action=getPlanRules")
-.then(r=>r.json())
-.then(d=>{
-  rulesTable.innerHTML='';
-  d.rules.forEach(r=>{
-    rulesTable.innerHTML += `
-      <tr class="border-t border-slate-800">
-        <td class="p-3">${r.plan}</td>
-        <td class="p-3">${r.task}</td>
-        <td class="p-3">${r.frequency}</td>
-        <td class="p-3">${r.freelancerEmail||'-'}</td>
-      </tr>`;
-  });
-});
+function generateId(type){
+  const num = String(counter++).padStart(3,"0");
+  return type + num;
 }
-loadRules();
 
-/* ---------- SAVE RULE ---------- */
-function saveRule(){
-fetch(API_BASE,{
-  method:'POST',
-  body:JSON.stringify({
-    action:'savePlanRule',
-    plan:plan.value,
-    task:task.value,
-    freelancerEmail:freelancer.value,
-    frequency:frequency.value
+function createClient(){
+  const name=document.getElementById("clientName").value;
+  const type=document.getElementById("clientType").value;
+  const plan=document.getElementById("plan").value;
+  const expert=document.getElementById("expert").value;
+
+  if(!name || !expert) return alert("Fill all fields");
+
+  const clientId = generateId(type);
+
+  fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      apiKey:API_KEY,
+      action:"createClient",
+      clientId,
+      name,
+      plan,
+      expert
+    })
   })
-}).then(()=>loadRules());
-}
-
-/* ---------- LOAD CLIENTS ---------- */
-function loadClients(){
-fetch(API_BASE + "?action=getClients")
-.then(r=>r.json())
-.then(d=>{
-  clientsTable.innerHTML='';
-  d.clients.forEach(c=>{
-    clientsTable.innerHTML += `
-      <tr class="border-t border-slate-800">
-        <td class="p-3">${c.name}<br><span class="text-xs">${c.email}</span></td>
-        <td class="p-3">${c.plan}</td>
-        <td class="p-3 text-green-400">${c.status}</td>
-        <td class="p-3">
-          <button onclick="openClient('${c.clientId}')" class="bg-purple-600 px-3 py-1 rounded text-xs">View</button>
-        </td>
-      </tr>`;
+  .then(r=>r.json())
+  .then(res=>{
+    document.getElementById("result").innerText =
+      "✅ Client Created | ID: "+clientId;
   });
-});
-}
-loadClients();
-
-/* ---------- CLIENT TASKS ---------- */
-function openClient(id){
-document.getElementById('clientModal').classList.remove('hidden');
-fetch(API_BASE + "?action=getClientTasks&clientId="+id)
-.then(r=>r.json())
-.then(d=>{
-  clientTasks.innerHTML='';
-  d.tasks.forEach(t=>{
-    clientTasks.innerHTML += `
-      <tr class="border-t border-slate-800">
-        <td class="p-3">${t.task}</td>
-        <td class="p-3">${t.freelancer||'-'}</td>
-        <td class="p-3">${t.status}</td>
-        <td class="p-3">${t.proof?'<a target="_blank" href="'+t.proof+'" class="text-purple-400">View</a>':'-'}</td>
-      </tr>`;
-  });
-});
-}
-
-function closeModal(){
-document.getElementById('clientModal').classList.add('hidden');
 }
 </script>
 
