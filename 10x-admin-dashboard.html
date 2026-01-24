@@ -2,38 +2,18 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Bizlink 10X – Admin Dashboard</title>
+<title>Bizlink 10X – Pro Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body{
-  margin:0;
-  font-family:Poppins;
-  background:#020617;
-  color:#e5e7eb;
-}
-.container{max-width:1000px;margin:auto;padding:24px}
-.card{
-  background:#0f172a;
-  border:1px solid rgba(148,163,184,.15);
-  border-radius:14px;
-  padding:20px;
-  margin-bottom:20px;
-}
-input,select,button{
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  margin-top:10px;
-}
-button{
-  background:linear-gradient(90deg,#8b5cf6,#ec4899);
-  color:#fff;
-  font-weight:600;
-  cursor:pointer;
-}
-.grid{display:grid;gap:16px}
-.grid-2{grid-template-columns:1fr 1fr}
+body{margin:0;font-family:Poppins;background:#020617;color:#e5e7eb}
+.container{max-width:1300px;margin:auto;padding:24px}
+.card{background:#0f172a;border:1px solid rgba(148,163,184,.15);
+border-radius:14px;padding:20px;margin-bottom:20px}
+.tabs{display:flex;gap:10px;margin-bottom:20px}
+.tab{padding:10px 20px;background:#1e293b;border-radius:8px;cursor:pointer}
+.active{background:linear-gradient(90deg,#8b5cf6,#ec4899)}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:12px;border-bottom:1px solid rgba(148,163,184,.1)}
 .small{font-size:13px;color:#94a3b8}
 </style>
 </head>
@@ -42,90 +22,85 @@ button{
 <div class="container">
 
 <div class="card">
-  <h2>Bizlink 10X – Admin Control Room</h2>
-  <div class="small">Create & Manage Clients</div>
+  <h2>Bizlink 10X – Mission Control (Admin Pro)</h2>
+  <div class="small">Full System Visibility</div>
 </div>
 
-<div class="card">
-  <h3>Create New Client</h3>
+<div class="tabs">
+  <div class="tab active" onclick="show('overview')">Overview</div>
+  <div class="tab" onclick="show('clients')">Clients</div>
+  <div class="tab" onclick="show('experts')">Experts</div>
+  <div class="tab" onclick="show('works')">Live Works</div>
+</div>
 
-  <div class="grid grid-2">
-    <div>
-      <label>Client Name</label>
-      <input id="clientName" placeholder="ABC School">
-    </div>
+<!-- OVERVIEW -->
+<div id="overview" class="card section">
+  <h3>System Overview</h3>
+  <div id="stats"></div>
+</div>
 
-    <div>
-      <label>Client Type</label>
-      <select id="clientType">
-        <option value="SCH">School</option>
-        <option value="REST">Restaurant</option>
-        <option value="PROP">Property</option>
-        <option value="BUS">Business</option>
-      </select>
-    </div>
+<!-- CLIENTS -->
+<div id="clients" class="card section" style="display:none">
+  <h3>All Clients</h3>
+  <table id="clientTable"></table>
+</div>
 
-    <div>
-      <label>Plan</label>
-      <select id="plan">
-        <option>Starter</option>
-        <option>Premium 10X</option>
-        <option>Elite</option>
-      </select>
-    </div>
+<!-- EXPERTS -->
+<div id="experts" class="card section" style="display:none">
+  <h3>Expert Load</h3>
+  <table id="expertTable"></table>
+</div>
 
-    <div>
-      <label>Assign Expert</label>
-      <input id="expert" placeholder="Ravi / Mohit">
-    </div>
-  </div>
-
-  <button onclick="createClient()">Create Client</button>
-
-  <div id="result" style="margin-top:15px;font-weight:600"></div>
+<!-- WORKS -->
+<div id="works" class="card section" style="display:none">
+  <h3>Live Work Monitor</h3>
+  <table id="workTable"></table>
 </div>
 
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbx4Jxr9d1jt2G97Rihos3P18GqCmZECAI7joBfDmxou5S16BhoXZldzKZxMINPq8X_azA/exec";
-const API_KEY = "BIZLINK_10X_SECRET_2026";
+const API="PASTE_APPS_SCRIPT_URL";
 
-let counter = 1;
-
-function generateId(type){
-  const num = String(counter++).padStart(3,"0");
-  return type + num;
+function show(id){
+  document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+  document.getElementById(id).style.display='block';
 }
 
-function createClient(){
-  const name=document.getElementById("clientName").value;
-  const type=document.getElementById("clientType").value;
-  const plan=document.getElementById("plan").value;
-  const expert=document.getElementById("expert").value;
+async function loadAll(){
+  const res=await fetch(API+"?admin=all");
+  const data=await res.json();
 
-  if(!name || !expert) return alert("Fill all fields");
+  // Overview
+  document.getElementById("stats").innerHTML=`
+    Total Clients: <b>${data.totalClients}</b><br>
+    Active Works: <b>${data.activeWorks}</b><br>
+    Experts: <b>${data.totalExperts}</b>
+  `;
 
-  const clientId = generateId(type);
-
-  fetch(API,{
-    method:"POST",
-    body:JSON.stringify({
-      apiKey:API_KEY,
-      action:"createClient",
-      clientId,
-      name,
-      plan,
-      expert
-    })
-  })
-  .then(r=>r.json())
-  .then(res=>{
-    document.getElementById("result").innerText =
-      "✅ Client Created | ID: "+clientId;
+  // Clients
+  let c=`<tr><th>ID</th><th>Name</th><th>Plan</th><th>Status</th></tr>`;
+  data.clients.forEach(x=>{
+    c+=`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.plan}</td><td>${x.status}</td></tr>`;
   });
-}
-</script>
+  document.getElementById("clientTable").innerHTML=c;
 
+  // Experts
+  let e=`<tr><th>Expert</th><th>Clients</th></tr>`;
+  Object.entries(data.experts).forEach(([k,v])=>{
+    e+=`<tr><td>${k}</td><td>${v}</td></tr>`;
+  });
+  document.getElementById("expertTable").innerHTML=e;
+
+  // Works
+  let w=`<tr><th>Client</th><th>Work</th><th>Status</th></tr>`;
+  data.works.forEach(x=>{
+    w+=`<tr><td>${x.client}</td><td>${x.work}</td><td>${x.status}</td></tr>`;
+  });
+  document.getElementById("workTable").innerHTML=w;
+}
+
+loadAll();
+</script>
 </body>
 </html>
