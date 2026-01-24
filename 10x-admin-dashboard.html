@@ -2,105 +2,180 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Bizlink 10X – Pro Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Bizlink 10X – Admin Control Room</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font-family:Poppins;background:#020617;color:#e5e7eb}
-.container{max-width:1300px;margin:auto;padding:24px}
-.card{background:#0f172a;border:1px solid rgba(148,163,184,.15);
-border-radius:14px;padding:20px;margin-bottom:20px}
-.tabs{display:flex;gap:10px;margin-bottom:20px}
-.tab{padding:10px 20px;background:#1e293b;border-radius:8px;cursor:pointer}
-.active{background:linear-gradient(90deg,#8b5cf6,#ec4899)}
+body{font-family:Poppins;background:#0b1220;color:#fff;margin:0;padding:20px}
+.card{background:#111827;padding:20px;border-radius:12px;margin-bottom:20px}
+h2{margin-top:0}
 table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{padding:12px;border-bottom:1px solid rgba(148,163,184,.1)}
-.small{font-size:13px;color:#94a3b8}
+th,td{padding:10px;border-bottom:1px solid #333;text-align:left}
+button{padding:6px 12px;border:none;border-radius:6px;cursor:pointer}
+.active{background:#065f46}
+.deactive{background:#7f1d1d}
+select{padding:6px;border-radius:6px;background:#0b1220;color:#fff}
 </style>
 </head>
 
 <body>
-<div class="container">
 
 <div class="card">
-  <h2>Bizlink 10X – Mission Control (Admin Pro)</h2>
-  <div class="small">Full System Visibility</div>
+  <h2>Bizlink 10X – Admin Control Room</h2>
 </div>
 
-<div class="tabs">
-  <div class="tab active" onclick="show('overview')">Overview</div>
-  <div class="tab" onclick="show('clients')">Clients</div>
-  <div class="tab" onclick="show('experts')">Experts</div>
-  <div class="tab" onclick="show('works')">Live Works</div>
+<div class="card">
+  <h3>👤 Clients</h3>
+  <table id="clientsTable">
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Status</th><th>Expert</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </div>
 
-<!-- OVERVIEW -->
-<div id="overview" class="card section">
-  <h3>System Overview</h3>
-  <div id="stats"></div>
+<div class="card">
+  <h3>🧑‍💼 Experts</h3>
+  <table id="expertsTable">
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Status</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </div>
 
-<!-- CLIENTS -->
-<div id="clients" class="card section" style="display:none">
-  <h3>All Clients</h3>
-  <table id="clientTable"></table>
-</div>
-
-<!-- EXPERTS -->
-<div id="experts" class="card section" style="display:none">
-  <h3>Expert Load</h3>
-  <table id="expertTable"></table>
-</div>
-
-<!-- WORKS -->
-<div id="works" class="card section" style="display:none">
-  <h3>Live Work Monitor</h3>
-  <table id="workTable"></table>
-</div>
-
+<div class="card">
+  <h3>📋 All Works Monitor</h3>
+  <table id="worksTable">
+    <thead>
+      <tr>
+        <th>Client</th><th>Work</th><th>Status</th><th>Month</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </div>
 
 <script>
-const API="PASTE_APPS_SCRIPT_URL";
+const API_URL = "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
 
-function show(id){
-  document.querySelectorAll('.section').forEach(s=>s.style.display='none');
-  document.getElementById(id).style.display='block';
+async function loadAdmin(){
+  const res = await fetch(API_URL+"?admin=dashboard");
+  const data = await res.json();
+
+  renderClients(data.clients, data.experts);
+  renderExperts(data.experts);
+  renderWorks(data.works);
 }
 
-async function loadAll(){
-  const res=await fetch(API+"?admin=all");
-  const data=await res.json();
+function renderClients(clients, experts){
+  const tbody=document.querySelector("#clientsTable tbody");
+  tbody.innerHTML="";
 
-  // Overview
-  document.getElementById("stats").innerHTML=`
-    Total Clients: <b>${data.totalClients}</b><br>
-    Active Works: <b>${data.activeWorks}</b><br>
-    Experts: <b>${data.totalExperts}</b>
-  `;
+  clients.forEach(c=>{
+    const tr=document.createElement("tr");
 
-  // Clients
-  let c=`<tr><th>ID</th><th>Name</th><th>Plan</th><th>Status</th></tr>`;
-  data.clients.forEach(x=>{
-    c+=`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.plan}</td><td>${x.status}</td></tr>`;
+    const expertOptions = experts.map(e=>
+      `<option value="${e[0]}" ${e[0]==c[4]?'selected':''}>${e[1]}</option>`
+    ).join("");
+
+    tr.innerHTML=`
+      <td>${c[0]}</td>
+      <td>${c[1]}</td>
+      <td>${c[3]}</td>
+      <td>
+        <select onchange="assignExpert('${c[0]}',this.value)">
+          ${expertOptions}
+        </select>
+      </td>
+      <td>
+        <button class="${c[3]=='Active'?'deactive':'active'}"
+          onclick="toggleClient('${c[0]}','${c[3]=='Active'?'De-active':'Active'}')">
+          ${c[3]=='Active'?'De-active':'Activate'}
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
   });
-  document.getElementById("clientTable").innerHTML=c;
-
-  // Experts
-  let e=`<tr><th>Expert</th><th>Clients</th></tr>`;
-  Object.entries(data.experts).forEach(([k,v])=>{
-    e+=`<tr><td>${k}</td><td>${v}</td></tr>`;
-  });
-  document.getElementById("expertTable").innerHTML=e;
-
-  // Works
-  let w=`<tr><th>Client</th><th>Work</th><th>Status</th></tr>`;
-  data.works.forEach(x=>{
-    w+=`<tr><td>${x.client}</td><td>${x.work}</td><td>${x.status}</td></tr>`;
-  });
-  document.getElementById("workTable").innerHTML=w;
 }
 
-loadAll();
+function renderExperts(experts){
+  const tbody=document.querySelector("#expertsTable tbody");
+  tbody.innerHTML="";
+
+  experts.forEach(e=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${e[0]}</td>
+      <td>${e[1]}</td>
+      <td>${e[2]}</td>
+      <td>
+        <button class="${e[2]=='Active'?'deactive':'active'}"
+          onclick="toggleExpert('${e[0]}','${e[2]=='Active'?'De-active':'Active'}')">
+          ${e[2]=='Active'?'De-active':'Activate'}
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderWorks(works){
+  const tbody=document.querySelector("#worksTable tbody");
+  tbody.innerHTML="";
+
+  works.forEach(w=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${w[0]}</td>
+      <td>${w[1]}</td>
+      <td>${w[2]}</td>
+      <td>${w[3]}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function toggleClient(id,status){
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"toggleClient",
+      clientId:id,
+      status:status
+    })
+  });
+  loadAdmin();
+}
+
+async function toggleExpert(id,status){
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"toggleExpert",
+      expertId:id,
+      status:status
+    })
+  });
+  loadAdmin();
+}
+
+async function assignExpert(cid,eid){
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"assignExpert",
+      clientId:cid,
+      expertId:eid
+    })
+  });
+}
+
+loadAdmin();
 </script>
+
 </body>
 </html>
