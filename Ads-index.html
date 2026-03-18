@@ -113,7 +113,7 @@
         <option value="whatsapp">WhatsApp</option>
         <option value="leads">Leads</option>
       </select>
-
+<input type="text" id="location" placeholder="Enter City" />
       <br>
 
       <input type="number" id="budget" value="500" placeholder="Enter Budget" />
@@ -139,6 +139,7 @@
       const business = document.getElementById("business").value;
       const goal = document.getElementById("goal").value;
       const budget = document.getElementById("budget").value;
+      const location = document.getElementById("location").value;
 
       document.getElementById("error").innerText = "";
 
@@ -148,11 +149,12 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            business,
-            goal,
-            budget
-          })
+         body: JSON.stringify({
+  business,
+  goal,
+  budget,
+  location
+})
         });
 
         if (!res.ok) {
