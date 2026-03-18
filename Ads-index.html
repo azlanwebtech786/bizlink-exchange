@@ -162,6 +162,11 @@
         }
 
         const data = await res.json();
+        const randomHeadline = data.headlines[Math.floor(Math.random() * data.headlines.length)];
+
+const randomText = data.texts[Math.floor(Math.random() * data.texts.length)];
+
+const randomCTA = data.ctas[Math.floor(Math.random() * data.ctas.length)];
 
         document.getElementById("result").style.display = "block";
         document.getElementById("result").innerHTML = `
@@ -175,11 +180,11 @@
 
 <h3>🔥 Ad Creative</h3>
 
-<p><b>Headline:</b> ${data.headline}</p>
+<p><b>Headline:</b> ${randomHeadline}</p>
 
-<p><b>Text:</b><br>${data.primaryText}</p>
+<p><b>Text:</b><br>${randomText}</p>
 
-<p><b>CTA:</b> ${data.cta}</p>
+<p><b>CTA:</b> ${randomCTA}</p>
         `;
 
       } catch (err) {
