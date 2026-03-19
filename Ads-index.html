@@ -19,7 +19,7 @@ select,input{padding:10px;margin:10px;border-radius:6px;border:none;width:220px;
 .cta{margin-top:20px;background:#22c55e;color:#000;padding:15px 30px;border-radius:10px;font-weight:bold;cursor:pointer;display:inline-block;}
 #result{margin:40px auto;max-width:500px;padding:20px;border:1px solid #22c55e;border-radius:10px;display:none;}
 .error{color:red;margin-top:10px;}
-#posterResult img{width:320px;border-radius:12px;margin-top:15px;}
+#posterResult img{width:250px;border-radius:10px;margin-top:15px;}
 #pdfContent{display:none;background:#fff;color:#000;padding:20px;}
 </style>
 </head>
@@ -56,22 +56,8 @@ Agency की जरूरत नहीं ❌<br>
 </select>
 
 <input type="text" id="location" placeholder="Enter City" />
-
 <br>
-
 <input type="number" id="budget" value="500" />
-
-<br>
-
-<!-- 🔥 NEW FEATURES -->
-<input type="file" id="logoUpload" accept="image/*" />
-<br>
-
-<select id="template">
-<option value="modern">Modern</option>
-<option value="bold">Bold</option>
-<option value="minimal">Minimal</option>
-</select>
 
 </div>
 
@@ -85,7 +71,7 @@ Agency की जरूरत नहीं ❌<br>
 📄 Download PDF
 </button>
 
-<div class="cta" onclick="generatePoster()">🎨 Generate Poster</div>
+<div class="cta" onclick="generatePoster()">🎨 Generate Posters</div>
 
 <div id="posterResult"></div>
 
@@ -112,15 +98,12 @@ body:JSON.stringify({ business,goal,budget,location })
 
 const data=await res.json();
 
-const randomHeadline=data.headlines[Math.floor(Math.random()*data.headlines.length)];
-const randomText=data.texts[Math.floor(Math.random()*data.texts.length)];
-const randomCTA=data.ctas[Math.floor(Math.random()*data.ctas.length)];
-
 document.getElementById("result").style.display="block";
 document.getElementById("pdfBtn").style.display="inline-block";
 
 document.getElementById("result").innerHTML=`
 <h2>🔥 Strategy Result</h2>
+
 <p><b>Campaign:</b> ${data.campaign}</p>
 <p><b>Audience:</b> ${data.audience}</p>
 <p><b>Creative:</b> ${data.creative}</p>
@@ -129,10 +112,14 @@ document.getElementById("result").innerHTML=`
 
 <hr>
 
-<h3>🔥 Ad Creative</h3>
-<p><b>Headline:</b> ${randomHeadline}</p>
-<p><b>Text:</b> ${randomText}</p>
-<p><b>CTA:</b> ${randomCTA}</p>
+<h3>🔥 Headlines</h3>
+${data.headlines.map(h=>`<p>• ${h}</p>`).join("")}
+
+<h3>🔥 Primary Text</h3>
+${data.texts.map(t=>`<p>• ${t}</p>`).join("")}
+
+<h3>🔥 CTA</h3>
+${data.ctas.map(c=>`<p>• ${c}</p>`).join("")}
 `;
 
 }catch(err){
@@ -143,6 +130,7 @@ document.getElementById("error").innerText="❌ Backend error";
 
 // PDF
 function downloadPDF(){
+
 const result=document.getElementById("result");
 const pdf=document.getElementById("pdfContent");
 
@@ -153,121 +141,69 @@ setTimeout(()=>{
 html2pdf().from(pdf).save();
 pdf.style.display="none";
 },500);
+
 }
 
-// POSTER SYSTEM
+// MULTI POSTERS
 function generatePoster(){
+
+const container=document.getElementById("posterResult");
+container.innerHTML="";
+
+const business=document.getElementById("business").value;
+const location=document.getElementById("location").value;
+
+const templates=["modern","bold","minimal"];
+
+templates.forEach(template=>{
 
 const canvas=document.createElement("canvas");
 canvas.width=1080;
 canvas.height=1080;
+
 const ctx=canvas.getContext("2d");
 
-const business=document.getElementById("business").value;
-const location=document.getElementById("location").value;
-const template=document.getElementById("template").value;
-const logoFile=document.getElementById("logoUpload").files[0];
+// Background
+let bg="#020617";
+if(template==="bold") bg="#ff3b3b";
+if(template==="minimal") bg="#ffffff";
 
-// Background images
-let bgUrl="";
-if(business==="restaurant"){
-bgUrl="https://images.unsplash.com/photo-1504674900247-0877df9cc836";
-}
-else if(business==="school"){
-bgUrl="https://images.unsplash.com/photo-1588072432836-e10032774350";
-}
-else{
-bgUrl="https://images.unsplash.com/photo-1521791136064-7986c2920216";
-}
-
-const bgImg=new Image();
-bgImg.crossOrigin="anonymous";
-bgImg.src=bgUrl;
-
-bgImg.onload=()=>{
-
-ctx.drawImage(bgImg,0,0,1080,1080);
-
-// Overlay
-ctx.fillStyle="rgba(0,0,0,0.6)";
+ctx.fillStyle=bg;
 ctx.fillRect(0,0,1080,1080);
 
-// Template color
-let mainColor="#22c55e";
-if(template==="bold") mainColor="#ff3b3b";
-if(template==="minimal") mainColor="#ffffff";
+// Text color
+ctx.fillStyle=template==="minimal"?"#000":"#fff";
 
-// Logo
-if(logoFile){
-const reader=new FileReader();
-reader.onload=function(e){
-const logo=new Image();
-logo.src=e.target.result;
-
-logo.onload=function(){
-ctx.drawImage(logo,50,50,150,150);
-drawText();
-}
-}
-reader.readAsDataURL(logoFile);
-}else{
-drawText();
-}
-
-function drawText(){
-
-ctx.fillStyle=mainColor;
-ctx.font="bold 70px Arial";
-ctx.fillText("AutoMetaAds",250,120);
+// Title
+ctx.font="bold 60px Arial";
+ctx.fillText("AutoMetaAds",200,120);
 
 // Headline
-ctx.fillStyle="#fff";
-ctx.font="bold 80px Arial";
-
-let headline="";
-if(business==="restaurant"){headline=`Best Food in ${location}`;}
-else if(business==="school"){headline=`Top School in ${location}`;}
-else{headline=`Best Services in ${location}`;}
-
-wrapText(ctx,headline,100,400,800,90);
+ctx.font="bold 70px Arial";
+ctx.fillText(`Best ${business}`,100,400);
+ctx.fillText(`in ${location}`,100,480);
 
 // CTA
-ctx.fillStyle=mainColor;
-ctx.fillRect(100,750,600,120);
+ctx.fillStyle="#22c55e";
+ctx.fillRect(100,700,500,100);
 
 ctx.fillStyle="#000";
-ctx.font="bold 50px Arial";
-ctx.fillText("Contact Now 🚀",150,825);
+ctx.font="bold 40px Arial";
+ctx.fillText("Contact Now 🚀",140,760);
 
 // Output
 const img=canvas.toDataURL();
 
-document.getElementById("posterResult").innerHTML=`
+const div=document.createElement("div");
+div.innerHTML=`
 <img src="${img}">
-<br><br>
-<a href="${img}" download="poster.png" class="cta">Download Poster</a>
+<br>
+<a href="${img}" download="poster.png" class="cta">Download</a>
 `;
-}
 
-};
+container.appendChild(div);
 
-// Text Wrap
-function wrapText(ctx,text,x,y,maxWidth,lineHeight){
-const words=text.split(" ");
-let line="";
-for(let n=0;n<words.length;n++){
-let testLine=line+words[n]+" ";
-let testWidth=ctx.measureText(testLine).width;
-if(testWidth>maxWidth && n>0){
-ctx.fillText(line,x,y);
-line=words[n]+" ";
-y+=lineHeight;
-}else{
-line=testLine;
-}
-}
-ctx.fillText(line,x,y);
-}
+});
 
 }
 
