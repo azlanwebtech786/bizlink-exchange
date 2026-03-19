@@ -160,6 +160,15 @@ img.src=url;
 
 // 🎨 MAIN
 async function generatePoster(){
+  const res = await fetch("http://localhost:5000/generate-image",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({business,location,offer})
+});
+
+const data = await res.json();
+
+img = await loadImage(data.image);
 
 const container=document.getElementById("posterResult");
 container.innerHTML="⏳ Generating...";
