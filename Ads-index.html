@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <meta charset="UTF-8" />
   <title>Auto Meta Ads – Beginner to Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -130,6 +131,9 @@
 
     <!-- 🔥 RESULT -->
     <div id="result"></div>
+    <button onclick="downloadPDF()" class="cta" style="margin-top:15px;">
+  📄 Download PDF
+</button>
 
   </section>
 
@@ -185,6 +189,7 @@ const randomCTA = data.ctas[Math.floor(Math.random() * data.ctas.length)];
 <p><b>Text:</b><br>${randomText}</p>
 
 <p><b>CTA:</b> ${randomCTA}</p>
+
         `;
 
       } catch (err) {
@@ -194,6 +199,13 @@ const randomCTA = data.ctas[Math.floor(Math.random() * data.ctas.length)];
       }
     }
   </script>
+  
+<script>
+function downloadPDF() {
+  const element = document.getElementById("result");
 
+  html2pdf().from(element).save();
+}
+</script>
 </body>
 </html>
