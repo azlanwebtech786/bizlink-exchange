@@ -163,7 +163,7 @@ img=await loadImage(data.image);
 console.log("AI fail → fallback");
 
 // fallback
-img=await loadImage(`https://source.unsplash.com/1080x1080/?${business},${location},${Math.random()}`);
+img = await loadImage(`https://picsum.photos/1080?random=${Math.random()}`);
 }
 
 // CANVAS
