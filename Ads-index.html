@@ -91,37 +91,19 @@ logoImg.src=event.target.result;
 reader.readAsDataURL(e.target.files[0]);
 });
 
-// 🔥 BUSINESS IMAGES
-function getImages(business,location){
-const map={
-restaurant:`food,restaurant,dish`,
-clothing:`fashion,clothing,model`,
-salon:`salon,hair,beauty`,
-gym:`fitness,gym,workout`,
-school:`school,classroom`,
-service:`office,business`
-};
-let key=map[business]||business;
-return [
-`https://source.unsplash.com/1080x1080/?${key},${location},${Math.random()}`,
-`https://picsum.photos/1080?random=${Math.random()}`
-];
-}
-
-// 🔥 AI STYLE HEADLINES
+// HEADLINE
 function getHeadline(business,location,name){
 const list=[
 `🔥 ${name} – ${location} का No.1 ${business}`,
 `😍 ${location} में सबसे trusted ${business}`,
 `🚀 Premium ${business} experience`,
 `💯 Best ${business} service near you`,
-`⚡ Limited time ${business} offer`,
-`🔥 Upgrade your ${business} today`
+`⚡ Limited time ${business} offer`
 ];
 return list[Math.floor(Math.random()*list.length)];
 }
 
-// 🔥 CAPTION
+// CAPTION
 function generateCaption(business,location,name,offer){
 return {
 caption:`🔥 ${name} – Best ${business} in ${location}
@@ -129,25 +111,11 @@ ${offer ? "🎁 "+offer : ""}
 आज ही visit करें!
 📍 ${location}
 📲 Contact Now`,
-hashtags:`#${name.replace(/\s/g,"")} #${location} #${business} #marketing #growth #ads #india`
+hashtags:`#${name.replace(/\s/g,"")} #${location} #${business} #marketing #growth #ads`
 };
 }
 
-// 🔥 STRATEGY
-function generateStrategy(business,location){
-return `
-📊 Ads Strategy:
-
-• Platform: Facebook + Instagram Ads  
-• Target: ${location} (5 KM radius)  
-• Audience: Local customers interested in ${business}  
-• Budget: ₹300-₹500/day  
-• Creative: Offer + Emotional hook  
-• CTA: WhatsApp / Call Now  
-`;
-}
-
-// 🔥 LOAD IMAGE
+// IMAGE LOADER
 function loadImage(url){
 return new Promise((res,rej)=>{
 const img=new Image();
@@ -158,20 +126,13 @@ img.src=url;
 });
 }
 
-// 🎨 MAIN
+// MAIN FUNCTION ✅ FIXED
 async function generatePoster(){
-  const res = await fetch("http://localhost:5000/generate-image",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({business,location,offer})
-});
-
-const data = await res.json();
-
-img = await loadImage(data.image);
 
 const container=document.getElementById("posterResult");
 container.innerHTML="⏳ Generating...";
+
+try{
 
 const business=document.getElementById("business").value;
 const location=document.getElementById("location").value || "india";
@@ -181,27 +142,40 @@ const phone=document.getElementById("phone").value || "Contact Now";
 
 container.innerHTML="";
 
+// 👉 2 posters
 for(let i=0;i<2;i++){
 
-let urls=getImages(business,location);
 let img;
 
-for(let url of urls){
+// 🔥 AI IMAGE TRY
 try{
-img=await loadImage(url);
-break;
-}catch(e){}
+const res=await fetch("http://localhost:5000/generate-image",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({business,location,offer})
+});
+
+const data=await res.json();
+img=await loadImage(data.image);
+
+}catch(e){
+
+console.log("AI fail → fallback");
+
+// fallback
+img=await loadImage(`https://source.unsplash.com/1080x1080/?${business},${location},${Math.random()}`);
 }
 
+// CANVAS
 const canvas=document.createElement("canvas");
 canvas.width=1080;
 canvas.height=1080;
 const ctx=canvas.getContext("2d");
 
 // BG
-if(img) ctx.drawImage(img,0,0,1080,1080);
+ctx.drawImage(img,0,0,1080,1080);
 
-// GRADIENT OVERLAY
+// GRADIENT
 let grad=ctx.createLinearGradient(0,0,0,1080);
 grad.addColorStop(0,"rgba(0,0,0,0.3)");
 grad.addColorStop(1,"rgba(0,0,0,0.9)");
@@ -224,7 +198,7 @@ ctx.fillStyle="#fff";
 ctx.font="bold 75px Arial";
 wrapText(ctx,headline,540,420,800,90);
 
-// OFFER TAG 🎯
+// OFFER
 if(offer){
 ctx.fillStyle="#ff3b3b";
 ctx.fillRect(390,250,300,80);
@@ -248,11 +222,11 @@ container.innerHTML+=`
 <br>
 <a href="${imgData}" download="poster-${i}.png" class="cta">Download</a>
 `;
+
 }
 
-// CAPTION + STRATEGY
+// CAPTION
 const ad=generateCaption(business,location,name,offer);
-const strategy=generateStrategy(business,location);
 
 container.innerHTML+=`
 <div class="box">
@@ -261,14 +235,18 @@ container.innerHTML+=`
 
 <h3>🔥 Hashtags</h3>
 <p>${ad.hashtags}</p>
-
-<h3>📊 Ads Strategy</h3>
-<p>${strategy.replace(/\n/g,"<br>")}</p>
 </div>
 `;
+
+}catch(err){
+
+console.log(err);
+container.innerHTML="❌ Error aaya (console check kar)";
 }
 
-// wrap
+}
+
+// WRAP
 function wrapText(ctx,text,x,y,maxWidth,lineHeight){
 const words=text.split(" ");
 let line="";
