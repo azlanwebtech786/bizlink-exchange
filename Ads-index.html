@@ -77,6 +77,15 @@
       color: red;
       margin-top: 10px;
     }
+
+    /* 🔥 PDF container (hidden) */
+    #pdfContent {
+      display: none;
+      background: #ffffff;
+      color: #000;
+      padding: 20px;
+    }
+
   </style>
 </head>
 
@@ -139,6 +148,9 @@
     <button id="pdfBtn" onclick="downloadPDF()" class="cta" style="display:none;">
       📄 Download PDF
     </button>
+
+    <!-- 🔥 HIDDEN PDF -->
+    <div id="pdfContent"></div>
 
   </section>
 
@@ -204,12 +216,17 @@
 
     function downloadPDF() {
 
-      const element = document.getElementById("result");
+      const result = document.getElementById("result");
+      const pdfContent = document.getElementById("pdfContent");
 
-      if (element.style.display === "none") {
+      if (result.style.display === "none") {
         alert("Pehle strategy generate karo 😄");
         return;
       }
+
+      // 🔥 Copy content to white background
+      pdfContent.innerHTML = result.innerHTML;
+      pdfContent.style.display = "block";
 
       const opt = {
         margin: 0.5,
@@ -220,7 +237,8 @@
       };
 
       setTimeout(() => {
-        html2pdf().set(opt).from(element).save();
+        html2pdf().set(opt).from(pdfContent).save();
+        pdfContent.style.display = "none";
       }, 500);
     }
   </script>
