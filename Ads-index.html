@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Auto Meta Ads – Beginner to Pro</title>
+<title>Auto Meta Ads – PRO AI SYSTEM</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -20,7 +20,6 @@ select,input{padding:10px;margin:10px;border-radius:6px;border:none;width:220px;
 #result{margin:40px auto;max-width:500px;padding:20px;border:1px solid #22c55e;border-radius:10px;display:none;}
 .error{color:red;margin-top:10px;}
 #posterResult img{width:260px;border-radius:12px;margin-top:15px;}
-#pdfContent{display:none;background:#fff;color:#000;padding:20px;}
 .box{max-width:500px;margin:auto;background:#111;padding:15px;border-radius:10px;margin-top:20px;text-align:left;}
 </style>
 </head>
@@ -28,18 +27,12 @@ select,input{padding:10px;margin:10px;border-radius:6px;border:none;width:220px;
 <body>
 
 <div class="navbar">
-<div class="logo">AutoMetaAds</div>
+<div class="logo">AutoMetaAds PRO</div>
 </div>
 
 <section class="hero">
 
-<h1>Beginners के लिए <span>Pro Level Meta Ads</span><br>अब 1 Click में</h1>
-
-<p>
-Ads सीखने की जरूरत नहीं ❌<br>
-Agency की जरूरत नहीं ❌<br>
-बस details भरो और result देखो ✅
-</p>
+<h1>🔥 AI Powered <span>Ads Creator</span></h1>
 
 <div class="form-box">
 
@@ -49,101 +42,53 @@ Agency की जरूरत नहीं ❌<br>
 <option value="service">Service</option>
 </select>
 
-<br>
-
-<select id="goal">
-<option value="whatsapp">WhatsApp</option>
-<option value="leads">Leads</option>
-</select>
-
 <input type="text" id="location" placeholder="Enter City" />
-<br>
-<input type="number" id="budget" value="500" />
 
 </div>
 
-<div class="cta" onclick="getStrategy()">🚀 Generate Ads Strategy</div>
-
-<div id="error" class="error"></div>
-<div id="result"></div>
-
-<button id="pdfBtn" onclick="downloadPDF()" class="cta" style="display:none;">
-📄 Download PDF
-</button>
-
-<div class="cta" onclick="generatePoster()">🎨 Generate Posters</div>
+<div class="cta" onclick="generatePoster()">🎨 Generate AI Posters</div>
 <div class="cta" onclick="generateInstaAd()">🔥 Instagram Ad</div>
 
 <div id="posterResult"></div>
-<div id="pdfContent"></div>
 
 </section>
 
 <script>
 
-// ===== STRATEGY =====
-async function getStrategy(){
+// 🔥 HEADLINES ENGINE
+function getHeadlines(business,location){
 
-const business=document.getElementById("business").value;
-const goal=document.getElementById("goal").value;
-const budget=document.getElementById("budget").value;
-const location=document.getElementById("location").value;
-
-try{
-
-const res=await fetch("http://localhost:5000/ads/generate",{
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({ business,goal,budget,location })
-});
-
-const data=await res.json();
-
-document.getElementById("result").style.display="block";
-document.getElementById("pdfBtn").style.display="inline-block";
-
-document.getElementById("result").innerHTML=`
-<h2>🔥 Strategy Result</h2>
-
-<p><b>Campaign:</b> ${data.campaign}</p>
-<p><b>Audience:</b> ${data.audience}</p>
-<p><b>Creative:</b> ${data.creative}</p>
-<p><b>Timing:</b> ${data.timing}</p>
-<p><b>Setup:</b> ${data.setup}</p>
-
-<hr>
-
-<h3>🔥 Headlines</h3>
-${data.headlines.map(h=>`<p>• ${h}</p>`).join("")}
-
-<h3>🔥 Primary Text</h3>
-${data.texts.map(t=>`<p>• ${t}</p>`).join("")}
-
-<h3>🔥 CTA</h3>
-${data.ctas.map(c=>`<p>• ${c}</p>`).join("")}
-`;
-
-}catch(err){
-document.getElementById("error").innerText="❌ Backend error";
+if(business==="restaurant"){
+return [
+`Hungry in ${location}? 🍔`,
+`Best Food in ${location} 😍`,
+`Taste You’ll Love 🔥`,
+`Order Delicious Food Today`,
+`Craving Something Tasty?`
+];
 }
+
+if(business==="school"){
+return [
+`Best School in ${location}`,
+`Admissions Open Now 🎓`,
+`Secure Your Child Future`,
+`Top Education Near You`,
+`Limited Seats Available`
+];
+}
+
+return [
+`Best Service in ${location}`,
+`Trusted by Hundreds`,
+`Fast & Reliable Service`,
+`Your Problem Our Solution`,
+`Contact Today 🚀`
+];
 
 }
 
-// ===== PDF =====
-function downloadPDF(){
-const result=document.getElementById("result");
-const pdf=document.getElementById("pdfContent");
-
-pdf.innerHTML=result.innerHTML;
-pdf.style.display="block";
-
-setTimeout(()=>{
-html2pdf().from(pdf).save();
-pdf.style.display="none";
-},500);
-}
-
-// ===== POSTER PRO =====
+// 🔥 POSTER SYSTEM
 function generatePoster(){
 
 const container=document.getElementById("posterResult");
@@ -152,21 +97,11 @@ container.innerHTML="";
 const business=document.getElementById("business").value;
 const location=document.getElementById("location").value;
 
-let bgUrl="";
+const headlines=getHeadlines(business,location);
 
-if(business==="restaurant"){
-bgUrl="https://images.unsplash.com/photo-1504674900247-0877df9cc836";
-}
-else if(business==="school"){
-bgUrl="https://images.unsplash.com/photo-1588072432836-e10032774350";
-}
-else{
-bgUrl="https://images.unsplash.com/photo-1521791136064-7986c2920216";
-}
+headlines.forEach(headline=>{
 
-const templates=["modern","bold","minimal"];
-
-templates.forEach(template=>{
+let bgUrl=`https://source.unsplash.com/1080x1080/?${business},${location},${Math.random()}`;
 
 const canvas=document.createElement("canvas");
 canvas.width=1080;
@@ -182,29 +117,24 @@ img.onload=function(){
 ctx.drawImage(img,0,0,1080,1080);
 
 // overlay
-ctx.fillStyle="rgba(0,0,0,0.6)";
+ctx.fillStyle="rgba(0,0,0,0.65)";
 ctx.fillRect(0,0,1080,1080);
-
-let mainColor="#22c55e";
-if(template==="bold") mainColor="#ff3b3b";
-if(template==="minimal") mainColor="#ffffff";
 
 ctx.textAlign="center";
 
-// title
-ctx.fillStyle=mainColor;
-ctx.font="bold 60px Arial";
+// brand
+ctx.fillStyle="#22c55e";
+ctx.font="bold 50px Arial";
 ctx.fillText("AutoMetaAds",540,120);
 
 // headline
 ctx.fillStyle="#fff";
-ctx.font="bold 80px Arial";
+ctx.font="bold 90px Arial";
 
-let text=`Best ${business} in ${location}`;
-wrapText(ctx,text,540,450,800,90);
+wrapText(ctx,headline,540,450,800,100);
 
 // CTA
-ctx.fillStyle=mainColor;
+ctx.fillStyle="#22c55e";
 ctx.fillRect(300,750,480,110);
 
 ctx.fillStyle="#000";
@@ -218,13 +148,14 @@ container.innerHTML+=`
 <br>
 <a href="${imgData}" download="poster.png" class="cta">Download</a>
 `;
+
 };
 
 });
 
 }
 
-// ===== TEXT WRAP =====
+// 🔥 TEXT WRAP
 function wrapText(ctx,text,x,y,maxWidth,lineHeight){
 const words=text.split(" ");
 let line="";
@@ -242,7 +173,7 @@ line=testLine;
 ctx.fillText(line,x,y);
 }
 
-// ===== INSTAGRAM AI =====
+// 🔥 INSTAGRAM AI
 function generateInstaAd(){
 
 const container=document.getElementById("posterResult");
@@ -253,26 +184,13 @@ const location=document.getElementById("location").value;
 
 let headline=`Best ${business} in ${location}`;
 
-const captions=[
-`🔥 ${headline}\nआज ही try करें!\n📍 ${location}\n📲 Message Now`,
-`🚀 ${headline}\nQuality service guaranteed 💯\n📍 ${location}\n📲 Contact Now`,
-`😍 ${headline}\nLimited offer today!\n📍 ${location}\n📲 Book Now`
-];
+const caption=`🔥 ${headline}
 
-const caption=captions[Math.floor(Math.random()*captions.length)];
+आज ही try करें!
+📍 ${location}
+📲 Message Now`;
 
-const hashtags=[
-`#${location}`,
-`#${business}`,
-`#localbusiness`,
-`#marketing`,
-`#growth`,
-`#ads`,
-`#digitalmarketing`,
-`#viral`,
-`#india`,
-`#business`
-];
+const hashtags=`#${location} #${business} #localbusiness #ads #marketing #growth #viral`;
 
 container.innerHTML=`
 <div class="box">
@@ -280,11 +198,12 @@ container.innerHTML=`
 <p>${caption.replace(/\n/g,"<br>")}</p>
 
 <h3>🔥 Hashtags</h3>
-<p>${hashtags.join(" ")}</p>
+<p>${hashtags}</p>
 </div>
 `;
 
 }
+
 </script>
 
 </body>
