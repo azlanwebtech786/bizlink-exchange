@@ -1,105 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Auto Meta Ads – Beginner to Pro</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<title>Auto Meta Ads – Beginner to Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- PDF LIBRARY -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- 🔥 PUTER AI -->
-  <script src="https://js.puter.com/v2/"></script>
-
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family: Arial; }
-
-    body { background:#020617; color:#fff; text-align:center; }
-
-    .navbar { padding:20px; border-bottom:1px solid #1f2933; }
-
-    .logo { color:#22c55e; font-weight:bold; font-size:20px; }
-
-    .hero { padding:80px 20px; }
-
-    h1 span { color:#22c55e; }
-
-    .form-box { margin-top:30px; }
-
-    select,input {
-      padding:10px; margin:10px;
-      border-radius:6px; border:none; width:220px;
-    }
-
-    .cta {
-      margin-top:20px; background:#22c55e;
-      color:#000; padding:15px 30px;
-      border-radius:10px; font-weight:bold;
-      cursor:pointer; display:inline-block;
-    }
-
-    #result {
-      margin:40px auto; max-width:500px;
-      padding:20px; border:1px solid #22c55e;
-      border-radius:10px; display:none;
-    }
-
-    #posterResult img {
-      width:300px;
-      border-radius:10px;
-      margin-top:15px;
-    }
-
-    .error { color:red; margin-top:10px; }
-
-    #pdfContent {
-      display:none; background:#fff;
-      color:#000; padding:20px;
-    }
-  </style>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+body{background:#020617;color:#fff;text-align:center;}
+.navbar{padding:20px;border-bottom:1px solid #1f2933;}
+.logo{color:#22c55e;font-weight:bold;font-size:20px;}
+.hero{padding:80px 20px;}
+h1 span{color:#22c55e;}
+.form-box{margin-top:30px;}
+select,input{padding:10px;margin:10px;border-radius:6px;border:none;width:220px;}
+.cta{margin-top:20px;background:#22c55e;color:#000;padding:15px 30px;border-radius:10px;font-weight:bold;cursor:pointer;display:inline-block;}
+#result{margin:40px auto;max-width:500px;padding:20px;border:1px solid #22c55e;border-radius:10px;display:none;}
+.error{color:red;margin-top:10px;}
+#posterResult img{width:300px;border-radius:10px;margin-top:15px;}
+#pdfContent{display:none;background:#fff;color:#000;padding:20px;}
+</style>
 </head>
 
 <body>
 
 <div class="navbar">
-  <div class="logo">AutoMetaAds</div>
+<div class="logo">AutoMetaAds</div>
 </div>
 
 <section class="hero">
 
-<h1>
-  Beginners के लिए  
-  <span>Pro Level Meta Ads</span><br />
-  अब 1 Click में
-</h1>
+<h1>Beginners के लिए <span>Pro Level Meta Ads</span><br>अब 1 Click में</h1>
 
 <p>
-  Ads सीखने की जरूरत नहीं ❌<br />
-  Agency की जरूरत नहीं ❌<br />
-  बस details भरो और result देखो ✅
+Ads सीखने की जरूरत नहीं ❌<br>
+Agency की जरूरत नहीं ❌<br>
+बस details भरो और result देखो ✅
 </p>
 
 <div class="form-box">
-
 <select id="business">
-  <option value="restaurant">Restaurant</option>
-  <option value="school">School</option>
-  <option value="service">Service</option>
+<option value="restaurant">Restaurant</option>
+<option value="school">School</option>
+<option value="service">Service</option>
 </select>
 
 <br>
 
 <select id="goal">
-  <option value="whatsapp">WhatsApp</option>
-  <option value="leads">Leads</option>
+<option value="whatsapp">WhatsApp</option>
+<option value="leads">Leads</option>
 </select>
 
 <input type="text" id="location" placeholder="Enter City" />
-
 <br>
-
 <input type="number" id="budget" value="500" />
-
 </div>
 
 <div class="cta" onclick="getStrategy()">🚀 Generate Ads Strategy</div>
@@ -112,8 +70,7 @@
 📄 Download PDF
 </button>
 
-<!-- 🔥 AI POSTER BUTTON -->
-<div class="cta" onclick="generateAIPoster()">🎨 Generate AI Poster</div>
+<div class="cta" onclick="generatePoster()">🎨 Generate Poster</div>
 
 <div id="posterResult"></div>
 
@@ -171,6 +128,7 @@ document.getElementById("error").innerText="❌ Backend error";
 
 }
 
+// ✅ FIXED PDF
 function downloadPDF(){
 
 const result=document.getElementById("result");
@@ -179,56 +137,76 @@ const pdf=document.getElementById("pdfContent");
 pdf.innerHTML=result.innerHTML;
 pdf.style.display="block";
 
+const opt={
+margin:0.5,
+filename:'ads-strategy.pdf',
+html2canvas:{scale:2},
+jsPDF:{unit:'in',format:'a4'}
+};
+
 setTimeout(()=>{
-html2pdf().from(pdf).save();
+html2pdf().set(opt).from(pdf).save().then(()=>{
 pdf.style.display="none";
+});
 },500);
 
 }
 
-async function generateAIPoster(){
+// ✅ 100% WORKING POSTER (NO ERROR)
+function generatePoster(){
+
+const canvas=document.createElement("canvas");
+canvas.width=1080;
+canvas.height=1080;
+
+const ctx=canvas.getContext("2d");
 
 const business=document.getElementById("business").value;
 const location=document.getElementById("location").value;
 
-let prompt="";
+// Background
+ctx.fillStyle="#020617";
+ctx.fillRect(0,0,1080,1080);
+
+// Title
+ctx.fillStyle="#22c55e";
+ctx.font="bold 70px Arial";
+ctx.fillText("AutoMetaAds",200,150);
+
+// Main Text
+ctx.fillStyle="#fff";
+ctx.font="bold 60px Arial";
+
+let text="";
 
 if(business==="restaurant"){
-prompt=`food advertisement poster restaurant in ${location}`;
+text=`Best Food in ${location}`;
 }
 else if(business==="school"){
-prompt=`school ad poster in ${location}`;
+text=`Top School in ${location}`;
 }
 else{
-prompt=`service ad poster in ${location}`;
+text=`Best Services in ${location}`;
 }
 
-document.getElementById("posterResult").innerHTML="⏳ Generating...";
+ctx.fillText(text,100,400);
 
-try{
+// CTA box
+ctx.fillStyle="#22c55e";
+ctx.fillRect(100,700,500,100);
 
-if(typeof puter === "undefined"){
-throw new Error("Puter not loaded");
-}
+ctx.fillStyle="#000";
+ctx.font="bold 40px Arial";
+ctx.fillText("Contact Now 🚀",140,760);
 
-const img=await puter.ai.image({ prompt });
+// Output
+const img=canvas.toDataURL();
 
-document.getElementById("posterResult").innerHTML="";
-document.getElementById("posterResult").appendChild(img);
-
-}catch(err){
-
-// 🔥 FALLBACK (no error)
 document.getElementById("posterResult").innerHTML=`
-<div style="background:#111; padding:20px; border-radius:10px;">
-<h2 style="color:#22c55e;">AutoMetaAds</h2>
-<p style="font-size:20px;">Best ${business} in ${location}</p>
-<p>Contact Now 🚀</p>
-</div>
+<img src="${img}">
+<br><br>
+<a href="${img}" download="poster.png" class="cta">Download Poster</a>
 `;
-
-console.error("Poster error:",err);
-}
 
 }
 
