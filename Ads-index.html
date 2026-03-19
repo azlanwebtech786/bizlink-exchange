@@ -27,6 +27,16 @@ display:inline-block;
 #posterResult img{
 width:260px;border-radius:12px;margin-top:15px;
 }
+
+.box{
+background:#111;
+padding:15px;
+border-radius:10px;
+margin-top:20px;
+max-width:500px;
+margin-left:auto;
+margin-right:auto;
+}
 </style>
 </head>
 
@@ -44,6 +54,8 @@ width:260px;border-radius:12px;margin-top:15px;
 <option value="restaurant">Restaurant</option>
 <option value="school">School</option>
 <option value="service">Service</option>
+<option value="salon">Salon</option>
+<option value="clothing">Clothing</option>
 </select>
 
 <input type="text" id="location" placeholder="City">
@@ -56,6 +68,10 @@ width:260px;border-radius:12px;margin-top:15px;
 
 <br>
 
+<input type="file" id="logoInput">
+
+<br>
+
 <div class="cta" onclick="generatePoster()">🎨 Generate Posters</div>
 
 <div id="posterResult"></div>
@@ -64,17 +80,63 @@ width:260px;border-radius:12px;margin-top:15px;
 
 <script>
 
+// 🔥 LOGO
+let logoImg=null;
+
+document.getElementById("logoInput").addEventListener("change",function(e){
+const file=e.target.files[0];
+const reader=new FileReader();
+
+reader.onload=function(event){
+logoImg=new Image();
+logoImg.src=event.target.result;
+};
+
+reader.readAsDataURL(file);
+});
+
 // 🔥 HEADLINES
 function getHeadlines(business,location){
 return [
-`Best ${business} in ${location} 🔥`,
-`Top ${business} Near You 😍`,
-`Trusted ${business} Service 💯`,
-`Premium ${business} Experience 🚀`
+`🔥 ${location} का No.1 ${business}`,
+`🚀 Best ${business} in ${location}`,
+`😍 Premium ${business} Experience`,
+`💯 Trusted ${business} Service`,
+`⚡ ${business} Upgrade Your Lifestyle`,
+`🔥 Limited Offer ${business}`
 ];
 }
 
-// 🔥 SAFE IMAGE LOADER (FIX)
+// 🔥 CAPTION
+function generateCaption(business,location){
+
+const captions=[
+`🔥 Best ${business} in ${location}\nआज ही try करें!\n📍 ${location}\n📲 Message Now`,
+`🚀 Top ${business} near you\nLimited offer today!\n📍 ${location}\n📲 Contact Now`,
+`😍 Premium ${business} service\nDon't miss this deal!\n📍 ${location}\n📲 Book Now`
+];
+
+const hashtags=[
+`#${location}`,
+`#${business}`,
+`#localbusiness`,
+`#marketing`,
+`#growth`,
+`#ads`,
+`#digitalmarketing`,
+`#india`,
+`#viral`,
+`#business`
+];
+
+return {
+caption: captions[Math.floor(Math.random()*captions.length)],
+hashtags: hashtags.join(" ")
+};
+
+}
+
+// 🔥 IMAGE LOADER
 function loadImage(url){
 return new Promise((resolve,reject)=>{
 const img=new Image();
@@ -87,7 +149,7 @@ img.src=url;
 });
 }
 
-// 🎨 MAIN POSTER FUNCTION
+// 🎨 MAIN FUNCTION
 async function generatePoster(){
 
 const container=document.getElementById("posterResult");
@@ -101,22 +163,16 @@ const phone=document.getElementById("phone").value || "Contact Now";
 
 const headlines=getHeadlines(business,location);
 
-// 2 posters only
-const selected=[
-headlines[Math.floor(Math.random()*headlines.length)],
-headlines[Math.floor(Math.random()*headlines.length)]
-];
-
 container.innerHTML="";
 
+// 👉 हमेशा 2 posters
 for(let i=0;i<2;i++){
 
-let headline=selected[i];
+let headline=headlines[Math.floor(Math.random()*headlines.length)];
 
-// 🔥 MULTIPLE IMAGE SOURCES (fallback fix)
 let urls=[
-`https://source.unsplash.com/1080x1080/?${business},${location},${Math.random()}`,
-`https://picsum.photos/1080?random=${Math.random()}` // fallback
+`https://source.unsplash.com/1080x1080/?${business},${location},${Math.random()},hd`,
+`https://picsum.photos/1080?random=${Math.random()}`
 ];
 
 let img;
@@ -128,19 +184,12 @@ break;
 }catch(e){}
 }
 
-// अगर दोनों fail हो जाए
-if(!img){
-img=new Image();
-img.src="";
-}
-
 const canvas=document.createElement("canvas");
 canvas.width=1080;
 canvas.height=1080;
 const ctx=canvas.getContext("2d");
 
-// draw bg
-if(img.complete){
+if(img){
 ctx.drawImage(img,0,0,1080,1080);
 }else{
 ctx.fillStyle="#111";
@@ -153,14 +202,19 @@ ctx.fillRect(0,0,1080,1080);
 
 ctx.textAlign="center";
 
-// brand
+// logo
+if(logoImg){
+ctx.drawImage(logoImg,800,40,200,200);
+}
+
+// name
 ctx.fillStyle="#22c55e";
 ctx.font="bold 55px Arial";
 ctx.fillText(name,540,120);
 
 // headline
 ctx.fillStyle="#fff";
-ctx.font="bold 85px Arial";
+ctx.font="bold 80px Arial";
 wrapText(ctx,headline,540,420,800,90);
 
 // offer
@@ -176,7 +230,6 @@ ctx.fillStyle="#000";
 ctx.font="bold 45px Arial";
 ctx.fillText(phone,540,820);
 
-// output
 const imgData=canvas.toDataURL();
 
 container.innerHTML+=`
@@ -186,9 +239,22 @@ container.innerHTML+=`
 `;
 }
 
+// 🔥 caption add
+const ad=generateCaption(business,location);
+
+container.innerHTML+=`
+<div class="box">
+<h3>📢 Caption</h3>
+<p>${ad.caption.replace(/\n/g,"<br>")}</p>
+
+<h3>🔥 Hashtags</h3>
+<p>${ad.hashtags}</p>
+</div>
+`;
+
 }
 
-// wrap text
+// wrap
 function wrapText(ctx,text,x,y,maxWidth,lineHeight){
 const words=text.split(" ");
 let line="";
