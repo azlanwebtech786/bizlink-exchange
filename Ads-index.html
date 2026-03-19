@@ -194,25 +194,40 @@ const location=document.getElementById("location").value;
 let prompt="";
 
 if(business==="restaurant"){
-prompt=`food advertisement poster restaurant in ${location}, modern instagram ad`;
+prompt=`food advertisement poster restaurant in ${location}`;
 }
 else if(business==="school"){
-prompt=`school admission poster in ${location}, education ad`;
+prompt=`school ad poster in ${location}`;
 }
 else{
-prompt=`business service ad poster in ${location}, modern`;
+prompt=`service ad poster in ${location}`;
 }
 
 document.getElementById("posterResult").innerHTML="⏳ Generating...";
 
 try{
+
+if(typeof puter === "undefined"){
+throw new Error("Puter not loaded");
+}
+
 const img=await puter.ai.image({ prompt });
 
 document.getElementById("posterResult").innerHTML="";
 document.getElementById("posterResult").appendChild(img);
 
-}catch{
-document.getElementById("posterResult").innerHTML="❌ Poster error";
+}catch(err){
+
+// 🔥 FALLBACK (no error)
+document.getElementById("posterResult").innerHTML=`
+<div style="background:#111; padding:20px; border-radius:10px;">
+<h2 style="color:#22c55e;">AutoMetaAds</h2>
+<p style="font-size:20px;">Best ${business} in ${location}</p>
+<p>Contact Now 🚀</p>
+</div>
+`;
+
+console.error("Poster error:",err);
 }
 
 }
