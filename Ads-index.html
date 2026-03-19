@@ -1,26 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Auto Meta Ads – PRO AI SYSTEM</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<meta charset="UTF-8">
+<title>AutoMetaAds PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
 body{background:#020617;color:#fff;text-align:center;}
 .navbar{padding:20px;border-bottom:1px solid #1f2933;}
-.logo{color:#22c55e;font-weight:bold;font-size:20px;}
-.hero{padding:80px 20px;}
-h1 span{color:#22c55e;}
-.form-box{margin-top:30px;}
-select,input{padding:10px;margin:10px;border-radius:6px;border:none;width:220px;}
-.cta{margin-top:20px;background:#22c55e;color:#000;padding:15px 30px;border-radius:10px;font-weight:bold;cursor:pointer;display:inline-block;}
-#result{margin:40px auto;max-width:500px;padding:20px;border:1px solid #22c55e;border-radius:10px;display:none;}
-.error{color:red;margin-top:10px;}
-#posterResult img{width:260px;border-radius:12px;margin-top:15px;}
-.box{max-width:500px;margin:auto;background:#111;padding:15px;border-radius:10px;margin-top:20px;text-align:left;}
+.logo{color:#22c55e;font-weight:bold;font-size:22px;}
+.hero{padding:60px 20px;}
+
+input,select{
+padding:10px;margin:10px;
+border-radius:6px;border:none;width:220px;
+}
+
+.cta{
+background:#22c55e;color:#000;
+padding:15px 30px;border-radius:10px;
+font-weight:bold;cursor:pointer;margin:10px;
+display:inline-block;
+}
+
+#posterResult img{
+width:260px;border-radius:12px;margin-top:15px;
+}
+
+.box{
+max-width:500px;margin:auto;
+background:#111;padding:15px;
+border-radius:10px;margin-top:20px;
+text-align:left;
+}
 </style>
 </head>
 
@@ -32,9 +45,7 @@ select,input{padding:10px;margin:10px;border-radius:6px;border:none;width:220px;
 
 <section class="hero">
 
-<h1>🔥 AI Powered <span>Ads Creator</span></h1>
-
-<div class="form-box">
+<h1>🔥 AI Ads Creator</h1>
 
 <select id="business">
 <option value="restaurant">Restaurant</option>
@@ -42,11 +53,17 @@ select,input{padding:10px;margin:10px;border-radius:6px;border:none;width:220px;
 <option value="service">Service</option>
 </select>
 
-<input type="text" id="location" placeholder="Enter City" />
+<input type="text" id="location" placeholder="City">
 
-</div>
+<br>
 
-<div class="cta" onclick="generatePoster()">🎨 Generate AI Posters</div>
+<input type="text" id="bname" placeholder="Business Name">
+<input type="text" id="offer" placeholder="Offer (50% OFF)">
+<input type="text" id="phone" placeholder="Phone / WhatsApp">
+
+<br>
+
+<div class="cta" onclick="generatePoster()">🎨 Generate Posters</div>
 <div class="cta" onclick="generateInstaAd()">🔥 Instagram Ad</div>
 
 <div id="posterResult"></div>
@@ -55,57 +72,47 @@ select,input{padding:10px;margin:10px;border-radius:6px;border:none;width:220px;
 
 <script>
 
-// 🔥 HEADLINES ENGINE
+// 🔥 HEADLINES
 function getHeadlines(business,location){
-
-if(business==="restaurant"){
 return [
-`Hungry in ${location}? 🍔`,
-`Best Food in ${location} 😍`,
-`Taste You’ll Love 🔥`,
-`Order Delicious Food Today`,
-`Craving Something Tasty?`
+`Best ${business} in ${location} 🔥`,
+`Top ${business} Near You 😍`,
+`Trusted ${business} Service 💯`,
+`Premium ${business} Experience 🚀`
 ];
 }
 
-if(business==="school"){
-return [
-`Best School in ${location}`,
-`Admissions Open Now 🎓`,
-`Secure Your Child Future`,
-`Top Education Near You`,
-`Limited Seats Available`
-];
-}
-
-return [
-`Best Service in ${location}`,
-`Trusted by Hundreds`,
-`Fast & Reliable Service`,
-`Your Problem Our Solution`,
-`Contact Today 🚀`
-];
-
-}
-
-// 🔥 POSTER SYSTEM
+// 🎨 POSTER SYSTEM (2 POSTERS)
 function generatePoster(){
 
 const container=document.getElementById("posterResult");
-container.innerHTML="";
+container.innerHTML="⏳ Generating...";
 
 const business=document.getElementById("business").value;
 const location=document.getElementById("location").value;
+const name=document.getElementById("bname").value || "Your Business";
+const offer=document.getElementById("offer").value || "";
+const phone=document.getElementById("phone").value || "Contact Now";
 
 const headlines=getHeadlines(business,location);
 
-headlines.forEach(headline=>{
+const selected=[
+headlines[Math.floor(Math.random()*headlines.length)],
+headlines[Math.floor(Math.random()*headlines.length)]
+];
+
+setTimeout(()=>{
+
+container.innerHTML="";
+
+selected.forEach((headline,index)=>{
 
 let bgUrl=`https://source.unsplash.com/1080x1080/?${business},${location},${Math.random()}`;
 
 const canvas=document.createElement("canvas");
 canvas.width=1080;
 canvas.height=1080;
+
 const ctx=canvas.getContext("2d");
 
 const img=new Image();
@@ -117,45 +124,51 @@ img.onload=function(){
 ctx.drawImage(img,0,0,1080,1080);
 
 // overlay
-ctx.fillStyle="rgba(0,0,0,0.65)";
+ctx.fillStyle=index===0 ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.8)";
 ctx.fillRect(0,0,1080,1080);
 
 ctx.textAlign="center";
 
 // brand
 ctx.fillStyle="#22c55e";
-ctx.font="bold 50px Arial";
-ctx.fillText("AutoMetaAds",540,120);
+ctx.font="bold 55px Arial";
+ctx.fillText(name,540,120);
 
 // headline
 ctx.fillStyle="#fff";
-ctx.font="bold 90px Arial";
+ctx.font="bold 85px Arial";
+wrapText(ctx,headline,540,420,800,90);
 
-wrapText(ctx,headline,540,450,800,100);
+// offer
+ctx.fillStyle="#facc15";
+ctx.font="45px Arial";
+wrapText(ctx,offer,540,550,800,70);
 
 // CTA
-ctx.fillStyle="#22c55e";
-ctx.fillRect(300,750,480,110);
+ctx.fillStyle=index===0 ? "#22c55e" : "#ff3b3b";
+ctx.fillRect(300,750,480,120);
 
 ctx.fillStyle="#000";
 ctx.font="bold 45px Arial";
-ctx.fillText("Contact Now 🚀",540,820);
+ctx.fillText(phone,540,820);
 
 const imgData=canvas.toDataURL();
 
 container.innerHTML+=`
 <img src="${imgData}">
 <br>
-<a href="${imgData}" download="poster.png" class="cta">Download</a>
+<a href="${imgData}" download="poster-${index}.png" class="cta">Download</a>
 `;
 
 };
 
 });
 
+},500);
+
 }
 
-// 🔥 TEXT WRAP
+// 🧠 TEXT WRAP
 function wrapText(ctx,text,x,y,maxWidth,lineHeight){
 const words=text.split(" ");
 let line="";
@@ -177,20 +190,17 @@ ctx.fillText(line,x,y);
 function generateInstaAd(){
 
 const container=document.getElementById("posterResult");
-container.innerHTML="⏳ Generating...";
 
 const business=document.getElementById("business").value;
 const location=document.getElementById("location").value;
 
-let headline=`Best ${business} in ${location}`;
-
-const caption=`🔥 ${headline}
+let caption=`🔥 Best ${business} in ${location}
 
 आज ही try करें!
 📍 ${location}
-📲 Message Now`;
+📲 Contact Now`;
 
-const hashtags=`#${location} #${business} #localbusiness #ads #marketing #growth #viral`;
+let hashtags=`#${location} #${business} #localbusiness #ads #marketing #growth #viral`;
 
 container.innerHTML=`
 <div class="box">
