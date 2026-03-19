@@ -19,8 +19,9 @@ select,input{padding:10px;margin:10px;border-radius:6px;border:none;width:220px;
 .cta{margin-top:20px;background:#22c55e;color:#000;padding:15px 30px;border-radius:10px;font-weight:bold;cursor:pointer;display:inline-block;}
 #result{margin:40px auto;max-width:500px;padding:20px;border:1px solid #22c55e;border-radius:10px;display:none;}
 .error{color:red;margin-top:10px;}
-#posterResult img{width:250px;border-radius:10px;margin-top:15px;}
+#posterResult img{width:260px;border-radius:12px;margin-top:15px;}
 #pdfContent{display:none;background:#fff;color:#000;padding:20px;}
+.box{max-width:500px;margin:auto;background:#111;padding:15px;border-radius:10px;margin-top:20px;text-align:left;}
 </style>
 </head>
 
@@ -64,7 +65,6 @@ Agency की जरूरत नहीं ❌<br>
 <div class="cta" onclick="getStrategy()">🚀 Generate Ads Strategy</div>
 
 <div id="error" class="error"></div>
-
 <div id="result"></div>
 
 <button id="pdfBtn" onclick="downloadPDF()" class="cta" style="display:none;">
@@ -72,15 +72,16 @@ Agency की जरूरत नहीं ❌<br>
 </button>
 
 <div class="cta" onclick="generatePoster()">🎨 Generate Posters</div>
+<div class="cta" onclick="generateInstaAd()">🔥 Instagram Ad</div>
 
 <div id="posterResult"></div>
-
 <div id="pdfContent"></div>
 
 </section>
 
 <script>
 
+// ===== STRATEGY =====
 async function getStrategy(){
 
 const business=document.getElementById("business").value;
@@ -128,9 +129,8 @@ document.getElementById("error").innerText="❌ Backend error";
 
 }
 
-// PDF
+// ===== PDF =====
 function downloadPDF(){
-
 const result=document.getElementById("result");
 const pdf=document.getElementById("pdfContent");
 
@@ -141,10 +141,9 @@ setTimeout(()=>{
 html2pdf().from(pdf).save();
 pdf.style.display="none";
 },500);
-
 }
 
-// MULTI POSTERS
+// ===== POSTER PRO =====
 function generatePoster(){
 
 const container=document.getElementById("posterResult");
@@ -153,6 +152,18 @@ container.innerHTML="";
 const business=document.getElementById("business").value;
 const location=document.getElementById("location").value;
 
+let bgUrl="";
+
+if(business==="restaurant"){
+bgUrl="https://images.unsplash.com/photo-1504674900247-0877df9cc836";
+}
+else if(business==="school"){
+bgUrl="https://images.unsplash.com/photo-1588072432836-e10032774350";
+}
+else{
+bgUrl="https://images.unsplash.com/photo-1521791136064-7986c2920216";
+}
+
 const templates=["modern","bold","minimal"];
 
 templates.forEach(template=>{
@@ -160,53 +171,120 @@ templates.forEach(template=>{
 const canvas=document.createElement("canvas");
 canvas.width=1080;
 canvas.height=1080;
-
 const ctx=canvas.getContext("2d");
 
-// Background
-let bg="#020617";
-if(template==="bold") bg="#ff3b3b";
-if(template==="minimal") bg="#ffffff";
+const img=new Image();
+img.crossOrigin="anonymous";
+img.src=bgUrl;
 
-ctx.fillStyle=bg;
+img.onload=function(){
+
+ctx.drawImage(img,0,0,1080,1080);
+
+// overlay
+ctx.fillStyle="rgba(0,0,0,0.6)";
 ctx.fillRect(0,0,1080,1080);
 
-// Text color
-ctx.fillStyle=template==="minimal"?"#000":"#fff";
+let mainColor="#22c55e";
+if(template==="bold") mainColor="#ff3b3b";
+if(template==="minimal") mainColor="#ffffff";
 
-// Title
+ctx.textAlign="center";
+
+// title
+ctx.fillStyle=mainColor;
 ctx.font="bold 60px Arial";
-ctx.fillText("AutoMetaAds",200,120);
+ctx.fillText("AutoMetaAds",540,120);
 
-// Headline
-ctx.font="bold 70px Arial";
-ctx.fillText(`Best ${business}`,100,400);
-ctx.fillText(`in ${location}`,100,480);
+// headline
+ctx.fillStyle="#fff";
+ctx.font="bold 80px Arial";
+
+let text=`Best ${business} in ${location}`;
+wrapText(ctx,text,540,450,800,90);
 
 // CTA
-ctx.fillStyle="#22c55e";
-ctx.fillRect(100,700,500,100);
+ctx.fillStyle=mainColor;
+ctx.fillRect(300,750,480,110);
 
 ctx.fillStyle="#000";
-ctx.font="bold 40px Arial";
-ctx.fillText("Contact Now 🚀",140,760);
+ctx.font="bold 45px Arial";
+ctx.fillText("Contact Now 🚀",540,820);
 
-// Output
-const img=canvas.toDataURL();
+const imgData=canvas.toDataURL();
 
-const div=document.createElement("div");
-div.innerHTML=`
-<img src="${img}">
+container.innerHTML+=`
+<img src="${imgData}">
 <br>
-<a href="${img}" download="poster.png" class="cta">Download</a>
+<a href="${imgData}" download="poster.png" class="cta">Download</a>
 `;
-
-container.appendChild(div);
+};
 
 });
 
 }
 
+// ===== TEXT WRAP =====
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+const words=text.split(" ");
+let line="";
+for(let n=0;n<words.length;n++){
+let testLine=line+words[n]+" ";
+let width=ctx.measureText(testLine).width;
+if(width>maxWidth && n>0){
+ctx.fillText(line,x,y);
+line=words[n]+" ";
+y+=lineHeight;
+}else{
+line=testLine;
+}
+}
+ctx.fillText(line,x,y);
+}
+
+// ===== INSTAGRAM AI =====
+function generateInstaAd(){
+
+const container=document.getElementById("posterResult");
+container.innerHTML="⏳ Generating...";
+
+const business=document.getElementById("business").value;
+const location=document.getElementById("location").value;
+
+let headline=`Best ${business} in ${location}`;
+
+const captions=[
+`🔥 ${headline}\nआज ही try करें!\n📍 ${location}\n📲 Message Now`,
+`🚀 ${headline}\nQuality service guaranteed 💯\n📍 ${location}\n📲 Contact Now`,
+`😍 ${headline}\nLimited offer today!\n📍 ${location}\n📲 Book Now`
+];
+
+const caption=captions[Math.floor(Math.random()*captions.length)];
+
+const hashtags=[
+`#${location}`,
+`#${business}`,
+`#localbusiness`,
+`#marketing`,
+`#growth`,
+`#ads`,
+`#digitalmarketing`,
+`#viral`,
+`#india`,
+`#business`
+];
+
+container.innerHTML=`
+<div class="box">
+<h3>📢 Caption</h3>
+<p>${caption.replace(/\n/g,"<br>")}</p>
+
+<h3>🔥 Hashtags</h3>
+<p>${hashtags.join(" ")}</p>
+</div>
+`;
+
+}
 </script>
 
 </body>
