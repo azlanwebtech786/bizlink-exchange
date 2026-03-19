@@ -198,14 +198,11 @@ const randomCTA = data.ctas[Math.floor(Math.random() * data.ctas.length)];
         console.error(err);
       }
     }
-  </script>
-  
-<script>
-function downloadPDF() {
-  const element = document.getElementById("result");
 
+    function downloadPDF() {
+  const element = document.getElementById("result");
   html2pdf().from(element).save();
 }
-</script>
+  </script>
 </body>
 </html>
