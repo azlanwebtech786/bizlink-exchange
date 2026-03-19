@@ -8,240 +8,216 @@
   <!-- PDF LIBRARY -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+  <!-- 🔥 PUTER AI -->
+  <script src="https://js.puter.com/v2/"></script>
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family: Arial; }
 
-    body {
-      background: #020617;
-      color: #ffffff;
-      text-align: center;
-    }
+    body { background:#020617; color:#fff; text-align:center; }
 
-    .navbar {
-      padding: 20px;
-      border-bottom: 1px solid #1f2933;
-    }
+    .navbar { padding:20px; border-bottom:1px solid #1f2933; }
 
-    .logo {
-      color: #22c55e;
-      font-weight: bold;
-      font-size: 20px;
-    }
+    .logo { color:#22c55e; font-weight:bold; font-size:20px; }
 
-    .hero {
-      padding: 80px 20px;
-    }
+    .hero { padding:80px 20px; }
 
-    h1 span {
-      color: #22c55e;
-    }
+    h1 span { color:#22c55e; }
 
-    .form-box {
-      margin-top: 30px;
-    }
+    .form-box { margin-top:30px; }
 
-    select, input {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 6px;
-      border: none;
-      width: 220px;
+    select,input {
+      padding:10px; margin:10px;
+      border-radius:6px; border:none; width:220px;
     }
 
     .cta {
-      margin-top: 20px;
-      background: #22c55e;
-      color: #000;
-      padding: 15px 30px;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      display: inline-block;
+      margin-top:20px; background:#22c55e;
+      color:#000; padding:15px 30px;
+      border-radius:10px; font-weight:bold;
+      cursor:pointer; display:inline-block;
     }
 
     #result {
-      margin: 40px auto;
-      max-width: 500px;
-      padding: 20px;
-      border: 1px solid #22c55e;
-      border-radius: 10px;
-      display: none;
+      margin:40px auto; max-width:500px;
+      padding:20px; border:1px solid #22c55e;
+      border-radius:10px; display:none;
     }
 
-    .error {
-      color: red;
-      margin-top: 10px;
+    #posterResult img {
+      width:300px;
+      border-radius:10px;
+      margin-top:15px;
     }
 
-    /* 🔥 PDF container (hidden) */
+    .error { color:red; margin-top:10px; }
+
     #pdfContent {
-      display: none;
-      background: #ffffff;
-      color: #000;
-      padding: 20px;
+      display:none; background:#fff;
+      color:#000; padding:20px;
     }
-
   </style>
 </head>
 
 <body>
 
-  <div class="navbar">
-    <div class="logo">AutoMetaAds</div>
-  </div>
+<div class="navbar">
+  <div class="logo">AutoMetaAds</div>
+</div>
 
-  <section class="hero">
+<section class="hero">
 
-    <h1>
-      Beginners के लिए  
-      <span>Pro Level Meta Ads</span><br />
-      अब 1 Click में
-    </h1>
+<h1>
+  Beginners के लिए  
+  <span>Pro Level Meta Ads</span><br />
+  अब 1 Click में
+</h1>
 
-    <p>
-      Ads सीखने की जरूरत नहीं ❌<br />
-      Agency की जरूरत नहीं ❌<br />
-      बस details भरो और result देखो ✅
-    </p>
+<p>
+  Ads सीखने की जरूरत नहीं ❌<br />
+  Agency की जरूरत नहीं ❌<br />
+  बस details भरो और result देखो ✅
+</p>
 
-    <!-- FORM -->
-    <div class="form-box">
+<div class="form-box">
 
-      <select id="business">
-        <option value="restaurant">Restaurant</option>
-        <option value="school">School</option>
-        <option value="service">Service</option>
-      </select>
+<select id="business">
+  <option value="restaurant">Restaurant</option>
+  <option value="school">School</option>
+  <option value="service">Service</option>
+</select>
 
-      <br>
+<br>
 
-      <select id="goal">
-        <option value="whatsapp">WhatsApp</option>
-        <option value="leads">Leads</option>
-      </select>
+<select id="goal">
+  <option value="whatsapp">WhatsApp</option>
+  <option value="leads">Leads</option>
+</select>
 
-      <input type="text" id="location" placeholder="Enter City" />
+<input type="text" id="location" placeholder="Enter City" />
 
-      <br>
+<br>
 
-      <input type="number" id="budget" value="500" placeholder="Enter Budget" />
+<input type="number" id="budget" value="500" />
 
-    </div>
+</div>
 
-    <!-- BUTTON -->
-    <div class="cta" onclick="getStrategy()">
-      🚀 Generate Ads Strategy
-    </div>
+<div class="cta" onclick="getStrategy()">🚀 Generate Ads Strategy</div>
 
-    <!-- ERROR -->
-    <div id="error" class="error"></div>
+<div id="error" class="error"></div>
 
-    <!-- RESULT -->
-    <div id="result"></div>
+<div id="result"></div>
 
-    <!-- PDF BUTTON -->
-    <button id="pdfBtn" onclick="downloadPDF()" class="cta" style="display:none;">
-      📄 Download PDF
-    </button>
+<button id="pdfBtn" onclick="downloadPDF()" class="cta" style="display:none;">
+📄 Download PDF
+</button>
 
-    <!-- 🔥 HIDDEN PDF -->
-    <div id="pdfContent"></div>
+<!-- 🔥 AI POSTER BUTTON -->
+<div class="cta" onclick="generateAIPoster()">🎨 Generate AI Poster</div>
 
-  </section>
+<div id="posterResult"></div>
 
-  <script>
-    async function getStrategy() {
+<div id="pdfContent"></div>
 
-      const business = document.getElementById("business").value;
-      const goal = document.getElementById("goal").value;
-      const budget = document.getElementById("budget").value;
-      const location = document.getElementById("location").value;
+</section>
 
-      document.getElementById("error").innerText = "";
+<script>
 
-      try {
-        const res = await fetch("http://localhost:5000/ads/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            business,
-            goal,
-            budget,
-            location
-          })
-        });
+async function getStrategy(){
 
-        if (!res.ok) throw new Error("Server error");
+const business=document.getElementById("business").value;
+const goal=document.getElementById("goal").value;
+const budget=document.getElementById("budget").value;
+const location=document.getElementById("location").value;
 
-        const data = await res.json();
+try{
 
-        const randomHeadline = data.headlines[Math.floor(Math.random() * data.headlines.length)];
-        const randomText = data.texts[Math.floor(Math.random() * data.texts.length)];
-        const randomCTA = data.ctas[Math.floor(Math.random() * data.ctas.length)];
+const res=await fetch("http://localhost:5000/ads/generate",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({ business,goal,budget,location })
+});
 
-        document.getElementById("result").style.display = "block";
-        document.getElementById("pdfBtn").style.display = "inline-block";
+const data=await res.json();
 
-        document.getElementById("result").innerHTML = `
-          <h2>🔥 Strategy Result</h2>
+const randomHeadline=data.headlines[Math.floor(Math.random()*data.headlines.length)];
+const randomText=data.texts[Math.floor(Math.random()*data.texts.length)];
+const randomCTA=data.ctas[Math.floor(Math.random()*data.ctas.length)];
 
-          <p><b>Campaign:</b> ${data.campaign}</p>
-          <p><b>Audience:</b> ${data.audience}</p>
-          <p><b>Creative:</b> ${data.creative}</p>
-          <p><b>Timing:</b> ${data.timing}</p>
-          <p><b>Setup:</b> ${data.setup}</p>
+document.getElementById("result").style.display="block";
+document.getElementById("pdfBtn").style.display="inline-block";
 
-          <hr style="margin:15px 0;">
+document.getElementById("result").innerHTML=`
+<h2>🔥 Strategy Result</h2>
 
-          <h3>🔥 Ad Creative</h3>
+<p><b>Campaign:</b> ${data.campaign}</p>
+<p><b>Audience:</b> ${data.audience}</p>
+<p><b>Creative:</b> ${data.creative}</p>
+<p><b>Timing:</b> ${data.timing}</p>
+<p><b>Setup:</b> ${data.setup}</p>
 
-          <p><b>Headline:</b> ${randomHeadline}</p>
-          <p><b>Text:</b><br>${randomText}</p>
-          <p><b>CTA:</b> ${randomCTA}</p>
-        `;
+<hr>
 
-      } catch (err) {
-        document.getElementById("error").innerText =
-          "❌ Backend connect nahi ho raha. Server ON karo.";
-        console.error(err);
-      }
-    }
+<h3>🔥 Ad Creative</h3>
 
-    function downloadPDF() {
+<p><b>Headline:</b> ${randomHeadline}</p>
+<p><b>Text:</b> ${randomText}</p>
+<p><b>CTA:</b> ${randomCTA}</p>
+`;
 
-      const result = document.getElementById("result");
-      const pdfContent = document.getElementById("pdfContent");
+}catch(err){
+document.getElementById("error").innerText="❌ Backend error";
+}
 
-      if (result.style.display === "none") {
-        alert("Pehle strategy generate karo 😄");
-        return;
-      }
+}
 
-      // 🔥 Copy content to white background
-      pdfContent.innerHTML = result.innerHTML;
-      pdfContent.style.display = "block";
+function downloadPDF(){
 
-      const opt = {
-        margin: 0.5,
-        filename: 'ads-strategy.pdf',
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: { scale: 3 },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
+const result=document.getElementById("result");
+const pdf=document.getElementById("pdfContent");
 
-      setTimeout(() => {
-        html2pdf().set(opt).from(pdfContent).save();
-        pdfContent.style.display = "none";
-      }, 500);
-    }
-  </script>
+pdf.innerHTML=result.innerHTML;
+pdf.style.display="block";
+
+setTimeout(()=>{
+html2pdf().from(pdf).save();
+pdf.style.display="none";
+},500);
+
+}
+
+async function generateAIPoster(){
+
+const business=document.getElementById("business").value;
+const location=document.getElementById("location").value;
+
+let prompt="";
+
+if(business==="restaurant"){
+prompt=`food advertisement poster restaurant in ${location}, modern instagram ad`;
+}
+else if(business==="school"){
+prompt=`school admission poster in ${location}, education ad`;
+}
+else{
+prompt=`business service ad poster in ${location}, modern`;
+}
+
+document.getElementById("posterResult").innerHTML="⏳ Generating...";
+
+try{
+const img=await puter.ai.image({ prompt });
+
+document.getElementById("posterResult").innerHTML="";
+document.getElementById("posterResult").appendChild(img);
+
+}catch{
+document.getElementById("posterResult").innerHTML="❌ Poster error";
+}
+
+}
+
+</script>
 
 </body>
 </html>
