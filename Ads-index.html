@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <meta charset="UTF-8" />
   <title>Auto Meta Ads – Beginner to Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- PDF LIBRARY -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     * {
@@ -48,7 +50,7 @@
       margin: 10px;
       border-radius: 6px;
       border: none;
-      width: 200px;
+      width: 220px;
     }
 
     .cta {
@@ -75,7 +77,6 @@
       color: red;
       margin-top: 10px;
     }
-
   </style>
 </head>
 
@@ -99,7 +100,7 @@
       बस details भरो और result देखो ✅
     </p>
 
-    <!-- 🔥 FORM -->
+    <!-- FORM -->
     <div class="form-box">
 
       <select id="business">
@@ -114,26 +115,30 @@
         <option value="whatsapp">WhatsApp</option>
         <option value="leads">Leads</option>
       </select>
-<input type="text" id="location" placeholder="Enter City" />
+
+      <input type="text" id="location" placeholder="Enter City" />
+
       <br>
 
       <input type="number" id="budget" value="500" placeholder="Enter Budget" />
 
     </div>
 
-    <!-- 🔥 BUTTON -->
+    <!-- BUTTON -->
     <div class="cta" onclick="getStrategy()">
       🚀 Generate Ads Strategy
     </div>
 
-    <!-- ❌ ERROR -->
+    <!-- ERROR -->
     <div id="error" class="error"></div>
 
-    <!-- 🔥 RESULT -->
+    <!-- RESULT -->
     <div id="result"></div>
-    <button onclick="downloadPDF()" class="cta" style="margin-top:15px;">
-  📄 Download PDF
-</button>
+
+    <!-- PDF BUTTON -->
+    <button id="pdfBtn" onclick="downloadPDF()" class="cta" style="display:none;">
+      📄 Download PDF
+    </button>
 
   </section>
 
@@ -153,43 +158,41 @@
           headers: {
             "Content-Type": "application/json"
           },
-         body: JSON.stringify({
-  business,
-  goal,
-  budget,
-  location
-})
+          body: JSON.stringify({
+            business,
+            goal,
+            budget,
+            location
+          })
         });
 
-        if (!res.ok) {
-          throw new Error("Server error");
-        }
+        if (!res.ok) throw new Error("Server error");
 
         const data = await res.json();
+
         const randomHeadline = data.headlines[Math.floor(Math.random() * data.headlines.length)];
-
-const randomText = data.texts[Math.floor(Math.random() * data.texts.length)];
-
-const randomCTA = data.ctas[Math.floor(Math.random() * data.ctas.length)];
+        const randomText = data.texts[Math.floor(Math.random() * data.texts.length)];
+        const randomCTA = data.ctas[Math.floor(Math.random() * data.ctas.length)];
 
         document.getElementById("result").style.display = "block";
+        document.getElementById("pdfBtn").style.display = "inline-block";
+
         document.getElementById("result").innerHTML = `
           <h2>🔥 Strategy Result</h2>
-          <p><b>Campaign:</b> ${data.campaign || "-"}</p>
-          <p><b>Audience:</b> ${data.audience || "-"}</p>
-          <p><b>Creative:</b> ${data.creative || "-"}</p>
-          <p><b>Timing:</b> ${data.timing || "-"}</p>
-          <p><b>Setup:</b> ${data.setup || "-"}</p>
+
+          <p><b>Campaign:</b> ${data.campaign}</p>
+          <p><b>Audience:</b> ${data.audience}</p>
+          <p><b>Creative:</b> ${data.creative}</p>
+          <p><b>Timing:</b> ${data.timing}</p>
+          <p><b>Setup:</b> ${data.setup}</p>
+
           <hr style="margin:15px 0;">
 
-<h3>🔥 Ad Creative</h3>
+          <h3>🔥 Ad Creative</h3>
 
-<p><b>Headline:</b> ${randomHeadline}</p>
-
-<p><b>Text:</b><br>${randomText}</p>
-
-<p><b>CTA:</b> ${randomCTA}</p>
-
+          <p><b>Headline:</b> ${randomHeadline}</p>
+          <p><b>Text:</b><br>${randomText}</p>
+          <p><b>CTA:</b> ${randomCTA}</p>
         `;
 
       } catch (err) {
@@ -200,9 +203,27 @@ const randomCTA = data.ctas[Math.floor(Math.random() * data.ctas.length)];
     }
 
     function downloadPDF() {
-  const element = document.getElementById("result");
-  html2pdf().from(element).save();
-}
+
+      const element = document.getElementById("result");
+
+      if (element.style.display === "none") {
+        alert("Pehle strategy generate karo 😄");
+        return;
+      }
+
+      const opt = {
+        margin: 0.5,
+        filename: 'ads-strategy.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 3 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      setTimeout(() => {
+        html2pdf().set(opt).from(element).save();
+      }, 500);
+    }
   </script>
+
 </body>
 </html>
