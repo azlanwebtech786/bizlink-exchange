@@ -103,6 +103,39 @@ const list=[
 return list[Math.floor(Math.random()*list.length)];
 }
 
+  function getPremiumHeadline(business, location, name){
+
+if(business==="gym"){
+return [
+`🔥 ${location} का सबसे powerful gym`,
+`💪 Transform your body in 30 days`,
+`⚡ Join ${name} today`
+];
+}
+
+if(business==="salon"){
+return [
+`✨ ${location} का No.1 salon`,
+`😍 Look premium, feel confident`,
+`💄 Book your makeover today`
+];
+}
+
+if(business==="school"){
+return [
+`🎓 Best education in ${location}`,
+`📚 Future starts here`,
+`🚀 Admissions open now`
+];
+}
+
+return [
+`🔥 Best ${business} in ${location}`,
+`💯 Trusted service near you`,
+`🚀 Grow with ${name}`
+];
+}
+
 // CAPTION
 function generateCaption(business,location,name,offer){
 return {
@@ -185,7 +218,8 @@ ctx.font="bold 50px Arial";
 ctx.fillText(name,540,120);
 
 // HEADLINE
-let headline=getHeadline(business,location,name);
+const headlines = getPremiumHeadline(business,location,name);
+let headline = headlines[i % headlines.length];
 ctx.fillStyle="#fff";
 ctx.font="bold 80px Arial";
 ctx.shadowColor="rgba(0,0,0,0.8)";
