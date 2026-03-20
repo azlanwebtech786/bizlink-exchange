@@ -188,7 +188,30 @@ const bgMap = {
 // 👉 2 posters
 for(let i=0;i<2;i++){
 
-const img = await loadImage(bgMap[business]);
+let img;
+
+try {
+
+  const res = await fetch("http://localhost:5000/leonardo-image", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ business })
+  });
+
+  const data = await res.json();
+
+  img = await loadImage(data.image);
+
+} catch (err) {
+
+  console.log("Leonardo fail → fallback");
+
+  const fallback = "https://picsum.photos/1080";
+
+  img = await loadImage(fallback);
+}
 
 const canvas=document.createElement("canvas");
 canvas.width=1080;
