@@ -14,27 +14,34 @@
 
     <input type="text" id="name" placeholder="Business Name" class="w-full p-3 rounded text-black" required>
 
-    <!-- CATEGORY -->
-    <select id="category" class="w-full p-3 rounded text-black"></select>
-    <input type="text" id="newCategory" placeholder="Or add new category" class="w-full p-3 rounded text-black">
+    <!-- CATEGORY DROPDOWN -->
+    <select id="category" class="w-full p-3 rounded text-black" required></select>
+
+    <!-- NEW CATEGORY INPUT (HIDDEN) -->
+    <input type="text" id="newCategory" placeholder="Enter new category"
+      class="w-full p-3 rounded text-black hidden">
 
     <input type="text" id="location" placeholder="Location" class="w-full p-3 rounded text-black" required>
-
     <input type="text" id="phone" placeholder="Phone Number" class="w-full p-3 rounded text-black" required>
-
     <input type="text" id="whatsapp" placeholder="WhatsApp Number" class="w-full p-3 rounded text-black" required>
 
     <textarea id="description" placeholder="Description" class="w-full p-3 rounded text-black"></textarea>
 
-    <!-- IMAGE UPLOAD -->
     <input type="file" id="imageFile" class="w-full p-3 bg-white text-black rounded">
 
-    <button class="bg-blue-600 px-6 py-3 w-full rounded">Save Business</button>
+    <!-- BUTTON -->
+    <button id="submitBtn" class="bg-blue-600 px-6 py-3 w-full rounded">
+      Save Business
+    </button>
+
+    <!-- STATUS -->
+    <p id="statusMsg" class="text-center mt-3"></p>
 
   </form>
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -44,15 +51,18 @@ const firebaseConfig = {
   authDomain: "biz-link9610.firebaseapp.com",
   projectId: "biz-link9610",
   storageBucket: "biz-link9610.firebasestorage.app",
-  messagingSenderId: "256899172885",
-  appId: "1:256899172885:web:69d634f42675be0ae0dc1c"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// 🔥 DEFAULT 20+ CATEGORIES
+const categorySelect = document.getElementById("category");
+const newCategoryInput = document.getElementById("newCategory");
+const submitBtn = document.getElementById("submitBtn");
+const statusMsg = document.getElementById("statusMsg");
+
+// 🔥 DEFAULT CATEGORY
 const defaultCategories = [
   "Salon","Coaching","Restaurant","Gym","Hospital","Hotel",
   "Electrician","Plumber","Car Service","Mobile Shop",
@@ -61,54 +71,86 @@ const defaultCategories = [
   "Interior Designer","Travel Agency"
 ];
 
-const categorySelect = document.getElementById("category");
-
 // LOAD DEFAULT
+categorySelect.innerHTML = `<option value="">Select Category</option>`;
 defaultCategories.forEach(cat=>{
   categorySelect.innerHTML += `<option value="${cat}">${cat}</option>`;
 });
 
-// LOAD FIREBASE CATEGORIES
-const snap = await getDocs(collection(db,"categories"));
-snap.forEach(doc=>{
-  categorySelect.innerHTML += `<option value="${doc.data().name}">${doc.data().name}</option>`;
+// 🔥 ADD NEW OPTION INSIDE SELECT
+categorySelect.innerHTML += `<option value="__new__">➕ Add New Category</option>`;
+
+// SHOW INPUT IF SELECTED
+categorySelect.addEventListener("change", ()=>{
+  if(categorySelect.value === "__new__"){
+    newCategoryInput.classList.remove("hidden");
+  } else {
+    newCategoryInput.classList.add("hidden");
+  }
 });
 
 // SUBMIT
 document.getElementById("businessForm").addEventListener("submit", async (e)=>{
   e.preventDefault();
 
-  let imageURL = "";
+  // BUTTON HIDE + LOADING
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Listing your business...";
+  statusMsg.innerText = "";
 
-  const file = document.getElementById("imageFile").files[0];
-  if(file){
-    const storageRef = ref(storage, "images/" + file.name);
-    await uploadBytes(storageRef, file);
-    imageURL = await getDownloadURL(storageRef);
+  try{
+
+    let imageURL = "";
+
+    const file = document.getElementById("imageFile").files[0];
+    if(file){
+      const storageRef = ref(storage, "images/" + Date.now());
+      await uploadBytes(storageRef, file);
+      imageURL = await getDownloadURL(storageRef);
+    }
+
+    let category = categorySelect.value;
+
+    // NEW CATEGORY HANDLE
+    if(category === "__new__"){
+      category = newCategoryInput.value;
+
+      if(!category){
+        alert("Enter new category");
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Save Business";
+        return;
+      }
+
+      await addDoc(collection(db,"categories"),{name:category});
+    }
+
+    // SAVE BUSINESS
+    await addDoc(collection(db,"businesses"),{
+      name: document.getElementById("name").value,
+      category: category,
+      location: document.getElementById("location").value,
+      phone: document.getElementById("phone").value,
+      whatsapp: document.getElementById("whatsapp").value,
+      description: document.getElementById("description").value,
+      image: imageURL,
+      createdAt: new Date()
+    });
+
+    // SUCCESS MESSAGE
+    submitBtn.innerText = "Done ✅";
+    statusMsg.innerHTML = "🎉 Congratulations! Your business listed successfully";
+
+    document.getElementById("businessForm").reset();
+
+  }catch(err){
+    alert("Error: " + err);
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Save Business";
   }
 
-  const newCategory = document.getElementById("newCategory").value;
-  let category = categorySelect.value;
-
-  if(newCategory){
-    category = newCategory;
-    await addDoc(collection(db,"categories"),{name:newCategory});
-  }
-
-  await addDoc(collection(db,"businesses"),{
-    name: name.value,
-    category: category,
-    location: location.value,
-    phone: phone.value,
-    whatsapp: whatsapp.value,
-    description: description.value,
-    image: imageURL,
-    createdAt: new Date()
-  });
-
-  alert("Business Added 🚀");
-  location.reload();
 });
+
 </script>
 
 </body>
