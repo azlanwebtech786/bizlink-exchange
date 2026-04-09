@@ -14,10 +14,10 @@
 
     <input type="text" id="name" placeholder="Business Name" class="w-full p-3 rounded text-black" required>
 
-    <!-- CATEGORY DROPDOWN -->
+    <!-- CATEGORY -->
     <select id="category" class="w-full p-3 rounded text-black" required></select>
 
-    <!-- NEW CATEGORY INPUT (HIDDEN) -->
+    <!-- NEW CATEGORY -->
     <input type="text" id="newCategory" placeholder="Enter new category"
       class="w-full p-3 rounded text-black hidden">
 
@@ -27,14 +27,13 @@
 
     <textarea id="description" placeholder="Description" class="w-full p-3 rounded text-black"></textarea>
 
-    <input type="file" id="imageFile" class="w-full p-3 bg-white text-black rounded">
+    <!-- IMAGE URL -->
+    <input type="text" id="image" placeholder="Paste Image URL" class="w-full p-3 rounded text-black">
 
-    <!-- BUTTON -->
     <button id="submitBtn" class="bg-blue-600 px-6 py-3 w-full rounded">
       Save Business
     </button>
 
-    <!-- STATUS -->
     <p id="statusMsg" class="text-center mt-3"></p>
 
   </form>
@@ -43,19 +42,19 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDruI4mHLRb-KKNnThDn7Woaj28Kg0THwE",
-  authDomain: "biz-link9610.firebaseapp.com",
-  projectId: "biz-link9610",
-  storageBucket: "biz-link9610.appspot.com",
+  apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
+  authDomain: "bizlink-new.firebaseapp.com",
+  projectId: "bizlink-new",
+  storageBucket: "bizlink-new.firebasestorage.app",
+  messagingSenderId: "759857311400",
+  appId: "1:759857311400:web:903eb700790bf53de09c9d"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 const categorySelect = document.getElementById("category");
 const newCategoryInput = document.getElementById("newCategory");
@@ -71,16 +70,14 @@ const defaultCategories = [
   "Interior Designer","Travel Agency"
 ];
 
-// LOAD DEFAULT
+// LOAD CATEGORY
 categorySelect.innerHTML = `<option value="">Select Category</option>`;
 defaultCategories.forEach(cat=>{
   categorySelect.innerHTML += `<option value="${cat}">${cat}</option>`;
 });
-
-// 🔥 ADD NEW OPTION INSIDE SELECT
 categorySelect.innerHTML += `<option value="__new__">➕ Add New Category</option>`;
 
-// SHOW INPUT IF SELECTED
+// SHOW INPUT
 categorySelect.addEventListener("change", ()=>{
   if(categorySelect.value === "__new__"){
     newCategoryInput.classList.remove("hidden");
@@ -93,28 +90,14 @@ categorySelect.addEventListener("change", ()=>{
 document.getElementById("businessForm").addEventListener("submit", async (e)=>{
   e.preventDefault();
 
-  // BUTTON HIDE + LOADING
   submitBtn.disabled = true;
   submitBtn.innerText = "Listing your business...";
   statusMsg.innerText = "";
 
   try{
 
-    let imageURL = "";
-
-   const file = document.getElementById("imageFile").files[0];
-
-if(file){
-  const storageRef = ref(storage, "business-images/" + Date.now() + "_" + file.name);
-
-  await uploadBytes(storageRef, file);
-
-  imageURL = await getDownloadURL(storageRef);
-}
-
     let category = categorySelect.value;
 
-    // NEW CATEGORY HANDLE
     if(category === "__new__"){
       category = newCategoryInput.value;
 
@@ -124,11 +107,8 @@ if(file){
         submitBtn.innerText = "Save Business";
         return;
       }
-
-      await addDoc(collection(db,"categories"),{name:category});
     }
 
-    // SAVE BUSINESS
     await addDoc(collection(db,"businesses"),{
       name: document.getElementById("name").value,
       category: category,
@@ -136,18 +116,18 @@ if(file){
       phone: document.getElementById("phone").value,
       whatsapp: document.getElementById("whatsapp").value,
       description: document.getElementById("description").value,
-      image: imageURL,
+      image: document.getElementById("image").value,
       createdAt: new Date()
     });
 
-    // SUCCESS MESSAGE
     submitBtn.innerText = "Done ✅";
     statusMsg.innerHTML = "🎉 Congratulations! Your business listed successfully";
 
     document.getElementById("businessForm").reset();
 
   }catch(err){
-    alert("Error: " + err);
+    console.error(err);
+    alert("Error: " + err.message);
     submitBtn.disabled = false;
     submitBtn.innerText = "Save Business";
   }
