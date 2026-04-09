@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Owner Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="max-w-5xl mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-6">📊 Owner Dashboard</h1>
+
+  <div id="content">Loading...</div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, query, where,
+  deleteDoc, doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+  getAuth, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
+  authDomain: "bizlink-new.firebaseapp.com",
+  projectId: "bizlink-new"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const box = document.getElementById("content");
+
+onAuthStateChanged(auth, async(user)=>{
+
+  if(!user){
+    alert("Login required");
+    window.location.href = "login-grow.html";
+    return;
+  }
+
+  const email = user.email;
+
+  // 🔥 FETCH BUSINESS (owner based)
+  const q = query(
+    collection(db,"businesses"),
+    where("owner","==",email)
+  );
+
+  const snap = await getDocs(q);
+
+  if(snap.empty){
+    box.innerHTML = "<p>No business found</p>";
+    return;
+  }
+
+  box.innerHTML = "";
+
+  snap.forEach(async(d)=>{
+
+    const b = d.data();
+    const id = d.id;
+
+    box.innerHTML += `
+      <div class="bg-white p-6 rounded-xl shadow mb-6">
+
+        <h2 class="text-xl font-bold">${b.name}</h2>
+        <p>${b.location}</p>
+
+        <!-- STATS -->
+        <div class="grid grid-cols-3 gap-4 mt-4 text-center">
+
+          <div class="bg-blue-100 p-3 rounded">
+            📞 Calls <br><b>${b.calls || 0}</b>
+          </div>
+
+          <div class="bg-green-100 p-3 rounded">
+            💬 WhatsApp <br><b>${b.whatsapp || 0}</b>
+          </div>
+
+          <div class="bg-yellow-100 p-3 rounded">
+            👁 Views <br><b>${b.views || 0}</b>
+          </div>
+
+        </div>
+
+        <!-- REVIEWS -->
+        <h3 class="mt-4 font-bold">⭐ Reviews</h3>
+        <div id="rev-${id}"></div>
+
+      </div>
+    `;
+
+    // 🔥 LOAD REVIEWS
+    const rSnap = await getDocs(collection(db,"reviews"));
+
+    rSnap.forEach(r=>{
+      const data = r.data();
+
+      if(data.businessId === id){
+
+        document.getElementById("rev-"+id).innerHTML += `
+          <div class="bg-gray-100 p-2 mt-2 rounded flex justify-between">
+
+            <div>
+              <b>${data.name}</b> ⭐${data.rating}
+              <p>${data.comment}</p>
+            </div>
+
+            <button onclick="deleteReview('${r.id}')" 
+              class="bg-red-500 text-white px-2 rounded">
+              Delete
+            </button>
+
+          </div>
+        `;
+      }
+
+    });
+
+  });
+
+});
+
+// 🗑 DELETE REVIEW
+window.deleteReview = async(id)=>{
+  await deleteDoc(doc(db,"reviews",id));
+  alert("Deleted");
+  location.reload();
+};
+
+</script>
+
+</body>
+</html>
