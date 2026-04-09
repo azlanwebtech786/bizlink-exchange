@@ -4,265 +4,213 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Bizlink Pro</title>
+<title>Bizlink</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:#f5f7fb}
 
-body{background:#0f172a;color:white}
-
-/* Navbar */
-.navbar{display:flex;justify-content:space-between;padding:15px;background:#111827}
-.logo{color:#38bdf8;font-size:22px}
-button{cursor:pointer}
-
-/* Hero */
-.hero{text-align:center;padding:60px;background:linear-gradient(135deg,#1e293b,#020617)}
-.hero input{padding:12px;border-radius:6px;border:none}
-
-/* Cards */
-#results{display:flex;flex-wrap:wrap;justify-content:center}
-.card{
-background:#1e293b;margin:15px;padding:15px;width:260px;
-border-radius:15px;cursor:pointer;
-transition:0.3s
+/* NAVBAR */
+.navbar{
+display:flex;justify-content:space-between;align-items:center;
+padding:15px 30px;background:#fff;
+box-shadow:0 2px 10px rgba(0,0,0,0.1)
 }
-.card:hover{transform:translateY(-8px)}
-.card img{width:100%;height:150px;object-fit:cover;border-radius:10px}
+.logo{font-size:24px;font-weight:bold;color:#007bff}
+.nav-right button{
+margin-left:10px;padding:8px 15px;border:none;
+border-radius:6px;cursor:pointer
+}
+.login{background:#eee}
+.add{background:#007bff;color:#fff}
 
-/* Detail */
-#detailPage{display:none;padding:20px}
-.detail-box{background:#1e293b;padding:20px;border-radius:15px;margin-top:15px}
+/* SEARCH */
+.search-box{
+display:flex;justify-content:center;margin:20px
+}
+.search-box input{
+padding:12px;width:300px;border:1px solid #ccc;
+border-radius:6px 0 0 6px
+}
+.search-box button{
+padding:12px;background:#ff6b00;border:none;
+color:#fff;border-radius:0 6px 6px 0
+}
 
-/* Review */
-.review{background:#020617;padding:10px;margin:5px;border-radius:8px}
+/* HERO */
+.hero{display:flex;gap:20px;padding:20px}
+.banner{
+flex:2;background:linear-gradient(135deg,#007bff,#00c6ff);
+color:#fff;padding:40px;border-radius:15px
+}
+.side-card{
+flex:1;background:#fff;padding:20px;border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1)
+}
 
-/* Gallery */
-#gallery img{width:100px;margin:5px;border-radius:8px}
+/* CATEGORIES */
+.categories{
+display:flex;flex-wrap:wrap;justify-content:center;padding:20px
+}
+.cat{
+width:100px;text-align:center;margin:10px;padding:15px;
+background:#fff;border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+cursor:pointer;transition:0.3s
+}
+.cat:hover{transform:scale(1.1)}
+.cat img{width:40px}
 
+/* CARDS */
+.section-title{font-size:20px;margin:20px}
+.cards{display:flex;flex-wrap:wrap;justify-content:center}
+.card{
+width:250px;margin:10px;background:#fff;border-radius:15px;
+overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1)
+}
+.card img{width:100%;height:150px;object-fit:cover}
+.card-body{padding:15px}
+
+/* POPUP */
+#categoryPopup{
+display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.6)
+}
+.popup-box{
+background:#fff;width:80%;margin:40px auto;padding:20px;
+border-radius:15px;max-height:80%;overflow:auto
+}
+.popup-grid{
+display:grid;grid-template-columns:repeat(4,1fr);gap:15px
+}
+.popup-grid p{
+padding:10px;background:#f5f5f5;border-radius:8px;
+cursor:pointer
+}
+.popup-grid p:hover{
+background:#007bff;color:white
+}
 </style>
 </head>
 
 <body>
 
+<!-- NAVBAR -->
 <div class="navbar">
 <div class="logo">Bizlink</div>
-<button onclick="openForm()">Add Business</button>
+<div class="nav-right">
+<button class="login">Login</button>
+<button class="add">Add Business</button>
+</div>
 </div>
 
-<div class="hero" id="homeSection">
-<h1>Find Services Near You</h1>
-<input id="searchInput" placeholder="Search...">
-<button onclick="search()">Search</button>
-<button onclick="nearMe()">Near Me</button>
+<!-- SEARCH -->
+<div class="search-box">
+<input placeholder="Search for services...">
+<button>Search</button>
 </div>
 
-<div id="results"></div>
-
-<!-- DETAIL -->
-<div id="detailPage">
-
-<button onclick="goBack()">⬅ Back</button>
-
-<div class="detail-box">
-<img id="dCover" style="width:100%;height:200px;border-radius:10px">
-
-<h2 id="dName"></h2>
-<p id="dCategory"></p>
-<p id="dPhone"></p>
-<p id="dAddress"></p>
-<p id="status"></p>
+<!-- HERO -->
+<div class="hero">
+<div class="banner">
+<h2>Find Best Services Near You 🚀</h2>
+<p>Search from thousands of businesses</p>
 </div>
 
-<!-- Rating -->
-<div class="detail-box">
-<h3>Rating</h3>
-<div>
-<span onclick="rate(1)">⭐</span>
-<span onclick="rate(2)">⭐</span>
-<span onclick="rate(3)">⭐</span>
-<span onclick="rate(4)">⭐</span>
-<span onclick="rate(5)">⭐</span>
+<div class="side-card">
+<h3>List Your Business</h3>
+<p>Get more customers</p>
+<button class="add">Start Now</button>
 </div>
-<p id="ratingText"></p>
 </div>
 
-<!-- Gallery -->
-<div class="detail-box">
-<h3>Gallery</h3>
-<div id="gallery"></div>
+<!-- CATEGORIES -->
+<div class="categories">
+
+<div class="cat" onclick="openCategory()">
+<img src="https://img.icons8.com/color/48/menu.png">
+<p>Popular</p>
 </div>
 
-<!-- Buttons -->
-<div class="detail-box">
-<button onclick="callNow()">📞 Call</button>
-<button onclick="openWhatsApp()">💬 WhatsApp</button>
-<button onclick="shareBusiness()">📤 Share</button>
-</div>
-
-<!-- Map -->
-<div class="detail-box">
-<iframe id="mapFrame" width="100%" height="250"></iframe>
-</div>
-
-<!-- Reviews -->
-<div class="detail-box">
-<input id="reviewText" placeholder="Write review">
-<button onclick="addReview()">Submit</button>
-<div id="reviewList"></div>
-</div>
+<div class="cat"><img src="https://img.icons8.com/color/48/restaurant.png"><p>Restaurants</p></div>
+<div class="cat"><img src="https://img.icons8.com/color/48/hotel.png"><p>Hotels</p></div>
+<div class="cat"><img src="https://img.icons8.com/color/48/spa.png"><p>Beauty</p></div>
+<div class="cat"><img src="https://img.icons8.com/color/48/home.png"><p>Home</p></div>
+<div class="cat"><img src="https://img.icons8.com/color/48/graduation-cap.png"><p>Education</p></div>
+<div class="cat"><img src="https://img.icons8.com/color/48/car.png"><p>Cars</p></div>
+<div class="cat"><img src="https://img.icons8.com/color/48/hospital.png"><p>Hospitals</p></div>
+<div class="cat"><img src="https://img.icons8.com/color/48/worker.png"><p>Contractors</p></div>
+<div class="cat"><img src="https://img.icons8.com/color/48/dog.png"><p>Pets</p></div>
 
 </div>
 
-<!-- FORM -->
-<div id="formBox" style="display:none;padding:20px">
-<input id="bname" placeholder="Name"><br><br>
-<input id="bcat" placeholder="Category"><br><br>
-<input id="bphone" placeholder="Phone"><br><br>
-<input id="bimg" placeholder="Cover Image"><br><br>
-<input id="bimages" placeholder="Gallery (comma ,)"><br><br>
-<input id="baddress" placeholder="Address"><br><br>
-<button onclick="addBusiness()">Add</button>
+<!-- POPUP -->
+<div id="categoryPopup">
+<div class="popup-box">
+
+<h2>Popular Categories</h2>
+
+<input placeholder="Search category..." style="padding:10px;width:100%;margin:10px 0">
+
+<div class="popup-grid">
+
+<p>AC Service</p>
+<p>Car Hire</p>
+<p>Courier Services</p>
+<p>Dentists</p>
+<p>Electricians</p>
+<p>Interior Designers</p>
+<p>Hospitals</p>
+<p>Real Estate</p>
+<p>Photographers</p>
+<p>Coaching</p>
+<p>Gym</p>
+<p>Event Organizer</p>
+<p>Packers & Movers</p>
+<p>Plumbers</p>
+<p>Beauty Spa</p>
+<p>Restaurants</p>
+
+</div>
+
+<button onclick="closeCategory()" style="margin-top:20px">Close</button>
+
+</div>
+</div>
+
+<!-- TRENDING -->
+<h2 class="section-title">Popular Services</h2>
+
+<div class="cards">
+
+<div class="card">
+<img src="https://via.placeholder.com/300">
+<div class="card-body">
+<h3>City Hospital</h3>
+<p>⭐ 4.5 | 📞 9876543210</p>
+</div>
+</div>
+
+<div class="card">
+<img src="https://via.placeholder.com/300">
+<div class="card-body">
+<h3>Dream Ranker Coaching</h3>
+<p>⭐ 4.8 | 📞 9876543211</p>
+</div>
+</div>
+
 </div>
 
 <script>
-
-let businesses = JSON.parse(localStorage.getItem("biz")) || [];
-
-function save(){localStorage.setItem("biz",JSON.stringify(businesses))}
-
-/* Search */
-function search(){
-let q=searchInput.value.toLowerCase();
-show(q)
+function openCategory(){
+document.getElementById("categoryPopup").style.display="block";
 }
 
-function show(q){
-let out=""
-businesses.forEach(b=>{
-if(b.name.toLowerCase().includes(q)||b.category.includes(q)){
-out+=`
-<div class="card" onclick="openDetail('${b.name}')">
-<img src="${b.img}">
-<h3>${b.name}</h3>
-<p>${b.phone}</p>
-</div>`
-}})
-results.innerHTML=out
+function closeCategory(){
+document.getElementById("categoryPopup").style.display="none";
 }
-
-/* Detail */
-let current="";
-
-function openDetail(name){
-current=name;
-let b=businesses.find(x=>x.name===name);
-
-homeSection.style.display="none";
-results.style.display="none";
-detailPage.style.display="block";
-
-dName.innerText=b.name;
-dCategory.innerText=b.category;
-dPhone.innerText="📞 "+b.phone;
-dAddress.innerText="📍 "+b.address;
-
-dCover.src=b.img;
-
-status.innerHTML=b.open?"🟢 Open":"🔴 Closed";
-
-mapFrame.src="https://www.google.com/maps?q="+encodeURIComponent(b.address)+"&output=embed";
-
-showReviews();
-showGallery(b);
-}
-
-/* Gallery */
-function showGallery(b){
-let html="";
-(b.images||[]).forEach(img=>{
-html+=`<img src="${img}">`
-});
-gallery.innerHTML=html;
-}
-
-/* Rating */
-function rate(n){
-let b=businesses.find(x=>x.name===current);
-b.rating=n;
-save();
-ratingText.innerText="Rated "+n+" ⭐";
-}
-
-/* Reviews */
-function addReview(){
-let text=reviewText.value.trim();
-if(!text) return alert("Write review");
-
-let b=businesses.find(x=>x.name===current);
-b.reviews.push(text);
-save();
-
-reviewText.value="";
-showReviews();
-}
-
-function showReviews(){
-let b=businesses.find(x=>x.name===current);
-let html="";
-(b.reviews||[]).forEach(r=>{
-html+=`<div class="review">⭐ ${r}</div>`
-});
-reviewList.innerHTML=html;
-}
-
-/* Buttons */
-function callNow(){
-let b=businesses.find(x=>x.name===current);
-alert("Calling "+b.phone);
-}
-
-function openWhatsApp(){
-let b=businesses.find(x=>x.name===current);
-window.open("https://wa.me/91"+b.phone);
-}
-
-function shareBusiness(){
-let b=businesses.find(x=>x.name===current);
-navigator.share({title:b.name,text:"Check this",url:location.href});
-}
-
-/* Near me */
-function nearMe(){
-alert("Nearby feature coming soon 😎");
-}
-
-/* Add */
-function openForm(){formBox.style.display="block"}
-
-function addBusiness(){
-let name=bname.value;
-let cat=bcat.value;
-let phone=bphone.value;
-let img=bimg.value||"https://via.placeholder.com/300";
-let images=bimages.value.split(",");
-let address=baddress.value;
-
-businesses.push({
-name,category:cat,phone,
-img,images,address,
-open:true,reviews:[]
-});
-
-save();
-alert("Added!");
-}
-
-/* Init */
-show("");
-
 </script>
 
 </body>
