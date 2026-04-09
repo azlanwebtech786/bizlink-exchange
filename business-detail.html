@@ -8,7 +8,7 @@
 
 <body class="bg-gray-100">
 
-<div id="detail" class="max-w-3xl mx-auto p-6"></div>
+<div id="detail" class="max-w-3xl mx-auto p-6 text-center">Loading...</div>
 
 <script type="module">
 
@@ -24,47 +24,86 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const container = document.getElementById("detail");
+
+// 👉 URL se ID lo
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-const container = document.getElementById("detail");
+// ❌ agar id hi nahi hai
+if(!id){
+  container.innerHTML = "<p class='text-red-500'>Invalid Business ID</p>";
+  throw new Error("No ID found");
+}
 
-const docRef = doc(db, "businesses", id);
-const docSnap = await getDoc(docRef);
+try {
 
-if(docSnap.exists()){
-  const b = docSnap.data();
+  const docRef = doc(db, "businesses", id);
+  const docSnap = await getDoc(docRef);
 
-  container.innerHTML = `
-    <div class="bg-white rounded-xl shadow p-6">
+  if(docSnap.exists()){
+    const b = docSnap.data();
 
-      <img src="${b.image || 'https://via.placeholder.com/400'}"
-        class="w-full h-64 object-cover rounded">
+    container.innerHTML = `
+      <div class="bg-white rounded-xl shadow p-6 text-left">
 
-      <h1 class="text-2xl font-bold mt-4">${b.name}</h1>
-      <p class="text-gray-500">${b.location}</p>
-      <p class="text-blue-500">${b.category}</p>
+        <!-- IMAGE -->
+        <img 
+          src="${b.image || 'https://via.placeholder.com/600'}"
+          onerror="this.src='https://via.placeholder.com/600'"
+          class="w-full h-64 object-cover rounded">
 
-      <p class="mt-4">${b.description || "No description"}</p>
+        <!-- TITLE -->
+        <h1 class="text-2xl font-bold mt-4">${b.name || "No Name"}</h1>
 
-      <div class="flex gap-3 mt-6">
-        <a href="https://wa.me/91${b.whatsapp}" target="_blank">
-          <button class="bg-green-500 text-white px-4 py-2 rounded">
-            WhatsApp
-          </button>
-        </a>
+        <!-- INFO -->
+        <p class="text-gray-500">${b.location || ""}</p>
+        <p class="text-blue-500">${b.category || ""}</p>
 
-        <a href="tel:${b.phone}">
-          <button class="bg-blue-500 text-white px-4 py-2 rounded">
-            Call
-          </button>
-        </a>
+        <!-- DESC -->
+        <p class="mt-4">${b.description || "No description available"}</p>
+
+        <!-- BUTTONS -->
+        <div class="flex gap-3 mt-6 flex-wrap">
+          <a href="https://wa.me/91${b.whatsapp || ""}" target="_blank">
+            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+              WhatsApp
+            </button>
+          </a>
+
+          <a href="tel:${b.phone || ""}">
+            <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+              Call
+            </button>
+          </a>
+        </div>
+
+        <!-- MAP 🔥 -->
+        <div class="mt-6">
+          <h3 class="font-bold mb-2">📍 Location</h3>
+
+          <iframe 
+            src="https://www.google.com/maps?q=${encodeURIComponent(b.location || "")}&output=embed"
+            class="w-full h-60 rounded-lg border">
+          </iframe>
+
+          <a href="https://www.google.com/maps?q=${encodeURIComponent(b.location || "")}" target="_blank">
+            <button class="mt-3 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+              Get Directions 🚀
+            </button>
+          </a>
+        </div>
+
       </div>
+    `;
 
-    </div>
-  `;
-} else {
-  container.innerHTML = "<p>Business not found</p>";
+  } else {
+    container.innerHTML = "<p class='text-red-500'>Business not found</p>";
+  }
+
+} catch (error) {
+  console.error(error);
+  container.innerHTML = "<p class='text-red-500'>Something went wrong</p>";
 }
 
 </script>
