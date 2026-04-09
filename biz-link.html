@@ -118,11 +118,20 @@ body{background:#f4f7fb}
 <button onclick="login()">Login / Signup</button>
 </div>
 
+<!-- ⚠️ HEAD SAME (NO CHANGE) -->
+
+<!-- ⚠️ FORM ME YE ADD KAR (IMAGE INPUT) -->
+<input type="file" id="bimg"> <!-- ✅ ADD -->
+
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* 🔥 STEP 2: STORAGE IMPORT */
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 const app = initializeApp({
 apiKey:"AIzaSyDruI4mHLRb-KKNnThDn7Woaj28Kg0THwE",
@@ -132,6 +141,9 @@ projectId:"biz-link9610"
 
 const auth=getAuth(app);
 const db=getFirestore(app);
+
+/* 🔥 STEP 3: STORAGE INIT */
+const storage = getStorage(app);
 
 let user=null;
 
@@ -204,8 +216,26 @@ dAddress.innerText=b.address;
 mapFrame.src="https://www.google.com/maps?q="+b.address+"&output=embed";
 }
 
+/* 🔥 STEP 4: IMAGE UPLOAD FUNCTION */
+async function uploadImage(file){
+const storageRef = ref(storage, "bizImages/" + Date.now() + file.name);
+await uploadBytes(storageRef, file);
+const url = await getDownloadURL(storageRef);
+return url;
+}
+
+/* 🔥 STEP 5: ADD BUSINESS UPDATE */
 window.addBusiness=async function(){
+
 if(!user){alert("Login first");return;}
+
+let file=document.getElementById("bimg")?.files[0];
+
+let imgURL="https://via.placeholder.com/300";
+
+if(file){
+imgURL=await uploadImage(file);
+}
 
 await addDoc(collection(db,"businesses"),{
 name:bname.value,
@@ -213,14 +243,14 @@ category:bcat.value,
 phone:bphone.value,
 address:baddress.value,
 rating:4,
-img:"https://via.placeholder.com/300",
+img:imgURL,
 userId:user.uid
 });
 
-alert("Saved 🚀");
+alert("Saved with image 🚀");
 }
 
-// DASHBOARD
+/* 🔥 DASHBOARD */
 window.openDashboard=function(){
 if(!user){alert("Login first");return;}
 
@@ -241,10 +271,25 @@ html+=`
 <h3>${b.name}</h3>
 <p>${b.phone}</p>
 <button onclick="deleteBiz('${b.id}')">Delete</button>
+<button onclick="editBiz('${b.id}')">Edit</button>
 </div>
 </div>`;
 });
 myBiz.innerHTML=html;
+}
+
+/* 🔥 STEP 6: EDIT FUNCTION */
+window.editBiz=async function(id){
+
+let name=prompt("New Name");
+let phone=prompt("New Phone");
+
+await updateDoc(doc(db,"businesses",id),{
+name:name,
+phone:phone
+});
+
+alert("Updated 🔥");
 }
 
 window.deleteBiz=async function(id){
