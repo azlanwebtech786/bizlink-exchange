@@ -52,7 +52,9 @@ body{background:#f5f7fb}
 <div class="navbar">
 <div class="logo">Bizlink</div>
 <div class="nav-right">
+<span id="userName" style="margin-right:10px;font-weight:bold;"></span>
 <button class="login" onclick="openLogin()">Login</button>
+<button onclick="logout()">Logout</button>
 <button class="add" onclick="openForm()">Add Business</button>
 </div>
 </div>
@@ -63,12 +65,8 @@ body{background:#f5f7fb}
 </div>
 
 <div class="hero">
-<div class="banner">
-<h2>Find Best Services 🚀</h2>
-</div>
-<div class="side-card">
-<button class="add" onclick="openForm()">Start Now</button>
-</div>
+<div class="banner"><h2>Find Best Services 🚀</h2></div>
+<div class="side-card"><button class="add" onclick="openForm()">Start Now</button></div>
 </div>
 
 <div class="categories">
@@ -79,7 +77,6 @@ body{background:#f5f7fb}
 <h2 style="margin:20px">Popular Services</h2>
 <div class="cards" id="cards"></div>
 
-<!-- DETAIL -->
 <div id="detailPage">
 <button onclick="goBack()">⬅ Back</button>
 
@@ -90,14 +87,8 @@ body{background:#f5f7fb}
 <p id="dAddress"></p>
 </div>
 
-<div class="detail-box">
-<h3>Rate ⭐</h3>
-<div id="stars"></div>
-</div>
-
-<div class="detail-box">
-<iframe id="mapFrame" width="100%" height="250"></iframe>
-</div>
+<div class="detail-box"><div id="stars"></div></div>
+<div class="detail-box"><iframe id="mapFrame" width="100%" height="250"></iframe></div>
 
 <div class="detail-box">
 <input id="reviewText">
@@ -106,7 +97,6 @@ body{background:#f5f7fb}
 </div>
 </div>
 
-<!-- ADD BUSINESS -->
 <div id="formBox">
 <input id="bname" placeholder="Name">
 <input id="bcat" placeholder="Category">
@@ -116,7 +106,6 @@ body{background:#f5f7fb}
 <button onclick="addBusiness()">Add</button>
 </div>
 
-<!-- LOGIN -->
 <div id="loginBox">
 <button onclick="login()">Login / Signup</button>
 </div>
@@ -124,7 +113,7 @@ body{background:#f5f7fb}
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -139,6 +128,7 @@ const db = getFirestore(app);
 
 let user=null;
 
+// LOGIN
 window.login = function(){
 let email = prompt("Email");
 let pass = prompt("Password");
@@ -155,8 +145,22 @@ alert("Wrong password");
 });
 }
 
+// LOGOUT
+window.logout = function(){
+signOut(auth);
+alert("Logout ho gaya");
+}
+
+// USER STATE
 onAuthStateChanged(auth,(u)=>{
-if(u){user=u;}
+if(u){
+user=u;
+userName.innerText="👤 "+u.email;
+document.querySelector(".login").style.display="none";
+}else{
+userName.innerText="";
+document.querySelector(".login").style.display="inline-block";
+}
 });
 
 let businesses=[];
@@ -198,41 +202,10 @@ dPhone.innerText=b.phone;
 dAddress.innerText=b.address;
 
 mapFrame.src="https://www.google.com/maps?q="+b.address+"&output=embed";
-
-loadStars(b.rating);
-showReviews();
-}
-
-function loadStars(r){
-let html="";
-for(let i=1;i<=5;i++){
-html+=`<span class="star ${i<=r?'active':''}" onclick="rate(${i})">★</span>`;
-}
-stars.innerHTML=html;
-}
-
-window.rate=function(val){
-let b=businesses.find(x=>x.name===current);
-b.rating=val;
-openDetail(current);
-}
-
-window.addReview=function(){
-let b=businesses.find(x=>x.name===current);
-b.reviews.push(reviewText.value);
-showReviews();
-}
-
-function showReviews(){
-let b=businesses.find(x=>x.name===current);
-reviewList.innerHTML=b.reviews.map(r=>"<p>⭐ "+r+"</p>").join("");
 }
 
 window.addBusiness=async function(){
 if(!user){alert("Login first");return;}
-
-let file=bimg.files[0];
-let imgURL=file?URL.createObjectURL(file):"https://via.placeholder.com/300";
 
 await addDoc(collection(db,"businesses"),{
 name:bname.value,
@@ -240,20 +213,20 @@ category:bcat.value,
 phone:bphone.value,
 address:baddress.value,
 rating:4,
-img:imgURL,
+img:"https://via.placeholder.com/300",
 reviews:[]
 });
 
 alert("Saved 🚀");
 }
 
-window.filterCategory=function(cat){
-render(businesses.filter(b=>b.category===cat));
-}
-
 window.search=function(){
 let q=searchInput.value.toLowerCase();
 render(businesses.filter(b=>b.name.toLowerCase().includes(q)));
+}
+
+window.filterCategory=function(cat){
+render(businesses.filter(b=>b.category===cat));
 }
 
 window.goBack=function(){
