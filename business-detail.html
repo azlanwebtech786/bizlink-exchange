@@ -1,127 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Business Details | BizLink Exchange</title>
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #f3f4f6, #dbeafe);
-      color: #222;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background: linear-gradient(90deg, #2563eb, #1e40af);
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: bold;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 40px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .business-title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #1e3a8a;
-    }
-
-    .business-desc {
-      margin: 15px 0;
-      font-size: 1rem;
-      color: #444;
-    }
-
-    form {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    input, textarea {
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #cbd5e1;
-      font-size: 1rem;
-      width: 100%;
-    }
-
-    button {
-      background: linear-gradient(90deg, #2563eb, #1e3a8a);
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background: linear-gradient(90deg, #1d4ed8, #1e40af);
-      transform: translateY(-2px);
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Business Detail</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-  <header>BizLink Exchange — Business Details</header>
+<body class="bg-gray-100">
 
-  <div class="container">
-    <h1 class="business-title" id="businessName">Loading...</h1>
-    <p class="business-desc" id="businessDesc">Please wait...</p>
+<div id="detail" class="max-w-3xl mx-auto p-6"></div>
 
-    <hr />
+<script type="module">
 
-    <h2>📩 Contact Owner</h2>
-    <form action="https://api.web3forms.com/submit" method="POST">
-  <!-- 🔑 Your Access Key -->
-  <input type="hidden" name="access_key" value="0fcfe81d-7fa3-42c7-952e-04615640a690">
-  
-  <!-- 🔁 Redirect to Thank You Page -->
-  <input type="hidden" name="redirect" value="https://azlanwebtech786.github.io/bizlink-exchange/thankyou.html">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <input type="text" name="name" placeholder="Your Name" required>
-  <input type="email" name="email" placeholder="Your Email" required>
-  <textarea name="message" rows="5" placeholder="Write your message..." required></textarea>
+const firebaseConfig = {
+  apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
+  authDomain: "bizlink-new.firebaseapp.com",
+  projectId: "bizlink-new"
+};
 
-  <button type="submit">Send Message</button>
-</form>
-  </div>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-<script>
-  // ✅ Business data
-  const businesses = [
-    { id: 1, name: "Digital Boost Marketing", desc: "We help small businesses grow through SEO and ads." },
-    { id: 2, name: "GreenLeaf Café", desc: "Eco-friendly cafe serving organic meals and beverages." },
-    { id: 3, name: "TechFix Solutions", desc: "Expert laptop and smartphone repair center." }
-  ];
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
 
-  // ✅ Load business by ID
-  const urlParams = new URLSearchParams(window.location.search);
-  const businessId = parseInt(urlParams.get("id"));
-  const business = businesses.find(b => b.id === businessId);
+const container = document.getElementById("detail");
 
-  if (business) {
-    document.getElementById("businessName").textContent = business.name;
-    document.getElementById("businessDesc").textContent = business.desc;
-  } else {
-    document.getElementById("businessName").textContent = "Business Not Found";
-    document.getElementById("businessDesc").textContent = "";
-  }
+const docRef = doc(db, "businesses", id);
+const docSnap = await getDoc(docRef);
+
+if(docSnap.exists()){
+  const b = docSnap.data();
+
+  container.innerHTML = `
+    <div class="bg-white rounded-xl shadow p-6">
+
+      <img src="${b.image || 'https://via.placeholder.com/400'}"
+        class="w-full h-64 object-cover rounded">
+
+      <h1 class="text-2xl font-bold mt-4">${b.name}</h1>
+      <p class="text-gray-500">${b.location}</p>
+      <p class="text-blue-500">${b.category}</p>
+
+      <p class="mt-4">${b.description || "No description"}</p>
+
+      <div class="flex gap-3 mt-6">
+        <a href="https://wa.me/91${b.whatsapp}" target="_blank">
+          <button class="bg-green-500 text-white px-4 py-2 rounded">
+            WhatsApp
+          </button>
+        </a>
+
+        <a href="tel:${b.phone}">
+          <button class="bg-blue-500 text-white px-4 py-2 rounded">
+            Call
+          </button>
+        </a>
+      </div>
+
+    </div>
+  `;
+} else {
+  container.innerHTML = "<p>Business not found</p>";
+}
+
 </script>
+
 </body>
 </html>
