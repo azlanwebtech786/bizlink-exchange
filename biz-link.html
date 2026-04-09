@@ -3,129 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bizlink Pro</title>
+
+<!-- SEO -->
+<title>Bizlink - Find Best Services Near You</title>
+<meta name="description" content="Find best schools, doctors, furniture and services near you in Hingona">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 body{background:#f4f7fb}
 
 /* Navbar */
-.navbar{
-display:flex;justify-content:space-between;
-padding:15px 25px;background:#fff;
-box-shadow:0 2px 10px rgba(0,0,0,0.1)
-}
+.navbar{display:flex;justify-content:space-between;padding:15px 25px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
 .logo{font-size:22px;font-weight:bold;color:#007bff}
-.navbar button{
-padding:8px 15px;border:none;border-radius:6px;
-background:#007bff;color:#fff;cursor:pointer
-}
+.navbar button{padding:8px 15px;border:none;border-radius:6px;background:#007bff;color:#fff}
 
 /* Hero */
-.hero{
-text-align:center;padding:70px 20px;
-background:linear-gradient(135deg,#007bff,#00c6ff);
-color:#fff
-}
-.hero input{
-padding:12px;width:260px;border:none;border-radius:6px
-}
-.hero button{
-padding:12px;background:black;color:#fff;
-border:none;border-radius:6px;cursor:pointer
-}
-
-/* Categories */
-.cat-grid{
-display:flex;justify-content:center;flex-wrap:wrap;
-padding:20px
-}
-.cat{
-background:#fff;margin:10px;padding:15px;
-border-radius:10px;cursor:pointer;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-transition:0.3s
-}
-.cat:hover{transform:translateY(-5px)}
+.hero{text-align:center;padding:70px;background:linear-gradient(135deg,#007bff,#00c6ff);color:#fff}
+.hero input{padding:12px;width:260px;border:none;border-radius:6px}
 
 /* Cards */
-#results{
-display:flex;flex-wrap:wrap;justify-content:center;
-padding:20px
-}
-.card{
-background:#fff;width:250px;margin:10px;
-padding:15px;border-radius:10px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
-transition:0.3s;
-cursor:pointer
-}
-.card:hover{transform:scale(1.05)}
-.badge{
-background:gold;padding:3px 6px;
-font-size:12px;border-radius:4px
-}
-.card button{
-margin-top:10px;width:100%;
-padding:10px;border:none;
-background:#28a745;color:#fff;border-radius:6px
-}
+#results{display:flex;flex-wrap:wrap;justify-content:center;padding:20px}
+.card{background:#fff;width:260px;margin:10px;padding:10px;border-radius:10px;box-shadow:0 5px 20px rgba(0,0,0,0.1);cursor:pointer}
+.card img{width:100%;border-radius:10px}
 
-/* Detail Page */
-#detailPage{
-display:none;padding:20px
-}
-.detail-box{
-background:#fff;padding:20px;border-radius:10px;
-margin-top:15px
-}
+/* Detail */
+#detailPage{display:none;padding:20px}
+.detail-box{background:#fff;padding:20px;border-radius:10px;margin-top:15px}
 
-/* Popup */
-.popup{
-display:none;position:fixed;top:50%;left:50%;
-transform:translate(-50%,-50%);
-background:#fff;padding:20px;
-box-shadow:0 5px 20px rgba(0,0,0,0.2);
-border-radius:10px
-}
-.popup input{
-display:block;margin:10px 0;padding:10px;width:100%
-}
-
-/* Footer */
-.footer{text-align:center;padding:20px;background:#fff}
+/* Review */
+.review{background:#eee;padding:8px;margin:5px;border-radius:5px}
 
 </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
 <div class="logo">Bizlink</div>
-<div>
-<button onclick="openLogin()">Login</button>
 <button onclick="openForm()">Add Business</button>
 </div>
-</div>
 
-<!-- Hero -->
 <div class="hero" id="homeSection">
 <h1>Find Services Near You</h1>
 <input type="text" id="searchInput" placeholder="Search...">
 <button onclick="search()">Search</button>
-<p id="locationText"></p>
 </div>
 
-<!-- Categories -->
-<div class="cat-grid" id="catSection">
-<div class="cat" onclick="quickSearch('school')">🏫 School</div>
-<div class="cat" onclick="quickSearch('doctor')">🏥 Doctor</div>
-<div class="cat" onclick="quickSearch('furniture')">🪑 Furniture</div>
-<div class="cat" onclick="quickSearch('coaching')">📘 Coaching</div>
-</div>
-
-<!-- Results -->
 <div id="results"></div>
 
 <!-- DETAIL PAGE -->
@@ -134,61 +57,45 @@ display:block;margin:10px 0;padding:10px;width:100%
 <button onclick="goBack()">⬅ Back</button>
 
 <div class="detail-box">
+<img id="dImg">
 <h1 id="dName"></h1>
 <p id="dCategory"></p>
 <p id="dPhone"></p>
-<p>⭐ 4.8 (120 reviews)</p>
-
-<button onclick="callNow()">📞 Call Now</button>
-<button style="background:green;color:#fff;padding:10px;border:none;border-radius:5px;margin-left:10px">
-WhatsApp
-</button>
 </div>
 
+<!-- Map -->
 <div class="detail-box">
-<h3>About</h3>
-<p>This business provides top quality services with best customer satisfaction.</p>
+<h3>Location</h3>
+<iframe id="mapFrame" width="100%" height="250"></iframe>
 </div>
 
+<!-- Reviews -->
 <div class="detail-box">
-<h3>Services</h3>
-<ul>
-<li>Expert Team</li>
-<li>Affordable Pricing</li>
-<li>Fast Service</li>
-</ul>
+<h3>Reviews</h3>
+
+<input id="reviewText" placeholder="Write review">
+<button onclick="addReview()">Submit</button>
+
+<div id="reviewList"></div>
 </div>
 
 </div>
 
-<!-- Login Popup -->
-<div class="popup" id="loginBox">
-<h3>Login</h3>
-<input type="text" id="username" placeholder="Enter name">
-<button onclick="login()">Login</button>
+<!-- Add Business -->
+<div id="formBox" style="display:none">
+<input id="bname" placeholder="Name">
+<input id="bcat" placeholder="Category">
+<input id="bphone" placeholder="Phone">
+<input id="bimg" placeholder="Image URL">
+<button onclick="addBusiness()">Add</button>
 </div>
-
-<!-- Add Business Popup -->
-<div class="popup" id="formBox">
-<h3>Add Business</h3>
-<input type="text" id="bname" placeholder="Business Name">
-<input type="text" id="bcat" placeholder="Category">
-<input type="text" id="bphone" placeholder="Phone">
-<button onclick="addBusiness()">Submit</button>
-</div>
-
-<div class="footer">© Bizlink 2026</div>
 
 <script>
 
-/* Data */
 let businesses = JSON.parse(localStorage.getItem("biz")) || [
-{name:"Dream Ranker Coaching",category:"coaching",phone:"9876543210",rating:"⭐⭐⭐⭐⭐",paid:true},
-{name:"City Hospital",category:"doctor",phone:"9876543212",rating:"⭐⭐⭐⭐",paid:false},
-{name:"Khan Furniture",category:"furniture",phone:"9876543211",rating:"⭐⭐⭐⭐⭐",paid:true}
+{name:"Dream Ranker Coaching",category:"coaching",phone:"9876543210",img:"https://via.placeholder.com/300",reviews:[]}
 ];
 
-/* Save */
 function save(){localStorage.setItem("biz",JSON.stringify(businesses))}
 
 /* Search */
@@ -196,72 +103,89 @@ function search(){
 let q=document.getElementById("searchInput").value.toLowerCase();
 show(q)
 }
-function quickSearch(q){show(q)}
 
 function show(q){
 let out=""
 businesses.forEach(b=>{
 if(b.name.toLowerCase().includes(q)||b.category.includes(q)){
 out+=`
-<div class="card" onclick="openDetail('${b.name}','${b.category}','${b.phone}')">
-<h3>${b.name} ${b.paid?'<span class="badge">Premium</span>':''}</h3>
-<p>⭐ ${b.rating}</p>
-<p>📞 ${b.phone}</p>
-<button onclick="event.stopPropagation();call('${b.phone}')">Call</button>
+<div class="card" onclick="openDetail('${b.name}')">
+<img src="${b.img}">
+<h3>${b.name}</h3>
+<p>${b.phone}</p>
 </div>`
 }})
-document.getElementById("results").innerHTML=out||"No Result"
+document.getElementById("results").innerHTML=out
 }
 
-/* Detail Page */
-function openDetail(name,cat,phone){
+/* Detail */
+let current="";
+
+function openDetail(name){
+current=name;
+
+let b=businesses.find(x=>x.name===name);
+
 document.getElementById("homeSection").style.display="none";
-document.getElementById("catSection").style.display="none";
 document.getElementById("results").style.display="none";
 document.getElementById("detailPage").style.display="block";
 
-document.getElementById("dName").innerText=name;
-document.getElementById("dCategory").innerText="Category: "+cat;
-document.getElementById("dPhone").innerText="Phone: "+phone;
+dName.innerText=b.name;
+dCategory.innerText=b.category;
+dPhone.innerText=b.phone;
+dImg.src=b.img;
+
+/* Map */
+mapFrame.src="https://www.google.com/maps?q="+b.name+"&output=embed";
+
+showReviews();
 }
 
 function goBack(){
-document.getElementById("homeSection").style.display="block";
-document.getElementById("catSection").style.display="flex";
-document.getElementById("results").style.display="flex";
-document.getElementById("detailPage").style.display="none";
+homeSection.style.display="block";
+results.style.display="flex";
+detailPage.style.display="none";
 }
 
-/* Call */
-function call(n){alert("Calling "+n)}
-function callNow(){alert("Calling business")}
+/* Reviews */
+function addReview(){
+let text=reviewText.value;
+let b=businesses.find(x=>x.name===current);
 
-/* Login */
-function openLogin(){document.getElementById("loginBox").style.display="block"}
-function login(){
-let name=document.getElementById("username").value;
-localStorage.setItem("user",name);
-alert("Welcome "+name);
-document.getElementById("loginBox").style.display="none";
+b.reviews.push(text);
+save();
+
+showReviews();
+}
+
+function showReviews(){
+let b=businesses.find(x=>x.name===current);
+let html="";
+
+(b.reviews||[]).forEach(r=>{
+html+=`<div class="review">⭐ ${r}</div>`
+});
+
+reviewList.innerHTML=html;
 }
 
 /* Add Business */
-function openForm(){document.getElementById("formBox").style.display="block"}
-function addBusiness(){
-let name=document.getElementById("bname").value;
-let cat=document.getElementById("bcat").value;
-let phone=document.getElementById("bphone").value;
+function openForm(){formBox.style.display="block"}
 
-businesses.push({name,category:cat,phone,rating:"⭐⭐⭐⭐",paid:false});
+function addBusiness(){
+let name=bname.value;
+let cat=bcat.value;
+let phone=bphone.value;
+let img=bimg.value;
+
+businesses.push({name,category:cat,phone,img,reviews:[]});
 save();
+
 alert("Added!");
-document.getElementById("formBox").style.display="none";
 }
 
-/* Location */
-navigator.geolocation.getCurrentPosition(()=>{
-document.getElementById("locationText").innerText="📍 Location detected";
-})
+/* Initial load */
+show("");
 
 </script>
 
