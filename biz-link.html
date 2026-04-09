@@ -124,23 +124,74 @@ body{background:#f5f7fb}
 <button onclick="login()">Login</button>
 </div>
 
-<script>
+<script type="module">
+
+// 🔥 FIREBASE IMPORT (MODERN)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// 🔥 CONFIG (tera wala)
+const firebaseConfig = {
+  apiKey: "AIzaSyDruI4mHLRb-KKNnThDn7Woaj28Kg0THwE",
+  authDomain: "biz-link9610.firebaseapp.com",
+  projectId: "biz-link9610",
+  storageBucket: "biz-link9610.firebasestorage.app",
+  messagingSenderId: "256899172885",
+  appId: "1:256899172885:web:69d634f42675be0ae0dc1c",
+  measurementId: "G-DSZV2BJ4PB"
+};
+
+// INIT
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 let user=null;
 
-function login(){
-user=username.value;
-alert("Welcome "+user);
-loginBox.style.display="none";
+// ================= LOGIN =================
+window.login = function(){
+let email = prompt("Enter Email");
+let pass = prompt("Enter Password");
+
+signInWithEmailAndPassword(auth,email,pass)
+.then(()=>{
+alert("Login Success 🔥");
+})
+.catch(()=>{
+
+createUserWithEmailAndPassword(auth,email,pass)
+.then(()=>{
+alert("Signup + Login Success 🚀");
+});
+
+});
 }
 
-/* DATA */
+// AUTO USER
+onAuthStateChanged(auth,(u)=>{
+if(u){
+user=u;
+console.log("User:",u.email);
+}
+});
+
+// ================= LOCAL DATA (OLD SAME) =================
 let businesses=[
 {name:"Dream Ranker Coaching",category:"Education",phone:"9876543211",address:"Hingona",rating:4,img:"https://via.placeholder.com/300",reviews:[]}
 ];
 
 let current="";
 
+// ================= FIREBASE LIVE =================
+onSnapshot(collection(db,"businesses"),(snap)=>{
+snap.forEach(doc=>{
+businesses.push(doc.data());
+});
+render(businesses);
+});
+
+// ================= RENDER =================
 function render(data){
 let html="";
 data.forEach(b=>{
@@ -156,7 +207,8 @@ html+=`
 cards.innerHTML=html;
 }
 
-function openDetail(name){
+// ================= DETAIL =================
+window.openDetail = function(name){
 current=name;
 let b=businesses.find(x=>x.name===name);
 
@@ -174,6 +226,7 @@ loadStars(b.rating);
 showReviews();
 }
 
+// ================= RATING =================
 function loadStars(r){
 let html="";
 for(let i=1;i<=5;i++){
@@ -182,13 +235,14 @@ html+=`<span class="star ${i<=r?'active':''}" onclick="rate(${i})">★</span>`;
 stars.innerHTML=html;
 }
 
-function rate(val){
+window.rate = function(val){
 let b=businesses.find(x=>x.name===current);
 b.rating=val;
 openDetail(current);
 }
 
-function addReview(){
+// ================= REVIEW =================
+window.addReview = function(){
 let b=businesses.find(x=>x.name===current);
 b.reviews.push(reviewText.value);
 showReviews();
@@ -199,11 +253,18 @@ let b=businesses.find(x=>x.name===current);
 reviewList.innerHTML=b.reviews.map(r=>"<p>⭐ "+r+"</p>").join("");
 }
 
-function addBusiness(){
+// ================= ADD BUSINESS =================
+window.addBusiness = async function(){
+
+if(!user){
+alert("Login first ❌");
+return;
+}
+
 let file=bimg.files[0];
 let imgURL=file?URL.createObjectURL(file):"https://via.placeholder.com/300";
 
-businesses.push({
+let newBiz={
 name:bname.value,
 category:bcat.value,
 phone:bphone.value,
@@ -211,32 +272,39 @@ address:baddress.value,
 rating:4,
 img:imgURL,
 reviews:[]
-});
+};
 
+// 🔥 FIREBASE SAVE
+await addDoc(collection(db,"businesses"),newBiz);
+
+alert("Saved to Firebase 🚀");
+
+businesses.push(newBiz);
 render(businesses);
-alert("Added 🚀");
 }
 
-function filterCategory(cat){
+// ================= FILTER =================
+window.filterCategory = function(cat){
 render(businesses.filter(b=>b.category===cat));
 }
 
-function search(){
+// ================= SEARCH =================
+window.search = function(){
 let q=searchInput.value.toLowerCase();
 render(businesses.filter(b=>b.name.toLowerCase().includes(q)));
 }
 
-function goBack(){
+// ================= BACK =================
+window.goBack = function(){
 detailPage.style.display="none";
 cards.style.display="flex";
 }
 
-function openForm(){formBox.style.display="block"}
-function openLogin(){loginBox.style.display="block"}
+window.openForm = function(){formBox.style.display="block"}
+window.openLogin = function(){loginBox.style.display="block"}
 
 render(businesses);
 
 </script>
-
 </body>
 </html>
