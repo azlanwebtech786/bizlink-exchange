@@ -7,78 +7,109 @@
 </head>
 <body class="bg-gray-950 text-white">
 
-  <div class="max-w-2xl mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-6">Add Your Business 🚀</h1>
+<div class="max-w-2xl mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-6">Add Your Business 🚀</h1>
 
-    <form id="businessForm" class="space-y-4">
+  <form id="businessForm" class="space-y-4">
 
-      <input type="text" id="name" placeholder="Business Name" class="w-full p-3 rounded text-black" required>
+    <input type="text" id="name" placeholder="Business Name" class="w-full p-3 rounded text-black" required>
 
-      <input type="text" id="category" placeholder="Category (Salon, Coaching...)" class="w-full p-3 rounded text-black" required>
+    <!-- CATEGORY -->
+    <select id="category" class="w-full p-3 rounded text-black"></select>
+    <input type="text" id="newCategory" placeholder="Or add new category" class="w-full p-3 rounded text-black">
 
-      <input type="text" id="location" placeholder="Location" class="w-full p-3 rounded text-black" required>
+    <input type="text" id="location" placeholder="Location" class="w-full p-3 rounded text-black" required>
 
-      <input type="text" id="phone" placeholder="Phone Number" class="w-full p-3 rounded text-black" required>
+    <input type="text" id="phone" placeholder="Phone Number" class="w-full p-3 rounded text-black" required>
 
-      <input type="text" id="whatsapp" placeholder="WhatsApp Number" class="w-full p-3 rounded text-black" required>
+    <input type="text" id="whatsapp" placeholder="WhatsApp Number" class="w-full p-3 rounded text-black" required>
 
-      <textarea id="description" placeholder="Business Description" class="w-full p-3 rounded text-black"></textarea>
+    <textarea id="description" placeholder="Description" class="w-full p-3 rounded text-black"></textarea>
 
-      <input type="text" id="image" placeholder="Image URL" class="w-full p-3 rounded text-black">
+    <!-- IMAGE UPLOAD -->
+    <input type="file" id="imageFile" class="w-full p-3 bg-white text-black rounded">
 
-      <button type="submit" class="bg-blue-600 px-6 py-3 rounded w-full hover:bg-blue-700">
-        Save Business
-      </button>
+    <button class="bg-blue-600 px-6 py-3 w-full rounded">Save Business</button>
 
-    </form>
-  </div>
+  </form>
+</div>
 
-  <!-- Firebase Script -->
-  <script type="module">
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    // 🔥 Firebase Import
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    // 🔑 TERA FIREBASE CONFIG (yahan apna dalna)
-   const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyDruI4mHLRb-KKNnThDn7Woaj28Kg0THwE",
   authDomain: "biz-link9610.firebaseapp.com",
   projectId: "biz-link9610",
   storageBucket: "biz-link9610.firebasestorage.app",
   messagingSenderId: "256899172885",
-  appId: "1:256899172885:web:69d634f42675be0ae0dc1c",
-  measurementId: "G-DSZV2BJ4PB"
+  appId: "1:256899172885:web:69d634f42675be0ae0dc1c"
 };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-    // 🚀 Form Submit
-    document.getElementById("businessForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+// 🔥 DEFAULT 20+ CATEGORIES
+const defaultCategories = [
+  "Salon","Coaching","Restaurant","Gym","Hospital","Hotel",
+  "Electrician","Plumber","Car Service","Mobile Shop",
+  "Real Estate","Repair","Boutique","Medical Store",
+  "Bakery","Cafe","Photography","Event Planner",
+  "Interior Designer","Travel Agency"
+];
 
-      const data = {
-        name: document.getElementById("name").value,
-        category: document.getElementById("category").value,
-        location: document.getElementById("location").value,
-        phone: document.getElementById("phone").value,
-        whatsapp: document.getElementById("whatsapp").value,
-        description: document.getElementById("description").value,
-        image: document.getElementById("image").value,
-        createdAt: new Date()
-      };
+const categorySelect = document.getElementById("category");
 
-      try {
-        await addDoc(collection(db, "businesses"), data);
-        alert("Business Added Successfully 🚀");
-        document.getElementById("businessForm").reset();
-      } catch (error) {
-        alert("Error: " + error);
-      }
-    });
+// LOAD DEFAULT
+defaultCategories.forEach(cat=>{
+  categorySelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+});
 
-  </script>
+// LOAD FIREBASE CATEGORIES
+const snap = await getDocs(collection(db,"categories"));
+snap.forEach(doc=>{
+  categorySelect.innerHTML += `<option value="${doc.data().name}">${doc.data().name}</option>`;
+});
+
+// SUBMIT
+document.getElementById("businessForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+
+  let imageURL = "";
+
+  const file = document.getElementById("imageFile").files[0];
+  if(file){
+    const storageRef = ref(storage, "images/" + file.name);
+    await uploadBytes(storageRef, file);
+    imageURL = await getDownloadURL(storageRef);
+  }
+
+  const newCategory = document.getElementById("newCategory").value;
+  let category = categorySelect.value;
+
+  if(newCategory){
+    category = newCategory;
+    await addDoc(collection(db,"categories"),{name:newCategory});
+  }
+
+  await addDoc(collection(db,"businesses"),{
+    name: name.value,
+    category: category,
+    location: location.value,
+    phone: phone.value,
+    whatsapp: whatsapp.value,
+    description: description.value,
+    image: imageURL,
+    createdAt: new Date()
+  });
+
+  alert("Business Added 🚀");
+  location.reload();
+});
+</script>
 
 </body>
 </html>
