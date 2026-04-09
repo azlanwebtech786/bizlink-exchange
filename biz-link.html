@@ -57,7 +57,8 @@ padding:20px
 background:#fff;width:250px;margin:10px;
 padding:15px;border-radius:10px;
 box-shadow:0 5px 20px rgba(0,0,0,0.1);
-transition:0.3s
+transition:0.3s;
+cursor:pointer
 }
 .card:hover{transform:scale(1.05)}
 .badge{
@@ -68,6 +69,15 @@ font-size:12px;border-radius:4px
 margin-top:10px;width:100%;
 padding:10px;border:none;
 background:#28a745;color:#fff;border-radius:6px
+}
+
+/* Detail Page */
+#detailPage{
+display:none;padding:20px
+}
+.detail-box{
+background:#fff;padding:20px;border-radius:10px;
+margin-top:15px
 }
 
 /* Popup */
@@ -100,7 +110,7 @@ display:block;margin:10px 0;padding:10px;width:100%
 </div>
 
 <!-- Hero -->
-<div class="hero">
+<div class="hero" id="homeSection">
 <h1>Find Services Near You</h1>
 <input type="text" id="searchInput" placeholder="Search...">
 <button onclick="search()">Search</button>
@@ -108,7 +118,7 @@ display:block;margin:10px 0;padding:10px;width:100%
 </div>
 
 <!-- Categories -->
-<div class="cat-grid">
+<div class="cat-grid" id="catSection">
 <div class="cat" onclick="quickSearch('school')">🏫 School</div>
 <div class="cat" onclick="quickSearch('doctor')">🏥 Doctor</div>
 <div class="cat" onclick="quickSearch('furniture')">🪑 Furniture</div>
@@ -117,6 +127,39 @@ display:block;margin:10px 0;padding:10px;width:100%
 
 <!-- Results -->
 <div id="results"></div>
+
+<!-- DETAIL PAGE -->
+<div id="detailPage">
+
+<button onclick="goBack()">⬅ Back</button>
+
+<div class="detail-box">
+<h1 id="dName"></h1>
+<p id="dCategory"></p>
+<p id="dPhone"></p>
+<p>⭐ 4.8 (120 reviews)</p>
+
+<button onclick="callNow()">📞 Call Now</button>
+<button style="background:green;color:#fff;padding:10px;border:none;border-radius:5px;margin-left:10px">
+WhatsApp
+</button>
+</div>
+
+<div class="detail-box">
+<h3>About</h3>
+<p>This business provides top quality services with best customer satisfaction.</p>
+</div>
+
+<div class="detail-box">
+<h3>Services</h3>
+<ul>
+<li>Expert Team</li>
+<li>Affordable Pricing</li>
+<li>Fast Service</li>
+</ul>
+</div>
+
+</div>
 
 <!-- Login Popup -->
 <div class="popup" id="loginBox">
@@ -138,7 +181,7 @@ display:block;margin:10px 0;padding:10px;width:100%
 
 <script>
 
-/* Default Data */
+/* Data */
 let businesses = JSON.parse(localStorage.getItem("biz")) || [
 {name:"Dream Ranker Coaching",category:"coaching",phone:"9876543210",rating:"⭐⭐⭐⭐⭐",paid:true},
 {name:"City Hospital",category:"doctor",phone:"9876543212",rating:"⭐⭐⭐⭐",paid:false},
@@ -160,18 +203,38 @@ let out=""
 businesses.forEach(b=>{
 if(b.name.toLowerCase().includes(q)||b.category.includes(q)){
 out+=`
-<div class="card">
+<div class="card" onclick="openDetail('${b.name}','${b.category}','${b.phone}')">
 <h3>${b.name} ${b.paid?'<span class="badge">Premium</span>':''}</h3>
 <p>⭐ ${b.rating}</p>
 <p>📞 ${b.phone}</p>
-<button onclick="call('${b.phone}')">Call</button>
+<button onclick="event.stopPropagation();call('${b.phone}')">Call</button>
 </div>`
 }})
 document.getElementById("results").innerHTML=out||"No Result"
 }
 
+/* Detail Page */
+function openDetail(name,cat,phone){
+document.getElementById("homeSection").style.display="none";
+document.getElementById("catSection").style.display="none";
+document.getElementById("results").style.display="none";
+document.getElementById("detailPage").style.display="block";
+
+document.getElementById("dName").innerText=name;
+document.getElementById("dCategory").innerText="Category: "+cat;
+document.getElementById("dPhone").innerText="Phone: "+phone;
+}
+
+function goBack(){
+document.getElementById("homeSection").style.display="block";
+document.getElementById("catSection").style.display="flex";
+document.getElementById("results").style.display="flex";
+document.getElementById("detailPage").style.display="none";
+}
+
 /* Call */
 function call(n){alert("Calling "+n)}
+function callNow(){alert("Calling business")}
 
 /* Login */
 function openLogin(){document.getElementById("loginBox").style.display="block"}
@@ -189,20 +252,15 @@ let name=document.getElementById("bname").value;
 let cat=document.getElementById("bcat").value;
 let phone=document.getElementById("bphone").value;
 
-businesses.push({
-name,category:cat,phone,
-rating:"⭐⭐⭐⭐",paid:false
-});
-
+businesses.push({name,category:cat,phone,rating:"⭐⭐⭐⭐",paid:false});
 save();
 alert("Added!");
 document.getElementById("formBox").style.display="none";
 }
 
 /* Location */
-navigator.geolocation.getCurrentPosition(pos=>{
-document.getElementById("locationText").innerText=
-"📍 Location detected";
+navigator.geolocation.getCurrentPosition(()=>{
+document.getElementById("locationText").innerText="📍 Location detected";
 })
 
 </script>
