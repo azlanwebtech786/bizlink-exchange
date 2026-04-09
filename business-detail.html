@@ -8,12 +8,16 @@
 
 <body class="bg-gray-100">
 
-<div id="detail" class="max-w-3xl mx-auto p-6 text-center">Loading...</div>
+<div id="detail" class="max-w-4xl mx-auto p-6 text-center">Loading...</div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { 
+  getFirestore, doc, getDoc, 
+  collection, addDoc, getDocs, serverTimestamp, 
+  updateDoc, increment 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
@@ -26,84 +30,184 @@ const db = getFirestore(app);
 
 const container = document.getElementById("detail");
 
-// 👉 URL se ID lo
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-// ❌ agar id hi nahi hai
 if(!id){
-  container.innerHTML = "<p class='text-red-500'>Invalid Business ID</p>";
-  throw new Error("No ID found");
+  container.innerHTML = "Invalid Business";
+  throw new Error("No ID");
 }
+
+// 📊 TRACK LEADS
+async function track(type){
+  const ref = doc(db,"businesses",id);
+  await updateDoc(ref,{
+    [type]: increment(1)
+  });
+}
+
+// ⭐ REVIEW SUBMIT
+window.submitReview = async ()=>{
+  const name = document.getElementById("rName").value;
+  const rating = document.getElementById("rRating").value;
+  const comment = document.getElementById("rComment").value;
+
+  if(!name || !rating || !comment){
+    alert("Fill all fields");
+    return;
+  }
+
+  await addDoc(collection(db,"reviews"),{
+    businessId: id,
+    name,
+    rating,
+    comment,
+    time: serverTimestamp()
+  });
+
+  alert("Review Added ✅");
+  location.reload();
+};
+
+// 📝 BLOG SUBMIT
+window.submitBlog = async ()=>{
+  const title = document.getElementById("bTitle").value;
+  const content = document.getElementById("bContent").value;
+
+  if(!title || !content){
+    alert("Fill blog fields");
+    return;
+  }
+
+  await addDoc(collection(db,"blogs"),{
+    businessId: id,
+    title,
+    content,
+    time: serverTimestamp()
+  });
+
+  alert("Blog Posted ✅");
+  location.reload();
+};
 
 try {
 
-  const docRef = doc(db, "businesses", id);
-  const docSnap = await getDoc(docRef);
+  const docRef = doc(db,"businesses",id);
+  const snap = await getDoc(docRef);
 
-  if(docSnap.exists()){
-    const b = docSnap.data();
+  if(snap.exists()){
+    const b = snap.data();
 
     container.innerHTML = `
       <div class="bg-white rounded-xl shadow p-6 text-left">
 
-        <!-- IMAGE -->
-        <img 
-          src="${b.image || 'https://via.placeholder.com/600'}"
-          onerror="this.src='https://via.placeholder.com/600'"
-          class="w-full h-64 object-cover rounded">
+        <img src="${b.image || 'https://via.placeholder.com/600'}"
+        class="w-full h-64 object-cover rounded">
 
-        <!-- TITLE -->
-        <h1 class="text-2xl font-bold mt-4">${b.name || "No Name"}</h1>
+        <h1 class="text-2xl font-bold mt-4">${b.name}</h1>
+        <p class="text-gray-500">${b.location}</p>
+        <p class="text-blue-500">${b.category}</p>
 
-        <!-- INFO -->
-        <p class="text-gray-500">${b.location || ""}</p>
-        <p class="text-blue-500">${b.category || ""}</p>
-
-        <!-- DESC -->
-        <p class="mt-4">${b.description || "No description available"}</p>
+        <p class="mt-4">${b.description || ""}</p>
 
         <!-- BUTTONS -->
         <div class="flex gap-3 mt-6 flex-wrap">
-          <a href="https://wa.me/91${b.whatsapp || ""}" target="_blank">
-            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-              WhatsApp
-            </button>
+          <a onclick="track('whatsapp')" href="https://wa.me/91${b.whatsapp}" target="_blank">
+            <button class="bg-green-500 text-white px-4 py-2 rounded">WhatsApp</button>
           </a>
 
-          <a href="tel:${b.phone || ""}">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-              Call
-            </button>
+          <a onclick="track('calls')" href="tel:${b.phone}">
+            <button class="bg-blue-500 text-white px-4 py-2 rounded">Call</button>
           </a>
         </div>
 
-        <!-- MAP 🔥 -->
+        <!-- MAP -->
         <div class="mt-6">
-          <h3 class="font-bold mb-2">📍 Location</h3>
-
           <iframe 
-            src="https://www.google.com/maps?q=${encodeURIComponent(b.location || "")}&output=embed"
-            class="w-full h-60 rounded-lg border">
+            src="https://www.google.com/maps?q=${encodeURIComponent(b.location)}&output=embed"
+            class="w-full h-60 rounded">
           </iframe>
+        </div>
 
-          <a href="https://www.google.com/maps?q=${encodeURIComponent(b.location || "")}" target="_blank">
-            <button class="mt-3 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-              Get Directions 🚀
-            </button>
-          </a>
+        <!-- GALLERY -->
+        <h2 class="text-xl font-bold mt-6">📸 Gallery</h2>
+        <div id="gallery" class="grid grid-cols-3 gap-3 mt-3"></div>
+
+        <!-- REVIEWS -->
+        <h2 class="text-xl font-bold mt-6">⭐ Reviews</h2>
+        <div id="reviews"></div>
+
+        <div class="bg-gray-100 p-4 mt-3 rounded">
+          <input id="rName" placeholder="Name" class="w-full p-2 mb-2">
+          <select id="rRating" class="w-full p-2 mb-2">
+            <option>5</option><option>4</option><option>3</option>
+            <option>2</option><option>1</option>
+          </select>
+          <textarea id="rComment" placeholder="Review" class="w-full p-2 mb-2"></textarea>
+          <button onclick="submitReview()" class="bg-indigo-600 text-white px-4 py-2 rounded">
+            Submit Review
+          </button>
+        </div>
+
+        <!-- BLOG -->
+        <h2 class="text-xl font-bold mt-6">📝 Blogs</h2>
+        <div id="blogs"></div>
+
+        <div class="bg-gray-100 p-4 mt-3 rounded">
+          <input id="bTitle" placeholder="Blog Title" class="w-full p-2 mb-2">
+          <textarea id="bContent" placeholder="Blog Content" class="w-full p-2 mb-2"></textarea>
+          <button onclick="submitBlog()" class="bg-green-600 text-white px-4 py-2 rounded">
+            Post Blog
+          </button>
         </div>
 
       </div>
     `;
 
+    // ⭐ LOAD REVIEWS
+    const reviewSnap = await getDocs(collection(db,"reviews"));
+    reviewSnap.forEach(d=>{
+      const r = d.data();
+      if(r.businessId === id){
+        document.getElementById("reviews").innerHTML += `
+          <div class="bg-white p-3 mt-2 rounded shadow">
+            <b>${r.name}</b> ⭐${r.rating}
+            <p>${r.comment}</p>
+          </div>
+        `;
+      }
+    });
+
+    // 📝 LOAD BLOGS
+    const blogSnap = await getDocs(collection(db,"blogs"));
+    blogSnap.forEach(d=>{
+      const bl = d.data();
+      if(bl.businessId === id){
+        document.getElementById("blogs").innerHTML += `
+          <div class="bg-white p-3 mt-2 rounded shadow">
+            <b>${bl.title}</b>
+            <p>${bl.content}</p>
+          </div>
+        `;
+      }
+    });
+
+    // 📸 GALLERY (MULTIPLE IMAGE SUPPORT)
+    if(b.gallery){
+      b.gallery.forEach(img=>{
+        document.getElementById("gallery").innerHTML += `
+          <img src="${img}" class="w-full h-24 object-cover rounded">
+        `;
+      });
+    }
+
   } else {
-    container.innerHTML = "<p class='text-red-500'>Business not found</p>";
+    container.innerHTML = "Business not found";
   }
 
-} catch (error) {
-  console.error(error);
-  container.innerHTML = "<p class='text-red-500'>Something went wrong</p>";
+} catch(err){
+  console.error(err);
+  container.innerHTML = "Error loading data";
 }
 
 </script>
