@@ -46,8 +46,14 @@ async function track(type){
   });
 }
 
-// ⭐ REVIEW SUBMIT
+// ⭐ REVIEW SUBMIT (FIXED)
 window.submitReview = async ()=>{
+
+  if(localStorage.getItem("review_"+id)){
+    alert("❌ You already submitted review");
+    return;
+  }
+
   const name = document.getElementById("rName").value;
   const rating = document.getElementById("rRating").value;
   const comment = document.getElementById("rComment").value;
@@ -65,12 +71,20 @@ window.submitReview = async ()=>{
     time: serverTimestamp()
   });
 
+  localStorage.setItem("review_"+id,"done");
+
   alert("Review Added ✅");
   location.reload();
 };
 
-// 📝 BLOG SUBMIT
+// 📝 BLOG SUBMIT (FIXED)
 window.submitBlog = async ()=>{
+
+  if(localStorage.getItem("blog_"+id)){
+    alert("❌ You already posted blog");
+    return;
+  }
+
   const title = document.getElementById("bTitle").value;
   const content = document.getElementById("bContent").value;
 
@@ -85,6 +99,8 @@ window.submitBlog = async ()=>{
     content,
     time: serverTimestamp()
   });
+
+  localStorage.setItem("blog_"+id,"done");
 
   alert("Blog Posted ✅");
   location.reload();
@@ -137,7 +153,7 @@ try {
         <h2 class="text-xl font-bold mt-6">⭐ Reviews</h2>
         <div id="reviews"></div>
 
-        <div class="bg-gray-100 p-4 mt-3 rounded">
+        <div id="reviewForm" class="bg-gray-100 p-4 mt-3 rounded">
           <input id="rName" placeholder="Name" class="w-full p-2 mb-2">
           <select id="rRating" class="w-full p-2 mb-2">
             <option>5</option><option>4</option><option>3</option>
@@ -153,7 +169,7 @@ try {
         <h2 class="text-xl font-bold mt-6">📝 Blogs</h2>
         <div id="blogs"></div>
 
-        <div class="bg-gray-100 p-4 mt-3 rounded">
+        <div id="blogForm" class="bg-gray-100 p-4 mt-3 rounded">
           <input id="bTitle" placeholder="Blog Title" class="w-full p-2 mb-2">
           <textarea id="bContent" placeholder="Blog Content" class="w-full p-2 mb-2"></textarea>
           <button onclick="submitBlog()" class="bg-green-600 text-white px-4 py-2 rounded">
@@ -192,13 +208,22 @@ try {
       }
     });
 
-    // 📸 GALLERY (MULTIPLE IMAGE SUPPORT)
+    // 📸 GALLERY
     if(b.gallery){
       b.gallery.forEach(img=>{
         document.getElementById("gallery").innerHTML += `
           <img src="${img}" class="w-full h-24 object-cover rounded">
         `;
       });
+    }
+
+    // 🔥 FORM HIDE
+    if(localStorage.getItem("review_"+id)){
+      document.getElementById("reviewForm").innerHTML = "✅ You already reviewed";
+    }
+
+    if(localStorage.getItem("blog_"+id)){
+      document.getElementById("blogForm").innerHTML = "✅ You already posted blog";
     }
 
   } else {
