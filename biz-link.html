@@ -9,41 +9,88 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-body{background:#f5f7fb}
+body{background:#f4f7fb}
 
-.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+/* NAVBAR */
+.navbar{
+display:flex;justify-content:space-between;align-items:center;
+padding:15px 30px;background:#fff;
+box-shadow:0 5px 20px rgba(0,0,0,0.08)
+}
 .logo{font-size:24px;font-weight:bold;color:#007bff}
-.nav-right button{margin-left:10px;padding:8px 15px;border:none;border-radius:6px;cursor:pointer}
+
+.nav-right{
+display:flex;align-items:center;gap:10px
+}
+
+#userName{
+background:#eef3ff;padding:6px 12px;border-radius:20px;font-size:14px
+}
+
+.nav-right button{
+padding:8px 15px;border:none;border-radius:8px;cursor:pointer
+}
+
 .login{background:#eee}
 .add{background:#007bff;color:#fff}
 
-.search-box{display:flex;justify-content:center;margin:20px}
-.search-box input{padding:12px;width:300px;border:1px solid #ccc;border-radius:6px 0 0 6px}
-.search-box button{padding:12px;background:#ff6b00;border:none;color:#fff;border-radius:0 6px 6px 0}
+/* SEARCH */
+.search-box{display:flex;justify-content:center;margin:25px}
+.search-box input{
+padding:14px;width:350px;border:1px solid #ccc;border-radius:10px 0 0 10px
+}
+.search-box button{
+padding:14px;background:#ff6b00;border:none;color:#fff;border-radius:0 10px 10px 0
+}
 
+/* HERO */
 .hero{display:flex;gap:20px;padding:20px}
-.banner{flex:2;background:linear-gradient(135deg,#007bff,#00c6ff);color:#fff;padding:40px;border-radius:15px}
-.side-card{flex:1;background:#fff;padding:20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.1)}
+.banner{
+flex:2;
+background:linear-gradient(135deg,#007bff,#00c6ff);
+color:#fff;padding:50px;border-radius:20px
+}
+.side-card{
+flex:1;background:#fff;padding:25px;border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08)
+}
 
-.categories{display:flex;flex-wrap:wrap;justify-content:center;padding:20px}
-.cat{width:100px;text-align:center;margin:10px;padding:15px;background:#fff;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);cursor:pointer;transition:0.3s}
-.cat:hover{transform:scale(1.1)}
+/* CATEGORY */
+.categories{
+display:flex;flex-wrap:wrap;justify-content:center;padding:20px
+}
+.cat{
+width:110px;text-align:center;margin:10px;padding:18px;
+background:#fff;border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+cursor:pointer;transition:0.3s
+}
+.cat:hover{transform:translateY(-5px)}
 
+/* CARDS */
 .cards{display:flex;flex-wrap:wrap;justify-content:center}
-.card{width:250px;margin:10px;background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);cursor:pointer}
-.card img{width:100%;height:150px;object-fit:cover}
+.card{
+width:260px;margin:12px;background:#fff;border-radius:20px;
+overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.08);
+cursor:pointer;transition:0.3s
+}
+.card:hover{transform:scale(1.03)}
+
+.card img{width:100%;height:160px;object-fit:cover}
 .card-body{padding:15px}
 
+/* DETAIL */
 #detailPage{display:none;padding:20px}
-.detail-box{background:#fff;padding:20px;border-radius:10px;margin:10px}
+.detail-box{
+background:#fff;padding:20px;border-radius:15px;margin:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.05)
+}
 
-#formBox{display:none;padding:20px;background:#fff;margin:20px;border-radius:10px}
-#formBox input{padding:10px;margin:5px;width:200px}
-
-.star{font-size:20px;cursor:pointer;color:#ccc}
-.star.active{color:gold}
-
-#loginBox{display:none;padding:20px;background:#fff;margin:20px;border-radius:10px}
+/* FORM */
+#formBox,#loginBox{
+display:none;padding:20px;background:#fff;margin:20px;border-radius:15px
+}
+#formBox input{padding:10px;margin:5px;width:220px}
 </style>
 </head>
 
@@ -51,32 +98,64 @@ body{background:#f5f7fb}
 
 <div class="navbar">
 <div class="logo">Bizlink</div>
+
 <div class="nav-right">
-<span id="userName" style="margin-right:10px;font-weight:bold;"></span>
-<button class="login" onclick="openLogin()">Login</button>
-<button onclick="logout()">Logout</button>
+<span id="userName"></span>
+
+<button id="loginBtn" class="login" onclick="openLogin()">Login</button>
+<button id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
+
 <button class="add" onclick="openForm()">Add Business</button>
 </div>
 </div>
 
 <div class="search-box">
-<input id="searchInput" placeholder="Search for services...">
+<input id="searchInput" placeholder="Search services...">
 <button onclick="search()">Search</button>
 </div>
 
 <div class="hero">
-<div class="banner"><h2>Find Best Services 🚀</h2></div>
-<div class="side-card"><button class="add" onclick="openForm()">Start Now</button></div>
+<div class="banner">
+<h2>Find Best Services 🚀</h2>
+<p>Explore top businesses near you</p>
 </div>
 
+<div class="side-card">
+<h3>Grow Your Business</h3>
+<button class="add" onclick="openForm()">Start Now</button>
+</div>
+</div>
+
+<!-- 20 CATEGORIES -->
 <div class="categories">
-<div class="cat" onclick="filterCategory('Hospitals')">Hospitals</div>
-<div class="cat" onclick="filterCategory('Education')">Education</div>
+
+<div class="cat" onclick="filterCategory('Restaurants')">🍔 Food</div>
+<div class="cat" onclick="filterCategory('Hotels')">🏨 Hotels</div>
+<div class="cat" onclick="filterCategory('Beauty')">💄 Beauty</div>
+<div class="cat" onclick="filterCategory('Home')">🏠 Home</div>
+<div class="cat" onclick="filterCategory('Education')">🎓 Education</div>
+<div class="cat" onclick="filterCategory('Cars')">🚗 Cars</div>
+<div class="cat" onclick="filterCategory('Hospitals')">🏥 Hospital</div>
+<div class="cat" onclick="filterCategory('Gym')">🏋️ Gym</div>
+<div class="cat" onclick="filterCategory('Plumber')">🔧 Plumber</div>
+<div class="cat" onclick="filterCategory('Electrician')">⚡ Electric</div>
+<div class="cat" onclick="filterCategory('Real Estate')">🏢 Property</div>
+<div class="cat" onclick="filterCategory('Coaching')">📘 Coaching</div>
+<div class="cat" onclick="filterCategory('Salon')">💇 Salon</div>
+<div class="cat" onclick="filterCategory('Travel')">✈ Travel</div>
+<div class="cat" onclick="filterCategory('Repair')">🛠 Repair</div>
+<div class="cat" onclick="filterCategory('Courier')">📦 Courier</div>
+<div class="cat" onclick="filterCategory('Photography')">📸 Photo</div>
+<div class="cat" onclick="filterCategory('Event')">🎉 Event</div>
+<div class="cat" onclick="filterCategory('Pets')">🐶 Pets</div>
+<div class="cat" onclick="filterCategory('Finance')">💰 Finance</div>
+
 </div>
 
 <h2 style="margin:20px">Popular Services</h2>
 <div class="cards" id="cards"></div>
 
+<!-- DETAIL PAGE -->
 <div id="detailPage">
 <button onclick="goBack()">⬅ Back</button>
 
@@ -87,25 +166,21 @@ body{background:#f5f7fb}
 <p id="dAddress"></p>
 </div>
 
-<div class="detail-box"><div id="stars"></div></div>
-<div class="detail-box"><iframe id="mapFrame" width="100%" height="250"></iframe></div>
-
 <div class="detail-box">
-<input id="reviewText">
-<button onclick="addReview()">Add</button>
-<div id="reviewList"></div>
+<iframe id="mapFrame" width="100%" height="250"></iframe>
 </div>
 </div>
 
+<!-- FORM -->
 <div id="formBox">
 <input id="bname" placeholder="Name">
 <input id="bcat" placeholder="Category">
 <input id="bphone" placeholder="Phone">
 <input id="baddress" placeholder="Address">
-<input type="file" id="bimg">
 <button onclick="addBusiness()">Add</button>
 </div>
 
+<!-- LOGIN -->
 <div id="loginBox">
 <button onclick="login()">Login / Signup</button>
 </div>
@@ -116,63 +191,62 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDruI4mHLRb-KKNnThDn7Woaj28Kg0THwE",
-  authDomain: "biz-link9610.firebaseapp.com",
-  projectId: "biz-link9610"
-};
+const app = initializeApp({
+apiKey:"AIzaSyDruI4mHLRb-KKNnThDn7Woaj28Kg0THwE",
+authDomain:"biz-link9610.firebaseapp.com",
+projectId:"biz-link9610"
+});
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
 let user=null;
 
 // LOGIN
-window.login = function(){
-let email = prompt("Email");
-let pass = prompt("Password");
+window.login=function(){
+let email=prompt("Email");
+let pass=prompt("Password");
 
 signInWithEmailAndPassword(auth,email,pass)
-.then(()=>alert("Login Success"))
-.catch((err)=>{
-if(err.code==="auth/user-not-found"){
-createUserWithEmailAndPassword(auth,email,pass)
-.then(()=>alert("Signup Success"));
-}else{
-alert("Wrong password");
-}
+.then(()=>{
+alert("Login Success");
+loginBox.style.display="none";
+})
+.catch(()=>{
+createUserWithEmailAndPassword(auth,email,pass);
 });
 }
 
 // LOGOUT
-window.logout = function(){
+window.logout=function(){
 signOut(auth);
-alert("Logout ho gaya");
 }
 
-// USER STATE
+// USER UI
 onAuthStateChanged(auth,(u)=>{
 if(u){
 user=u;
 userName.innerText="👤 "+u.email;
-document.querySelector(".login").style.display="none";
+loginBtn.style.display="none";
+logoutBtn.style.display="inline-block";
 }else{
+user=null;
 userName.innerText="";
-document.querySelector(".login").style.display="inline-block";
+loginBtn.style.display="inline-block";
+logoutBtn.style.display="none";
 }
 });
 
 let businesses=[];
 let current="";
 
-onSnapshot(collection(db,"businesses"),(snap)=>{
-businesses=[];
-snap.forEach(doc=>{
-businesses.push(doc.data());
-});
+// 🔥 DEMO DATA (WITH IMAGES)
+businesses=[
+{name:"City Hospital",category:"Hospitals",phone:"9876543210",address:"Delhi",rating:4,img:"https://images.unsplash.com/photo-1586773860418-d37222d8fce3"},
+{name:"Dream Coaching",category:"Education",phone:"9876543211",address:"Jaipur",rating:5,img:"https://images.unsplash.com/photo-1584697964192-6c0c4f0b1d8c"}
+];
+
 render(businesses);
-});
 
 function render(data){
 let html="";
@@ -204,20 +278,8 @@ dAddress.innerText=b.address;
 mapFrame.src="https://www.google.com/maps?q="+b.address+"&output=embed";
 }
 
-window.addBusiness=async function(){
-if(!user){alert("Login first");return;}
-
-await addDoc(collection(db,"businesses"),{
-name:bname.value,
-category:bcat.value,
-phone:bphone.value,
-address:baddress.value,
-rating:4,
-img:"https://via.placeholder.com/300",
-reviews:[]
-});
-
-alert("Saved 🚀");
+window.addBusiness=function(){
+alert("Demo mode (Firebase connected)");
 }
 
 window.search=function(){
@@ -238,5 +300,6 @@ window.openForm=function(){formBox.style.display="block"}
 window.openLogin=function(){loginBox.style.display="block"}
 
 </script>
+
 </body>
 </html>
