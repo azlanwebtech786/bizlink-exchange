@@ -4,67 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Bizlink - Find Best Services</title>
+<title>Bizlink Pro</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 
-body{
-background:#0f172a;
-color:white;
-}
+body{background:#0f172a;color:white}
 
 /* Navbar */
-.navbar{
-display:flex;justify-content:space-between;
-padding:15px 25px;background:#111827;
-}
-.logo{font-size:22px;font-weight:bold;color:#38bdf8}
-.navbar button{
-background:#38bdf8;border:none;padding:8px 15px;border-radius:6px;color:black
-}
+.navbar{display:flex;justify-content:space-between;padding:15px;background:#111827}
+.logo{color:#38bdf8;font-size:22px}
+button{cursor:pointer}
 
 /* Hero */
-.hero{
-text-align:center;padding:70px;
-background:linear-gradient(135deg,#1e293b,#020617);
-}
-.hero input{
-padding:12px;border-radius:6px;border:none;width:260px
-}
+.hero{text-align:center;padding:60px;background:linear-gradient(135deg,#1e293b,#020617)}
+.hero input{padding:12px;border-radius:6px;border:none}
 
 /* Cards */
-#results{display:flex;flex-wrap:wrap;justify-content:center;padding:20px}
+#results{display:flex;flex-wrap:wrap;justify-content:center}
 .card{
-background:#1e293b;
-width:260px;margin:10px;padding:10px;
+background:#1e293b;margin:15px;padding:15px;width:260px;
 border-radius:15px;cursor:pointer;
-box-shadow:0 5px 20px rgba(0,0,0,0.3)
+transition:0.3s
 }
-.card img{
-width:100%;height:150px;object-fit:cover;border-radius:10px
-}
+.card:hover{transform:translateY(-8px)}
+.card img{width:100%;height:150px;object-fit:cover;border-radius:10px}
 
 /* Detail */
 #detailPage{display:none;padding:20px}
-
-.detail-box{
-background:#1e293b;
-padding:20px;border-radius:15px;margin-top:15px
-}
+.detail-box{background:#1e293b;padding:20px;border-radius:15px;margin-top:15px}
 
 /* Review */
-.review{
-background:#020617;
-padding:10px;margin:5px;border-radius:8px
-}
+.review{background:#020617;padding:10px;margin:5px;border-radius:8px}
 
-button{cursor:pointer}
+/* Gallery */
+#gallery img{width:100px;margin:5px;border-radius:8px}
 
-/* Map */
-iframe{border-radius:10px;border:none}
 </style>
 </head>
 
@@ -77,98 +54,88 @@ iframe{border-radius:10px;border:none}
 
 <div class="hero" id="homeSection">
 <h1>Find Services Near You</h1>
-<input type="text" id="searchInput" placeholder="Search...">
+<input id="searchInput" placeholder="Search...">
 <button onclick="search()">Search</button>
+<button onclick="nearMe()">Near Me</button>
 </div>
 
 <div id="results"></div>
 
-<!-- DETAIL PAGE -->
+<!-- DETAIL -->
 <div id="detailPage">
 
 <button onclick="goBack()">⬅ Back</button>
 
 <div class="detail-box">
+<img id="dCover" style="width:100%;height:200px;border-radius:10px">
 
-<img id="dCover" style="width:100%;height:200px;object-fit:cover;border-radius:15px">
-
-<div style="display:flex;align-items:center;margin-top:-40px">
-
-<img id="dLogo" style="width:80px;height:80px;border-radius:50%;border:3px solid white;margin-right:10px">
-
-<div>
 <h2 id="dName"></h2>
+<p id="dCategory"></p>
+<p id="dPhone"></p>
+<p id="dAddress"></p>
 <p id="status"></p>
 </div>
 
+<!-- Rating -->
+<div class="detail-box">
+<h3>Rating</h3>
+<div>
+<span onclick="rate(1)">⭐</span>
+<span onclick="rate(2)">⭐</span>
+<span onclick="rate(3)">⭐</span>
+<span onclick="rate(4)">⭐</span>
+<span onclick="rate(5)">⭐</span>
+</div>
+<p id="ratingText"></p>
 </div>
 
-<p id="dCategory"></p>
-<p id="dPhone"></p>
-
+<!-- Gallery -->
+<div class="detail-box">
+<h3>Gallery</h3>
+<div id="gallery"></div>
 </div>
 
 <!-- Buttons -->
 <div class="detail-box">
 <button onclick="callNow()">📞 Call</button>
-
-<button onclick="openWhatsApp()" style="background:#25D366;margin-left:10px">
-💬 WhatsApp
-</button>
-
-<button onclick="shareBusiness()" style="margin-left:10px">
-📤 Share
-</button>
+<button onclick="openWhatsApp()">💬 WhatsApp</button>
+<button onclick="shareBusiness()">📤 Share</button>
 </div>
 
 <!-- Map -->
 <div class="detail-box">
-<h3>Location</h3>
 <iframe id="mapFrame" width="100%" height="250"></iframe>
 </div>
 
 <!-- Reviews -->
 <div class="detail-box">
-<h3>Reviews</h3>
-
 <input id="reviewText" placeholder="Write review">
 <button onclick="addReview()">Submit</button>
-
 <div id="reviewList"></div>
 </div>
 
 </div>
 
-<!-- Add Business -->
+<!-- FORM -->
 <div id="formBox" style="display:none;padding:20px">
 <input id="bname" placeholder="Name"><br><br>
 <input id="bcat" placeholder="Category"><br><br>
 <input id="bphone" placeholder="Phone"><br><br>
-<input id="bimg" placeholder="Cover Image URL"><br><br>
-<input id="blogo" placeholder="Logo URL"><br><br>
-
+<input id="bimg" placeholder="Cover Image"><br><br>
+<input id="bimages" placeholder="Gallery (comma ,)"><br><br>
+<input id="baddress" placeholder="Address"><br><br>
 <button onclick="addBusiness()">Add</button>
 </div>
 
 <script>
 
-let businesses = JSON.parse(localStorage.getItem("biz")) || [
-{
-name:"Dream Ranker Coaching",
-category:"coaching",
-phone:"9876543210",
-img:"https://via.placeholder.com/400",
-logo:"https://via.placeholder.com/100",
-open:true,
-reviews:[]
-}
-];
+let businesses = JSON.parse(localStorage.getItem("biz")) || [];
 
 function save(){localStorage.setItem("biz",JSON.stringify(businesses))}
 
 /* Search */
 function search(){
-let q=document.getElementById("searchInput").value.toLowerCase();
+let q=searchInput.value.toLowerCase();
 show(q)
 }
 
@@ -183,7 +150,7 @@ out+=`
 <p>${b.phone}</p>
 </div>`
 }})
-document.getElementById("results").innerHTML=out
+results.innerHTML=out
 }
 
 /* Detail */
@@ -191,7 +158,6 @@ let current="";
 
 function openDetail(name){
 current=name;
-
 let b=businesses.find(x=>x.name===name);
 
 homeSection.style.display="none";
@@ -201,46 +167,54 @@ detailPage.style.display="block";
 dName.innerText=b.name;
 dCategory.innerText=b.category;
 dPhone.innerText="📞 "+b.phone;
+dAddress.innerText="📍 "+b.address;
 
 dCover.src=b.img;
-dLogo.src=b.logo || b.img;
 
-/* Open Closed */
-status.innerHTML = b.open 
-? "<span style='color:lightgreen'>🟢 Open Now</span>"
-: "<span style='color:red'>🔴 Closed</span>";
+status.innerHTML=b.open?"🟢 Open":"🔴 Closed";
 
-/* Map */
-mapFrame.src="https://www.google.com/maps?q="+b.name+"&output=embed";
+mapFrame.src="https://www.google.com/maps?q="+encodeURIComponent(b.address)+"&output=embed";
 
 showReviews();
+showGallery(b);
 }
 
-function goBack(){
-homeSection.style.display="block";
-results.style.display="flex";
-detailPage.style.display="none";
+/* Gallery */
+function showGallery(b){
+let html="";
+(b.images||[]).forEach(img=>{
+html+=`<img src="${img}">`
+});
+gallery.innerHTML=html;
+}
+
+/* Rating */
+function rate(n){
+let b=businesses.find(x=>x.name===current);
+b.rating=n;
+save();
+ratingText.innerText="Rated "+n+" ⭐";
 }
 
 /* Reviews */
 function addReview(){
-let text=reviewText.value;
-let b=businesses.find(x=>x.name===current);
+let text=reviewText.value.trim();
+if(!text) return alert("Write review");
 
+let b=businesses.find(x=>x.name===current);
 b.reviews.push(text);
 save();
 
+reviewText.value="";
 showReviews();
 }
 
 function showReviews(){
 let b=businesses.find(x=>x.name===current);
 let html="";
-
 (b.reviews||[]).forEach(r=>{
 html+=`<div class="review">⭐ ${r}</div>`
 });
-
 reviewList.innerHTML=html;
 }
 
@@ -257,36 +231,36 @@ window.open("https://wa.me/91"+b.phone);
 
 function shareBusiness(){
 let b=businesses.find(x=>x.name===current);
-
-navigator.share({
-title:b.name,
-text:"Check this business on Bizlink",
-url:window.location.href
-});
+navigator.share({title:b.name,text:"Check this",url:location.href});
 }
 
-/* Add Business */
+/* Near me */
+function nearMe(){
+alert("Nearby feature coming soon 😎");
+}
+
+/* Add */
 function openForm(){formBox.style.display="block"}
 
 function addBusiness(){
 let name=bname.value;
 let cat=bcat.value;
 let phone=bphone.value;
-let img=bimg.value;
-let logo=blogo.value;
+let img=bimg.value||"https://via.placeholder.com/300";
+let images=bimages.value.split(",");
+let address=baddress.value;
 
 businesses.push({
 name,category:cat,phone,
-img,logo,
-open:true,
-reviews:[]
+img,images,address,
+open:true,reviews:[]
 });
 
 save();
 alert("Added!");
 }
 
-/* Initial */
+/* Init */
 show("");
 
 </script>
