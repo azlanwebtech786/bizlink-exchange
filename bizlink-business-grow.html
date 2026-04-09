@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Bizlink</title>
+  <title>Bizlink Ecosystem</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -52,14 +52,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ✅ NEW PROJECT CONFIG (IMPORTANT)
 const firebaseConfig = {
   apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
   authDomain: "bizlink-new.firebaseapp.com",
-  projectId: "bizlink-new",
-  storageBucket: "bizlink-new.firebasestorage.app",
-  messagingSenderId: "759857311400",
-  appId: "1:759857311400:web:903eb700790bf53de09c9d"
+  projectId: "bizlink-new"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -70,7 +66,6 @@ const catBox = document.getElementById("categories");
 
 let all = [];
 
-// 🔥 DEFAULT CATEGORY
 let categories = [
   "All","Salon","Coaching","Restaurant","Gym","Hospital","Hotel",
   "Electrician","Plumber","Car Service","Mobile Shop",
@@ -79,26 +74,21 @@ let categories = [
   "Interior Designer","Travel Agency"
 ];
 
-// 🔥 FETCH DATA
+// FETCH
 const snap = await getDocs(collection(db,"businesses"));
 
-snap.forEach(doc=>{
+snap.forEach((doc)=>{
   const data = doc.data();
-
-  // normalize category
-  if(data.category){
-    data.category = data.category.trim();
-  }
+  data.id = doc.id; // 🔥 IMPORTANT
 
   all.push(data);
 
-  // ADD NEW CATEGORY AUTO
   if(data.category && !categories.includes(data.category)){
     categories.push(data.category);
   }
 });
 
-// 🔥 RENDER CATEGORY
+// CATEGORY RENDER
 categories.forEach(cat=>{
   catBox.innerHTML += `
     <div onclick="filterCategory('${cat}')"
@@ -108,18 +98,19 @@ categories.forEach(cat=>{
   `;
 });
 
-// 🔥 RENDER BUSINESS
+// BUSINESS RENDER
 function render(data){
   list.innerHTML = "";
 
   if(data.length === 0){
-    list.innerHTML = `<p class="text-gray-500">No business found</p>`;
+    list.innerHTML = `<p>No business found</p>`;
     return;
   }
 
   data.forEach(b=>{
     list.innerHTML += `
-      <div class="bg-white shadow rounded-xl overflow-hidden hover:shadow-xl transition">
+      <div onclick="openDetail('${b.id}')"
+        class="bg-white shadow rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
         <img src="${b.image || 'https://via.placeholder.com/400'}"
           class="w-full h-40 object-cover">
@@ -128,20 +119,6 @@ function render(data){
           <h3 class="font-bold text-lg">${b.name}</h3>
           <p class="text-gray-500 text-sm">${b.location}</p>
           <p class="text-xs text-blue-500">${b.category}</p>
-
-          <div class="flex gap-2 mt-3">
-            <a href="https://wa.me/91${b.whatsapp}" target="_blank">
-              <button class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                WhatsApp
-              </button>
-            </a>
-
-            <a href="tel:${b.phone}">
-              <button class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                Call
-              </button>
-            </a>
-          </div>
         </div>
 
       </div>
@@ -149,31 +126,31 @@ function render(data){
   });
 }
 
-// INITIAL
 render(all);
 
-// 🔥 FILTER
+// FILTER
 window.filterCategory = (cat)=>{
   if(cat === "All"){
     render(all);
   } else {
-    render(all.filter(b => 
-      b.category && b.category.toLowerCase() === cat.toLowerCase()
-    ));
+    render(all.filter(b => b.category === cat));
   }
 };
 
-// 🔥 SEARCH
+// SEARCH
 window.searchBusiness = ()=>{
   const val = document.getElementById("searchInput").value.toLowerCase();
 
-  const filtered = all.filter(b =>
+  render(all.filter(b =>
     (b.name && b.name.toLowerCase().includes(val)) ||
     (b.category && b.category.toLowerCase().includes(val)) ||
     (b.location && b.location.toLowerCase().includes(val))
-  );
+  ));
+};
 
-  render(filtered);
+// OPEN DETAIL
+window.openDetail = (id)=>{
+  window.location.href = "business-detail.html?id=" + id;
 };
 
 </script>
