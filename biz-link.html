@@ -9,50 +9,54 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-body{background:#f4f7fb}
+
+body{
+background:#0f172a;
+color:#fff;
+}
 
 /* NAVBAR */
 .navbar{
 display:flex;justify-content:space-between;align-items:center;
-padding:15px 30px;background:#fff;
-box-shadow:0 5px 20px rgba(0,0,0,0.08)
+padding:15px 30px;background:#111827;
+box-shadow:0 5px 20px rgba(0,0,0,0.5)
 }
-.logo{font-size:24px;font-weight:bold;color:#007bff}
 
-.nav-right{
-display:flex;align-items:center;gap:10px
-}
+.logo{font-size:24px;font-weight:bold;color:#3b82f6}
+
+.nav-right{display:flex;align-items:center;gap:10px}
 
 #userName{
-background:#eef3ff;padding:6px 12px;border-radius:20px;font-size:14px
+background:#1e293b;padding:6px 12px;border-radius:20px;font-size:14px
 }
 
-.nav-right button{
+button{
 padding:8px 15px;border:none;border-radius:8px;cursor:pointer
 }
 
-.login{background:#eee}
-.add{background:#007bff;color:#fff}
+.login{background:#374151;color:#fff}
+.add{background:#3b82f6;color:#fff}
 
 /* SEARCH */
 .search-box{display:flex;justify-content:center;margin:25px}
 .search-box input{
-padding:14px;width:350px;border:1px solid #ccc;border-radius:10px 0 0 10px
+padding:14px;width:350px;border:none;background:#1e293b;color:#fff;
+border-radius:10px 0 0 10px
 }
 .search-box button{
-padding:14px;background:#ff6b00;border:none;color:#fff;border-radius:0 10px 10px 0
+padding:14px;background:#f97316;color:#fff;border-radius:0 10px 10px 0
 }
 
 /* HERO */
 .hero{display:flex;gap:20px;padding:20px}
 .banner{
 flex:2;
-background:linear-gradient(135deg,#007bff,#00c6ff);
-color:#fff;padding:50px;border-radius:20px
+background:linear-gradient(135deg,#3b82f6,#06b6d4);
+padding:50px;border-radius:20px;
+animation:fadeIn 1s ease;
 }
 .side-card{
-flex:1;background:#fff;padding:25px;border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.08)
+flex:1;background:#111827;padding:25px;border-radius:20px;
 }
 
 /* CATEGORY */
@@ -61,62 +65,40 @@ display:flex;flex-wrap:wrap;justify-content:center;padding:20px
 }
 .cat{
 width:110px;text-align:center;margin:10px;padding:18px;
-background:#fff;border-radius:15px;
-box-shadow:0 10px 25px rgba(0,0,0,0.08);
+background:#1e293b;border-radius:15px;
 cursor:pointer;transition:0.3s
 }
-.cat:hover{transform:translateY(-5px)}
+.cat:hover{transform:translateY(-5px);background:#334155}
 
 /* CARDS */
 .cards{display:flex;flex-wrap:wrap;justify-content:center}
 .card{
-width:260px;margin:12px;background:#fff;border-radius:20px;
-overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.08);
-cursor:pointer;transition:0.3s
+width:260px;margin:12px;background:#111827;border-radius:20px;
+overflow:hidden;transition:0.3s
 }
 .card:hover{
 transform:translateY(-10px);
-box-shadow:0 25px 60px rgba(0,0,0,0.15);
+box-shadow:0 20px 50px rgba(0,0,0,0.6);
 }
 .card img{width:100%;height:160px;object-fit:cover}
 .card-body{padding:15px}
 
-/* DETAIL */
-#detailPage{display:none;padding:20px}
-.detail-box{
-background:#fff;padding:20px;border-radius:15px;margin:10px;
-box-shadow:0 5px 15px rgba(0,0,0,0.05)
-}
-
 /* FORM */
-#formBox,#loginBox{
-display:none;padding:20px;background:#fff;margin:20px auto;border-radius:20px;
-max-width:400px;
-box-shadow:0 20px 60px rgba(0,0,0,0.1)
+#formBox,#loginBox,#dashboard,#profilePage{
+display:none;
+padding:20px;background:#111827;margin:20px auto;border-radius:20px;
+max-width:450px;
 }
 
-#formBox input{
-display:block;
-width:100%;
-padding:12px;
-margin:8px 0;
-border-radius:10px;
-border:1px solid #ddd
+input{
+width:100%;padding:12px;margin:8px 0;
+background:#1e293b;border:none;border-radius:10px;color:#fff
 }
 
-#formBox button{
-width:100%;
-padding:12px;
-background:#007bff;
-color:#fff;
-border-radius:10px;
-font-weight:bold
-}
-
-/* DASHBOARD */
-#dashboard h2{
-font-size:26px;
-margin-bottom:15px;
+/* ANIMATION */
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
 }
 </style>
 </head>
@@ -129,19 +111,13 @@ margin-bottom:15px;
 <div class="nav-right">
 <span id="userName"></span>
 
-<button id="loginBtn" class="login" onclick="openLogin()">Login</button>
+<button id="loginBtn" onclick="openLogin()">Login</button>
 <button id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
 
 <button onclick="openDashboard()">My Business</button>
-
-<button class="add" onclick="openForm()">Add Business</button>
+<button onclick="openProfile()">Profile</button>
+<button class="add" onclick="openForm()">Grow Business</button>
 </div>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboard" style="display:none;padding:20px">
-<h2>My Businesses 🚀</h2>
-<div id="myBiz" class="cards"></div>
 </div>
 
 <div class="search-box">
@@ -152,40 +128,22 @@ margin-bottom:15px;
 <div class="hero">
 <div class="banner">
 <h2>Find Best Services 🚀</h2>
-<p>Explore top businesses near you</p>
+<p>Justdial level experience 💎</p>
 </div>
-
 <div class="side-card">
-<h3>Grow Your Business</h3>
+<h3>Grow your business</h3>
 <button class="add" onclick="openForm()">Start Now</button>
 </div>
 </div>
 
 <div class="categories">
 <div class="cat" onclick="filterCategory('Restaurants')">🍔 Food</div>
-<div class="cat" onclick="filterCategory('Hotels')">🏨 Hotels</div>
-<div class="cat" onclick="filterCategory('Beauty')">💄 Beauty</div>
-<div class="cat" onclick="filterCategory('Home')">🏠 Home</div>
-<div class="cat" onclick="filterCategory('Education')">🎓 Education</div>
-<div class="cat" onclick="filterCategory('Cars')">🚗 Cars</div>
 <div class="cat" onclick="filterCategory('Hospitals')">🏥 Hospital</div>
+<div class="cat" onclick="filterCategory('Education')">🎓 Education</div>
 </div>
 
 <h2 style="margin:20px">Popular Services</h2>
 <div class="cards" id="cards"></div>
-
-<div id="detailPage">
-<button onclick="goBack()">⬅ Back</button>
-<div class="detail-box">
-<h2 id="dName"></h2>
-<p id="dCategory"></p>
-<p id="dPhone"></p>
-<p id="dAddress"></p>
-</div>
-<div class="detail-box">
-<iframe id="mapFrame" width="100%" height="250"></iframe>
-</div>
-</div>
 
 <!-- FORM -->
 <div id="formBox">
@@ -194,11 +152,19 @@ margin-bottom:15px;
 <input id="bphone" placeholder="Phone">
 <input id="baddress" placeholder="Address">
 <input type="file" id="bimg">
-<button onclick="addBusiness()">Add Business</button>
+<button onclick="addBusiness()">Add</button>
 </div>
 
-<div id="loginBox">
-<button onclick="login()">Login / Signup</button>
+<!-- DASHBOARD -->
+<div id="dashboard">
+<h2>My Businesses</h2>
+<div id="myBiz"></div>
+</div>
+
+<!-- PROFILE -->
+<div id="profilePage">
+<h2>Business Profile</h2>
+<div id="profileData"></div>
 </div>
 
 <script type="module">
@@ -219,6 +185,7 @@ const db=getFirestore(app);
 const storage=getStorage(app);
 
 let user=null;
+let businesses=[];
 
 // LOGIN
 window.login=function(){
@@ -226,158 +193,88 @@ let email=prompt("Email");
 let pass=prompt("Password");
 
 signInWithEmailAndPassword(auth,email,pass)
-.then(()=>{alert("Login Success");loginBox.style.display="none";})
-.catch(()=>{createUserWithEmailAndPassword(auth,email,pass);});
+.catch(()=>createUserWithEmailAndPassword(auth,email,pass));
 }
 
-// LOGOUT
-window.logout=function(){signOut(auth);}
+window.logout=function(){signOut(auth)}
 
-// USER UI
 onAuthStateChanged(auth,(u)=>{
 if(u){
 user=u;
-userName.innerText="👤 "+u.email;
+userName.innerText=u.email;
 loginBtn.style.display="none";
 logoutBtn.style.display="inline-block";
-}else{
-user=null;
-userName.innerText="";
-loginBtn.style.display="inline-block";
-logoutBtn.style.display="none";
 }
 });
 
-let businesses=[];
-let current="";
-
-onSnapshot(collection(db,"businesses"),(snap)=>{
-businesses=[];
-snap.forEach(d=>{
-businesses.push({...d.data(),id:d.id});
-});
-render(businesses);
-});
-
-function render(data){
-let html="";
-data.forEach(b=>{
-html+=`
-<div class="card" onclick="openDetail('${b.name}')">
-<img src="${b.img}">
-<div class="card-body">
-<h3>${b.name}</h3>
-<p>⭐ ${b.rating} | ${b.phone}</p>
-</div>
-</div>`;
-});
-cards.innerHTML=html;
-}
-
-window.openDetail=function(name){
-current=name;
-let b=businesses.find(x=>x.name===name);
-
-detailPage.style.display="block";
-cards.style.display="none";
-
-dName.innerText=b.name;
-dCategory.innerText=b.category;
-dPhone.innerText=b.phone;
-dAddress.innerText=b.address;
-
-mapFrame.src="https://www.google.com/maps?q="+b.address+"&output=embed";
-}
-
+// IMAGE UPLOAD
 async function uploadImage(file){
-const storageRef = ref(storage, "bizImages/" + Date.now() + file.name);
-await uploadBytes(storageRef, file);
+const storageRef=ref(storage,"biz/"+Date.now());
+await uploadBytes(storageRef,file);
 return await getDownloadURL(storageRef);
 }
 
+// ADD BUSINESS
 window.addBusiness=async function(){
-if(!user){alert("Login first");return;}
-
 let file=bimg.files[0];
-let imgURL="https://via.placeholder.com/300";
-
-if(file){
-imgURL=await uploadImage(file);
-}
+let img=file?await uploadImage(file):"https://via.placeholder.com/300";
 
 await addDoc(collection(db,"businesses"),{
 name:bname.value,
 category:bcat.value,
 phone:bphone.value,
 address:baddress.value,
-rating:4,
-img:imgURL,
-userId:user.uid
+img,
+userId:user.uid,
+leads:0
 });
-
-alert("Saved 🚀");
+alert("Business Added 🚀");
 }
 
-window.openDashboard=function(){
-if(!user){alert("Login first");return;}
+// REAL TIME
+onSnapshot(collection(db,"businesses"),(snap)=>{
+businesses=[];
+snap.forEach(d=>businesses.push({...d.data(),id:d.id}));
+render(businesses);
+});
 
-document.querySelector(".hero").style.display="none";
-document.querySelector(".categories").style.display="none";
-document.querySelector(".cards").style.display="none";
-
-dashboard.style.display="block";
-
-let my=businesses.filter(b=>b.userId===user.uid);
-
-let html="";
-my.forEach(b=>{
-html+=`
+function render(data){
+cards.innerHTML=data.map(b=>`
 <div class="card">
 <img src="${b.img}">
 <div class="card-body">
 <h3>${b.name}</h3>
 <p>${b.phone}</p>
-<button onclick="deleteBiz('${b.id}')">Delete</button>
-<button onclick="editBiz('${b.id}')">Edit</button>
 </div>
-</div>`;
-});
-myBiz.innerHTML=html;
+</div>`).join("");
 }
 
-window.deleteBiz=async function(id){
+// DASHBOARD
+window.openDashboard=function(){
+dashboard.style.display="block";
+myBiz.innerHTML=businesses
+.filter(b=>b.userId===user.uid)
+.map(b=>`
+<div class="card">
+<img src="${b.img}">
+<div class="card-body">
+<h3>${b.name}</h3>
+<p>Leads: ${b.leads||0}</p>
+<button onclick="deleteBiz('${b.id}')">Delete</button>
+</div>
+</div>`).join("");
+}
+
+// PROFILE
+window.openProfile=function(){
+profilePage.style.display="block";
+profileData.innerHTML=`Logged in as ${user.email}`;
+}
+
+// DELETE
+window.deleteBiz=async(id)=>{
 await deleteDoc(doc(db,"businesses",id));
 }
-
-window.editBiz=async function(id){
-let name=prompt("New Name");
-let phone=prompt("New Phone");
-
-await updateDoc(doc(db,"businesses",id),{
-name,phone
-});
-}
-
-window.search=function(){
-let q=searchInput.value.toLowerCase();
-render(businesses.filter(b=>b.name.toLowerCase().includes(q)));
-}
-
-window.filterCategory=function(cat){
-render(businesses.filter(b=>b.category===cat));
-}
-
-window.goBack=function(){
-detailPage.style.display="none";
-dashboard.style.display="none";
-
-document.querySelector(".hero").style.display="flex";
-document.querySelector(".categories").style.display="flex";
-document.querySelector(".cards").style.display="flex";
-}
-
-window.openForm=function(){formBox.style.display="block"}
-window.openLogin=function(){loginBox.style.display="block"}
 
 </script>
 
