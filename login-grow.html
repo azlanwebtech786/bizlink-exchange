@@ -1,25 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login | Bizlink</title>
+  <meta charset="UTF-8">
+  <title>Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body class="bg-gray-100 flex justify-center items-center h-screen">
 
-<div class="bg-white p-6 rounded-xl shadow w-80">
+<div class="bg-white p-6 rounded-xl shadow w-80 text-center">
 
-  <h2 class="text-xl font-bold mb-4 text-center">Login</h2>
+  <h2 class="text-xl font-bold mb-4">Login</h2>
 
-  <input id="email" placeholder="Email" class="w-full p-2 mb-3 border rounded">
-  <input id="password" type="password" placeholder="Password" class="w-full p-2 mb-3 border rounded">
-
-  <button onclick="login()" class="w-full bg-blue-600 text-white p-2 rounded mb-2">
-    Login
-  </button>
-
-  <button onclick="signup()" class="w-full bg-green-600 text-white p-2 rounded">
-    Signup
+  <!-- GOOGLE LOGIN -->
+  <button onclick="googleLogin()" 
+    class="w-full bg-red-500 text-white py-2 rounded mb-3 hover:bg-red-600">
+    Continue with Google 🚀
   </button>
 
 </div>
@@ -28,7 +24,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { 
-  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword 
+  getAuth, GoogleAuthProvider, signInWithPopup 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
@@ -40,31 +36,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// LOGIN
-window.login = async ()=>{
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
+const provider = new GoogleAuthProvider();
+
+// 🔥 GOOGLE LOGIN FUNCTION
+window.googleLogin = async ()=>{
 
   try{
-    await signInWithEmailAndPassword(auth,email,pass);
-    alert("Login Success ✅");
-    window.location.href = "index.html";
-  }catch(e){
-    alert(e.message);
-  }
-};
+    const result = await signInWithPopup(auth, provider);
 
-// SIGNUP
-window.signup = async ()=>{
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
+    const user = result.user;
 
-  try{
-    await createUserWithEmailAndPassword(auth,email,pass);
-    alert("Account Created ✅");
-  }catch(e){
-    alert(e.message);
+    alert("Welcome " + user.displayName + " 🎉");
+
+    // 👉 redirect
+    window.location.href = "bizlink-business-grow.html";
+
+  } catch(err){
+    console.error(err);
+    alert("Login failed ❌");
   }
+
 };
 
 </script>
