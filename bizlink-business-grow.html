@@ -5,83 +5,160 @@
   <title>Bizlink</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-950 text-white">
 
-<nav class="flex justify-between p-4 bg-gray-900">
-  <h1 class="text-xl font-bold text-blue-500">Bizlink</h1>
+<body class="bg-gray-100 font-sans">
+
+<!-- NAVBAR -->
+<div class="flex justify-between items-center px-6 py-4 bg-white shadow">
+  <h1 class="text-2xl font-bold text-blue-600">Bizlink</h1>
+
   <a href="add-business-grow.html">
-    <button class="bg-blue-600 px-4 py-2 rounded">Add Business</button>
+    <button class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow">
+      List Business
+    </button>
   </a>
-</nav>
+</div>
 
-<section class="p-6">
-  <h2 class="text-2xl mb-4">All Categories</h2>
-  <div id="categories" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
-</section>
+<!-- HERO -->
+<div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-10 text-center">
+  <h2 class="text-4xl font-bold mb-2">Grow Your Business 🚀</h2>
+  <p class="mb-6">Get customers, leads & Google visibility</p>
 
-<section class="p-6">
-  <h2 class="text-2xl mb-4">Businesses</h2>
-  <div id="list" class="grid md:grid-cols-3 gap-4"></div>
-</section>
+  <div class="flex justify-center max-w-xl mx-auto">
+    <input id="searchInput" placeholder="Search business..."
+      class="w-full p-3 rounded-l text-black">
+
+    <button onclick="searchBusiness()"
+      class="bg-yellow-400 px-6 rounded-r font-bold">
+      Search
+    </button>
+  </div>
+</div>
+
+<!-- CATEGORY -->
+<div class="p-6">
+  <h2 class="text-xl font-bold mb-4">Popular Categories</h2>
+
+  <div id="categories" class="grid grid-cols-3 md:grid-cols-6 gap-4"></div>
+</div>
+
+<!-- BUSINESS -->
+<div class="p-6">
+  <h2 class="text-xl font-bold mb-4">Businesses</h2>
+
+  <div id="list" class="grid md:grid-cols-3 gap-6"></div>
+</div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDruI4mHLRb-KKNnThDn7Woaj28Kg0THwE",
   authDomain: "biz-link9610.firebaseapp.com",
-  projectId: "biz-link9610",
-  storageBucket: "biz-link9610.firebasestorage.app",
-  messagingSenderId: "256899172885",
-  appId: "1:256899172885:web:69d634f42675be0ae0dc1c"
+  projectId: "biz-link9610"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const catBox = document.getElementById("categories");
 const list = document.getElementById("list");
+const catBox = document.getElementById("categories");
 
 let all = [];
 
-// FETCH BUSINESSES
-const snap = await getDocs(collection(db,"businesses"));
-snap.forEach(doc=> all.push(doc.data()));
+// 🔥 DEFAULT 20+ CATEGORY (ALWAYS SHOW)
+const defaultCategories = [
+  "All","Salon","Coaching","Restaurant","Gym","Hospital","Hotel",
+  "Electrician","Plumber","Car Service","Mobile Shop",
+  "Real Estate","Repair","Boutique","Medical Store",
+  "Bakery","Cafe","Photography","Event Planner",
+  "Interior Designer","Travel Agency"
+];
 
-// RENDER
-function render(data){
-  list.innerHTML="";
-  data.forEach(b=>{
-    list.innerHTML+=`
-      <div class="bg-gray-800 p-4 rounded">
-        <img src="${b.image || 'https://via.placeholder.com/300'}" class="w-full h-32 object-cover">
-        <h3 class="text-lg mt-2">${b.name}</h3>
-        <p>${b.location}</p>
-        <a href="https://wa.me/91${b.whatsapp}" target="_blank">WhatsApp</a>
-      </div>
-    `;
-  });
-}
-
-render(all);
-
-// FETCH CATEGORIES
-let cats = new Set();
-all.forEach(b=> cats.add(b.category));
-
-cats.forEach(cat=>{
-  catBox.innerHTML+=`
-    <div onclick="filter('${cat}')" class="bg-gray-700 p-2 rounded text-center cursor-pointer">
+// RENDER CATEGORY
+defaultCategories.forEach(cat=>{
+  catBox.innerHTML += `
+    <div onclick="filter('${cat}')"
+      class="bg-white shadow rounded-xl p-4 text-center cursor-pointer hover:bg-blue-100">
       ${cat}
     </div>
   `;
 });
 
+// 🔥 FETCH BUSINESS
+const snap = await getDocs(collection(db,"businesses"));
+
+snap.forEach(doc=>{
+  all.push(doc.data());
+});
+
+// RENDER BUSINESS
+function render(data){
+  list.innerHTML = "";
+
+  if(data.length === 0){
+    list.innerHTML = `<p class="text-gray-500">No business found</p>`;
+    return;
+  }
+
+  data.forEach(b=>{
+    list.innerHTML += `
+      <div class="bg-white shadow rounded-xl overflow-hidden hover:shadow-lg">
+
+        <img src="${b.image || 'https://via.placeholder.com/400'}"
+          class="w-full h-40 object-cover">
+
+        <div class="p-4">
+          <h3 class="font-bold text-lg">${b.name}</h3>
+          <p class="text-gray-500 text-sm">${b.location}</p>
+
+          <div class="flex gap-2 mt-3">
+            <a href="https://wa.me/91${b.whatsapp}" target="_blank">
+              <button class="bg-green-500 text-white px-3 py-1 rounded">
+                WhatsApp
+              </button>
+            </a>
+
+            <a href="tel:${b.phone}">
+              <button class="bg-blue-500 text-white px-3 py-1 rounded">
+                Call
+              </button>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    `;
+  });
+}
+
+// INITIAL LOAD
+render(all);
+
 // FILTER
-window.filter = (c)=>{
-  render(all.filter(b=>b.category===c));
+window.filter = (cat)=>{
+  if(cat === "All"){
+    render(all);
+  } else {
+    render(all.filter(b => b.category === cat));
+  }
 };
+
+// SEARCH
+window.searchBusiness = ()=>{
+  const val = document.getElementById("searchInput").value.toLowerCase();
+
+  const filtered = all.filter(b =>
+    b.name.toLowerCase().includes(val) ||
+    b.category.toLowerCase().includes(val) ||
+    b.location.toLowerCase().includes(val)
+  );
+
+  render(filtered);
+};
+
 </script>
 
 </body>
