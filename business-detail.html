@@ -16,8 +16,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { 
   getFirestore, doc, getDoc, 
   collection, addDoc, getDocs, serverTimestamp, 
-  updateDoc, increment 
+  updateDoc, increment, query, where 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { 
+  getAuth, onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
@@ -27,6 +31,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 const container = document.getElementById("detail");
 
@@ -38,21 +43,30 @@ if(!id){
   throw new Error("No ID");
 }
 
-// 📊 TRACK LEADS
-async function track(type){
-  const ref = doc(db,"businesses",id);
-  await updateDoc(ref,{
-    [type]: increment(1)
-  });
-}
+let currentUser = null;
 
-// ⭐ REVIEW SUBMIT (FIXED)
-window.submitReview = async ()=>{
-
-  if(localStorage.getItem("review_"+id)){
-    alert("❌ You already submitted review");
+// 🔐 LOGIN CHECK
+onAuthStateChanged(auth, async (user)=>{
+  
+  if(!user){
+    alert("Login required");
+    window.location.href = "login-grow.html";
     return;
   }
+
+  currentUser = user;
+
+  loadPage();
+});
+
+// 📊 TRACK
+async function track(type){
+  const ref = doc(db,"businesses",id);
+  await updateDoc(ref,{ [type]: increment(1) });
+}
+
+// ⭐ REVIEW SUBMIT
+window.submitReview = async ()=>{
 
   const name = document.getElementById("rName").value;
   const rating = document.getElementById("rRating").value;
@@ -63,27 +77,35 @@ window.submitReview = async ()=>{
     return;
   }
 
+  // 🔥 CHECK EXISTING REVIEW
+  const q = query(
+    collection(db,"reviews"),
+    where("businessId","==",id),
+    where("user","==",currentUser.email)
+  );
+
+  const snap = await getDocs(q);
+
+  if(!snap.empty){
+    alert("❌ You already reviewed");
+    return;
+  }
+
   await addDoc(collection(db,"reviews"),{
     businessId: id,
+    user: currentUser.email,
     name,
     rating,
     comment,
     time: serverTimestamp()
   });
 
-  localStorage.setItem("review_"+id,"done");
-
   alert("Review Added ✅");
   location.reload();
 };
 
-// 📝 BLOG SUBMIT (FIXED)
+// 📝 BLOG SUBMIT
 window.submitBlog = async ()=>{
-
-  if(localStorage.getItem("blog_"+id)){
-    alert("❌ You already posted blog");
-    return;
-  }
 
   const title = document.getElementById("bTitle").value;
   const content = document.getElementById("bContent").value;
@@ -93,146 +115,138 @@ window.submitBlog = async ()=>{
     return;
   }
 
+  // 🔥 CHECK EXISTING BLOG
+  const q = query(
+    collection(db,"blogs"),
+    where("businessId","==",id),
+    where("user","==",currentUser.email)
+  );
+
+  const snap = await getDocs(q);
+
+  if(!snap.empty){
+    alert("❌ You already posted blog");
+    return;
+  }
+
   await addDoc(collection(db,"blogs"),{
     businessId: id,
+    user: currentUser.email,
     title,
     content,
     time: serverTimestamp()
   });
 
-  localStorage.setItem("blog_"+id,"done");
-
   alert("Blog Posted ✅");
   location.reload();
 };
 
-try {
+// 🚀 LOAD PAGE
+async function loadPage(){
 
-  const docRef = doc(db,"businesses",id);
-  const snap = await getDoc(docRef);
+  try {
 
-  if(snap.exists()){
-    const b = snap.data();
+    const docRef = doc(db,"businesses",id);
+    const snap = await getDoc(docRef);
 
-    container.innerHTML = `
-      <div class="bg-white rounded-xl shadow p-6 text-left">
+    if(snap.exists()){
+      const b = snap.data();
 
-        <img src="${b.image || 'https://via.placeholder.com/600'}"
-        class="w-full h-64 object-cover rounded">
+      container.innerHTML = `
+        <div class="bg-white rounded-xl shadow p-6 text-left">
 
-        <h1 class="text-2xl font-bold mt-4">${b.name}</h1>
-        <p class="text-gray-500">${b.location}</p>
-        <p class="text-blue-500">${b.category}</p>
+          <img src="${b.image || 'https://via.placeholder.com/600'}"
+          class="w-full h-64 object-cover rounded">
 
-        <p class="mt-4">${b.description || ""}</p>
+          <h1 class="text-2xl font-bold mt-4">${b.name}</h1>
+          <p class="text-gray-500">${b.location}</p>
+          <p class="text-blue-500">${b.category}</p>
 
-        <!-- BUTTONS -->
-        <div class="flex gap-3 mt-6 flex-wrap">
-          <a onclick="track('whatsapp')" href="https://wa.me/91${b.whatsapp}" target="_blank">
-            <button class="bg-green-500 text-white px-4 py-2 rounded">WhatsApp</button>
-          </a>
+          <p class="mt-4">${b.description || ""}</p>
 
-          <a onclick="track('calls')" href="tel:${b.phone}">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded">Call</button>
-          </a>
-        </div>
+          <div class="flex gap-3 mt-6 flex-wrap">
+            <a onclick="track('whatsapp')" href="https://wa.me/91${b.whatsapp}" target="_blank">
+              <button class="bg-green-500 text-white px-4 py-2 rounded">WhatsApp</button>
+            </a>
 
-        <!-- MAP -->
-        <div class="mt-6">
-          <iframe 
-            src="https://www.google.com/maps?q=${encodeURIComponent(b.location)}&output=embed"
-            class="w-full h-60 rounded">
-          </iframe>
-        </div>
-
-        <!-- GALLERY -->
-        <h2 class="text-xl font-bold mt-6">📸 Gallery</h2>
-        <div id="gallery" class="grid grid-cols-3 gap-3 mt-3"></div>
-
-        <!-- REVIEWS -->
-        <h2 class="text-xl font-bold mt-6">⭐ Reviews</h2>
-        <div id="reviews"></div>
-
-        <div id="reviewForm" class="bg-gray-100 p-4 mt-3 rounded">
-          <input id="rName" placeholder="Name" class="w-full p-2 mb-2">
-          <select id="rRating" class="w-full p-2 mb-2">
-            <option>5</option><option>4</option><option>3</option>
-            <option>2</option><option>1</option>
-          </select>
-          <textarea id="rComment" placeholder="Review" class="w-full p-2 mb-2"></textarea>
-          <button onclick="submitReview()" class="bg-indigo-600 text-white px-4 py-2 rounded">
-            Submit Review
-          </button>
-        </div>
-
-        <!-- BLOG -->
-        <h2 class="text-xl font-bold mt-6">📝 Blogs</h2>
-        <div id="blogs"></div>
-
-        <div id="blogForm" class="bg-gray-100 p-4 mt-3 rounded">
-          <input id="bTitle" placeholder="Blog Title" class="w-full p-2 mb-2">
-          <textarea id="bContent" placeholder="Blog Content" class="w-full p-2 mb-2"></textarea>
-          <button onclick="submitBlog()" class="bg-green-600 text-white px-4 py-2 rounded">
-            Post Blog
-          </button>
-        </div>
-
-      </div>
-    `;
-
-    // ⭐ LOAD REVIEWS
-    const reviewSnap = await getDocs(collection(db,"reviews"));
-    reviewSnap.forEach(d=>{
-      const r = d.data();
-      if(r.businessId === id){
-        document.getElementById("reviews").innerHTML += `
-          <div class="bg-white p-3 mt-2 rounded shadow">
-            <b>${r.name}</b> ⭐${r.rating}
-            <p>${r.comment}</p>
+            <a onclick="track('calls')" href="tel:${b.phone}">
+              <button class="bg-blue-500 text-white px-4 py-2 rounded">Call</button>
+            </a>
           </div>
-        `;
-      }
-    });
 
-    // 📝 LOAD BLOGS
-    const blogSnap = await getDocs(collection(db,"blogs"));
-    blogSnap.forEach(d=>{
-      const bl = d.data();
-      if(bl.businessId === id){
-        document.getElementById("blogs").innerHTML += `
-          <div class="bg-white p-3 mt-2 rounded shadow">
-            <b>${bl.title}</b>
-            <p>${bl.content}</p>
+          <div class="mt-6">
+            <iframe 
+              src="https://www.google.com/maps?q=${encodeURIComponent(b.location)}&output=embed"
+              class="w-full h-60 rounded">
+            </iframe>
           </div>
-        `;
-      }
-    });
 
-    // 📸 GALLERY
-    if(b.gallery){
-      b.gallery.forEach(img=>{
-        document.getElementById("gallery").innerHTML += `
-          <img src="${img}" class="w-full h-24 object-cover rounded">
-        `;
+          <h2 class="text-xl font-bold mt-6">⭐ Reviews</h2>
+          <div id="reviews"></div>
+
+          <div id="reviewForm" class="bg-gray-100 p-4 mt-3 rounded">
+            <input id="rName" placeholder="Name" class="w-full p-2 mb-2">
+            <select id="rRating" class="w-full p-2 mb-2">
+              <option>5</option><option>4</option><option>3</option>
+              <option>2</option><option>1</option>
+            </select>
+            <textarea id="rComment" class="w-full p-2 mb-2"></textarea>
+            <button onclick="submitReview()" class="bg-indigo-600 text-white px-4 py-2 rounded">
+              Submit Review
+            </button>
+          </div>
+
+          <h2 class="text-xl font-bold mt-6">📝 Blogs</h2>
+          <div id="blogs"></div>
+
+          <div id="blogForm" class="bg-gray-100 p-4 mt-3 rounded">
+            <input id="bTitle" class="w-full p-2 mb-2">
+            <textarea id="bContent" class="w-full p-2 mb-2"></textarea>
+            <button onclick="submitBlog()" class="bg-green-600 text-white px-4 py-2 rounded">
+              Post Blog
+            </button>
+          </div>
+
+        </div>
+      `;
+
+      // LOAD REVIEWS
+      const reviewSnap = await getDocs(collection(db,"reviews"));
+      reviewSnap.forEach(d=>{
+        const r = d.data();
+        if(r.businessId === id){
+          document.getElementById("reviews").innerHTML += `
+            <div class="bg-white p-3 mt-2 rounded shadow">
+              <b>${r.name}</b> ⭐${r.rating}
+              <p>${r.comment}</p>
+            </div>
+          `;
+        }
       });
+
+      // LOAD BLOGS
+      const blogSnap = await getDocs(collection(db,"blogs"));
+      blogSnap.forEach(d=>{
+        const bl = d.data();
+        if(bl.businessId === id){
+          document.getElementById("blogs").innerHTML += `
+            <div class="bg-white p-3 mt-2 rounded shadow">
+              <b>${bl.title}</b>
+              <p>${bl.content}</p>
+            </div>
+          `;
+        }
+      });
+
+    } else {
+      container.innerHTML = "Business not found";
     }
 
-    // 🔥 FORM HIDE
-    if(localStorage.getItem("review_"+id)){
-      document.getElementById("reviewForm").innerHTML = "✅ You already reviewed";
-    }
-
-    if(localStorage.getItem("blog_"+id)){
-      document.getElementById("blogForm").innerHTML = "✅ You already posted blog";
-    }
-
-  } else {
-    container.innerHTML = "Business not found";
+  } catch(err){
+    console.error(err);
+    container.innerHTML = "Error loading data";
   }
 
-} catch(err){
-  console.error(err);
-  container.innerHTML = "Error loading data";
 }
 
 </script>
