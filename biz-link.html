@@ -108,8 +108,8 @@ background:#007bff;color:white
 
 <!-- SEARCH -->
 <div class="search-box">
-<input placeholder="Search for services...">
-<button>Search</button>
+<input id="searchInput" placeholder="Search for services...">
+<button onclick="search()">Search</button>
 </div>
 
 <!-- HERO -->
@@ -134,15 +134,13 @@ background:#007bff;color:white
 <p>Popular</p>
 </div>
 
-<div class="cat"><img src="https://img.icons8.com/color/48/restaurant.png"><p>Restaurants</p></div>
-<div class="cat"><img src="https://img.icons8.com/color/48/hotel.png"><p>Hotels</p></div>
-<div class="cat"><img src="https://img.icons8.com/color/48/spa.png"><p>Beauty</p></div>
-<div class="cat"><img src="https://img.icons8.com/color/48/home.png"><p>Home</p></div>
-<div class="cat"><img src="https://img.icons8.com/color/48/graduation-cap.png"><p>Education</p></div>
-<div class="cat"><img src="https://img.icons8.com/color/48/car.png"><p>Cars</p></div>
-<div class="cat"><img src="https://img.icons8.com/color/48/hospital.png"><p>Hospitals</p></div>
-<div class="cat"><img src="https://img.icons8.com/color/48/worker.png"><p>Contractors</p></div>
-<div class="cat"><img src="https://img.icons8.com/color/48/dog.png"><p>Pets</p></div>
+<div class="cat" onclick="filterCategory('Restaurants')"><p>Restaurants</p></div>
+<div class="cat" onclick="filterCategory('Hotels')"><p>Hotels</p></div>
+<div class="cat" onclick="filterCategory('Beauty')"><p>Beauty</p></div>
+<div class="cat" onclick="filterCategory('Home')"><p>Home</p></div>
+<div class="cat" onclick="filterCategory('Education')"><p>Education</p></div>
+<div class="cat" onclick="filterCategory('Cars')"><p>Cars</p></div>
+<div class="cat" onclick="filterCategory('Hospitals')"><p>Hospitals</p></div>
 
 </div>
 
@@ -156,22 +154,10 @@ background:#007bff;color:white
 
 <div class="popup-grid">
 
-<p>AC Service</p>
-<p>Car Hire</p>
-<p>Courier Services</p>
-<p>Dentists</p>
-<p>Electricians</p>
-<p>Interior Designers</p>
-<p>Hospitals</p>
-<p>Real Estate</p>
-<p>Photographers</p>
-<p>Coaching</p>
-<p>Gym</p>
-<p>Event Organizer</p>
-<p>Packers & Movers</p>
-<p>Plumbers</p>
-<p>Beauty Spa</p>
-<p>Restaurants</p>
+<p onclick="filterCategory('Hospitals')">Hospitals</p>
+<p onclick="filterCategory('Education')">Coaching</p>
+<p onclick="filterCategory('Beauty')">Beauty Spa</p>
+<p onclick="filterCategory('Restaurants')">Restaurants</p>
 
 </div>
 
@@ -183,34 +169,65 @@ background:#007bff;color:white
 <!-- TRENDING -->
 <h2 class="section-title">Popular Services</h2>
 
-<div class="cards">
-
-<div class="card">
-<img src="https://via.placeholder.com/300">
-<div class="card-body">
-<h3>City Hospital</h3>
-<p>⭐ 4.5 | 📞 9876543210</p>
-</div>
-</div>
-
-<div class="card">
-<img src="https://via.placeholder.com/300">
-<div class="card-body">
-<h3>Dream Ranker Coaching</h3>
-<p>⭐ 4.8 | 📞 9876543211</p>
-</div>
-</div>
-
-</div>
+<div class="cards" id="cards"></div>
 
 <script>
+
+// DATA
+let businesses = [
+{name:"City Hospital",category:"Hospitals",phone:"9876543210",rating:4.5,img:"https://via.placeholder.com/300"},
+{name:"Dream Ranker Coaching",category:"Education",phone:"9876543211",rating:4.8,img:"https://via.placeholder.com/300"},
+{name:"Beauty Spa Center",category:"Beauty",phone:"9876543212",rating:4.7,img:"https://via.placeholder.com/300"},
+{name:"Hotel Royal",category:"Hotels",phone:"9876543213",rating:4.3,img:"https://via.placeholder.com/300"},
+{name:"Food Plaza",category:"Restaurants",phone:"9876543214",rating:4.6,img:"https://via.placeholder.com/300"}
+];
+
+// SHOW ALL
+function showAll(){
+render(businesses);
+}
+
+// RENDER
+function render(data){
+let html="";
+data.forEach(b=>{
+html+=`
+<div class="card">
+<img src="${b.img}">
+<div class="card-body">
+<h3>${b.name}</h3>
+<p>⭐ ${b.rating} | 📞 ${b.phone}</p>
+</div>
+</div>`;
+});
+document.getElementById("cards").innerHTML=html;
+}
+
+// FILTER CATEGORY
+function filterCategory(cat){
+let filtered = businesses.filter(b=>b.category===cat);
+render(filtered);
+closeCategory();
+}
+
+// SEARCH
+function search(){
+let q=document.getElementById("searchInput").value.toLowerCase();
+let filtered = businesses.filter(b=>b.name.toLowerCase().includes(q) || b.category.toLowerCase().includes(q));
+render(filtered);
+}
+
+// POPUP
 function openCategory(){
 document.getElementById("categoryPopup").style.display="block";
 }
-
 function closeCategory(){
 document.getElementById("categoryPopup").style.display="none";
 }
+
+// INIT
+showAll();
+
 </script>
 
 </body>
