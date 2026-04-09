@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Business - Bizlink</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white">
+
+  <div class="max-w-2xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Add Your Business 🚀</h1>
+
+    <form id="businessForm" class="space-y-4">
+
+      <input type="text" id="name" placeholder="Business Name" class="w-full p-3 rounded text-black" required>
+
+      <input type="text" id="category" placeholder="Category (Salon, Coaching...)" class="w-full p-3 rounded text-black" required>
+
+      <input type="text" id="location" placeholder="Location" class="w-full p-3 rounded text-black" required>
+
+      <input type="text" id="phone" placeholder="Phone Number" class="w-full p-3 rounded text-black" required>
+
+      <input type="text" id="whatsapp" placeholder="WhatsApp Number" class="w-full p-3 rounded text-black" required>
+
+      <textarea id="description" placeholder="Business Description" class="w-full p-3 rounded text-black"></textarea>
+
+      <input type="text" id="image" placeholder="Image URL" class="w-full p-3 rounded text-black">
+
+      <button type="submit" class="bg-blue-600 px-6 py-3 rounded w-full hover:bg-blue-700">
+        Save Business
+      </button>
+
+    </form>
+  </div>
+
+  <!-- Firebase Script -->
+  <script type="module">
+
+    // 🔥 Firebase Import
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // 🔑 TERA FIREBASE CONFIG (yahan apna dalna)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "XXXX",
+      appId: "XXXX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 🚀 Form Submit
+    document.getElementById("businessForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById("name").value,
+        category: document.getElementById("category").value,
+        location: document.getElementById("location").value,
+        phone: document.getElementById("phone").value,
+        whatsapp: document.getElementById("whatsapp").value,
+        description: document.getElementById("description").value,
+        image: document.getElementById("image").value,
+        createdAt: new Date()
+      };
+
+      try {
+        await addDoc(collection(db, "businesses"), data);
+        alert("Business Added Successfully 🚀");
+        document.getElementById("businessForm").reset();
+      } catch (error) {
+        alert("Error: " + error);
+      }
+    });
+
+  </script>
+
+</body>
+</html>
