@@ -102,12 +102,15 @@ document.getElementById("businessForm").addEventListener("submit", async (e)=>{
 
     let imageURL = "";
 
-    const file = document.getElementById("imageFile").files[0];
-    if(file){
-      const storageRef = ref(storage, "images/" + Date.now());
-      await uploadBytes(storageRef, file);
-      imageURL = await getDownloadURL(storageRef);
-    }
+   const file = document.getElementById("imageFile").files[0];
+
+if(file){
+  const storageRef = ref(storage, "business-images/" + Date.now() + "_" + file.name);
+
+  await uploadBytes(storageRef, file);
+
+  imageURL = await getDownloadURL(storageRef);
+}
 
     let category = categorySelect.value;
 
