@@ -13,85 +13,48 @@
 body{background:#f5f7fb}
 
 /* NAVBAR */
-.navbar{
-display:flex;justify-content:space-between;align-items:center;
-padding:15px 30px;background:#fff;
-box-shadow:0 2px 10px rgba(0,0,0,0.1)
-}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
 .logo{font-size:24px;font-weight:bold;color:#007bff}
-.nav-right button{
-margin-left:10px;padding:8px 15px;border:none;
-border-radius:6px;cursor:pointer
-}
+.nav-right button{margin-left:10px;padding:8px 15px;border:none;border-radius:6px;cursor:pointer}
 .login{background:#eee}
 .add{background:#007bff;color:#fff}
 
 /* SEARCH */
-.search-box{
-display:flex;justify-content:center;margin:20px
-}
-.search-box input{
-padding:12px;width:300px;border:1px solid #ccc;
-border-radius:6px 0 0 6px
-}
-.search-box button{
-padding:12px;background:#ff6b00;border:none;
-color:#fff;border-radius:0 6px 6px 0
-}
+.search-box{display:flex;justify-content:center;margin:20px}
+.search-box input{padding:12px;width:300px;border:1px solid #ccc;border-radius:6px 0 0 6px}
+.search-box button{padding:12px;background:#ff6b00;border:none;color:#fff;border-radius:0 6px 6px 0}
 
 /* HERO */
 .hero{display:flex;gap:20px;padding:20px}
-.banner{
-flex:2;background:linear-gradient(135deg,#007bff,#00c6ff);
-color:#fff;padding:40px;border-radius:15px
-}
-.side-card{
-flex:1;background:#fff;padding:20px;border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1)
-}
+.banner{flex:2;background:linear-gradient(135deg,#007bff,#00c6ff);color:#fff;padding:40px;border-radius:15px}
+.side-card{flex:1;background:#fff;padding:20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.1)}
 
 /* CATEGORIES */
-.categories{
-display:flex;flex-wrap:wrap;justify-content:center;padding:20px
-}
-.cat{
-width:100px;text-align:center;margin:10px;padding:15px;
-background:#fff;border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-cursor:pointer;transition:0.3s
-}
+.categories{display:flex;flex-wrap:wrap;justify-content:center;padding:20px}
+.cat{width:100px;text-align:center;margin:10px;padding:15px;background:#fff;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);cursor:pointer;transition:0.3s}
 .cat:hover{transform:scale(1.1)}
-.cat img{width:40px}
 
 /* CARDS */
 .section-title{font-size:20px;margin:20px}
 .cards{display:flex;flex-wrap:wrap;justify-content:center}
-.card{
-width:250px;margin:10px;background:#fff;border-radius:15px;
-overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1)
-}
+.card{width:250px;margin:10px;background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);cursor:pointer}
 .card img{width:100%;height:150px;object-fit:cover}
 .card-body{padding:15px}
 
 /* POPUP */
-#categoryPopup{
-display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.6)
-}
-.popup-box{
-background:#fff;width:80%;margin:40px auto;padding:20px;
-border-radius:15px;max-height:80%;overflow:auto
-}
-.popup-grid{
-display:grid;grid-template-columns:repeat(4,1fr);gap:15px
-}
-.popup-grid p{
-padding:10px;background:#f5f5f5;border-radius:8px;
-cursor:pointer
-}
-.popup-grid p:hover{
-background:#007bff;color:white
-}
+#categoryPopup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6)}
+.popup-box{background:#fff;width:80%;margin:40px auto;padding:20px;border-radius:15px}
+.popup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.popup-grid p{padding:10px;background:#f5f5f5;border-radius:8px;cursor:pointer}
+.popup-grid p:hover{background:#007bff;color:white}
+
+/* DETAIL PAGE */
+#detailPage{display:none;padding:20px}
+.detail-box{background:#fff;padding:20px;border-radius:10px;margin:10px}
+
+/* FORM */
+#formBox{display:none;padding:20px;background:#fff;margin:20px;border-radius:10px}
+#formBox input{padding:10px;margin:5px;width:200px}
 </style>
 </head>
 
@@ -102,7 +65,7 @@ background:#007bff;color:white
 <div class="logo">Bizlink</div>
 <div class="nav-right">
 <button class="login">Login</button>
-<button class="add">Add Business</button>
+<button class="add" onclick="openForm()">Add Business</button>
 </div>
 </div>
 
@@ -122,77 +85,85 @@ background:#007bff;color:white
 <div class="side-card">
 <h3>List Your Business</h3>
 <p>Get more customers</p>
-<button class="add">Start Now</button>
+<button class="add" onclick="openForm()">Start Now</button>
 </div>
 </div>
 
 <!-- CATEGORIES -->
 <div class="categories">
-
-<div class="cat" onclick="openCategory()">
-<img src="https://img.icons8.com/color/48/menu.png">
-<p>Popular</p>
-</div>
-
-<div class="cat" onclick="filterCategory('Restaurants')"><p>Restaurants</p></div>
-<div class="cat" onclick="filterCategory('Hotels')"><p>Hotels</p></div>
-<div class="cat" onclick="filterCategory('Beauty')"><p>Beauty</p></div>
-<div class="cat" onclick="filterCategory('Home')"><p>Home</p></div>
-<div class="cat" onclick="filterCategory('Education')"><p>Education</p></div>
-<div class="cat" onclick="filterCategory('Cars')"><p>Cars</p></div>
-<div class="cat" onclick="filterCategory('Hospitals')"><p>Hospitals</p></div>
-
+<div class="cat" onclick="openCategory()">Popular</div>
+<div class="cat" onclick="filterCategory('Restaurants')">Restaurants</div>
+<div class="cat" onclick="filterCategory('Hotels')">Hotels</div>
+<div class="cat" onclick="filterCategory('Beauty')">Beauty</div>
+<div class="cat" onclick="filterCategory('Home')">Home</div>
+<div class="cat" onclick="filterCategory('Education')">Education</div>
+<div class="cat" onclick="filterCategory('Cars')">Cars</div>
+<div class="cat" onclick="filterCategory('Hospitals')">Hospitals</div>
 </div>
 
 <!-- POPUP -->
 <div id="categoryPopup">
 <div class="popup-box">
-
 <h2>Popular Categories</h2>
-
-<input placeholder="Search category..." style="padding:10px;width:100%;margin:10px 0">
-
 <div class="popup-grid">
-
 <p onclick="filterCategory('Hospitals')">Hospitals</p>
 <p onclick="filterCategory('Education')">Coaching</p>
 <p onclick="filterCategory('Beauty')">Beauty Spa</p>
 <p onclick="filterCategory('Restaurants')">Restaurants</p>
-
 </div>
-
-<button onclick="closeCategory()" style="margin-top:20px">Close</button>
-
+<button onclick="closeCategory()">Close</button>
 </div>
 </div>
 
 <!-- TRENDING -->
 <h2 class="section-title">Popular Services</h2>
-
 <div class="cards" id="cards"></div>
+
+<!-- DETAIL PAGE -->
+<div id="detailPage">
+<button onclick="goBack()">⬅ Back</button>
+
+<div class="detail-box">
+<h2 id="dName"></h2>
+<p id="dCategory"></p>
+<p id="dPhone"></p>
+</div>
+
+<div class="detail-box">
+<h3>Location</h3>
+<iframe id="mapFrame" width="100%" height="250"></iframe>
+</div>
+
+<div class="detail-box">
+<h3>Reviews</h3>
+<input id="reviewText" placeholder="Write review">
+<button onclick="addReview()">Submit</button>
+<div id="reviewList"></div>
+</div>
+</div>
+
+<!-- ADD BUSINESS -->
+<div id="formBox">
+<input id="bname" placeholder="Name">
+<input id="bcat" placeholder="Category">
+<input id="bphone" placeholder="Phone">
+<button onclick="addBusiness()">Add</button>
+</div>
 
 <script>
 
-// DATA
 let businesses = [
-{name:"City Hospital",category:"Hospitals",phone:"9876543210",rating:4.5,img:"https://via.placeholder.com/300"},
-{name:"Dream Ranker Coaching",category:"Education",phone:"9876543211",rating:4.8,img:"https://via.placeholder.com/300"},
-{name:"Beauty Spa Center",category:"Beauty",phone:"9876543212",rating:4.7,img:"https://via.placeholder.com/300"},
-{name:"Hotel Royal",category:"Hotels",phone:"9876543213",rating:4.3,img:"https://via.placeholder.com/300"},
-{name:"Food Plaza",category:"Restaurants",phone:"9876543214",rating:4.6,img:"https://via.placeholder.com/300"}
+{name:"City Hospital",category:"Hospitals",phone:"9876543210",rating:4.5,img:"https://via.placeholder.com/300",reviews:[]},
+{name:"Dream Ranker Coaching",category:"Education",phone:"9876543211",rating:4.8,img:"https://via.placeholder.com/300",reviews:[]}
 ];
 
-// SHOW ALL
-function showAll(){
-render(businesses);
-}
+let current="";
 
-// RENDER
 function render(data){
 let html="";
 data.forEach(b=>{
 html+=`
-<div class="card">
+<div class="card" onclick="openDetail('${b.name}')">
 <img src="${b.img}">
 <div class="card-body">
 <h3>${b.name}</h3>
@@ -200,33 +171,74 @@ html+=`
 </div>
 </div>`;
 });
-document.getElementById("cards").innerHTML=html;
+cards.innerHTML=html;
 }
 
-// FILTER CATEGORY
 function filterCategory(cat){
-let filtered = businesses.filter(b=>b.category===cat);
-render(filtered);
+render(businesses.filter(b=>b.category===cat));
 closeCategory();
 }
 
-// SEARCH
 function search(){
-let q=document.getElementById("searchInput").value.toLowerCase();
-let filtered = businesses.filter(b=>b.name.toLowerCase().includes(q) || b.category.toLowerCase().includes(q));
-render(filtered);
+let q=searchInput.value.toLowerCase();
+render(businesses.filter(b=>b.name.toLowerCase().includes(q) || b.category.toLowerCase().includes(q)));
 }
 
-// POPUP
-function openCategory(){
-document.getElementById("categoryPopup").style.display="block";
-}
-function closeCategory(){
-document.getElementById("categoryPopup").style.display="none";
+function openDetail(name){
+current=name;
+let b=businesses.find(x=>x.name===name);
+
+detailPage.style.display="block";
+document.querySelector(".cards").style.display="none";
+
+dName.innerText=b.name;
+dCategory.innerText=b.category;
+dPhone.innerText=b.phone;
+
+mapFrame.src="https://www.google.com/maps?q="+b.name+"&output=embed";
+
+showReviews();
 }
 
-// INIT
-showAll();
+function goBack(){
+detailPage.style.display="none";
+document.querySelector(".cards").style.display="flex";
+}
+
+function addReview(){
+let b=businesses.find(x=>x.name===current);
+b.reviews.push(reviewText.value);
+showReviews();
+}
+
+function showReviews(){
+let b=businesses.find(x=>x.name===current);
+let html="";
+(b.reviews||[]).forEach(r=>{
+html+=`<div>⭐ ${r}</div>`;
+});
+reviewList.innerHTML=html;
+}
+
+function openForm(){formBox.style.display="block"}
+
+function addBusiness(){
+businesses.push({
+name:bname.value,
+category:bcat.value,
+phone:bphone.value,
+rating:4.0,
+img:"https://via.placeholder.com/300",
+reviews:[]
+});
+render(businesses);
+alert("Business Added 🚀");
+}
+
+function openCategory(){categoryPopup.style.display="block"}
+function closeCategory(){categoryPopup.style.display="none"}
+
+render(businesses);
 
 </script>
 
