@@ -52,6 +52,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// 🔥 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
   authDomain: "bizlink-new.firebaseapp.com",
@@ -66,6 +67,7 @@ const catBox = document.getElementById("categories");
 
 let all = [];
 
+// 🔥 Default Categories
 let categories = [
   "All","Salon","Coaching","Restaurant","Gym","Hospital","Hotel",
   "Electrician","Plumber","Car Service","Mobile Shop",
@@ -74,21 +76,25 @@ let categories = [
   "Interior Designer","Travel Agency"
 ];
 
-// FETCH
+// 🚀 FETCH DATA (OPTIMIZED)
 const snap = await getDocs(collection(db,"businesses"));
 
-snap.forEach((doc)=>{
-  const data = doc.data();
-  data.id = doc.id; // 🔥 IMPORTANT
+snap.forEach((docSnap)=>{
+  const data = docSnap.data();
+
+  // 🔥 IMPORTANT
+  data.id = docSnap.id;
 
   all.push(data);
 
+  // 🔥 Auto category add
   if(data.category && !categories.includes(data.category)){
     categories.push(data.category);
   }
 });
 
-// CATEGORY RENDER
+// 🔥 CATEGORY RENDER
+catBox.innerHTML = "";
 categories.forEach(cat=>{
   catBox.innerHTML += `
     <div onclick="filterCategory('${cat}')"
@@ -98,12 +104,12 @@ categories.forEach(cat=>{
   `;
 });
 
-// BUSINESS RENDER
+// 🔥 BUSINESS RENDER
 function render(data){
   list.innerHTML = "";
 
   if(data.length === 0){
-    list.innerHTML = `<p>No business found</p>`;
+    list.innerHTML = `<p class="text-gray-500">No business found</p>`;
     return;
   }
 
@@ -116,9 +122,9 @@ function render(data){
           class="w-full h-40 object-cover">
 
         <div class="p-4">
-          <h3 class="font-bold text-lg">${b.name}</h3>
-          <p class="text-gray-500 text-sm">${b.location}</p>
-          <p class="text-xs text-blue-500">${b.category}</p>
+          <h3 class="font-bold text-lg">${b.name || "No Name"}</h3>
+          <p class="text-gray-500 text-sm">${b.location || ""}</p>
+          <p class="text-xs text-blue-500">${b.category || ""}</p>
         </div>
 
       </div>
@@ -126,9 +132,10 @@ function render(data){
   });
 }
 
+// 🔥 INITIAL LOAD
 render(all);
 
-// FILTER
+// 🔥 FILTER
 window.filterCategory = (cat)=>{
   if(cat === "All"){
     render(all);
@@ -137,7 +144,7 @@ window.filterCategory = (cat)=>{
   }
 };
 
-// SEARCH
+// 🔥 SEARCH (IMPROVED)
 window.searchBusiness = ()=>{
   const val = document.getElementById("searchInput").value.toLowerCase();
 
@@ -148,7 +155,7 @@ window.searchBusiness = ()=>{
   ));
 };
 
-// OPEN DETAIL
+// 🔥 OPEN DETAIL
 window.openDetail = (id)=>{
   window.location.href = "business-detail.html?id=" + id;
 };
