@@ -11,10 +11,6 @@
       padding: 20px;
     }
 
-    h1 {
-      margin-bottom: 20px;
-    }
-
     .card {
       background: #1e293b;
       padding: 20px;
@@ -42,9 +38,7 @@
     .delete { background: #ef4444; color: white; }
     .save { background: #3b82f6; color: white; }
 
-    .hidden {
-      display: none;
-    }
+    .hidden { display: none; }
   </style>
 </head>
 
@@ -54,7 +48,7 @@
 
 <div id="container"></div>
 
-<!-- EDIT FORM -->
+<!-- EDIT SECTION -->
 <div id="editSection" class="hidden">
   <h2>✏️ Edit Business</h2>
 
@@ -70,13 +64,7 @@
 
 <script type="module">
 
-// 🔥 Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import {
   getFirestore,
@@ -97,19 +85,17 @@ import {
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-
-// 🔥 CONFIG (अपना डाल)
+// 🔥 Firebase Config (अपना already वाला डालना)
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_ID",
-  storageBucket: "YOUR_BUCKET",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
+  authDomain: "bizlink-new.firebaseapp.com",
+  projectId: "bizlink-new",
+  storageBucket: "bizlink-new.firebasestorage.app",
+  messagingSenderId: "759857311400",
+  appId: "1:759857311400:web:903eb700790bf53de09c9d"
 };
 
-// 🔥 INIT
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
@@ -118,22 +104,14 @@ const editSection = document.getElementById("editSection");
 
 let currentEditId = null;
 
-// 🔐 LOGIN CHECK
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    alert("Login required");
-    window.location.href = "/login.html";
-    return;
-  }
+// 🔥 UID already set
+const OWNER_ID = "2qxi6o0JE4O3Kup2xHzIoEyxBa42";
 
-  loadBusinesses(user.uid);
-});
-
-// 📊 LOAD BUSINESSES
-async function loadBusinesses(uid) {
+// 📊 Load Businesses
+async function loadBusinesses() {
   const q = query(
     collection(db, "businesses"),
-    where("ownerId", "==", uid)
+    where("ownerId", "==", OWNER_ID)
   );
 
   const snapshot = await getDocs(q);
@@ -162,7 +140,9 @@ async function loadBusinesses(uid) {
   });
 }
 
-// ✏️ EDIT
+loadBusinesses();
+
+// ✏️ Edit
 window.editBusiness = async (id) => {
   currentEditId = id;
 
@@ -179,7 +159,7 @@ window.editBusiness = async (id) => {
   editSection.classList.remove("hidden");
 };
 
-// 💾 UPDATE
+// 💾 Update
 window.updateBusiness = async () => {
   const docRef = doc(db, "businesses", currentEditId);
 
@@ -215,7 +195,7 @@ window.updateBusiness = async () => {
   location.reload();
 };
 
-// 🗑 DELETE
+// 🗑 Delete
 window.deleteBusiness = async (id) => {
   if (!confirm("Delete this business?")) return;
 
