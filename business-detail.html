@@ -55,7 +55,6 @@ onAuthStateChanged(auth, async (user)=>{
   }
 
   currentUser = user;
-
   loadPage();
 });
 
@@ -65,19 +64,17 @@ async function track(type){
   await updateDoc(ref,{ [type]: increment(1) });
 }
 
-// ⭐ REVIEW SUBMIT
+// ⭐ REVIEW
 window.submitReview = async ()=>{
-
-  const name = document.getElementById("rName").value;
-  const rating = document.getElementById("rRating").value;
-  const comment = document.getElementById("rComment").value;
+  const name = rName.value;
+  const rating = rRating.value;
+  const comment = rComment.value;
 
   if(!name || !rating || !comment){
     alert("Fill all fields");
     return;
   }
 
-  // 🔥 CHECK EXISTING REVIEW
   const q = query(
     collection(db,"reviews"),
     where("businessId","==",id),
@@ -87,7 +84,7 @@ window.submitReview = async ()=>{
   const snap = await getDocs(q);
 
   if(!snap.empty){
-    alert("❌ You already reviewed");
+    alert("❌ Already reviewed");
     return;
   }
 
@@ -104,18 +101,16 @@ window.submitReview = async ()=>{
   location.reload();
 };
 
-// 📝 BLOG SUBMIT
+// 📝 BLOG
 window.submitBlog = async ()=>{
-
-  const title = document.getElementById("bTitle").value;
-  const content = document.getElementById("bContent").value;
+  const title = bTitle.value;
+  const content = bContent.value;
 
   if(!title || !content){
     alert("Fill blog fields");
     return;
   }
 
-  // 🔥 CHECK EXISTING BLOG
   const q = query(
     collection(db,"blogs"),
     where("businessId","==",id),
@@ -125,7 +120,7 @@ window.submitBlog = async ()=>{
   const snap = await getDocs(q);
 
   if(!snap.empty){
-    alert("❌ You already posted blog");
+    alert("❌ Already posted blog");
     return;
   }
 
@@ -152,6 +147,18 @@ async function loadPage(){
     if(snap.exists()){
       const b = snap.data();
 
+      // 🔥 MAP FIX
+      let mapEmbed = "";
+      let mapButton = "";
+
+      if(b.mapLink){
+        mapEmbed = b.mapLink.replace("maps.google.com", "www.google.com/maps/embed");
+        mapButton = b.mapLink;
+      } else {
+        mapEmbed = "https://www.google.com/maps?q=" + encodeURIComponent(b.location) + "&output=embed";
+        mapButton = "https://www.google.com/maps?q=" + encodeURIComponent(b.location);
+      }
+
       container.innerHTML = `
         <div class="bg-white rounded-xl shadow p-6 text-left">
 
@@ -165,7 +172,7 @@ async function loadPage(){
           <p class="mt-4">${b.description || ""}</p>
 
           <div class="flex gap-3 mt-6 flex-wrap">
-            <a onclick="track('whatsapp')" href="https://wa.me/91${b.whatsapp}" target="_blank">
+            <a onclick="track('whatsappClicks')" href="https://wa.me/91${b.whatsapp}" target="_blank">
               <button class="bg-green-500 text-white px-4 py-2 rounded">WhatsApp</button>
             </a>
 
@@ -174,17 +181,26 @@ async function loadPage(){
             </a>
           </div>
 
+          <!-- 🔥 MAP -->
           <div class="mt-6">
+            <h3 class="font-bold mb-2">📍 Location</h3>
+
             <iframe 
-              src="https://www.google.com/maps?q=${encodeURIComponent(b.location)}&output=embed"
+              src="${mapEmbed}"
               class="w-full h-60 rounded">
             </iframe>
+
+            <a href="${mapButton}" target="_blank">
+              <button class="mt-3 bg-indigo-600 text-white px-4 py-2 rounded">
+                Get Directions 🚀
+              </button>
+            </a>
           </div>
 
           <h2 class="text-xl font-bold mt-6">⭐ Reviews</h2>
           <div id="reviews"></div>
 
-          <div id="reviewForm" class="bg-gray-100 p-4 mt-3 rounded">
+          <div class="bg-gray-100 p-4 mt-3 rounded">
             <input id="rName" placeholder="Name" class="w-full p-2 mb-2">
             <select id="rRating" class="w-full p-2 mb-2">
               <option>5</option><option>4</option><option>3</option>
@@ -199,7 +215,7 @@ async function loadPage(){
           <h2 class="text-xl font-bold mt-6">📝 Blogs</h2>
           <div id="blogs"></div>
 
-          <div id="blogForm" class="bg-gray-100 p-4 mt-3 rounded">
+          <div class="bg-gray-100 p-4 mt-3 rounded">
             <input id="bTitle" class="w-full p-2 mb-2">
             <textarea id="bContent" class="w-full p-2 mb-2"></textarea>
             <button onclick="submitBlog()" class="bg-green-600 text-white px-4 py-2 rounded">
@@ -210,12 +226,12 @@ async function loadPage(){
         </div>
       `;
 
-      // LOAD REVIEWS
+      // REVIEWS
       const reviewSnap = await getDocs(collection(db,"reviews"));
       reviewSnap.forEach(d=>{
         const r = d.data();
         if(r.businessId === id){
-          document.getElementById("reviews").innerHTML += `
+          reviews.innerHTML += `
             <div class="bg-white p-3 mt-2 rounded shadow">
               <b>${r.name}</b> ⭐${r.rating}
               <p>${r.comment}</p>
@@ -224,12 +240,12 @@ async function loadPage(){
         }
       });
 
-      // LOAD BLOGS
+      // BLOGS
       const blogSnap = await getDocs(collection(db,"blogs"));
       blogSnap.forEach(d=>{
         const bl = d.data();
         if(bl.businessId === id){
-          document.getElementById("blogs").innerHTML += `
+          blogs.innerHTML += `
             <div class="bg-white p-3 mt-2 rounded shadow">
               <b>${bl.title}</b>
               <p>${bl.content}</p>
