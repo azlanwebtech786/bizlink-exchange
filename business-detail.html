@@ -19,11 +19,9 @@ import {
   updateDoc, increment, query, where 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import { 
-  getAuth, onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// 🔥 CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
   authDomain: "bizlink-new.firebaseapp.com",
@@ -46,45 +44,23 @@ if(!id){
 
 let currentUser = null;
 
-// 🔐 LOGIN CHECK
+// 🔐 LOGIN
 onAuthStateChanged(auth, async (user)=>{
   if(!user){
     alert("Login required");
     window.location.href = "login-grow.html";
     return;
   }
-
   currentUser = user;
   loadPage();
 });
 
-// 🔥 TRACK FUNCTION
-async function track(type){
-  try{
-    await updateDoc(doc(db,"businesses",id),{
-      [type]: increment(1)
-    });
-  }catch(e){
-    console.log("Tracking error:", e);
-  }
+// 🔥 TRACK (background safe)
+function track(type){
+  updateDoc(doc(db,"businesses",id),{
+    [type]: increment(1)
+  }).catch(()=>{});
 }
-
-// 🔥 FIXED HANDLERS
-window.handleCall = async (e) => {
-  e.preventDefault();
-  await track("calls").catch(()=>{});
-  setTimeout(() => {
-    window.location.href = e.currentTarget.href;
-  }, 300);
-};
-
-window.handleWhatsApp = async (e) => {
-  e.preventDefault();
-  await track("whatsappClicks").catch(()=>{});
-  setTimeout(() => {
-    window.open(e.currentTarget.href, "_blank");
-  }, 300);
-};
 
 // ⭐ REVIEW
 window.submitReview = async ()=>{
@@ -163,8 +139,7 @@ async function loadPage(){
 
   try {
 
-    const docRef = doc(db,"businesses",id);
-    const snap = await getDoc(docRef);
+    const snap = await getDoc(doc(db,"businesses",id));
 
     if(!snap.exists()){
       container.innerHTML = "Business not found";
@@ -176,17 +151,12 @@ async function loadPage(){
     // 🔥 VIEW TRACK
     track("views");
 
-    // 🔥 MAP
-    let mapEmbed = "";
-    let mapButton = "";
+    let mapEmbed = b.mapLink
+      ? b.mapLink.replace("maps.google.com", "www.google.com/maps/embed")
+      : "https://www.google.com/maps?q=" + encodeURIComponent(b.location) + "&output=embed";
 
-    if(b.mapLink){
-      mapEmbed = b.mapLink.replace("maps.google.com", "www.google.com/maps/embed");
-      mapButton = b.mapLink;
-    } else {
-      mapEmbed = "https://www.google.com/maps?q=" + encodeURIComponent(b.location) + "&output=embed";
-      mapButton = "https://www.google.com/maps?q=" + encodeURIComponent(b.location);
-    }
+    let mapButton = b.mapLink || 
+      "https://www.google.com/maps?q=" + encodeURIComponent(b.location);
 
     container.innerHTML = `
       <div class="bg-white rounded-xl shadow p-6 text-left">
@@ -202,14 +172,14 @@ async function loadPage(){
 
         <div class="flex gap-3 mt-6 flex-wrap">
 
-          <!-- ✅ FIXED WHATSAPP -->
+          <!-- 🔥 FINAL WHATSAPP -->
           <a href="https://wa.me/91${b.whatsapp}" target="_blank"
-             onclick="handleWhatsApp(event)">
+             onclick="track('whatsappClicks')">
             <button class="bg-green-500 text-white px-4 py-2 rounded">WhatsApp</button>
           </a>
 
-          <!-- ✅ FIXED CALL -->
-          <a href="tel:${b.phone}" onclick="handleCall(event)">
+          <!-- 🔥 FINAL CALL -->
+          <a href="tel:${b.phone}" onclick="track('calls')">
             <button class="bg-blue-500 text-white px-4 py-2 rounded">Call</button>
           </a>
 
@@ -256,34 +226,18 @@ async function loadPage(){
       </div>
     `;
 
-    // 🔥 REVIEWS
-    const reviewSnap = await getDocs(
-      query(collection(db,"reviews"), where("businessId","==",id))
-    );
-
+    // REVIEWS
+    const reviewSnap = await getDocs(query(collection(db,"reviews"), where("businessId","==",id)));
     reviewSnap.forEach(d=>{
       const r = d.data();
-      reviews.innerHTML += `
-        <div class="bg-white p-3 mt-2 rounded shadow">
-          <b>${r.name}</b> ⭐${r.rating}
-          <p>${r.comment}</p>
-        </div>
-      `;
+      reviews.innerHTML += `<div class="bg-white p-3 mt-2 rounded shadow"><b>${r.name}</b> ⭐${r.rating}<p>${r.comment}</p></div>`;
     });
 
-    // 🔥 BLOGS
-    const blogSnap = await getDocs(
-      query(collection(db,"blogs"), where("businessId","==",id))
-    );
-
+    // BLOGS
+    const blogSnap = await getDocs(query(collection(db,"blogs"), where("businessId","==",id)));
     blogSnap.forEach(d=>{
       const bl = d.data();
-      blogs.innerHTML += `
-        <div class="bg-white p-3 mt-2 rounded shadow">
-          <b>${bl.title}</b>
-          <p>${bl.content}</p>
-        </div>
-      `;
+      blogs.innerHTML += `<div class="bg-white p-3 mt-2 rounded shadow"><b>${bl.title}</b><p>${bl.content}</p></div>`;
     });
 
   } catch(err){
