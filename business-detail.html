@@ -55,29 +55,12 @@ onAuthStateChanged(auth, async (user)=>{
   loadPage();
 });
 
-// 🔥 TRACK (background safe)
+// 🔥 TRACK (FAST BACKGROUND)
 function track(type){
   updateDoc(doc(db,"businesses",id),{
     [type]: increment(1)
   }).catch(()=>{});
 }
-         // 🔥 CALL FUNCTION
-window.handleCall = (phone) => {
-  track("calls");
-
-  setTimeout(() => {
-    window.location.href = "tel:" + phone;
-  }, 200);
-};
-
-// 🔥 WHATSAPP FUNCTION
-window.handleWhatsApp = (number) => {
-  track("whatsappClicks");
-
-  setTimeout(() => {
-    window.open("https://wa.me/91" + number, "_blank");
-  }, 200);
-};
 
 // ⭐ REVIEW
 window.submitReview = async ()=>{
@@ -189,19 +172,23 @@ async function loadPage(){
 
         <div class="flex gap-3 mt-6 flex-wrap">
 
-  <!-- CALL -->
-  <button onclick="handleCall('${b.phone}')"
-    class="bg-blue-500 text-white px-4 py-2 rounded">
-    Call
-  </button>
+          <!-- 🔥 FINAL CALL -->
+          <a href="tel:${b.phone}" onclick="track('calls')">
+            <button class="bg-blue-500 text-white px-4 py-2 rounded">
+              Call
+            </button>
+          </a>
 
-  <!-- WHATSAPP -->
-  <button onclick="handleWhatsApp('${b.whatsapp}')"
-    class="bg-green-500 text-white px-4 py-2 rounded">
-    WhatsApp
-  </button>
+          <!-- 🔥 FINAL WHATSAPP -->
+          <a href="https://wa.me/91${b.whatsapp}" target="_blank"
+             onclick="track('whatsappClicks')">
+            <button class="bg-green-500 text-white px-4 py-2 rounded">
+              WhatsApp
+            </button>
+          </a>
 
-</div>
+        </div>
+
         <div class="mt-6">
           <h3 class="font-bold mb-2">📍 Location</h3>
 
