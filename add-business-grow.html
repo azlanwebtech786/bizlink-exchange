@@ -21,9 +21,20 @@
 
     <input type="text" id="location" placeholder="Location (City/Area)" class="w-full p-3 rounded text-black" required>
 
-    <!-- 🔥 NEW MAP LINK FIELD -->
-    <input type="text" id="mapLink" placeholder="Paste Google Map Link (Share → Copy Link)"
+    <!-- 🔥 MAP LINK -->
+    <input type="text" id="mapLink" placeholder="Paste Google Map Link OR use detect button"
       class="w-full p-3 rounded text-black">
+
+    <!-- 🚀 AUTO LOCATION BUTTON -->
+    <button type="button" onclick="getLocation()"
+      class="bg-green-600 w-full py-3 rounded">
+      📍 Detect My Location
+    </button>
+
+    <!-- 🔥 MAP PREVIEW -->
+    <div id="mapPreview" class="hidden">
+      <iframe id="mapFrame" class="w-full h-60 rounded"></iframe>
+    </div>
 
     <input type="text" id="phone" placeholder="Phone Number" class="w-full p-3 rounded text-black" required>
     <input type="text" id="whatsapp" placeholder="WhatsApp Number" class="w-full p-3 rounded text-black" required>
@@ -92,12 +103,61 @@ defaultCategories.forEach(cat=>{
 });
 categorySelect.innerHTML += `<option value="__new__">➕ Add New Category</option>`;
 
-// SHOW NEW CATEGORY INPUT
+// SHOW NEW CATEGORY
 categorySelect.addEventListener("change", ()=>{
   if(categorySelect.value === "__new__"){
     newCategoryInput.classList.remove("hidden");
   } else {
     newCategoryInput.classList.add("hidden");
+  }
+});
+
+// 🚀 AUTO LOCATION FUNCTION
+window.getLocation = () => {
+
+  if (!navigator.geolocation) {
+    alert("Geolocation not supported");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    const mapLink = `https://www.google.com/maps?q=${lat},${lng}`;
+
+    document.getElementById("mapLink").value = mapLink;
+
+    document.getElementById("mapPreview").classList.remove("hidden");
+    document.getElementById("mapFrame").src =
+      `https://www.google.com/maps?q=${lat},${lng}&output=embed`;
+
+    // address fetch
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+    );
+
+    const data = await res.json();
+
+    if (data.display_name) {
+      document.getElementById("location").value = data.display_name;
+    }
+
+  }, () => {
+    alert("Location permission denied ❌");
+  });
+
+};
+
+// 🔥 MAP LINK PREVIEW
+document.getElementById("mapLink").addEventListener("input", (e)=>{
+  const link = e.target.value;
+
+  if(link.includes("google")){
+    document.getElementById("mapPreview").classList.remove("hidden");
+    document.getElementById("mapFrame").src =
+      link.replace("maps.google.com","www.google.com/maps/embed");
   }
 });
 
@@ -131,16 +191,14 @@ document.getElementById("businessForm").addEventListener("submit", async (e)=>{
 
     await addDoc(collection(db,"businesses"),{
 
-      name: document.getElementById("name").value,
-      category: category,
-      location: document.getElementById("location").value,
-      phone: document.getElementById("phone").value,
-      whatsapp: document.getElementById("whatsapp").value,
-      description: document.getElementById("description").value,
-      image: document.getElementById("image").value,
-
-      // 🔥 MAP LINK SAVE
-      mapLink: document.getElementById("mapLink").value,
+      name: name.value,
+      category,
+      location: location.value,
+      phone: phone.value,
+      whatsapp: whatsapp.value,
+      description: description.value,
+      image: image.value,
+      mapLink: mapLink.value,
 
       owner: currentUser.email,
       calls: 0,
@@ -152,9 +210,9 @@ document.getElementById("businessForm").addEventListener("submit", async (e)=>{
     });
 
     submitBtn.innerText = "Done ✅";
-    statusMsg.innerHTML = "🎉 Congratulations! Your business listed successfully";
+    statusMsg.innerHTML = "🎉 Business listed successfully";
 
-    document.getElementById("businessForm").reset();
+    businessForm.reset();
 
   }catch(err){
     console.error(err);
