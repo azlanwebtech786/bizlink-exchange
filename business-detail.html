@@ -61,6 +61,23 @@ function track(type){
     [type]: increment(1)
   }).catch(()=>{});
 }
+         // 🔥 CALL FUNCTION
+window.handleCall = (phone) => {
+  track("calls");
+
+  setTimeout(() => {
+    window.location.href = "tel:" + phone;
+  }, 200);
+};
+
+// 🔥 WHATSAPP FUNCTION
+window.handleWhatsApp = (number) => {
+  track("whatsappClicks");
+
+  setTimeout(() => {
+    window.open("https://wa.me/91" + number, "_blank");
+  }, 200);
+};
 
 // ⭐ REVIEW
 window.submitReview = async ()=>{
@@ -169,24 +186,6 @@ async function loadPage(){
         <p class="text-blue-500">${b.category}</p>
 
         <p class="mt-4">${b.description || ""}</p>
-
-        // 🔥 CALL FUNCTION
-window.handleCall = (phone) => {
-  track("calls");
-
-  setTimeout(() => {
-    window.location.href = "tel:" + phone;
-  }, 200);
-};
-
-// 🔥 WHATSAPP FUNCTION
-window.handleWhatsApp = (number) => {
-  track("whatsappClicks");
-
-  setTimeout(() => {
-    window.open("https://wa.me/91" + number, "_blank");
-  }, 200);
-};
 
         <div class="flex gap-3 mt-6 flex-wrap">
 
