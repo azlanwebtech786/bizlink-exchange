@@ -58,7 +58,7 @@ onAuthStateChanged(auth, async (user)=>{
   loadPage();
 });
 
-// 🔥 TRACK FUNCTION (FIXED SAFE)
+// 🔥 TRACK FUNCTION
 async function track(type){
   try{
     await updateDoc(doc(db,"businesses",id),{
@@ -68,6 +68,23 @@ async function track(type){
     console.log("Tracking error:", e);
   }
 }
+
+// 🔥 FIXED HANDLERS
+window.handleCall = async (e) => {
+  e.preventDefault();
+  await track("calls").catch(()=>{});
+  setTimeout(() => {
+    window.location.href = e.currentTarget.href;
+  }, 300);
+};
+
+window.handleWhatsApp = async (e) => {
+  e.preventDefault();
+  await track("whatsappClicks").catch(()=>{});
+  setTimeout(() => {
+    window.open(e.currentTarget.href, "_blank");
+  }, 300);
+};
 
 // ⭐ REVIEW
 window.submitReview = async ()=>{
@@ -156,7 +173,7 @@ async function loadPage(){
 
     const b = snap.data();
 
-    // 🔥 VIEW TRACK (AUTO)
+    // 🔥 VIEW TRACK
     track("views");
 
     // 🔥 MAP
@@ -185,20 +202,19 @@ async function loadPage(){
 
         <div class="flex gap-3 mt-6 flex-wrap">
 
-          <!-- 🔥 WHATSAPP TRACK -->
+          <!-- ✅ FIXED WHATSAPP -->
           <a href="https://wa.me/91${b.whatsapp}" target="_blank"
-             onclick="track('whatsappClicks')">
+             onclick="handleWhatsApp(event)">
             <button class="bg-green-500 text-white px-4 py-2 rounded">WhatsApp</button>
           </a>
 
-          <!-- 🔥 CALL TRACK -->
-          <a href="tel:${b.phone}" onclick="track('calls')">
+          <!-- ✅ FIXED CALL -->
+          <a href="tel:${b.phone}" onclick="handleCall(event)">
             <button class="bg-blue-500 text-white px-4 py-2 rounded">Call</button>
           </a>
 
         </div>
 
-        <!-- MAP -->
         <div class="mt-6">
           <h3 class="font-bold mb-2">📍 Location</h3>
 
@@ -240,7 +256,7 @@ async function loadPage(){
       </div>
     `;
 
-    // 🔥 FILTERED REVIEWS (OPTIMIZED)
+    // 🔥 REVIEWS
     const reviewSnap = await getDocs(
       query(collection(db,"reviews"), where("businessId","==",id))
     );
@@ -255,7 +271,7 @@ async function loadPage(){
       `;
     });
 
-    // 🔥 FILTERED BLOGS
+    // 🔥 BLOGS
     const blogSnap = await getDocs(
       query(collection(db,"blogs"), where("businessId","==",id))
     );
