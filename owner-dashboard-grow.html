@@ -1,224 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bizlink Owner Dashboard</title>
+  <title>Owner Dashboard</title>
 
   <style>
-    body {
-      background: #0f172a;
-      color: white;
-      font-family: Arial;
-      padding: 20px;
-    }
-
-    .card {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      border: none;
-    }
-
-    button {
-      padding: 8px 15px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 5px;
-    }
-
-    .edit { background: #22c55e; color: white; }
-    .delete { background: #ef4444; color: white; }
-    .save { background: #3b82f6; color: white; }
-
-    .hidden { display: none; }
+    body { background:#0f172a; color:white; font-family:Arial; padding:20px;}
+    .card { background:#1e293b; padding:20px; border-radius:12px; margin-bottom:15px;}
+    button { padding:8px 15px; border:none; border-radius:6px; cursor:pointer;}
   </style>
 </head>
 
 <body>
 
-<h1>📊 Owner Dashboard (LIVE)</h1>
-
+<h1>📊 Dashboard</h1>
 <div id="container"></div>
-
-<div id="editSection" class="hidden">
-  <h2>✏️ Edit Business</h2>
-
-  <input id="name">
-  <input id="phone">
-  <input id="whatsapp">
-  <input id="address">
-  <textarea id="description"></textarea>
-  <input type="file" id="image">
-
-  <button class="save" onclick="updateBusiness()">💾 Save</button>
-</div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
 import {
   getFirestore,
   collection,
   query,
   where,
-  doc,
-  deleteDoc,
-  getDoc,
-  updateDoc,
-  onSnapshot,
-  increment
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBcSrWFZGputQMjk-gScCEzFpBPiOmBcI",
   authDomain: "bizlink-new.firebaseapp.com",
-  projectId: "bizlink-new",
-  storageBucket: "bizlink-new.firebasestorage.app",
-  messagingSenderId: "759857311400",
-  appId: "1:759857311400:web:903eb700790bf53de09c9d"
+  projectId: "bizlink-new"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
-
-const container = document.getElementById("container");
-const editSection = document.getElementById("editSection");
-
-let currentEditId = null;
 
 const OWNER_ID = "2qxi6o0JE4O3Kup2xHzIoEyxBa42";
+const container = document.getElementById("container");
 
+// 🔥 LIVE DATA
+const q = query(collection(db,"businesses"), where("ownerId","==",OWNER_ID));
 
-// 🔥 FORCE SYNC FUNCTION (FIXED)
-async function forceSyncAll(){
-  let pending = JSON.parse(localStorage.getItem("pendingStats")) || {};
+onSnapshot(q,(snapshot)=>{
+  container.innerHTML="";
 
-  for(let bid in pending){
-    let data = pending[bid];
+  snapshot.forEach(doc=>{
+    const d = doc.data();
 
-    try{
-      await updateDoc(doc(db,"businesses",bid), {
-        views: increment(data.views || 0),
-        calls: increment(data.calls || 0),
-        whatsappClicks: increment(data.whatsappClicks || 0)
-      });
-    }catch(e){
-      console.log("sync error");
-    }
-  }
-
-  localStorage.removeItem("pendingStats");
-}
-
-
-// 🔥 LIVE DATA LISTENER
-function loadBusinesses() {
-
-  const q = query(
-    collection(db, "businesses"),
-    where("ownerId", "==", OWNER_ID)
-  );
-
-  onSnapshot(q, (snapshot) => {
-
-    container.innerHTML = "";
-
-    snapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      const id = docSnap.id;
-
-      const div = document.createElement("div");
-      div.className = "card";
-
-      div.innerHTML = `
-        <h2>${data.name}</h2>
-
-        <p>👁 Views: ${data.views || 0}</p>
-        <p>📞 Calls: ${data.calls || 0}</p>
-        <p>💬 WhatsApp: ${data.whatsappClicks || 0}</p>
-
-        <button class="edit" onclick="editBusiness('${id}')">✏️ Edit</button>
-        <button class="delete" onclick="deleteBusiness('${id}')">🗑 Delete</button>
-      `;
-
-      container.appendChild(div);
-    });
-
+    container.innerHTML += `
+      <div class="card">
+        <h2>${d.name}</h2>
+        <p>👁 Views: ${d.views||0}</p>
+        <p>📞 Calls: ${d.calls||0}</p>
+        <p>💬 WhatsApp: ${d.whatsappClicks||0}</p>
+      </div>
+    `;
   });
-}
-
-
-// 🚀 INIT (IMPORTANT FIX)
-await forceSyncAll();   // 🔥 पहले sync
-loadBusinesses();       // 🔥 फिर load
-
-
-// ✏️ EDIT
-window.editBusiness = async (id) => {
-  currentEditId = id;
-
-  const snap = await getDoc(doc(db, "businesses", id));
-  const data = snap.data();
-
-  name.value = data.name || "";
-  phone.value = data.phone || "";
-  whatsapp.value = data.whatsapp || "";
-  address.value = data.address || "";
-  description.value = data.description || "";
-
-  editSection.classList.remove("hidden");
-};
-
-
-// 💾 UPDATE
-window.updateBusiness = async () => {
-  const docRef = doc(db, "businesses", currentEditId);
-
-  let imageUrl = "";
-
-  if (image.files[0]) {
-    const storageRef = ref(storage, "businessImages/" + Date.now());
-    await uploadBytes(storageRef, image.files[0]);
-    imageUrl = await getDownloadURL(storageRef);
-  }
-
-  await updateDoc(docRef, {
-    name: name.value,
-    phone: phone.value,
-    whatsapp: whatsapp.value,
-    address: address.value,
-    description: description.value,
-    ...(imageUrl && { image: imageUrl })
-  });
-
-  alert("Updated");
-  editSection.classList.add("hidden");
-};
-
-
-// 🗑 DELETE
-window.deleteBusiness = async (id) => {
-  if (!confirm("Delete this business?")) return;
-
-  await deleteDoc(doc(db, "businesses", id));
-};
+});
 
 </script>
 
