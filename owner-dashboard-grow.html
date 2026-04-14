@@ -74,7 +74,8 @@ import {
   deleteDoc,
   getDoc,
   updateDoc,
-  onSnapshot
+  onSnapshot,
+  increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 import {
@@ -103,6 +104,29 @@ const editSection = document.getElementById("editSection");
 let currentEditId = null;
 
 const OWNER_ID = "2qxi6o0JE4O3Kup2xHzIoEyxBa42";
+
+
+// 🔥 FORCE SYNC FUNCTION (FIXED)
+async function forceSyncAll(){
+  let pending = JSON.parse(localStorage.getItem("pendingStats")) || {};
+
+  for(let bid in pending){
+    let data = pending[bid];
+
+    try{
+      await updateDoc(doc(db,"businesses",bid), {
+        views: increment(data.views || 0),
+        calls: increment(data.calls || 0),
+        whatsappClicks: increment(data.whatsappClicks || 0)
+      });
+    }catch(e){
+      console.log("sync error");
+    }
+  }
+
+  localStorage.removeItem("pendingStats");
+}
+
 
 // 🔥 LIVE DATA LISTENER
 function loadBusinesses() {
@@ -140,7 +164,10 @@ function loadBusinesses() {
   });
 }
 
-loadBusinesses();
+
+// 🚀 INIT (IMPORTANT FIX)
+await forceSyncAll();   // 🔥 पहले sync
+loadBusinesses();       // 🔥 फिर load
 
 
 // ✏️ EDIT
