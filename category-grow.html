@@ -56,9 +56,10 @@ snap.forEach(doc=>{
   b.id = doc.id;
 
   if(
-    b.category?.toLowerCase() === category.toLowerCase() &&
-    b.location?.toLowerCase().includes(city.toLowerCase())
-  ){
+  (category === "All" || b.category?.toLowerCase().includes(category.toLowerCase())) &&
+  b.location?.toLowerCase().includes(city.toLowerCase())
+)
+  {
     found.push(b);
   }
 });
