@@ -13,14 +13,7 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { 
-  getFirestore, doc, getDoc, 
-  collection, addDoc, getDocs, serverTimestamp, 
-  updateDoc, increment, query, where 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-import { getAuth, onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
@@ -30,273 +23,64 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
+const id = new URLSearchParams(window.location.search).get("id");
 const container = document.getElementById("detail");
 
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-
-if(!id){
-  container.innerHTML = "Invalid Business";
-  throw new Error("No ID");
-}
-
-let currentUser = null;
-
-// 🔐 LOGIN
-onAuthStateChanged(auth, async (user)=>{
-  if(!user){
-    alert("Login required");
-    window.location.href = "login-grow.html";
-    return;
-  }
-  currentUser = user;
-  loadPage();
-});
-
-
-// =========================
-// 🔥 TRACK SYSTEM (BUFFER)
-// =========================
-
+// 🔥 TRACK DIRECT FIRESTORE (NO MISS)
 function track(type){
-  let pending = JSON.parse(localStorage.getItem("pendingStats")) || {};
-
-  if(!pending[id]){
-    pending[id] = { views:0, calls:0, whatsappClicks:0 };
-  }
-
-  pending[id][type] += 1;
-
-  localStorage.setItem("pendingStats", JSON.stringify(pending));
+  updateDoc(doc(db,"businesses",id), {
+    [type]: increment(1)
+  }).catch(()=>{});
 }
 
-// 🔥 SYNC TO FIREBASE
-async function syncStats(){
-  let pending = JSON.parse(localStorage.getItem("pendingStats")) || {};
+async function load(){
+  const snap = await getDoc(doc(db,"businesses",id));
+  const b = snap.data();
 
-  if(!pending[id]) return;
+  // 👁 view track
+  track("views");
 
-  let data = pending[id];
+  container.innerHTML = `
+    <div class="bg-white p-6 rounded-xl shadow">
 
-  try{
-    await updateDoc(doc(db,"businesses",id), {
-      views: increment(data.views || 0),
-      calls: increment(data.calls || 0),
-      whatsappClicks: increment(data.whatsappClicks || 0)
-    });
+      <img src="${b.image || ''}" class="w-full h-64 object-cover rounded">
 
-    delete pending[id];
-    localStorage.setItem("pendingStats", JSON.stringify(pending));
+      <h1 class="text-2xl font-bold mt-4">${b.name}</h1>
+      <p>${b.location}</p>
+      <p class="text-blue-500">${b.category}</p>
 
-  }catch(e){
-    console.log("Sync failed");
-  }
-}
+      <div class="flex gap-3 mt-6">
 
+        <!-- CALL -->
+        <button onclick="callNow('${b.phone}')"
+          class="bg-blue-500 text-white px-4 py-2 rounded">
+          Call
+        </button>
 
-// =========================
-// ⭐ REVIEW
-// =========================
-
-window.submitReview = async ()=>{
-  const name = rName.value;
-  const rating = rRating.value;
-  const comment = rComment.value;
-
-  if(!name || !rating || !comment){
-    alert("Fill all fields");
-    return;
-  }
-
-  const q = query(
-    collection(db,"reviews"),
-    where("businessId","==",id),
-    where("user","==",currentUser.email)
-  );
-
-  const snap = await getDocs(q);
-
-  if(!snap.empty){
-    alert("Already reviewed");
-    return;
-  }
-
-  await addDoc(collection(db,"reviews"),{
-    businessId: id,
-    user: currentUser.email,
-    name,
-    rating,
-    comment,
-    time: serverTimestamp()
-  });
-
-  alert("Review Added");
-  location.reload();
-};
-
-
-// =========================
-// 📝 BLOG
-// =========================
-
-window.submitBlog = async ()=>{
-  const title = bTitle.value;
-  const content = bContent.value;
-
-  if(!title || !content){
-    alert("Fill blog fields");
-    return;
-  }
-
-  const q = query(
-    collection(db,"blogs"),
-    where("businessId","==",id),
-    where("user","==",currentUser.email)
-  );
-
-  const snap = await getDocs(q);
-
-  if(!snap.empty){
-    alert("Already posted blog");
-    return;
-  }
-
-  await addDoc(collection(db,"blogs"),{
-    businessId: id,
-    user: currentUser.email,
-    title,
-    content,
-    time: serverTimestamp()
-  });
-
-  alert("Blog Posted");
-  location.reload();
-};
-
-
-// =========================
-// 🚀 LOAD PAGE
-// =========================
-
-async function loadPage(){
-
-  try {
-
-    const snap = await getDoc(doc(db,"businesses",id));
-
-    if(!snap.exists()){
-      container.innerHTML = "Business not found";
-      return;
-    }
-
-    const b = snap.data();
-
-    // 🔥 VIEW TRACK
-    track("views");
-
-    // 🔥 SYNC PREVIOUS CLICKS
-    syncStats();
-
-    let mapEmbed = b.mapLink
-      ? b.mapLink.replace("maps.google.com", "www.google.com/maps/embed")
-      : "https://www.google.com/maps?q=" + encodeURIComponent(b.location) + "&output=embed";
-
-    let mapButton = b.mapLink || 
-      "https://www.google.com/maps?q=" + encodeURIComponent(b.location);
-
-    container.innerHTML = `
-      <div class="bg-white rounded-xl shadow p-6 text-left">
-
-        <img src="${b.image || 'https://via.placeholder.com/600'}"
-        class="w-full h-64 object-cover rounded">
-
-        <h1 class="text-2xl font-bold mt-4">${b.name}</h1>
-        <p class="text-gray-500">${b.location}</p>
-        <p class="text-blue-500">${b.category}</p>
-
-        <p class="mt-4">${b.description || ""}</p>
-
-        <div class="flex gap-3 mt-6 flex-wrap">
-
-          <!-- CALL -->
-          <a href="tel:${b.phone}" onclick="track('calls')">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded">
-              Call
-            </button>
-          </a>
-
-          <!-- WHATSAPP -->
-          <a href="https://wa.me/91${b.whatsapp}" target="_blank"
-             onclick="track('whatsappClicks')">
-            <button class="bg-green-500 text-white px-4 py-2 rounded">
-              WhatsApp
-            </button>
-          </a>
-
-        </div>
-
-        <div class="mt-6">
-          <h3 class="font-bold mb-2">📍 Location</h3>
-
-          <iframe src="${mapEmbed}" class="w-full h-60 rounded"></iframe>
-
-          <a href="${mapButton}" target="_blank">
-            <button class="mt-3 bg-indigo-600 text-white px-4 py-2 rounded">
-              Get Directions
-            </button>
-          </a>
-        </div>
-
-        <h2 class="text-xl font-bold mt-6">⭐ Reviews</h2>
-        <div id="reviews"></div>
-
-        <div class="bg-gray-100 p-4 mt-3 rounded">
-          <input id="rName" placeholder="Name" class="w-full p-2 mb-2">
-          <select id="rRating" class="w-full p-2 mb-2">
-            <option>5</option><option>4</option><option>3</option>
-            <option>2</option><option>1</option>
-          </select>
-          <textarea id="rComment" class="w-full p-2 mb-2"></textarea>
-          <button onclick="submitReview()" class="bg-indigo-600 text-white px-4 py-2 rounded">
-            Submit Review
-          </button>
-        </div>
-
-        <h2 class="text-xl font-bold mt-6">📝 Blogs</h2>
-        <div id="blogs"></div>
-
-        <div class="bg-gray-100 p-4 mt-3 rounded">
-          <input id="bTitle" class="w-full p-2 mb-2">
-          <textarea id="bContent" class="w-full p-2 mb-2"></textarea>
-          <button onclick="submitBlog()" class="bg-green-600 text-white px-4 py-2 rounded">
-            Post Blog
-          </button>
-        </div>
+        <!-- WHATSAPP -->
+        <button onclick="whatsappNow('${b.whatsapp}')"
+          class="bg-green-500 text-white px-4 py-2 rounded">
+          WhatsApp
+        </button>
 
       </div>
-    `;
 
-    // REVIEWS
-    const reviewSnap = await getDocs(query(collection(db,"reviews"), where("businessId","==",id)));
-    reviewSnap.forEach(d=>{
-      const r = d.data();
-      reviews.innerHTML += `<div class="bg-white p-3 mt-2 rounded shadow"><b>${r.name}</b> ⭐${r.rating}<p>${r.comment}</p></div>`;
-    });
-
-    // BLOGS
-    const blogSnap = await getDocs(query(collection(db,"blogs"), where("businessId","==",id)));
-    blogSnap.forEach(d=>{
-      const bl = d.data();
-      blogs.innerHTML += `<div class="bg-white p-3 mt-2 rounded shadow"><b>${bl.title}</b><p>${bl.content}</p></div>`;
-    });
-
-  } catch(err){
-    console.error(err);
-    container.innerHTML = "Error loading data";
-  }
+    </div>
+  `;
 }
+
+window.callNow = (phone)=>{
+  track("calls");
+  window.location.href = "tel:"+phone;
+};
+
+window.whatsappNow = (num)=>{
+  track("whatsappClicks");
+  window.open("https://wa.me/91"+num, "_blank");
+};
+
+load();
 
 </script>
 
