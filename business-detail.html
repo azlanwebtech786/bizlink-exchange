@@ -55,14 +55,51 @@ onAuthStateChanged(auth, async (user)=>{
   loadPage();
 });
 
-// 🔥 TRACK (FAST BACKGROUND)
+
+// =========================
+// 🔥 TRACK SYSTEM (BUFFER)
+// =========================
+
 function track(type){
-  updateDoc(doc(db,"businesses",id),{
-    [type]: increment(1)
-  }).catch(()=>{});
+  let pending = JSON.parse(localStorage.getItem("pendingStats")) || {};
+
+  if(!pending[id]){
+    pending[id] = { views:0, calls:0, whatsappClicks:0 };
+  }
+
+  pending[id][type] += 1;
+
+  localStorage.setItem("pendingStats", JSON.stringify(pending));
 }
 
+// 🔥 SYNC TO FIREBASE
+async function syncStats(){
+  let pending = JSON.parse(localStorage.getItem("pendingStats")) || {};
+
+  if(!pending[id]) return;
+
+  let data = pending[id];
+
+  try{
+    await updateDoc(doc(db,"businesses",id), {
+      views: increment(data.views || 0),
+      calls: increment(data.calls || 0),
+      whatsappClicks: increment(data.whatsappClicks || 0)
+    });
+
+    delete pending[id];
+    localStorage.setItem("pendingStats", JSON.stringify(pending));
+
+  }catch(e){
+    console.log("Sync failed");
+  }
+}
+
+
+// =========================
 // ⭐ REVIEW
+// =========================
+
 window.submitReview = async ()=>{
   const name = rName.value;
   const rating = rRating.value;
@@ -99,7 +136,11 @@ window.submitReview = async ()=>{
   location.reload();
 };
 
+
+// =========================
 // 📝 BLOG
+// =========================
+
 window.submitBlog = async ()=>{
   const title = bTitle.value;
   const content = bContent.value;
@@ -134,7 +175,11 @@ window.submitBlog = async ()=>{
   location.reload();
 };
 
+
+// =========================
 // 🚀 LOAD PAGE
+// =========================
+
 async function loadPage(){
 
   try {
@@ -150,6 +195,9 @@ async function loadPage(){
 
     // 🔥 VIEW TRACK
     track("views");
+
+    // 🔥 SYNC PREVIOUS CLICKS
+    syncStats();
 
     let mapEmbed = b.mapLink
       ? b.mapLink.replace("maps.google.com", "www.google.com/maps/embed")
@@ -172,14 +220,14 @@ async function loadPage(){
 
         <div class="flex gap-3 mt-6 flex-wrap">
 
-          <!-- 🔥 FINAL CALL -->
+          <!-- CALL -->
           <a href="tel:${b.phone}" onclick="track('calls')">
             <button class="bg-blue-500 text-white px-4 py-2 rounded">
               Call
             </button>
           </a>
 
-          <!-- 🔥 FINAL WHATSAPP -->
+          <!-- WHATSAPP -->
           <a href="https://wa.me/91${b.whatsapp}" target="_blank"
              onclick="track('whatsappClicks')">
             <button class="bg-green-500 text-white px-4 py-2 rounded">
