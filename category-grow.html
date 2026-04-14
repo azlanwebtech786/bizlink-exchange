@@ -64,9 +64,9 @@ snap.forEach(doc=>{
   }
 });
 
-if(found.length === 0){
-  list.innerHTML = "No business found";
-}else{
+// 🔥 अगर match मिला
+if(found.length > 0){
+
   found.forEach(b=>{
     list.innerHTML += `
       <div onclick="openDetail('${b.id}')"
@@ -80,6 +80,35 @@ if(found.length === 0){
       </div>
     `;
   });
+
+}else{
+
+  // 🔥 fallback
+  list.innerHTML = `
+    <p class="mb-4 text-red-500">
+      No exact match found. Showing all businesses in ${city}
+    </p>
+  `;
+
+  snap.forEach(doc=>{
+    const b = doc.data();
+    b.id = doc.id;
+
+    if(b.location?.toLowerCase().includes(city.toLowerCase())){
+      list.innerHTML += `
+        <div onclick="openDetail('${b.id}')"
+          class="bg-white p-4 rounded shadow cursor-pointer">
+
+          <img src="${b.image || ''}" class="h-40 w-full object-cover">
+
+          <h3 class="font-bold mt-2">${b.name}</h3>
+          <p class="text-sm">${b.location}</p>
+
+        </div>
+      `;
+    }
+  });
+
 }
 
 window.openDetail = (id)=>{
