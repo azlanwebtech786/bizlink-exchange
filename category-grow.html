@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title id="title">Loading...</title>
+
+  <meta name="description" id="metaDesc">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="max-w-6xl mx-auto p-6">
+
+  <h1 id="heading" class="text-3xl font-bold mb-6"></h1>
+
+  <div id="list" class="grid md:grid-cols-3 gap-6"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
+  authDomain: "bizlink-new.firebaseapp.com",
+  projectId: "bizlink-new"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const params = new URLSearchParams(window.location.search);
+
+const category = params.get("cat");
+const city = params.get("city");
+
+// 🔥 SEO TITLE
+document.getElementById("title").innerText = `${category} in ${city} | Bizlink`;
+document.getElementById("metaDesc").content = `Best ${category} in ${city}. Find top services near you.`;
+
+// 🔥 HEADING
+document.getElementById("heading").innerText = `${category} in ${city}`;
+
+const list = document.getElementById("list");
+
+const snap = await getDocs(collection(db,"businesses"));
+
+let found = [];
+
+snap.forEach(doc=>{
+  const b = doc.data();
+  b.id = doc.id;
+
+  if(
+    b.category?.toLowerCase() === category.toLowerCase() &&
+    b.location?.toLowerCase().includes(city.toLowerCase())
+  ){
+    found.push(b);
+  }
+});
+
+if(found.length === 0){
+  list.innerHTML = "No business found";
+}else{
+  found.forEach(b=>{
+    list.innerHTML += `
+      <div onclick="openDetail('${b.id}')"
+        class="bg-white p-4 rounded shadow cursor-pointer">
+
+        <img src="${b.image || ''}" class="h-40 w-full object-cover">
+
+        <h3 class="font-bold mt-2">${b.name}</h3>
+        <p class="text-sm">${b.location}</p>
+
+      </div>
+    `;
+  });
+}
+
+window.openDetail = (id)=>{
+  window.location.href = "business-detail.html?id="+id;
+};
+
+</script>
+
+</body>
+</html>
