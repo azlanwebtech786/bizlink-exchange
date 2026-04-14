@@ -27,7 +27,7 @@ const db = getFirestore(app);
 const id = new URLSearchParams(window.location.search).get("id");
 const container = document.getElementById("detail");
 
-// 🔥 TRACK DIRECT FIRESTORE (NO MISS)
+// 🔥 TRACK
 function track(type){
   updateDoc(doc(db,"businesses",id), {
     [type]: increment(1)
@@ -36,29 +36,40 @@ function track(type){
 
 async function load(){
   const snap = await getDoc(doc(db,"businesses",id));
+
+  if(!snap.exists()){
+    container.innerHTML = "Business not found";
+    return;
+  }
+
   const b = snap.data();
 
-  // 👁 view track
+  // 👁 VIEW
   track("views");
 
-  container.innerHTML = `
-    <div class="bg-white p-6 rounded-xl shadow">
+  // 📍 MAP
+  let mapUrl = "https://www.google.com/maps?q=" + encodeURIComponent(b.location);
 
-      <img src="${b.image || ''}" class="w-full h-64 object-cover rounded">
+  container.innerHTML = `
+    <div class="bg-white p-6 rounded-xl shadow text-left">
+
+      <img src="${b.image || 'https://via.placeholder.com/600'}"
+        class="w-full h-64 object-cover rounded">
 
       <h1 class="text-2xl font-bold mt-4">${b.name}</h1>
-      <p>${b.location}</p>
+      <p class="text-gray-500">${b.location}</p>
       <p class="text-blue-500">${b.category}</p>
 
+      <p class="mt-4">${b.description || ""}</p>
+
+      <!-- BUTTONS -->
       <div class="flex gap-3 mt-6">
 
-        <!-- CALL -->
         <button onclick="callNow('${b.phone}')"
           class="bg-blue-500 text-white px-4 py-2 rounded">
           Call
         </button>
 
-        <!-- WHATSAPP -->
         <button onclick="whatsappNow('${b.whatsapp}')"
           class="bg-green-500 text-white px-4 py-2 rounded">
           WhatsApp
@@ -66,15 +77,33 @@ async function load(){
 
       </div>
 
+      <!-- MAP -->
+      <div class="mt-6">
+        <h3 class="font-bold mb-2">📍 Location</h3>
+
+        <iframe 
+          src="https://www.google.com/maps?q=${encodeURIComponent(b.location)}&output=embed"
+          class="w-full h-60 rounded">
+        </iframe>
+
+        <a href="${mapUrl}" target="_blank">
+          <button class="mt-3 bg-indigo-600 text-white px-4 py-2 rounded">
+            Get Directions
+          </button>
+        </a>
+      </div>
+
     </div>
   `;
 }
 
+// 📞 CALL
 window.callNow = (phone)=>{
   track("calls");
   window.location.href = "tel:"+phone;
 };
 
+// 💬 WHATSAPP
 window.whatsappNow = (num)=>{
   track("whatsappClicks");
   window.open("https://wa.me/91"+num, "_blank");
