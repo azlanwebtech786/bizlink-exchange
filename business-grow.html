@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title id="title">Loading...</title>
+  <meta name="description" id="metaDesc">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div id="detail" class="max-w-4xl mx-auto p-6"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBcSrWFZGputQMjk-gGsCcEzFpBPiOmBcI",
+  authDomain: "bizlink-new.firebaseapp.com",
+  projectId: "bizlink-new"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+const container = document.getElementById("detail");
+
+function track(type){
+  updateDoc(doc(db,"businesses",id), {
+    [type]: increment(1)
+  }).catch(()=>{});
+}
+
+async function load(){
+  const snap = await getDoc(doc(db,"businesses",id));
+  const b = snap.data();
+
+  track("views");
+
+  document.getElementById("title").innerText = `${b.name} in ${b.location} | Bizlink`;
+
+  document.getElementById("metaDesc").setAttribute(
+    "content",
+    `Contact ${b.name} in ${b.location}. ${b.description || ""}`
+  );
+
+  container.innerHTML = `
+    <div class="bg-white p-6 rounded shadow">
+
+      <img src="${b.image || ''}" class="w-full h-64 object-cover">
+
+      <h1 class="text-2xl font-bold mt-4">${b.name}</h1>
+      <p>${b.location}</p>
+      <p class="text-blue-500">${b.category}</p>
+      <p>${b.description || ""}</p>
+
+      <div class="flex gap-3 mt-6">
+
+        <button onclick="callNow('${b.phone}')"
+          class="bg-blue-500 text-white px-4 py-2 rounded">
+          Call
+        </button>
+
+        <button onclick="whatsappNow('${b.whatsapp}')"
+          class="bg-green-500 text-white px-4 py-2 rounded">
+          WhatsApp
+        </button>
+
+      </div>
+
+    </div>
+  `;
+}
+
+window.callNow = (p)=>{
+  track("calls");
+  window.location.href = "tel:"+p;
+};
+
+window.whatsappNow = (w)=>{
+  track("whatsappClicks");
+  window.open("https://wa.me/91"+w);
+};
+
+load();
+
+</script>
+
+</body>
+</html>
