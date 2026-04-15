@@ -3,7 +3,6 @@
 <head>
   <title id="title">Loading...</title>
   <meta name="description" id="metaDesc">
-
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -42,8 +41,11 @@ async function load(){
 
   track("views");
 
-  document.getElementById("title").innerText = `${b.name} in ${b.location} | Bizlink`;
+  // SEO TITLE
+  document.getElementById("title").innerText =
+    `${b.name} in ${b.location} | Bizlink`;
 
+  // SEO DESCRIPTION
   document.getElementById("metaDesc").setAttribute(
     "content",
     `Contact ${b.name} in ${b.location}. ${b.description || ""}`
@@ -77,11 +79,13 @@ async function load(){
   `;
 }
 
+// CALL
 window.callNow = (p)=>{
   track("calls");
   window.location.href = "tel:"+p;
 };
 
+// WHATSAPP
 window.whatsappNow = (w)=>{
   track("whatsappClicks");
   window.open("https://wa.me/91"+w);
