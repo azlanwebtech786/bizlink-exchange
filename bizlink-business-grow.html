@@ -156,8 +156,10 @@ window.searchBusiness = ()=>{
 };
 
 // 🔥 OPEN DETAIL
-window.openDetail = (id)=>{
-  window.location.href = "business-detail.html?id=" + id;
+window.openDetail = (b)=>{
+  const slug = createSlug(b.name, b.location);
+
+  window.location.href = "business.html?slug=" + slug + "&id=" + b.id;
 };
 
   function createSlug(name, location){
