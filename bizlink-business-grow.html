@@ -115,7 +115,7 @@ function render(data){
 
   data.forEach(b=>{
     list.innerHTML += `
-      <div onclick="openDetail('${b.id}')"
+      <div onclick='openDetail(${JSON.stringify(b)})'
         class="bg-white shadow rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
         <img src="${b.image || 'https://via.placeholder.com/400'}"
