@@ -160,6 +160,13 @@ window.openDetail = (id)=>{
   window.location.href = "business-detail.html?id=" + id;
 };
 
+  function createSlug(name, location){
+  return (name + " in " + location)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 </script>
 
 </body>
