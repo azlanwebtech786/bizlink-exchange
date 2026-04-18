@@ -114,6 +114,15 @@ function render(data){
   }
 
   data.forEach(b=>{
+    let tag = "";
+
+if((b.calls||0) > 10){
+  tag = "🔥 High Demand";
+}else if((b.whatsappClicks||0) > 5){
+  tag = "⚡ Active";
+}else{
+  tag = "🟢 New";
+}
     list.innerHTML += `
       <div onclick='openDetail(${JSON.stringify(b)})'
         class="bg-white shadow rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
