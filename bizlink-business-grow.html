@@ -132,6 +132,14 @@ function render(data){
   });
 }
 
+  // 🔥 RESULT BASED SORTING
+all.sort((a,b)=>{
+  const aScore = (a.calls||0) + (a.whatsappClicks||0);
+  const bScore = (b.calls||0) + (b.whatsappClicks||0);
+
+  return bScore - aScore;
+});
+  
 // 🔥 INITIAL LOAD
 render(all);
 
