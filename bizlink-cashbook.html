@@ -68,7 +68,16 @@ th, td {
 <input type="number" id="credit" placeholder="Money In (Credit)">
 <button onclick="addEntry()">Add Entry</button>
 </div>
+<br><br>
 
+<input type="month" id="monthFilter">
+<input type="date" id="fromDate">
+<input type="date" id="toDate">
+<input type="text" id="search" placeholder="Search...">
+
+<button onclick="applyFilter()">Filter</button>
+<button onclick="resetFilter()">Reset</button>
+<button onclick="downloadCSV()">Download Excel</button>
 <table>
 <thead>
 <tr>
