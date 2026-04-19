@@ -12,7 +12,6 @@ body {
   text-align:center;
   padding:20px;
 }
-
 button {
   padding:10px;
   margin:5px;
@@ -21,23 +20,18 @@ button {
   background:#38bdf8;
   cursor:pointer;
 }
-
 .hidden { display:none; }
-
 table {
   width:100%;
   margin-top:10px;
   border-collapse: collapse;
 }
-
 th, td {
   border:1px solid #334155;
   padding:8px;
 }
-
 .credit { color:#22c55e; font-weight:bold; }
 .debit { color:#facc15; font-weight:bold; }
-
 .total {
   margin-top:15px;
   font-size:18px;
@@ -68,6 +62,7 @@ th, td {
 <input type="number" id="credit" placeholder="Money In (Credit)">
 <button onclick="addEntry()">Add Entry</button>
 </div>
+
 <br><br>
 
 <input type="month" id="monthFilter">
@@ -78,6 +73,7 @@ th, td {
 <button onclick="applyFilter()">Filter</button>
 <button onclick="resetFilter()">Reset</button>
 <button onclick="downloadCSV()">Download Excel</button>
+
 <table>
 <thead>
 <tr>
@@ -95,14 +91,12 @@ th, td {
 
 </div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
 
-// 🔥 CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyAZLwV2xzpIYXyBw15T2OI4j3iLz3uuEwI",
   authDomain: "bizlink-cashbook.firebaseapp.com",
@@ -117,39 +111,49 @@ const db = firebase.firestore();
 let currentUser = null;
 let entries = [];
 let filteredEntries = [];
-  
+
 const ALLOWED_USERS = [
   "samaydeen321633@gmail.com",
   "sahilkhandadar@gmail.com"
 ];
 
-// 📅 TODAY FIX
-const dateInput = document.getElementById('date');
+// ✅ INDIA DATE FIX
+function getToday() {
+  const now = new Date();
+  const india = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  );
+  return india.toISOString().split('T')[0];
+}
 
 function setTodayDate() {
   const today = getToday();
+  const dateInput = document.getElementById('date');
+
+  dateInput.value = "";
   dateInput.value = today;
+
   dateInput.min = today;
   dateInput.max = today;
 }
 
 setTodayDate();
-// 🔐 LOGIN
+
+// LOGIN
 function googleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider);
 }
 
-// 🚪 LOGOUT
+// LOGOUT
 function logout() {
   auth.signOut();
 }
 
-// 👀 AUTH
+// AUTH
 auth.onAuthStateChanged(user => {
   if (user) {
 
-    // ❌ agar allowed list me nahi hai → logout
     if (!ALLOWED_USERS.includes(user.email)) {
       alert("Access Denied ❌");
       auth.signOut();
@@ -160,7 +164,8 @@ auth.onAuthStateChanged(user => {
 
     document.getElementById("loginBox").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
-    setTodayDate();
+
+    setTodayDate(); // 🔥 IMPORTANT
     loadData();
 
   } else {
@@ -168,10 +173,10 @@ auth.onAuthStateChanged(user => {
     document.getElementById("app").classList.add("hidden");
   }
 });
-  
-// ➕ ADD ENTRY
+
+// ADD ENTRY
 function addEntry() {
-  const date = dateInput.value;
+  const date = document.getElementById('date').value;
   const particulars = document.getElementById('particulars').value.trim();
   const debit = Number(document.getElementById('debit').value) || 0;
   const credit = Number(document.getElementById('credit').value) || 0;
@@ -189,11 +194,9 @@ function addEntry() {
   });
 
   document.getElementById('particulars').value = '';
-  document.getElementById('debit').value = '';
-  document.getElementById('credit').value = '';
 }
 
-// 🔥 FIXED LOAD DATA (MAIN ISSUE SOLVED)
+// LOAD DATA
 function loadData() {
   db.collection("cashbook")
     .onSnapshot(snapshot => {
@@ -202,107 +205,70 @@ function loadData() {
       snapshot.forEach(doc => {
         const data = doc.data();
 
-        let time = 0;
+        let time = data.createdAt?.seconds || new Date(data.createdAt).getTime();
 
-        // ✅ handle both Timestamp & Date
-        if (data.createdAt) {
-          if (data.createdAt.seconds) {
-            time = data.createdAt.seconds;
-          } else {
-            time = new Date(data.createdAt).getTime();
-          }
-        }
-
-        entries.push({
-          ...data,
-          _time: time
-        });
+        entries.push({ ...data, _time: time });
       });
 
-      // ✅ correct order
       entries.sort((a, b) => a._time - b._time);
-
       renderTable();
     });
 }
 
-// 📊 TABLE
+// TABLE
 function renderTable(data = entries) {
-  let balance = 0;
-  let totalCredit = 0;
-  let totalDebit = 0;
-
+  let balance = 0, totalCredit = 0, totalDebit = 0;
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
 
   data.forEach(entry => {
     balance += entry.credit - entry.debit;
-
     totalCredit += entry.credit;
     totalDebit += entry.debit;
-
-    const debitText = entry.debit ? `<span class="debit">-₹${entry.debit}</span>` : '';
-    const creditText = entry.credit ? `<span class="credit">+₹${entry.credit}</span>` : '';
 
     tbody.innerHTML += `
     <tr>
       <td>${entry.date}</td>
       <td>${entry.particulars}</td>
-      <td>${debitText}</td>
-      <td>${creditText}</td>
+      <td>${entry.debit ? `<span class="debit">-₹${entry.debit}</span>` : ''}</td>
+      <td>${entry.credit ? `<span class="credit">+₹${entry.credit}</span>` : ''}</td>
       <td>₹${balance}</td>
     </tr>`;
   });
 
-  // 🔥 FINAL TOTAL DISPLAY
-  document.getElementById("totalBalance").innerHTML = `
-    Total Credit: ₹${totalCredit} &nbsp;&nbsp; | &nbsp;&nbsp;
-    Total Debit: ₹${totalDebit} &nbsp;&nbsp; | &nbsp;&nbsp;
-    Remaining Balance: ₹${balance}
-  `;
+  document.getElementById("totalBalance").innerHTML =
+    `Total Credit: ₹${totalCredit} | Total Debit: ₹${totalDebit} | Balance: ₹${balance}`;
 }
+
+// FILTER
 function applyFilter() {
   const month = document.getElementById("monthFilter").value;
   const from = document.getElementById("fromDate").value;
   const to = document.getElementById("toDate").value;
   const search = document.getElementById("search").value.toLowerCase();
 
-  filteredEntries = entries.filter(entry => {
-
-    let match = true;
-
-    if (month) {
-      match = entry.date.startsWith(month);
-    }
-
-    if (from && to) {
-      match = entry.date >= from && entry.date <= to;
-    }
-
-    if (search) {
-      match = entry.particulars.toLowerCase().includes(search);
-    }
-
-    return match;
-  });
+  filteredEntries = entries.filter(e =>
+    (!month || e.date.startsWith(month)) &&
+    (!from || e.date >= from) &&
+    (!to || e.date <= to) &&
+    (!search || e.particulars.toLowerCase().includes(search))
+  );
 
   renderTable(filteredEntries);
 }
 
-  function resetFilter() {
+function resetFilter() {
   document.getElementById("monthFilter").value = "";
   document.getElementById("fromDate").value = "";
   document.getElementById("toDate").value = "";
   document.getElementById("search").value = "";
-
   renderTable(entries);
 }
 
-  function downloadCSV() {
+// CSV
+function downloadCSV() {
   const data = filteredEntries.length ? filteredEntries : entries;
-
   let csv = "Date,Particulars,Debit,Credit,Balance\n";
-
   let balance = 0;
 
   data.forEach(e => {
@@ -311,7 +277,7 @@ function applyFilter() {
   });
 
   const blob = new Blob([csv], { type: "text/csv" });
-  const url = window.URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
 
   const a = document.createElement("a");
   a.href = url;
@@ -319,10 +285,6 @@ function applyFilter() {
   a.click();
 }
 
-  function getToday() {
-  return new Date().toISOString().split('T')[0];
-}
-  
 </script>
 
 </body>
