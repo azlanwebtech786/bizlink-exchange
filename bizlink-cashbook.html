@@ -30,10 +30,6 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #0ea5e9;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -64,10 +60,10 @@ th {
 
 <input type="date" id="date">
 <input type="text" id="particulars" placeholder="Particulars">
-<input type="number" id="debit" placeholder="Debit">
-<input type="number" id="credit" placeholder="Credit">
+<input type="number" id="debit" placeholder="Money In (Debit)">
+<input type="number" id="credit" placeholder="Money Out (Credit)">
 
-<button onclick="addEntry()">Add Entry</button>
+<button onclick="addEntry()">Add / Update</button>
 
 <table>
 <thead>
@@ -85,24 +81,33 @@ th {
 
 <div class="summary" id="summary"></div>
 
+<!-- ✅ Firebase CDN (IMPORTANT) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <script>
 
-let entries = JSON.parse(localStorage.getItem('cashbook')) || [];
-let editIndex = -1;
+// ✅ TERA FIREBASE CONFIG (Already correct)
+const firebaseConfig = {
+  apiKey: "AIzaSyAZLwV2xzpIYXyBw15T2OI4j3iLz3uuEwI",
+  authDomain: "bizlink-cashbook.firebaseapp.com",
+  projectId: "bizlink-cashbook",
+  storageBucket: "bizlink-cashbook.firebasestorage.app",
+  messagingSenderId: "97954558794",
+  appId: "1:97954558794:web:bb8dce824a3865183347b3"
+};
 
-// Set today's date default
+// ✅ Initialize
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let entries = [];
+let editDocId = null;
+
+// Default date
 document.getElementById('date').valueAsDate = new Date();
 
-function saveData() {
-  localStorage.setItem('cashbook', JSON.stringify(entries));
-}
-
-function clearInputs() {
-  document.getElementById('particulars').value = '';
-  document.getElementById('debit').value = '';
-  document.getElementById('credit').value = '';
-}
-
+// ➕ ADD / UPDATE
 function addEntry() {
   const date = document.getElementById('date').value;
   const particulars = document.getElementById('particulars').value;
@@ -110,38 +115,64 @@ function addEntry() {
   const credit = Number(document.getElementById('credit').value) || 0;
 
   if (!date || !particulars) {
-    alert('Fill all fields');
+    alert("Fill all fields");
     return;
   }
 
-  if (editIndex === -1) {
-    entries.push({ date, particulars, debit, credit });
+  if (editDocId) {
+    const name = prompt("Enter your name:");
+    const remark = prompt("Edit remark:");
+
+    db.collection("cashbook").doc(editDocId).update({
+      date, particulars, debit, credit,
+      edited: true,
+      editedBy: name || "Unknown",
+      remark: remark || ""
+    });
+
+    editDocId = null;
   } else {
-    entries[editIndex] = { date, particulars, debit, credit };
-    editIndex = -1;
+    db.collection("cashbook").add({
+      date,
+      particulars,
+      debit,
+      credit,
+      createdAt: new Date()
+    });
   }
 
-  saveData();
-  renderTable();
   clearInputs();
 }
 
-function deleteEntry(index) {
-  entries.splice(index, 1);
-  saveData();
+// ✏️ EDIT
+function editEntry(id) {
+  const entry = entries.find(e => e.id === id);
+
+  document.getElementById('date').value = entry.date;
+  document.getElementById('particulars').value = entry.particulars;
+  document.getElementById('debit').value = entry.debit;
+  document.getElementById('credit').value = entry.credit;
+
+  editDocId = id;
+}
+
+// 🧹 CLEAR
+function clearInputs() {
+  document.getElementById('particulars').value = '';
+  document.getElementById('debit').value = '';
+  document.getElementById('credit').value = '';
+}
+
+// 🔥 REALTIME DATA
+db.collection("cashbook").orderBy("createdAt").onSnapshot(snapshot => {
+  entries = [];
+  snapshot.forEach(doc => {
+    entries.push({ id: doc.id, ...doc.data() });
+  });
   renderTable();
-}
+});
 
-function editEntry(index) {
-  const e = entries[index];
-  document.getElementById('date').value = e.date;
-  document.getElementById('particulars').value = e.particulars;
-  document.getElementById('debit').value = e.debit;
-  document.getElementById('credit').value = e.credit;
-
-  editIndex = index;
-}
-
+// 📊 TABLE
 function renderTable() {
   let balance = 0;
   let totalDebit = 0;
@@ -150,20 +181,25 @@ function renderTable() {
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
 
-  entries.forEach((entry, index) => {
+  entries.forEach(entry => {
     balance += entry.debit - entry.credit;
     totalDebit += entry.debit;
     totalCredit += entry.credit;
 
-    const row = `<tr>
+    const row = `
+    <tr>
       <td>${entry.date}</td>
-      <td>${entry.particulars}</td>
+      <td>
+        ${entry.particulars}
+        ${entry.edited ? `<br><small style="color:#facc15;">
+        Edited by ${entry.editedBy} (${entry.remark})
+        </small>` : ""}
+      </td>
       <td>₹${entry.debit}</td>
       <td>₹${entry.credit}</td>
       <td>₹${balance}</td>
       <td>
-        <button onclick="editEntry(${index})">Edit</button>
-        <button onclick="deleteEntry(${index})">Delete</button>
+        <button onclick="editEntry('${entry.id}')">Edit</button>
       </td>
     </tr>`;
 
@@ -173,8 +209,6 @@ function renderTable() {
   document.getElementById('summary').innerHTML =
     `Total Debit: ₹${totalDebit} | Total Credit: ₹${totalCredit} | Balance: ₹${balance}`;
 }
-
-renderTable();
 
 </script>
 
