@@ -29,6 +29,7 @@ const id = params.get("id");
 
 const container = document.getElementById("detail");
 
+// 🔥 TRACK
 function track(type){
   updateDoc(doc(db,"businesses",id), {
     [type]: increment(1)
@@ -41,43 +42,83 @@ async function load(){
 
   track("views");
 
-  // SEO TITLE
+  // 🔥 SEO
   document.getElementById("title").innerText =
     `${b.name} in ${b.location} | Bizlink`;
 
-  // SEO DESCRIPTION
   document.getElementById("metaDesc").setAttribute(
     "content",
     `Contact ${b.name} in ${b.location}. ${b.description || ""}`
   );
 
-  container.innerHTML = `
-    <div class="bg-white p-6 rounded shadow">
+  // 🔥 AUTO BADGE
+  let badge = "";
+  let badgeColor = "";
 
-      <img src="${b.image || ''}" class="w-full h-64 object-cover">
+  if((b.calls||0) > 20){
+    badge = "🔥 Trending Business";
+    badgeColor = "bg-red-500";
+  }
+  else if((b.calls||0) > 10){
+    badge = "🚀 High Demand";
+    badgeColor = "bg-orange-500";
+  }
+  else if((b.whatsappClicks||0) > 5){
+    badge = "⚡ Active";
+    badgeColor = "bg-blue-500";
+  }
+  else{
+    badge = "🟢 New Business";
+    badgeColor = "bg-green-500";
+  }
+
+  // 🔥 TOTAL ENQUIRY
+  const total = (b.calls||0) + (b.whatsappClicks||0);
+
+  container.innerHTML = `
+    <div class="bg-white p-6 rounded-xl shadow">
+
+      <div class="relative">
+        <img src="${b.image || 'https://via.placeholder.com/600'}"
+          class="w-full h-64 object-cover rounded">
+
+        <div class="absolute top-3 left-3 ${badgeColor} text-white text-xs px-3 py-1 rounded">
+          ${badge}
+        </div>
+      </div>
 
       <h1 class="text-2xl font-bold mt-4">${b.name}</h1>
-      <p>${b.location}</p>
+      <p class="text-gray-500">${b.location}</p>
       <p class="text-blue-500">${b.category}</p>
-      <p>${b.description || ""}</p>
-      <p class="text-green-600 font-semibold mt-2">
-🔥 ${b.calls||0} Calls • ${b.whatsappClicks||0} WhatsApp
-</p>
 
-<div class="mt-3 p-2 bg-yellow-100 rounded text-sm">
-🚀 Bizlink Growth Active
-</div>
+      <p class="mt-4">${b.description || ""}</p>
 
+      <!-- 🔥 LEAD PROOF -->
+      <p class="text-green-600 font-semibold mt-4 text-lg">
+        🔥 Last 7 Days: ${b.calls||0} Calls • ${b.whatsappClicks||0} WhatsApp
+      </p>
+
+      <!-- 💣 STRONG PROOF -->
+      <div class="mt-2 text-gray-700 font-medium">
+        👉 This business received <b>${total}+ enquiries</b> recently
+      </div>
+
+      <!-- 🚀 GROWTH -->
+      <div class="mt-4 p-3 bg-yellow-100 rounded text-sm font-medium">
+        🚀 This business is actively getting customers from Bizlink
+      </div>
+
+      <!-- BUTTONS -->
       <div class="flex gap-3 mt-6">
 
         <button onclick="callNow('${b.phone}')"
-          class="bg-blue-500 text-white px-4 py-2 rounded">
-          Call
+          class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700">
+          📞 Call Now
         </button>
 
         <button onclick="whatsappNow('${b.whatsapp}')"
-          class="bg-green-500 text-white px-4 py-2 rounded">
-          WhatsApp
+          class="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700">
+          💬 WhatsApp
         </button>
 
       </div>
@@ -86,16 +127,16 @@ async function load(){
   `;
 }
 
-// CALL
+// 📞 CALL
 window.callNow = (p)=>{
   track("calls");
   window.location.href = "tel:"+p;
 };
 
-// WHATSAPP
+// 💬 WHATSAPP
 window.whatsappNow = (w)=>{
   track("whatsappClicks");
-  window.open("https://wa.me/91"+w);
+  window.open("https://wa.me/91"+w, "_blank");
 };
 
 load();
