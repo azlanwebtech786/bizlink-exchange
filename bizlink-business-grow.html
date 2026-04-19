@@ -76,22 +76,27 @@ let categories = [
   "Interior Designer","Travel Agency"
 ];
 
-// 🚀 FETCH DATA (OPTIMIZED)
+// 🚀 FETCH DATA
 const snap = await getDocs(collection(db,"businesses"));
 
 snap.forEach((docSnap)=>{
   const data = docSnap.data();
-
-  // 🔥 IMPORTANT
   data.id = docSnap.id;
-
   all.push(data);
 
-  // 🔥 Auto category add
   if(data.category && !categories.includes(data.category)){
     categories.push(data.category);
   }
 });
+
+
+// 🔥 RESULT BASED SORTING (TOP BUSINESS FIRST)
+all.sort((a,b)=>{
+  const aScore = (a.calls||0) + (a.whatsappClicks||0);
+  const bScore = (b.calls||0) + (b.whatsappClicks||0);
+  return bScore - aScore;
+});
+
 
 // 🔥 CATEGORY RENDER
 catBox.innerHTML = "";
@@ -104,6 +109,7 @@ categories.forEach(cat=>{
   `;
 });
 
+
 // 🔥 BUSINESS RENDER
 function render(data){
   list.innerHTML = "";
@@ -114,30 +120,51 @@ function render(data){
   }
 
   data.forEach(b=>{
-    let tag = "";
 
-if((b.calls||0) > 10){
-  tag = "🔥 High Demand";
-}else if((b.whatsappClicks||0) > 5){
-  tag = "⚡ Active";
-}else{
-  tag = "🟢 New";
-}
+    // 🔥 AUTO BADGE SYSTEM
+    let badge = "";
+    let badgeColor = "";
+
+    if((b.calls||0) > 20){
+      badge = "🔥 Trending";
+      badgeColor = "bg-red-500";
+    }
+    else if((b.calls||0) > 10){
+      badge = "🚀 High Demand";
+      badgeColor = "bg-orange-500";
+    }
+    else if((b.whatsappClicks||0) > 5){
+      badge = "⚡ Active";
+      badgeColor = "bg-blue-500";
+    }
+    else{
+      badge = "🟢 New";
+      badgeColor = "bg-green-500";
+    }
+
     list.innerHTML += `
       <div onclick='openDetail(${JSON.stringify(b)})'
         class="bg-white shadow rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition">
 
-        <img src="${b.image || 'https://via.placeholder.com/400'}"
-          class="w-full h-40 object-cover">
+        <div class="relative">
+          <img src="${b.image || 'https://via.placeholder.com/400'}"
+            class="w-full h-40 object-cover">
+
+          <div class="absolute top-2 left-2 ${badgeColor} text-white text-xs px-2 py-1 rounded">
+            ${badge}
+          </div>
+        </div>
 
         <div class="p-4">
           <h3 class="font-bold text-lg">${b.name || "No Name"}</h3>
           <p class="text-gray-500 text-sm">${b.location || ""}</p>
           <p class="text-xs text-blue-500">${b.category || ""}</p>
-          <p class="text-xs mt-1">${tag}</p>
-          <p class="text-xs text-green-600 mt-1 font-semibold">
-🔥 ${b.calls||0} Calls • ${b.whatsappClicks||0} WhatsApp
-</p>
+
+          <!-- 🔥 LEAD PROOF -->
+          <p class="text-xs text-green-600 mt-2 font-semibold">
+          🔥 Last 7 Days: ${b.calls||0} Calls • ${b.whatsappClicks||0} WhatsApp
+          </p>
+
         </div>
 
       </div>
@@ -145,16 +172,10 @@ if((b.calls||0) > 10){
   });
 }
 
-  // 🔥 RESULT BASED SORTING
-all.sort((a,b)=>{
-  const aScore = (a.calls||0) + (a.whatsappClicks||0);
-  const bScore = (b.calls||0) + (b.whatsappClicks||0);
 
-  return bScore - aScore;
-});
-  
 // 🔥 INITIAL LOAD
 render(all);
+
 
 // 🔥 FILTER
 window.filterCategory = (cat)=>{
@@ -165,7 +186,8 @@ window.filterCategory = (cat)=>{
   }
 };
 
-// 🔥 SEARCH (IMPROVED)
+
+// 🔥 SEARCH
 window.searchBusiness = ()=>{
   const val = document.getElementById("searchInput").value.toLowerCase();
 
@@ -176,14 +198,16 @@ window.searchBusiness = ()=>{
   ));
 };
 
-// 🔥 OPEN DETAIL
+
+// 🔥 OPEN DETAIL (SEO URL SAFE)
 window.openDetail = (b)=>{
   const slug = createSlug(b.name, b.location);
-
   window.location.href = "business-grow.html?slug=" + slug + "&id=" + b.id;
 };
 
-  function createSlug(name, location){
+
+// 🔥 SLUG FUNCTION
+function createSlug(name, location){
   return (name + " in " + location)
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
