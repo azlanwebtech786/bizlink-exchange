@@ -35,8 +35,8 @@ th, td {
   padding:8px;
 }
 
-.credit { color: #22c55e; font-weight:bold; }  /* Green */
-.debit { color: #facc15; font-weight:bold; }   /* Yellow */
+.credit { color: #22c55e; font-weight:bold; }
+.debit { color: #facc15; font-weight:bold; }
 
 </style>
 </head>
@@ -101,13 +101,13 @@ const db = firebase.firestore();
 let currentUser = null;
 let entries = [];
 
-// 📅 Set today's date only
+// 📅 TODAY ONLY
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('date').value = today;
 document.getElementById('date').min = today;
 document.getElementById('date').max = today;
 
-// 🔐 GOOGLE LOGIN
+// 🔐 LOGIN
 function googleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider);
@@ -145,7 +145,6 @@ function addEntry() {
     return;
   }
 
-  // Date validation (extra safety)
   if (date !== today) {
     alert("Only today's entry allowed");
     return;
@@ -160,22 +159,25 @@ function addEntry() {
     createdAt: new Date()
   });
 
-  // Clear fields
   document.getElementById('particulars').value = '';
   document.getElementById('debit').value = '';
   document.getElementById('credit').value = '';
 }
 
-// 📥 LOAD DATA
+// 📥 LOAD DATA (FIXED 🔥)
 function loadData() {
   db.collection("cashbook")
     .where("userId", "==", currentUser.uid)
-    .orderBy("createdAt")
     .onSnapshot(snapshot => {
       entries = [];
+
       snapshot.forEach(doc => {
         entries.push(doc.data());
       });
+
+      // ✅ client side sorting
+      entries.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
       renderTable();
     });
 }
