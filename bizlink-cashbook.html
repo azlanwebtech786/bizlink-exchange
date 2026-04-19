@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bizlink Cash Book Pro</title>
+
+<style>
+body {
+  font-family: Arial;
+  padding: 20px;
+  background: #0f172a;
+  color: white;
+}
+h2 { color: #38bdf8; }
+
+input, button {
+  padding: 8px;
+  margin: 5px;
+  border-radius: 6px;
+  border: none;
+}
+
+input {
+  background: #1e293b;
+  color: white;
+}
+
+button {
+  background: #38bdf8;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0ea5e9;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  border: 1px solid #334155;
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background: #1e293b;
+}
+
+.summary {
+  margin-top: 10px;
+  font-weight: bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>📖 Bizlink Cash Book Pro</h2>
+
+<input type="date" id="date">
+<input type="text" id="particulars" placeholder="Particulars">
+<input type="number" id="debit" placeholder="Debit">
+<input type="number" id="credit" placeholder="Credit">
+
+<button onclick="addEntry()">Add Entry</button>
+
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Particulars</th>
+<th>Debit</th>
+<th>Credit</th>
+<th>Balance</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<div class="summary" id="summary"></div>
+
+<script>
+
+let entries = JSON.parse(localStorage.getItem('cashbook')) || [];
+let editIndex = -1;
+
+// Set today's date default
+document.getElementById('date').valueAsDate = new Date();
+
+function saveData() {
+  localStorage.setItem('cashbook', JSON.stringify(entries));
+}
+
+function clearInputs() {
+  document.getElementById('particulars').value = '';
+  document.getElementById('debit').value = '';
+  document.getElementById('credit').value = '';
+}
+
+function addEntry() {
+  const date = document.getElementById('date').value;
+  const particulars = document.getElementById('particulars').value;
+  const debit = Number(document.getElementById('debit').value) || 0;
+  const credit = Number(document.getElementById('credit').value) || 0;
+
+  if (!date || !particulars) {
+    alert('Fill all fields');
+    return;
+  }
+
+  if (editIndex === -1) {
+    entries.push({ date, particulars, debit, credit });
+  } else {
+    entries[editIndex] = { date, particulars, debit, credit };
+    editIndex = -1;
+  }
+
+  saveData();
+  renderTable();
+  clearInputs();
+}
+
+function deleteEntry(index) {
+  entries.splice(index, 1);
+  saveData();
+  renderTable();
+}
+
+function editEntry(index) {
+  const e = entries[index];
+  document.getElementById('date').value = e.date;
+  document.getElementById('particulars').value = e.particulars;
+  document.getElementById('debit').value = e.debit;
+  document.getElementById('credit').value = e.credit;
+
+  editIndex = index;
+}
+
+function renderTable() {
+  let balance = 0;
+  let totalDebit = 0;
+  let totalCredit = 0;
+
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  entries.forEach((entry, index) => {
+    balance += entry.debit - entry.credit;
+    totalDebit += entry.debit;
+    totalCredit += entry.credit;
+
+    const row = `<tr>
+      <td>${entry.date}</td>
+      <td>${entry.particulars}</td>
+      <td>₹${entry.debit}</td>
+      <td>₹${entry.credit}</td>
+      <td>₹${balance}</td>
+      <td>
+        <button onclick="editEntry(${index})">Edit</button>
+        <button onclick="deleteEntry(${index})">Delete</button>
+      </td>
+    </tr>`;
+
+    tbody.innerHTML += row;
+  });
+
+  document.getElementById('summary').innerHTML =
+    `Total Debit: ₹${totalDebit} | Total Credit: ₹${totalCredit} | Balance: ₹${balance}`;
+}
+
+renderTable();
+
+</script>
+
+</body>
+</html>
