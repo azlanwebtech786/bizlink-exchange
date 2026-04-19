@@ -108,7 +108,7 @@ const db = firebase.firestore();
 let currentUser = null;
 let entries = [];
 
-// 👑 ADMIN EMAIL (CHANGE KARNA)
+// 👑 ADMIN EMAIL
 const ADMIN_EMAIL = "sahilkhandadar@gmail.com";
 
 // 📅 TODAY FIX
@@ -137,7 +137,6 @@ auth.onAuthStateChanged(user => {
     document.getElementById("loginBox").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
 
-    // only admin entry
     if (user.email !== ADMIN_EMAIL) {
       document.getElementById("entryBox").style.display = "none";
     }
@@ -173,7 +172,7 @@ function addEntry() {
   document.getElementById('credit').value = '';
 }
 
-// 📥 LOAD DATA
+// 🔥 FIXED LOAD DATA (MAIN ISSUE SOLVED)
 function loadData() {
   db.collection("cashbook")
     .onSnapshot(snapshot => {
@@ -182,10 +181,15 @@ function loadData() {
       snapshot.forEach(doc => {
         const data = doc.data();
 
-        // 🔥 safe timestamp convert
         let time = 0;
-        if (data.createdAt && data.createdAt.seconds) {
-          time = data.createdAt.seconds;
+
+        // ✅ handle both Timestamp & Date
+        if (data.createdAt) {
+          if (data.createdAt.seconds) {
+            time = data.createdAt.seconds;
+          } else {
+            time = new Date(data.createdAt).getTime();
+          }
         }
 
         entries.push({
