@@ -177,7 +177,7 @@ function addEntry() {
   const credit = Number(document.getElementById('credit').value) || 0;
 
   if (!particulars) return alert("Enter particulars");
-  if (date !== today) return alert("Only today's entry allowed");
+  if (date !== getToday()) return alert("Only today's entry allowed");
 
   db.collection("cashbook").add({
     userId: currentUser.uid,
