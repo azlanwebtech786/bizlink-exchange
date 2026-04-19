@@ -4,15 +4,38 @@
   <title>Owner Dashboard</title>
 
   <style>
-    body { background:#0f172a; color:white; font-family:Arial; padding:20px;}
-    .card { background:#1e293b; padding:20px; border-radius:12px; margin-bottom:15px;}
-    button { padding:8px 15px; border:none; border-radius:6px; cursor:pointer;}
+    body {
+      background:#0f172a;
+      color:white;
+      font-family:Arial;
+      padding:20px;
+    }
+
+    .card {
+      background:#1e293b;
+      padding:20px;
+      border-radius:12px;
+      margin-bottom:15px;
+    }
+
+    .badge {
+      padding:4px 10px;
+      border-radius:20px;
+      font-size:12px;
+      display:inline-block;
+      margin-top:5px;
+    }
+
+    .red { background:#ef4444; }
+    .orange { background:#f97316; }
+    .blue { background:#3b82f6; }
+    .green { background:#22c55e; }
   </style>
 </head>
 
 <body>
 
-<h1>📊 Dashboard</h1>
+<h1>📊 Owner Dashboard (LIVE)</h1>
 <div id="container"></div>
 
 <script type="module">
@@ -47,15 +70,65 @@ onSnapshot(q,(snapshot)=>{
   snapshot.forEach(doc=>{
     const d = doc.data();
 
+    const total = (d.calls||0) + (d.whatsappClicks||0);
+
+    // 🔥 BADGE LOGIC
+    let badge = "";
+    let color = "";
+
+    if((d.calls||0) > 20){
+      badge = "🔥 Trending";
+      color = "red";
+    }
+    else if((d.calls||0) > 10){
+      badge = "🚀 High Demand";
+      color = "orange";
+    }
+    else if((d.whatsappClicks||0) > 5){
+      badge = "⚡ Active";
+      color = "blue";
+    }
+    else{
+      badge = "🟢 Growing";
+      color = "green";
+    }
+
+    // 🔥 GROWTH TEXT
+    let growth = "";
+
+    if(total > 30){
+      growth = "🔥 Your business is getting strong leads";
+    }
+    else if(total > 10){
+      growth = "🚀 Leads are coming regularly";
+    }
+    else{
+      growth = "📈 Your business is growing";
+    }
+
     container.innerHTML += `
       <div class="card">
+
         <h2>${d.name}</h2>
-        <p>👁 Views: ${d.views||0}</p>
+
+        <div class="badge ${color}">${badge}</div>
+
+        <p class="mt-2">👁 Views: ${d.views||0}</p>
         <p>📞 Calls: ${d.calls||0}</p>
         <p>💬 WhatsApp: ${d.whatsappClicks||0}</p>
+
+        <p class="mt-2 font-bold text-green-400">
+          Total Leads: ${total}
+        </p>
+
+        <p class="mt-2 text-yellow-300">
+          ${growth}
+        </p>
+
       </div>
     `;
   });
+
 });
 
 </script>
