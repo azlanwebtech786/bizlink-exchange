@@ -38,6 +38,12 @@ th, td {
 .credit { color: #22c55e; font-weight:bold; }
 .debit { color: #facc15; font-weight:bold; }
 
+.total {
+  margin-top:15px;
+  font-size:18px;
+  font-weight:bold;
+  color:#38bdf8;
+}
 </style>
 </head>
 
@@ -45,24 +51,23 @@ th, td {
 
 <h2>🔐 Bizlink Cash Book</h2>
 
-<!-- LOGIN -->
 <div id="loginBox">
   <button onclick="googleLogin()">Login with Google</button>
 </div>
 
-<!-- APP -->
 <div id="app" class="hidden">
 
 <button onclick="logout()">Logout</button>
 
 <br><br>
 
+<div id="entryBox">
 <input type="date" id="date">
 <input type="text" id="particulars" placeholder="Particulars">
 <input type="number" id="debit" placeholder="Money Out (Debit)">
 <input type="number" id="credit" placeholder="Money In (Credit)">
-
 <button onclick="addEntry()">Add Entry</button>
+</div>
 
 <table>
 <thead>
@@ -76,6 +81,8 @@ th, td {
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
+
+<div class="total" id="totalBalance"></div>
 
 </div>
 
@@ -101,7 +108,10 @@ const db = firebase.firestore();
 let currentUser = null;
 let entries = [];
 
-// 📅 TODAY ONLY
+// 👑 ADMIN EMAIL (CHANGE KARNA)
+const ADMIN_EMAIL = "sahilkhandadar@gmail.com";
+
+// 📅 TODAY
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('date').value = today;
 document.getElementById('date').min = today;
@@ -118,13 +128,18 @@ function logout() {
   auth.signOut();
 }
 
-// 👀 AUTH STATE
+// 👀 AUTH
 auth.onAuthStateChanged(user => {
   if (user) {
     currentUser = user;
 
     document.getElementById("loginBox").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
+
+    // 🔥 Only admin can add entry
+    if (user.email !== ADMIN_EMAIL) {
+      document.getElementById("entryBox").style.display = "none";
+    }
 
     loadData();
   } else {
@@ -140,15 +155,8 @@ function addEntry() {
   const debit = Number(document.getElementById('debit').value) || 0;
   const credit = Number(document.getElementById('credit').value) || 0;
 
-  if (!particulars) {
-    alert("Enter particulars");
-    return;
-  }
-
-  if (date !== today) {
-    alert("Only today's entry allowed");
-    return;
-  }
+  if (!particulars) return alert("Enter particulars");
+  if (date !== today) return alert("Only today's entry allowed");
 
   db.collection("cashbook").add({
     userId: currentUser.uid,
@@ -164,10 +172,9 @@ function addEntry() {
   document.getElementById('credit').value = '';
 }
 
-// 📥 LOAD DATA (FIXED 🔥)
+// 📥 LOAD DATA (ALL USERS SEE SAME DATA)
 function loadData() {
   db.collection("cashbook")
-    .where("userId", "==", currentUser.uid)
     .onSnapshot(snapshot => {
       entries = [];
 
@@ -175,7 +182,7 @@ function loadData() {
         entries.push(doc.data());
       });
 
-      // ✅ client side sorting
+      // 🔥 Proper order
       entries.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
       renderTable();
@@ -205,6 +212,9 @@ function renderTable() {
 
     tbody.innerHTML += row;
   });
+
+  // 🔥 TOTAL BALANCE
+  document.getElementById("totalBalance").innerText = "Total Balance: ₹" + balance;
 }
 
 </script>
