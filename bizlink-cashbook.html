@@ -97,6 +97,7 @@ th, td {
 
 <script>
 
+// 🔥 FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyAZLwV2xzpIYXyBw15T2OI4j3iLz3uuEwI",
   authDomain: "bizlink-cashbook.firebaseapp.com",
@@ -112,10 +113,12 @@ let currentUser = null;
 let entries = [];
 let filteredEntries = [];
 
+// 👥 ALLOWED USERS
 const ALLOWED_USERS = [
   "samaydeen321633@gmail.com",
   "sahilkhandadar@gmail.com"
 ];
+
 
 // ✅ INDIA DATE FIX
 function getToday() {
@@ -123,21 +126,39 @@ function getToday() {
   const india = new Date(
     now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
   );
-  return india.toISOString().split('T')[0];
+
+  const year = india.getFullYear();
+  const month = String(india.getMonth() + 1).padStart(2, '0');
+  const day = String(india.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
 }
 
+// ✅ SET TODAY
 function setTodayDate() {
   const today = getToday();
   const dateInput = document.getElementById('date');
 
-  dateInput.value = "";
   dateInput.value = today;
-
   dateInput.min = today;
   dateInput.max = today;
 }
 
+// 🔄 AUTO UPDATE DATE
+function autoUpdateDate() {
+  setInterval(() => {
+    const current = getToday();
+    const inputDate = document.getElementById('date').value;
+
+    if (inputDate !== current) {
+      setTodayDate();
+    }
+  }, 60000);
+}
+
+// RUN
 setTodayDate();
+autoUpdateDate();
 
 // LOGIN
 function googleLogin() {
@@ -165,7 +186,7 @@ auth.onAuthStateChanged(user => {
     document.getElementById("loginBox").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
 
-    setTodayDate(); // 🔥 IMPORTANT
+    setTodayDate();
     loadData();
 
   } else {
@@ -194,6 +215,8 @@ function addEntry() {
   });
 
   document.getElementById('particulars').value = '';
+  document.getElementById('debit').value = '';
+  document.getElementById('credit').value = '';
 }
 
 // LOAD DATA
@@ -257,6 +280,7 @@ function applyFilter() {
   renderTable(filteredEntries);
 }
 
+// RESET
 function resetFilter() {
   document.getElementById("monthFilter").value = "";
   document.getElementById("fromDate").value = "";
@@ -265,7 +289,7 @@ function resetFilter() {
   renderTable(entries);
 }
 
-// CSV
+// CSV DOWNLOAD
 function downloadCSV() {
   const data = filteredEntries.length ? filteredEntries : entries;
   let csv = "Date,Particulars,Debit,Credit,Balance\n";
@@ -285,17 +309,6 @@ function downloadCSV() {
   a.click();
 }
 
-  function autoUpdateDate() {
-  setInterval(() => {
-    const current = getToday();
-    const inputDate = document.getElementById('date').value;
-
-    if (inputDate !== current) {
-      setTodayDate(); // 🔥 auto update
-    }
-  }, 60000); // हर 1 मिनट check
-}
-  autoUpdateDate();
 </script>
 
 </body>
