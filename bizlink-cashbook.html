@@ -285,6 +285,17 @@ function downloadCSV() {
   a.click();
 }
 
+  function autoUpdateDate() {
+  setInterval(() => {
+    const current = getToday();
+    const inputDate = document.getElementById('date').value;
+
+    if (inputDate !== current) {
+      setTodayDate(); // 🔥 auto update
+    }
+  }, 60000); // हर 1 मिनट check
+}
+  autoUpdateDate();
 </script>
 
 </body>
