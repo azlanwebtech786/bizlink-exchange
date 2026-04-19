@@ -208,11 +208,17 @@ function loadData() {
 // 📊 TABLE
 function renderTable() {
   let balance = 0;
+  let totalCredit = 0;
+  let totalDebit = 0;
+
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
 
   entries.forEach(entry => {
     balance += entry.credit - entry.debit;
+
+    totalCredit += entry.credit;
+    totalDebit += entry.debit;
 
     const debitText = entry.debit ? `<span class="debit">-₹${entry.debit}</span>` : '';
     const creditText = entry.credit ? `<span class="credit">+₹${entry.credit}</span>` : '';
@@ -227,8 +233,12 @@ function renderTable() {
     </tr>`;
   });
 
-  document.getElementById("totalBalance").innerText =
-    "Total Balance: ₹" + balance;
+  // 🔥 FINAL TOTAL DISPLAY
+  document.getElementById("totalBalance").innerHTML = `
+    Total Credit: ₹${totalCredit} &nbsp;&nbsp; | &nbsp;&nbsp;
+    Total Debit: ₹${totalDebit} &nbsp;&nbsp; | &nbsp;&nbsp;
+    Remaining Balance: ₹${balance}
+  `;
 }
 
 </script>
