@@ -2,68 +2,67 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Bizlink Cash Book Pro</title>
+<title>Bizlink Cash Book Secure</title>
 
 <style>
 body {
   font-family: Arial;
-  padding: 20px;
-  background: #0f172a;
-  color: white;
-}
-h2 { color: #38bdf8; }
-
-input, button {
-  padding: 8px;
-  margin: 5px;
-  border-radius: 6px;
-  border: none;
-}
-
-input {
-  background: #1e293b;
-  color: white;
+  background:#0f172a;
+  color:white;
+  text-align:center;
+  padding:20px;
 }
 
 button {
-  background: #38bdf8;
-  cursor: pointer;
+  padding:10px;
+  margin:5px;
+  border:none;
+  border-radius:6px;
+  background:#38bdf8;
+  cursor:pointer;
 }
 
+.hidden { display:none; }
+
 table {
-  width: 100%;
+  width:100%;
+  margin-top:10px;
   border-collapse: collapse;
-  margin-top: 10px;
 }
 
 th, td {
-  border: 1px solid #334155;
-  padding: 8px;
-  text-align: center;
+  border:1px solid #334155;
+  padding:8px;
 }
 
-th {
-  background: #1e293b;
-}
+.credit { color: #22c55e; font-weight:bold; }  /* Green */
+.debit { color: #facc15; font-weight:bold; }   /* Yellow */
 
-.summary {
-  margin-top: 10px;
-  font-weight: bold;
-}
 </style>
-
 </head>
 
 <body>
 
-<h2>📖 Bizlink Cash Book Pro</h2>
+<h2>🔐 Bizlink Cash Book</h2>
+
+<!-- LOGIN -->
+<div id="loginBox">
+  <button onclick="googleLogin()">Login with Google</button>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+<button onclick="logout()">Logout</button>
+
+<br><br>
 
 <input type="date" id="date">
 <input type="text" id="particulars" placeholder="Particulars">
-<input type="number" id="debit" placeholder="Money In (Debit)">
-<input type="number" id="credit" placeholder="Money Out (Credit)">
+<input type="number" id="debit" placeholder="Money Out (Debit)">
+<input type="number" id="credit" placeholder="Money In (Credit)">
 
-<button onclick="addEntry()">Add / Update</button>
+<button onclick="addEntry()">Add Entry</button>
 
 <table>
 <thead>
@@ -73,141 +72,137 @@ th {
 <th>Debit</th>
 <th>Credit</th>
 <th>Balance</th>
-<th>Action</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
 
-<div class="summary" id="summary"></div>
+</div>
 
-<!-- ✅ Firebase CDN (IMPORTANT) -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
 
-// ✅ TERA FIREBASE CONFIG (Already correct)
+// 🔥 CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyAZLwV2xzpIYXyBw15T2OI4j3iLz3uuEwI",
   authDomain: "bizlink-cashbook.firebaseapp.com",
   projectId: "bizlink-cashbook",
-  storageBucket: "bizlink-cashbook.firebasestorage.app",
-  messagingSenderId: "97954558794",
-  appId: "1:97954558794:web:bb8dce824a3865183347b3"
 };
 
-// ✅ Initialize
 firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
 const db = firebase.firestore();
 
+let currentUser = null;
 let entries = [];
-let editDocId = null;
 
-// Default date
-document.getElementById('date').valueAsDate = new Date();
+// 📅 Set today's date only
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('date').value = today;
+document.getElementById('date').min = today;
+document.getElementById('date').max = today;
 
-// ➕ ADD / UPDATE
+// 🔐 GOOGLE LOGIN
+function googleLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider);
+}
+
+// 🚪 LOGOUT
+function logout() {
+  auth.signOut();
+}
+
+// 👀 AUTH STATE
+auth.onAuthStateChanged(user => {
+  if (user) {
+    currentUser = user;
+
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+
+    loadData();
+  } else {
+    document.getElementById("loginBox").classList.remove("hidden");
+    document.getElementById("app").classList.add("hidden");
+  }
+});
+
+// ➕ ADD ENTRY
 function addEntry() {
   const date = document.getElementById('date').value;
   const particulars = document.getElementById('particulars').value;
   const debit = Number(document.getElementById('debit').value) || 0;
   const credit = Number(document.getElementById('credit').value) || 0;
 
-  if (!date || !particulars) {
-    alert("Fill all fields");
+  if (!particulars) {
+    alert("Enter particulars");
     return;
   }
 
-  if (editDocId) {
-    const name = prompt("Enter your name:");
-    const remark = prompt("Edit remark:");
-
-    db.collection("cashbook").doc(editDocId).update({
-      date, particulars, debit, credit,
-      edited: true,
-      editedBy: name || "Unknown",
-      remark: remark || ""
-    });
-
-    editDocId = null;
-  } else {
-    db.collection("cashbook").add({
-      date,
-      particulars,
-      debit,
-      credit,
-      createdAt: new Date()
-    });
+  // Date validation (extra safety)
+  if (date !== today) {
+    alert("Only today's entry allowed");
+    return;
   }
 
-  clearInputs();
-}
+  db.collection("cashbook").add({
+    userId: currentUser.uid,
+    date,
+    particulars,
+    debit,
+    credit,
+    createdAt: new Date()
+  });
 
-// ✏️ EDIT
-function editEntry(id) {
-  const entry = entries.find(e => e.id === id);
-
-  document.getElementById('date').value = entry.date;
-  document.getElementById('particulars').value = entry.particulars;
-  document.getElementById('debit').value = entry.debit;
-  document.getElementById('credit').value = entry.credit;
-
-  editDocId = id;
-}
-
-// 🧹 CLEAR
-function clearInputs() {
+  // Clear fields
   document.getElementById('particulars').value = '';
   document.getElementById('debit').value = '';
   document.getElementById('credit').value = '';
 }
 
-// 🔥 REALTIME DATA
-db.collection("cashbook").orderBy("createdAt").onSnapshot(snapshot => {
-  entries = [];
-  snapshot.forEach(doc => {
-    entries.push({ id: doc.id, ...doc.data() });
-  });
-  renderTable();
-});
+// 📥 LOAD DATA
+function loadData() {
+  db.collection("cashbook")
+    .where("userId", "==", currentUser.uid)
+    .orderBy("createdAt")
+    .onSnapshot(snapshot => {
+      entries = [];
+      snapshot.forEach(doc => {
+        entries.push(doc.data());
+      });
+      renderTable();
+    });
+}
 
 // 📊 TABLE
 function renderTable() {
   let balance = 0;
-  let totalDebit = 0;
-  let totalCredit = 0;
-
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
 
   entries.forEach(entry => {
-    balance += entry.debit - entry.credit;
-    totalDebit += entry.debit;
-    totalCredit += entry.credit;
+    balance += entry.credit - entry.debit;
+
+    const debitText = entry.debit ? `<span class="debit">-₹${entry.debit}</span>` : '';
+    const creditText = entry.credit ? `<span class="credit">+₹${entry.credit}</span>` : '';
 
     const row = `
     <tr>
       <td>${entry.date}</td>
-      <td>
-        ${entry.particulars}
-        ${entry.edited ? `<br><small style="color:#facc15;">
-        Edited by ${entry.editedBy} (${entry.remark})
-        </small>` : ""}
-      </td>
-      <td>₹${entry.debit}</td>
-      <td>₹${entry.credit}</td>
+      <td>${entry.particulars}</td>
+      <td>${debitText}</td>
+      <td>${creditText}</td>
       <td>₹${balance}</td>
-      <td>
-        <button onclick="editEntry('${entry.id}')">Edit</button>
-      </td>
     </tr>`;
 
     tbody.innerHTML += row;
   });
-
-  document.getElementById('summary').innerHTML =
-    `Total Debit: ₹${totalDebit} | Total Credit: ₹${totalCredit} | Balance: ₹${balance}`;
 }
 
 </script>
