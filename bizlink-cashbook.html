@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Bizlink Cash Book Secure</title>
+<title>Bizlink Cash Book Pro</title>
 
 <style>
 body {
@@ -35,8 +35,8 @@ th, td {
   padding:8px;
 }
 
-.credit { color: #22c55e; font-weight:bold; }
-.debit { color: #facc15; font-weight:bold; }
+.credit { color:#22c55e; font-weight:bold; }
+.debit { color:#facc15; font-weight:bold; }
 
 .total {
   margin-top:15px;
@@ -109,13 +109,14 @@ let currentUser = null;
 let entries = [];
 
 // 👑 ADMIN EMAIL (CHANGE KARNA)
-const ADMIN_EMAIL = "sahilkhandadar@gmail.com";
+const ADMIN_EMAIL = "aayatdadar@gmail.com";
 
-// 📅 TODAY
+// 📅 TODAY FIX
 const today = new Date().toISOString().split('T')[0];
-document.getElementById('date').value = today;
-document.getElementById('date').min = today;
-document.getElementById('date').max = today;
+const dateInput = document.getElementById('date');
+dateInput.value = today;
+dateInput.min = today;
+dateInput.max = today;
 
 // 🔐 LOGIN
 function googleLogin() {
@@ -136,7 +137,7 @@ auth.onAuthStateChanged(user => {
     document.getElementById("loginBox").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
 
-    // 🔥 Only admin can add entry
+    // only admin entry
     if (user.email !== ADMIN_EMAIL) {
       document.getElementById("entryBox").style.display = "none";
     }
@@ -150,8 +151,8 @@ auth.onAuthStateChanged(user => {
 
 // ➕ ADD ENTRY
 function addEntry() {
-  const date = document.getElementById('date').value;
-  const particulars = document.getElementById('particulars').value;
+  const date = dateInput.value;
+  const particulars = document.getElementById('particulars').value.trim();
   const debit = Number(document.getElementById('debit').value) || 0;
   const credit = Number(document.getElementById('credit').value) || 0;
 
@@ -172,18 +173,29 @@ function addEntry() {
   document.getElementById('credit').value = '';
 }
 
-// 📥 LOAD DATA (ALL USERS SEE SAME DATA)
+// 📥 LOAD DATA
 function loadData() {
   db.collection("cashbook")
     .onSnapshot(snapshot => {
       entries = [];
 
       snapshot.forEach(doc => {
-        entries.push(doc.data());
+        const data = doc.data();
+
+        // 🔥 safe timestamp convert
+        let time = 0;
+        if (data.createdAt && data.createdAt.seconds) {
+          time = data.createdAt.seconds;
+        }
+
+        entries.push({
+          ...data,
+          _time: time
+        });
       });
 
-      // 🔥 Proper order
-      entries.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      // ✅ correct order
+      entries.sort((a, b) => a._time - b._time);
 
       renderTable();
     });
@@ -201,7 +213,7 @@ function renderTable() {
     const debitText = entry.debit ? `<span class="debit">-₹${entry.debit}</span>` : '';
     const creditText = entry.credit ? `<span class="credit">+₹${entry.credit}</span>` : '';
 
-    const row = `
+    tbody.innerHTML += `
     <tr>
       <td>${entry.date}</td>
       <td>${entry.particulars}</td>
@@ -209,12 +221,10 @@ function renderTable() {
       <td>${creditText}</td>
       <td>₹${balance}</td>
     </tr>`;
-
-    tbody.innerHTML += row;
   });
 
-  // 🔥 TOTAL BALANCE
-  document.getElementById("totalBalance").innerText = "Total Balance: ₹" + balance;
+  document.getElementById("totalBalance").innerText =
+    "Total Balance: ₹" + balance;
 }
 
 </script>
