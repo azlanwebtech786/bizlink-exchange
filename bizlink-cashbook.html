@@ -124,12 +124,16 @@ const ALLOWED_USERS = [
 ];
 
 // 📅 TODAY FIX
-const today = new Date().toISOString().split('T')[0];
 const dateInput = document.getElementById('date');
-dateInput.value = today;
-dateInput.min = today;
-dateInput.max = today;
 
+function setTodayDate() {
+  const today = getToday();
+  dateInput.value = today;
+  dateInput.min = today;
+  dateInput.max = today;
+}
+
+setTodayDate();
 // 🔐 LOGIN
 function googleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
