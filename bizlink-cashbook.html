@@ -224,7 +224,7 @@ function renderTable(data = entries) {
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
 
-  entries.forEach(entry => {
+  data.forEach(entry => {
     balance += entry.credit - entry.debit;
 
     totalCredit += entry.credit;
