@@ -118,9 +118,10 @@ let currentUser = null;
 let entries = [];
 let filteredEntries = [];
   
-// 👑 ADMIN EMAIL
-const ADMIN_EMAIL = "sahilkhandadar@gmail.com";
-  const ADMIN_EMAIL = "samaydeen321633@gmail.com";
+const ALLOWED_USERS = [
+  "samaydeen321633@gmail.com",
+  "sahilkhandadar@gmail.com"
+];
 
 // 📅 TODAY FIX
 const today = new Date().toISOString().split('T')[0];
