@@ -314,6 +314,10 @@ function applyFilter() {
   a.download = "cashbook.csv";
   a.click();
 }
+
+  function getToday() {
+  return new Date().toISOString().split('T')[0];
+}
   
 </script>
 
