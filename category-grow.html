@@ -38,11 +38,10 @@ const params = new URLSearchParams(window.location.search);
 const category = params.get("cat");
 const city = params.get("city");
 
-// 🔥 SEO TITLE
+// 🔥 SEO
 document.getElementById("title").innerText = `${category} in ${city} | Bizlink`;
 document.getElementById("metaDesc").content = `Best ${category} in ${city}. Find top services near you.`;
 
-// 🔥 HEADING
 document.getElementById("heading").innerText = `${category} in ${city}`;
 
 const list = document.getElementById("list");
@@ -51,71 +50,127 @@ const snap = await getDocs(collection(db,"businesses"));
 
 let found = [];
 
+// 🔥 FILTER
 snap.forEach(doc=>{
   const b = doc.data();
   b.id = doc.id;
 
   if(
-  (category === "All" || b.category?.toLowerCase().includes(category.toLowerCase())) &&
-  b.location?.toLowerCase().includes(city.toLowerCase())
-)
-  {
+    (category === "All" || b.category?.toLowerCase().includes(category.toLowerCase())) &&
+    b.location?.toLowerCase().includes(city.toLowerCase())
+  ){
     found.push(b);
   }
 });
 
-// 🔥 अगर match मिला
-if(found.length > 0){
+// 🔥 RESULT BASED SORT
+found.sort((a,b)=>{
+  const aScore = (a.calls||0) + (a.whatsappClicks||0);
+  const bScore = (b.calls||0) + (b.whatsappClicks||0);
+  return bScore - aScore;
+});
 
-  found.forEach(b=>{
+
+// 🔥 RENDER FUNCTION
+function renderCards(data){
+  data.forEach(b=>{
+
+    // 🔥 AUTO BADGE
+    let badge = "";
+    let badgeColor = "";
+
+    if((b.calls||0) > 20){
+      badge = "🔥 Trending";
+      badgeColor = "bg-red-500";
+    }
+    else if((b.calls||0) > 10){
+      badge = "🚀 High Demand";
+      badgeColor = "bg-orange-500";
+    }
+    else if((b.whatsappClicks||0) > 5){
+      badge = "⚡ Active";
+      badgeColor = "bg-blue-500";
+    }
+    else{
+      badge = "🟢 New";
+      badgeColor = "bg-green-500";
+    }
+
     list.innerHTML += `
-      <div onclick="openDetail('${b.id}')"
-        class="bg-white p-4 rounded shadow cursor-pointer">
+      <div onclick='openDetail(${JSON.stringify(b)})'
+        class="bg-white rounded-xl shadow overflow-hidden cursor-pointer hover:scale-105 transition">
 
-        <img src="${b.image || ''}" class="h-40 w-full object-cover">
+        <div class="relative">
+          <img src="${b.image || 'https://via.placeholder.com/400'}"
+            class="h-40 w-full object-cover">
 
-        <h3 class="font-bold mt-2">${b.name}</h3>
-        <p class="text-sm">${b.location}</p>
+          <div class="absolute top-2 left-2 ${badgeColor} text-white text-xs px-2 py-1 rounded">
+            ${badge}
+          </div>
+        </div>
+
+        <div class="p-4">
+          <h3 class="font-bold text-lg">${b.name}</h3>
+          <p class="text-sm text-gray-500">${b.location}</p>
+
+          <!-- 🔥 LEAD PROOF -->
+          <p class="text-xs text-green-600 mt-2 font-semibold">
+            🔥 Last 7 Days: ${b.calls||0} Calls • ${b.whatsappClicks||0} WhatsApp
+          </p>
+
+        </div>
 
       </div>
     `;
   });
+}
+
+
+// 🔥 MAIN LOGIC
+if(found.length > 0){
+
+  renderCards(found);
 
 }else{
 
-  // 🔥 fallback
   list.innerHTML = `
     <p class="mb-4 text-red-500">
       No exact match found. Showing all businesses in ${city}
     </p>
   `;
 
+  let fallback = [];
+
   snap.forEach(doc=>{
     const b = doc.data();
     b.id = doc.id;
 
     if(b.location?.toLowerCase().includes(city.toLowerCase())){
-      list.innerHTML += `
-        <div onclick="openDetail('${b.id}')"
-          class="bg-white p-4 rounded shadow cursor-pointer">
-
-          <img src="${b.image || ''}" class="h-40 w-full object-cover">
-
-          <h3 class="font-bold mt-2">${b.name}</h3>
-          <p class="text-sm">${b.location}</p>
-
-        </div>
-      `;
+      fallback.push(b);
     }
   });
 
+  // 🔥 fallback sorting
+  fallback.sort((a,b)=>{
+    const aScore = (a.calls||0) + (a.whatsappClicks||0);
+    const bScore = (b.calls||0) + (b.whatsappClicks||0);
+    return bScore - aScore;
+  });
+
+  renderCards(fallback);
 }
 
-window.openDetail = (id)=>{
-  window.location.href = "business-detail.html?id="+id;
+
+// 🔥 OPEN DETAIL (SEO SAFE)
+window.openDetail = (b)=>{
+  const slug = (b.name + " in " + b.location)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+  window.location.href = "business-grow.html?slug=" + slug + "&id=" + b.id;
 };
 
 </script>
-
 </body>
 </html>
