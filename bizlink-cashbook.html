@@ -250,7 +250,64 @@ function renderTable(data = entries) {
     Remaining Balance: ₹${balance}
   `;
 }
+function applyFilter() {
+  const month = document.getElementById("monthFilter").value;
+  const from = document.getElementById("fromDate").value;
+  const to = document.getElementById("toDate").value;
+  const search = document.getElementById("search").value.toLowerCase();
 
+  filteredEntries = entries.filter(entry => {
+
+    let match = true;
+
+    if (month) {
+      match = entry.date.startsWith(month);
+    }
+
+    if (from && to) {
+      match = entry.date >= from && entry.date <= to;
+    }
+
+    if (search) {
+      match = entry.particulars.toLowerCase().includes(search);
+    }
+
+    return match;
+  });
+
+  renderTable(filteredEntries);
+}
+
+  function resetFilter() {
+  document.getElementById("monthFilter").value = "";
+  document.getElementById("fromDate").value = "";
+  document.getElementById("toDate").value = "";
+  document.getElementById("search").value = "";
+
+  renderTable(entries);
+}
+
+  function downloadCSV() {
+  const data = filteredEntries.length ? filteredEntries : entries;
+
+  let csv = "Date,Particulars,Debit,Credit,Balance\n";
+
+  let balance = 0;
+
+  data.forEach(e => {
+    balance += e.credit - e.debit;
+    csv += `${e.date},${e.particulars},${e.debit},${e.credit},${balance}\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "cashbook.csv";
+  a.click();
+}
+  
 </script>
 
 </body>
