@@ -160,7 +160,7 @@ auth.onAuthStateChanged(user => {
 
     document.getElementById("loginBox").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
-
+    setTodayDate();
     loadData();
 
   } else {
