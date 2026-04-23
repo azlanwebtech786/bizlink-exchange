@@ -21,17 +21,14 @@
 
     <input type="text" id="location" placeholder="Location (City/Area)" class="w-full p-3 rounded text-black" required>
 
-    <!-- 🔥 MAP LINK -->
     <input type="text" id="mapLink" placeholder="Paste Google Map Link OR use detect button"
       class="w-full p-3 rounded text-black">
 
-    <!-- 🚀 AUTO LOCATION BUTTON -->
     <button type="button" onclick="getLocation()"
       class="bg-green-600 w-full py-3 rounded">
       📍 Detect My Location
     </button>
 
-    <!-- 🔥 MAP PREVIEW -->
     <div id="mapPreview" class="hidden">
       <iframe id="mapFrame" class="w-full h-60 rounded"></iframe>
     </div>
@@ -112,7 +109,7 @@ categorySelect.addEventListener("change", ()=>{
   }
 });
 
-// 🚀 AUTO LOCATION FUNCTION
+// AUTO LOCATION
 window.getLocation = () => {
 
   if (!navigator.geolocation) {
@@ -125,15 +122,14 @@ window.getLocation = () => {
     const lat = pos.coords.latitude;
     const lng = pos.coords.longitude;
 
-    const mapLink = `https://www.google.com/maps?q=${lat},${lng}`;
+    const mapLinkVal = `https://www.google.com/maps?q=${lat},${lng}`;
 
-    document.getElementById("mapLink").value = mapLink;
+    document.getElementById("mapLink").value = mapLinkVal;
 
     document.getElementById("mapPreview").classList.remove("hidden");
     document.getElementById("mapFrame").src =
       `https://www.google.com/maps?q=${lat},${lng}&output=embed`;
 
-    // address fetch
     const res = await fetch(
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
     );
@@ -150,11 +146,11 @@ window.getLocation = () => {
 
 };
 
-// 🔥 MAP LINK PREVIEW
+// MAP PREVIEW
 document.getElementById("mapLink").addEventListener("input", (e)=>{
   const link = e.target.value;
 
-  if(link.includes("google")){
+  if(link && link.includes("google")){
     document.getElementById("mapPreview").classList.remove("hidden");
     document.getElementById("mapFrame").src =
       link.replace("maps.google.com","www.google.com/maps/embed");
@@ -191,16 +187,17 @@ document.getElementById("businessForm").addEventListener("submit", async (e)=>{
 
     await addDoc(collection(db,"businesses"),{
 
-      name: name.value,
-      category,
-      location: location.value,
-      phone: phone.value,
-      whatsapp: whatsapp.value,
-      description: description.value,
-      image: image.value,
-      mapLink: mapLink.value,
+      name: name.value || "",
+      category: category || "",
+      location: location.value || "",
+      phone: phone.value || "",
+      whatsapp: whatsapp.value || "",
+      description: description.value || "",
+      image: image.value || "",
+      mapLink: mapLink.value || "",   // 🔥 FIX
 
       ownerId: currentUser.uid,
+
       calls: 0,
       whatsappClicks: 0,
       views: 0,
