@@ -3,95 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Auto Ads Engine</title>
+  <title>Auto Ads Engine Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 font-sans">
 
-  <!-- Navbar -->
-  <div class="bg-white shadow p-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">Bizlink Ads</h1>
-    <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+<!-- Navbar -->
+<div class="bg-white shadow p-4 flex justify-between items-center">
+  <h1 class="text-xl font-bold">Bizlink Ads</h1>
+  <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+</div>
+
+<!-- Dashboard -->
+<div class="p-4">
+  <button onclick="showSection('create')" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl text-lg mb-4 hover:scale-105 transition">🚀 Run New Ad</button>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="bg-white p-4 rounded-xl shadow text-center hover:shadow-lg">📊 My Ads</div>
+    <div class="bg-white p-4 rounded-xl shadow text-center hover:shadow-lg">💰 Performance</div>
+  </div>
+</div>
+
+<!-- Create Ad -->
+<div id="create" class="hidden p-4 space-y-4">
+
+  <!-- Upload -->
+  <div class="bg-white p-4 rounded-xl shadow">
+    <p class="mb-2 font-medium">Upload Creative</p>
+    <input type="file" id="upload" class="w-full border p-2 rounded">
+    <img id="preview" class="mt-3 rounded hidden max-h-40"/>
   </div>
 
-  <!-- Home Dashboard -->
-  <div class="p-4">
-    <button onclick="showSection('create')" class="w-full bg-blue-600 text-white py-4 rounded-xl text-lg mb-4">🚀 Run New Ad</button>
-
-    <div class="grid grid-cols-2 gap-4">
-      <div class="bg-white p-4 rounded-xl shadow text-center">📊 My Ads</div>
-      <div class="bg-white p-4 rounded-xl shadow text-center">💰 Performance</div>
+  <!-- Business -->
+  <div class="bg-white p-4 rounded-xl shadow">
+    <p class="mb-2 font-medium">Business Type</p>
+    <div class="grid grid-cols-2 gap-2">
+      <button class="select-btn p-2 border rounded">Coaching</button>
+      <button class="select-btn p-2 border rounded">Furniture</button>
+      <button class="select-btn p-2 border rounded">Real Estate</button>
+      <button class="select-btn p-2 border rounded">Other</button>
     </div>
   </div>
 
-  <!-- Create Ad Section -->
-  <div id="create" class="hidden p-4">
-    <h2 class="text-xl font-bold mb-4">Create Ad</h2>
-
-    <!-- Step 1 Upload -->
-    <div class="bg-white p-4 rounded-xl shadow mb-4">
-      <p class="mb-2">Upload Creative</p>
-      <input type="file" class="w-full border p-2 rounded">
+  <!-- Goal -->
+  <div class="bg-white p-4 rounded-xl shadow">
+    <p class="mb-2 font-medium">Goal</p>
+    <div class="flex gap-2">
+      <button class="select-btn flex-1 p-2 border rounded">📞 Leads</button>
+      <button class="select-btn flex-1 p-2 border rounded">💬 WhatsApp</button>
+      <button class="select-btn flex-1 p-2 border rounded">🌐 Traffic</button>
     </div>
-
-    <!-- Step 2 Business Type -->
-    <div class="bg-white p-4 rounded-xl shadow mb-4">
-      <p class="mb-2">Business Type</p>
-      <div class="grid grid-cols-2 gap-2">
-        <button class="p-2 border rounded">Coaching</button>
-        <button class="p-2 border rounded">Furniture</button>
-        <button class="p-2 border rounded">Real Estate</button>
-        <button class="p-2 border rounded">Other</button>
-      </div>
-    </div>
-
-    <!-- Step 3 Goal -->
-    <div class="bg-white p-4 rounded-xl shadow mb-4">
-      <p class="mb-2">Goal</p>
-      <div class="flex gap-2">
-        <button class="flex-1 p-2 border rounded">📞 Leads</button>
-        <button class="flex-1 p-2 border rounded">💬 WhatsApp</button>
-        <button class="flex-1 p-2 border rounded">🌐 Traffic</button>
-      </div>
-    </div>
-
-    <!-- Step 4 Location -->
-    <div class="bg-white p-4 rounded-xl shadow mb-4">
-      <p class="mb-2">Location</p>
-      <input type="text" placeholder="Enter city" class="w-full border p-2 rounded">
-    </div>
-
-    <!-- Step 5 Budget -->
-    <div class="bg-white p-4 rounded-xl shadow mb-4">
-      <p class="mb-2">Budget</p>
-      <input type="range" min="500" max="10000" class="w-full">
-      <p class="text-sm text-gray-500">Recommended: ₹1500</p>
-    </div>
-
-    <button onclick="showSection('processing')" class="w-full bg-green-600 text-white py-3 rounded-xl">🚀 Launch My Ad</button>
   </div>
 
-  <!-- Processing -->
-  <div id="processing" class="hidden p-4 text-center">
-    <p class="text-lg">⚙️ Setting up your campaign...</p>
+  <!-- Location -->
+  <div class="bg-white p-4 rounded-xl shadow">
+    <p class="mb-2 font-medium">Location</p>
+    <input type="text" placeholder="Enter city" class="w-full border p-2 rounded">
   </div>
 
-  <!-- Success -->
-  <div id="success" class="hidden p-4 text-center">
-    <h2 class="text-xl font-bold">✅ Ad is LIVE</h2>
-    <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">View Performance</button>
+  <!-- Budget -->
+  <div class="bg-white p-4 rounded-xl shadow">
+    <p class="mb-2 font-medium">Budget</p>
+    <input type="range" min="500" max="10000" id="budget" class="w-full">
+    <p id="budgetValue" class="text-blue-600 font-semibold">₹1500</p>
+    <p class="text-sm text-gray-500">Recommended: ₹1500</p>
   </div>
 
-  <script>
-    function showSection(id) {
-      document.querySelectorAll('#create, #processing, #success').forEach(el => el.classList.add('hidden'));
-      document.getElementById(id).classList.remove('hidden');
+  <!-- AI Smart Box -->
+  <div class="bg-gradient-to-r from-green-100 to-blue-100 p-4 rounded-xl shadow">
+    <p class="font-medium">🎯 AI Insights</p>
+    <p class="text-sm">Success Probability: <span class="font-bold text-green-600">82%</span></p>
+    <p class="text-sm">💡 Target: Students + Parents</p>
+  </div>
 
-      if(id === 'processing') {
-        setTimeout(() => showSection('success'), 3000);
-      }
-    }
-  </script>
+  <!-- CTA -->
+  <button onclick="showSection('processing')" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl text-lg hover:scale-105 transition">🚀 Launch My Ad</button>
+</div>
+
+<!-- Processing -->
+<div id="processing" class="hidden p-4 flex flex-col items-center justify-center h-64">
+  <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  <p class="mt-4 text-lg" id="processText">Setting up campaign...</p>
+</div>
+
+<!-- Success -->
+<div id="success" class="hidden p-4 text-center">
+  <h2 class="text-xl font-bold text-green-600">✅ Ad is LIVE</h2>
+  <p class="mt-2">Your campaign is running successfully</p>
+  <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">View Performance</button>
+</div>
+
+<script>
+
+// Section switch
+function showSection(id) {
+  document.querySelectorAll('#create, #processing, #success').forEach(el => el.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+
+  if(id === 'processing') {
+    let steps = [
+      "Setting up campaign...",
+      "Finding best audience...",
+      "Optimizing budget...",
+      "Launching your ad..."
+    ];
+    let i = 0;
+    let interval = setInterval(() => {
+      document.getElementById('processText').innerText = steps[i];
+      i++;
+      if(i >= steps.length) clearInterval(interval);
+    }, 800);
+
+    setTimeout(() => showSection('success'), 3500);
+  }
+}
+
+// Selection UI
+
+document.querySelectorAll('.select-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.parentElement.querySelectorAll('.select-btn').forEach(b => {
+      b.classList.remove('bg-blue-600','text-white');
+    });
+    btn.classList.add('bg-blue-600','text-white');
+  });
+});
+
+// Budget
+const slider = document.getElementById('budget');
+const output = document.getElementById('budgetValue');
+slider.oninput = function() {
+  output.innerText = "₹" + this.value;
+}
+
+// Image preview
+upload.onchange = evt => {
+  const [file] = upload.files;
+  if (file) {
+    preview.src = URL.createObjectURL(file);
+    preview.classList.remove('hidden');
+  }
+}
+
+</script>
 
 </body>
 </html>
