@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Ads Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <!-- Navbar -->
+  <div class="bg-white shadow p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">Bizlink Ads</h1>
+    <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+  </div>
+
+  <!-- Home Dashboard -->
+  <div class="p-4">
+    <button onclick="showSection('create')" class="w-full bg-blue-600 text-white py-4 rounded-xl text-lg mb-4">🚀 Run New Ad</button>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-white p-4 rounded-xl shadow text-center">📊 My Ads</div>
+      <div class="bg-white p-4 rounded-xl shadow text-center">💰 Performance</div>
+    </div>
+  </div>
+
+  <!-- Create Ad Section -->
+  <div id="create" class="hidden p-4">
+    <h2 class="text-xl font-bold mb-4">Create Ad</h2>
+
+    <!-- Step 1 Upload -->
+    <div class="bg-white p-4 rounded-xl shadow mb-4">
+      <p class="mb-2">Upload Creative</p>
+      <input type="file" class="w-full border p-2 rounded">
+    </div>
+
+    <!-- Step 2 Business Type -->
+    <div class="bg-white p-4 rounded-xl shadow mb-4">
+      <p class="mb-2">Business Type</p>
+      <div class="grid grid-cols-2 gap-2">
+        <button class="p-2 border rounded">Coaching</button>
+        <button class="p-2 border rounded">Furniture</button>
+        <button class="p-2 border rounded">Real Estate</button>
+        <button class="p-2 border rounded">Other</button>
+      </div>
+    </div>
+
+    <!-- Step 3 Goal -->
+    <div class="bg-white p-4 rounded-xl shadow mb-4">
+      <p class="mb-2">Goal</p>
+      <div class="flex gap-2">
+        <button class="flex-1 p-2 border rounded">📞 Leads</button>
+        <button class="flex-1 p-2 border rounded">💬 WhatsApp</button>
+        <button class="flex-1 p-2 border rounded">🌐 Traffic</button>
+      </div>
+    </div>
+
+    <!-- Step 4 Location -->
+    <div class="bg-white p-4 rounded-xl shadow mb-4">
+      <p class="mb-2">Location</p>
+      <input type="text" placeholder="Enter city" class="w-full border p-2 rounded">
+    </div>
+
+    <!-- Step 5 Budget -->
+    <div class="bg-white p-4 rounded-xl shadow mb-4">
+      <p class="mb-2">Budget</p>
+      <input type="range" min="500" max="10000" class="w-full">
+      <p class="text-sm text-gray-500">Recommended: ₹1500</p>
+    </div>
+
+    <button onclick="showSection('processing')" class="w-full bg-green-600 text-white py-3 rounded-xl">🚀 Launch My Ad</button>
+  </div>
+
+  <!-- Processing -->
+  <div id="processing" class="hidden p-4 text-center">
+    <p class="text-lg">⚙️ Setting up your campaign...</p>
+  </div>
+
+  <!-- Success -->
+  <div id="success" class="hidden p-4 text-center">
+    <h2 class="text-xl font-bold">✅ Ad is LIVE</h2>
+    <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">View Performance</button>
+  </div>
+
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('#create, #processing, #success').forEach(el => el.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+
+      if(id === 'processing') {
+        setTimeout(() => showSection('success'), 3000);
+      }
+    }
+  </script>
+
+</body>
+</html>
