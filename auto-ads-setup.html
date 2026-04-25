@@ -19,12 +19,12 @@
   <button onclick="showSection('create')" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl text-lg mb-4 hover:scale-105 transition">🚀 Run New Ad</button>
 
   <div class="grid grid-cols-2 gap-4">
-    <div class="bg-white p-4 rounded-xl shadow text-center hover:shadow-lg">📊 My Ads</div>
-    <div class="bg-white p-4 rounded-xl shadow text-center hover:shadow-lg">💰 Performance</div>
+    <div class="bg-white p-4 rounded-xl shadow text-center">📊 My Ads</div>
+    <div class="bg-white p-4 rounded-xl shadow text-center">💰 Performance</div>
   </div>
 </div>
 
-<!-- Create Ad -->
+<!-- Create -->
 <div id="create" class="hidden p-4 space-y-4">
 
   <!-- Upload -->
@@ -58,7 +58,7 @@
   <!-- Location -->
   <div class="bg-white p-4 rounded-xl shadow">
     <p class="mb-2 font-medium">Location</p>
-    <input type="text" placeholder="Enter city" class="w-full border p-2 rounded">
+    <input type="text" placeholder="Enter city" class="w-full border p-2 rounded" id="location">
   </div>
 
   <!-- Budget -->
@@ -69,79 +69,104 @@
     <p class="text-sm text-gray-500">Recommended: ₹1500</p>
   </div>
 
-  <!-- AI Smart Box -->
-  <div class="bg-gradient-to-r from-green-100 to-blue-100 p-4 rounded-xl shadow">
-    <p class="font-medium">🎯 AI Insights</p>
-    <p class="text-sm">Success Probability: <span class="font-bold text-green-600">82%</span></p>
-    <p class="text-sm">💡 Target: Students + Parents</p>
-  </div>
-
   <!-- CTA -->
-  <button onclick="showSection('processing')" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl text-lg hover:scale-105 transition">🚀 Launch My Ad</button>
+  <button onclick="launchAd()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl text-lg hover:scale-105 transition">
+    🚀 Launch My Ad
+  </button>
+
 </div>
 
 <!-- Processing -->
 <div id="processing" class="hidden p-4 flex flex-col items-center justify-center h-64">
   <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-  <p class="mt-4 text-lg" id="processText">Setting up campaign...</p>
+  <p class="mt-4 text-lg">Optimizing your campaign...</p>
 </div>
 
 <!-- Success -->
 <div id="success" class="hidden p-4 text-center">
   <h2 class="text-xl font-bold text-green-600">✅ Ad is LIVE</h2>
-  <p class="mt-2">Your campaign is running successfully</p>
-  <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">View Performance</button>
+
+  <div id="resultBox" class="bg-white p-4 rounded-xl shadow mt-4">
+    <h3 class="font-bold text-lg mb-2">📊 AI Ad Result</h3>
+    <p id="targeting"></p>
+    <p id="strategy"></p>
+    <p id="probability"></p>
+  </div>
+
 </div>
 
 <script>
 
-// Section switch
+// SECTION SWITCH
 function showSection(id) {
   document.querySelectorAll('#create, #processing, #success').forEach(el => el.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
-
-  if(id === 'processing') {
-    let steps = [
-      "Setting up campaign...",
-      "Finding best audience...",
-      "Optimizing budget...",
-      "Launching your ad..."
-    ];
-    let i = 0;
-    let interval = setInterval(() => {
-      document.getElementById('processText').innerText = steps[i];
-      i++;
-      if(i >= steps.length) clearInterval(interval);
-    }, 800);
-
-    setTimeout(() => showSection('success'), 3500);
-  }
 }
 
-// Selection UI
-
+// BUTTON SELECT
 document.querySelectorAll('.select-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    btn.parentElement.querySelectorAll('.select-btn').forEach(b => {
+    const group = btn.parentElement;
+    group.querySelectorAll('.select-btn').forEach(b => {
       b.classList.remove('bg-blue-600','text-white');
     });
     btn.classList.add('bg-blue-600','text-white');
   });
 });
 
-// Budget
+// BUDGET
 const slider = document.getElementById('budget');
 const output = document.getElementById('budgetValue');
 slider.oninput = function() {
   output.innerText = "₹" + this.value;
 }
 
-// Image preview
+// IMAGE PREVIEW
 upload.onchange = evt => {
   const [file] = upload.files;
   if (file) {
     preview.src = URL.createObjectURL(file);
     preview.classList.remove('hidden');
+  }
+}
+
+// 🚀 MAIN FUNCTION (CONNECTED TO n8n)
+async function launchAd() {
+
+  showSection('processing');
+
+  const data = {
+    businessType: document.querySelector('.select-btn.bg-blue-600')?.innerText,
+    goal: document.querySelectorAll('.select-btn.bg-blue-600')[1]?.innerText,
+    location: document.getElementById('location').value,
+    budget: document.getElementById('budget').value
+  };
+
+  try {
+
+    const res = await fetch("https://bizlink-ads-engine.app.n8n.cloud/webhook/create-ad", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    showSection('success');
+
+    document.getElementById("targeting").innerText =
+      "🎯 Target: " + result.targeting;
+
+    document.getElementById("strategy").innerText =
+      "⚙️ Strategy: " + result.strategy;
+
+    document.getElementById("probability").innerText =
+      "📈 Success Chance: " + result.probability;
+
+  } catch (error) {
+    alert("Server Error ❌");
   }
 }
 
