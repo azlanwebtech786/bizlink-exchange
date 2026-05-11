@@ -1,539 +1,537 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Bizlink Fashion</title>
+<title>Bizlink Men's Fashion</title>
 
-<!-- GOOGLE FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- SWIPER -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
 <!-- GSAP -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-
-<!-- LENIS -->
-<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/bundled/lenis.min.js"></script>
 
 <style>
 
-/* =========================
-GLOBAL
-========================= */
-
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
-}
-
-html{
-  scroll-behavior:smooth;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
 }
 
 body{
-  background:#fff;
-  overflow-x:hidden;
-  color:#111;
+    background:#f5f5f5;
+    overflow-x:hidden;
 }
 
-a{
-  text-decoration:none;
-}
-
-/* =========================
-LOADER
-========================= */
+/* ================= LOADER ================= */
 
 .loader{
-  position:fixed;
-  width:100%;
-  height:100vh;
-  background:#000;
-  z-index:999999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  color:white;
+    position:fixed;
+    width:100%;
+    height:100vh;
+    background:black;
+    z-index:999999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    color:white;
 }
 
 .loader h1{
-  font-size:5vw;
-  letter-spacing:12px;
-  font-weight:700;
+    font-size:70px;
+    letter-spacing:10px;
 }
 
-.loader p{
-  margin-top:10px;
-  color:#999;
-  letter-spacing:5px;
+.loader-line{
+    width:0;
+    height:3px;
+    background:white;
+    margin-top:20px;
 }
 
-/* =========================
-TOP BAR
-========================= */
+/* ================= NAVBAR ================= */
 
 .topbar{
-  width:100%;
-  padding:12px;
-  text-align:center;
-  background:#111;
-  color:#fff;
-  font-size:14px;
-  letter-spacing:1px;
+    background:#111;
+    color:white;
+    text-align:center;
+    padding:10px;
+    font-size:14px;
 }
 
-/* =========================
-NAVBAR
-========================= */
-
-nav{
-  width:100%;
-  padding:18px 5%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:#fff;
-  position:sticky;
-  top:0;
-  z-index:999;
-  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+.navbar{
+    width:100%;
+    background:white;
+    padding:18px 5%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:999;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
 .logo{
-  font-size:30px;
-  font-weight:800;
-  color:#ff3f6c;
+    font-size:32px;
+    font-weight:800;
+    color:#ff3f6c;
 }
 
 .nav-links{
-  display:flex;
-  gap:35px;
+    display:flex;
+    gap:30px;
 }
 
 .nav-links a{
-  color:#111;
-  font-weight:500;
-  transition:0.3s;
+    text-decoration:none;
+    color:#111;
+    font-weight:600;
 }
 
-.nav-links a:hover{
-  color:#ff3f6c;
+.search-box{
+    width:300px;
+    padding:12px;
+    border:none;
+    outline:none;
+    background:#f3f3f3;
+    border-radius:10px;
 }
 
 .nav-icons{
-  display:flex;
-  gap:20px;
-  font-size:24px;
-  cursor:pointer;
+    display:flex;
+    gap:20px;
+    font-size:22px;
 }
 
-/* =========================
-HERO SECTION
-========================= */
+/* ================= HERO SLIDER ================= */
 
-.hero{
-  width:100%;
-  height:92vh;
-  position:relative;
-  overflow:hidden;
+.hero-slider{
+    width:100%;
+    height:85vh;
 }
 
-.hero video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+.swiper-slide{
+    position:relative;
 }
 
-.hero-overlay{
-  position:absolute;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.45);
-  top:0;
-  left:0;
+.swiper-slide img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.overlay{
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.35);
+    top:0;
+    left:0;
 }
 
 .hero-content{
-  position:absolute;
-  top:50%;
-  left:7%;
-  transform:translateY(-50%);
-  color:white;
+    position:absolute;
+    top:50%;
+    left:8%;
+    transform:translateY(-50%);
+    color:white;
+    z-index:2;
 }
 
 .hero-content h1{
-  font-size:6vw;
-  line-height:1;
-  font-weight:800;
+    font-size:80px;
+    line-height:1;
+    font-weight:800;
 }
 
 .hero-content p{
-  margin-top:20px;
-  font-size:18px;
-  color:#ddd;
+    margin-top:20px;
+    font-size:20px;
 }
 
 .hero-btn{
-  margin-top:35px;
-  padding:16px 40px;
-  border:none;
-  background:#ff3f6c;
-  color:white;
-  border-radius:50px;
-  font-size:16px;
-  cursor:pointer;
-  transition:0.4s;
+    margin-top:30px;
+    padding:15px 35px;
+    border:none;
+    background:#ff3f6c;
+    color:white;
+    border-radius:50px;
+    font-size:16px;
+    cursor:pointer;
 }
 
-.hero-btn:hover{
-  transform:translateY(-5px);
-}
-
-/* =========================
-SECTION
-========================= */
+/* ================= SECTION ================= */
 
 .section{
-  padding:80px 5%;
+    padding:70px 5%;
 }
 
 .section-title{
-  font-size:38px;
-  margin-bottom:45px;
-  font-weight:700;
+    font-size:38px;
+    margin-bottom:40px;
 }
 
-/* =========================
-CATEGORIES
-========================= */
+/* ================= CATEGORY ================= */
 
 .categories{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:25px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
 }
 
 .category-card{
-  position:relative;
-  border-radius:20px;
-  overflow:hidden;
-  cursor:pointer;
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    transition:0.4s;
+    cursor:pointer;
+}
+
+.category-card:hover{
+    transform:translateY(-10px);
 }
 
 .category-card img{
-  width:100%;
-  height:340px;
-  object-fit:cover;
-  transition:0.8s;
+    width:100%;
+    height:320px;
+    object-fit:cover;
+    transition:0.6s;
 }
 
 .category-card:hover img{
-  transform:scale(1.1);
+    transform:scale(1.1);
 }
 
-.category-name{
-  position:absolute;
-  bottom:25px;
-  left:25px;
-  color:white;
-  font-size:28px;
-  font-weight:700;
+.category-info{
+    padding:18px;
 }
 
-/* =========================
-PRODUCTS
-========================= */
+.category-info h3{
+    font-size:22px;
+}
+
+.category-info p{
+    color:#666;
+    margin-top:5px;
+}
+
+/* ================= PRODUCTS ================= */
 
 .products{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:30px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
 }
 
 .product-card{
-  background:white;
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:0 4px 25px rgba(0,0,0,0.08);
-  transition:0.4s;
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    transition:0.4s;
+    cursor:pointer;
+    position:relative;
 }
 
 .product-card:hover{
-  transform:translateY(-10px);
+    transform:translateY(-10px);
 }
 
-.product-img{
-  overflow:hidden;
-}
-
-.product-img img{
-  width:100%;
-  height:350px;
-  object-fit:cover;
-  transition:0.7s;
+.product-card img{
+    width:100%;
+    height:300px;
+    object-fit:cover;
+    transition:0.6s;
 }
 
 .product-card:hover img{
-  transform:scale(1.08);
+    transform:scale(1.08);
 }
 
 .product-info{
-  padding:18px;
-}
-
-.product-info h3{
-  font-size:20px;
-  margin-bottom:8px;
-}
-
-.product-info p{
-  color:#666;
-  font-size:14px;
-}
-
-.price{
-  margin-top:15px;
-  font-size:22px;
-  font-weight:700;
-  color:#111;
-}
-
-/* =========================
-SALE BANNER
-========================= */
-
-.sale-banner{
-  width:100%;
-  height:400px;
-  background:url('https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1400&auto=format&fit=crop') center/cover;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  color:white;
-}
-
-.sale-banner h1{
-  font-size:6vw;
-  text-shadow:0 5px 20px rgba(0,0,0,0.5);
-}
-
-/* =========================
-BRANDS
-========================= */
-
-.brands{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:25px;
+    padding:15px;
 }
 
 .brand{
-  background:#f7f7f7;
-  padding:40px;
-  border-radius:20px;
-  text-align:center;
-  font-size:28px;
-  font-weight:700;
-  transition:0.4s;
+    font-size:18px;
+    font-weight:700;
 }
 
-.brand:hover{
-  background:#111;
-  color:white;
+.product-name{
+    color:#666;
+    margin-top:5px;
 }
 
-/* =========================
-NEWSLETTER
-========================= */
-
-.newsletter{
-  background:#111;
-  padding:80px 5%;
-  text-align:center;
-  color:white;
+.price{
+    margin-top:10px;
+    font-size:20px;
+    font-weight:700;
 }
 
-.newsletter h1{
-  font-size:42px;
+.discount{
+    color:green;
+    font-size:14px;
 }
 
-.newsletter p{
-  margin-top:15px;
-  color:#bbb;
+/* ================= BANNER ================= */
+
+.banner{
+    width:100%;
+    height:350px;
+    border-radius:20px;
+    overflow:hidden;
+    position:relative;
+    margin-top:40px;
 }
 
-.newsletter-box{
-  margin-top:35px;
-  display:flex;
-  justify-content:center;
-  gap:15px;
-  flex-wrap:wrap;
+.banner img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
 }
 
-.newsletter-box input{
-  width:350px;
-  padding:18px;
-  border:none;
-  border-radius:50px;
-  outline:none;
+.banner-content{
+    position:absolute;
+    top:50%;
+    left:8%;
+    transform:translateY(-50%);
+    color:white;
 }
 
-.newsletter-box button{
-  padding:18px 35px;
-  border:none;
-  background:#ff3f6c;
-  color:white;
-  border-radius:50px;
-  cursor:pointer;
+.banner-content h1{
+    font-size:70px;
 }
 
-/* =========================
-FOOTER
-========================= */
+/* ================= BRANDS ================= */
 
-footer{
-  background:#000;
-  color:white;
-  padding:80px 5%;
+.brands{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+}
+
+.brand-box{
+    background:white;
+    padding:40px;
+    border-radius:15px;
+    text-align:center;
+    font-size:28px;
+    font-weight:700;
+    transition:0.4s;
+}
+
+.brand-box:hover{
+    background:#111;
+    color:white;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    background:#111;
+    color:white;
+    padding:60px 5%;
 }
 
 .footer-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:40px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:40px;
 }
 
-.footer-grid h2{
-  margin-bottom:20px;
+.footer p{
+    color:#bbb;
+    line-height:2;
 }
 
-.footer-grid p{
-  color:#bbb;
-  line-height:2;
-  font-size:14px;
-}
-
-/* =========================
-MOBILE
-========================= */
+/* ================= MOBILE ================= */
 
 @media(max-width:768px){
 
-  .nav-links{
-    display:none;
-  }
+    .nav-links{
+        display:none;
+    }
 
-  .hero-content h1{
-    font-size:14vw;
-  }
+    .search-box{
+        display:none;
+    }
 
-  .section-title{
-    font-size:30px;
-  }
+    .hero-content h1{
+        font-size:45px;
+    }
 
-  .sale-banner h1{
-    font-size:12vw;
-  }
+    .hero-slider{
+        height:60vh;
+    }
 
-  .newsletter h1{
-    font-size:32px;
-  }
+    .banner-content h1{
+        font-size:40px;
+    }
 
 }
 
 </style>
 
 </head>
+
 <body>
 
 <!-- LOADER -->
 
 <div class="loader">
-  <h1>BIZLINK</h1>
-  <p>FASHION EXPERIENCE</p>
+
+    <h1>BIZLINK</h1>
+
+    <div class="loader-line"></div>
+
 </div>
 
 <!-- TOPBAR -->
 
 <div class="topbar">
-  FREE SHIPPING ON ORDERS ABOVE ₹999
+    FREE SHIPPING ABOVE ₹999
 </div>
 
 <!-- NAVBAR -->
 
-<nav>
+<div class="navbar">
 
-  <div class="logo">BIZLINK</div>
+    <div class="logo">
+        BIZLINK
+    </div>
 
-  <div class="nav-links">
-    <a href="#">MEN</a>
-    <a href="#">WOMEN</a>
-    <a href="#">KIDS</a>
-    <a href="#">BEAUTY</a>
-    <a href="#">STUDIO</a>
-  </div>
+    <div class="nav-links">
+        <a href="#">MEN</a>
+        <a href="#">SHOES</a>
+        <a href="#">JACKETS</a>
+        <a href="#">JEANS</a>
+        <a href="#">TROUSERS</a>
+        <a href="#">TSHIRTS</a>
+    </div>
 
-  <div class="nav-icons">
-    🛒 ❤️ 👤
-  </div>
+    <input type="text" class="search-box" placeholder="Search for products">
 
-</nav>
+    <div class="nav-icons">
+        ❤️ 🛒 👤
+    </div>
 
-<!-- HERO -->
+</div>
 
-<section class="hero">
+<!-- HERO SLIDER -->
 
-  <video autoplay muted loop playsinline>
-    <source src="https://cdn.coverr.co/videos/coverr-young-man-walking-in-the-city-1572878646158?download=1080p" type="video/mp4">
-  </video>
+<div class="swiper hero-slider">
 
-  <div class="hero-overlay"></div>
+    <div class="swiper-wrapper">
 
-  <div class="hero-content">
-    <h1>NEW<br>COLLECTION</h1>
+        <div class="swiper-slide">
 
-    <p>Luxury Fashion Experience 2026</p>
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1600&auto=format&fit=crop">
 
-    <button class="hero-btn">SHOP NOW</button>
-  </div>
+            <div class="overlay"></div>
 
-</section>
+            <div class="hero-content">
+                <h1>NEW<br>STREETWEAR</h1>
+                <p>Premium Men's Collection</p>
+                <button class="hero-btn">SHOP NOW</button>
+            </div>
 
-<!-- CATEGORIES -->
+        </div>
+
+        <div class="swiper-slide">
+
+            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1600&auto=format&fit=crop">
+
+            <div class="overlay"></div>
+
+            <div class="hero-content">
+                <h1>WINTER<br>JACKETS</h1>
+                <p>Luxury Fashion Experience</p>
+                <button class="hero-btn">EXPLORE</button>
+            </div>
+
+        </div>
+
+        <div class="swiper-slide">
+
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1600&auto=format&fit=crop">
+
+            <div class="overlay"></div>
+
+            <div class="hero-content">
+                <h1>LIMITED<br>SNEAKERS</h1>
+                <p>Exclusive New Drop</p>
+                <button class="hero-btn">BUY NOW</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- CATEGORY -->
 
 <section class="section">
 
-  <h1 class="section-title">SHOP BY CATEGORY</h1>
+    <h1 class="section-title">
+        SHOP BY CATEGORY
+    </h1>
 
-  <div class="categories">
+    <div class="categories">
 
-    <div class="category-card">
-      <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200&auto=format&fit=crop">
-      <div class="category-name">MEN</div>
+        <div class="category-card">
+
+            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=1200&auto=format&fit=crop">
+
+            <div class="category-info">
+                <h3>T-Shirts</h3>
+                <p>Up To 50% Off</p>
+            </div>
+
+        </div>
+
+        <div class="category-card">
+
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200&auto=format&fit=crop">
+
+            <div class="category-info">
+                <h3>Hoodies</h3>
+                <p>Luxury Collection</p>
+            </div>
+
+        </div>
+
+        <div class="category-card">
+
+            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop">
+
+            <div class="category-info">
+                <h3>Jackets</h3>
+                <p>Winter Fashion</p>
+            </div>
+
+        </div>
+
+        <div class="category-card">
+
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop">
+
+            <div class="category-info">
+                <h3>Shoes</h3>
+                <p>Premium Sneakers</p>
+            </div>
+
+        </div>
+
     </div>
-
-    <div class="category-card">
-      <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop">
-      <div class="category-name">WOMEN</div>
-    </div>
-
-    <div class="category-card">
-      <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=1200&auto=format&fit=crop">
-      <div class="category-name">STREETWEAR</div>
-    </div>
-
-    <div class="category-card">
-      <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop">
-      <div class="category-name">PREMIUM</div>
-    </div>
-
-  </div>
 
 </section>
 
@@ -541,253 +539,287 @@ MOBILE
 
 <section class="section">
 
-  <h1 class="section-title">TRENDING NOW</h1>
+    <h1 class="section-title">
+        TRENDING PRODUCTS
+    </h1>
 
-  <div class="products">
+    <div class="products">
 
-    <div class="product-card">
+        <div class="product-card">
 
-      <div class="product-img">
-        <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=1200&auto=format&fit=crop">
-      </div>
+            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=1200&auto=format&fit=crop">
 
-      <div class="product-info">
-        <h3>Oversized T-Shirt</h3>
-        <p>Premium Cotton Edition</p>
-        <div class="price">₹1,999</div>
-      </div>
+            <div class="product-info">
+
+                <div class="brand">Nike</div>
+
+                <div class="product-name">
+                    Oversized T-Shirt
+                </div>
+
+                <div class="price">
+                    ₹999
+                    <span class="discount">
+                        40% OFF
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="product-card">
+
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200&auto=format&fit=crop">
+
+            <div class="product-info">
+
+                <div class="brand">Puma</div>
+
+                <div class="product-name">
+                    Premium Hoodie
+                </div>
+
+                <div class="price">
+                    ₹2,499
+                    <span class="discount">
+                        35% OFF
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="product-card">
+
+            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop">
+
+            <div class="product-info">
+
+                <div class="brand">Roadster</div>
+
+                <div class="product-name">
+                    Denim Jacket
+                </div>
+
+                <div class="price">
+                    ₹3,999
+                    <span class="discount">
+                        50% OFF
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="product-card">
+
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop">
+
+            <div class="product-info">
+
+                <div class="brand">Adidas</div>
+
+                <div class="product-name">
+                    Sneakers
+                </div>
+
+                <div class="price">
+                    ₹5,999
+                    <span class="discount">
+                        25% OFF
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
-    <div class="product-card">
+    <!-- BANNER -->
 
-      <div class="product-img">
-        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200&auto=format&fit=crop">
-      </div>
+    <div class="banner">
 
-      <div class="product-info">
-        <h3>Luxury Hoodie</h3>
-        <p>Winter Collection</p>
-        <div class="price">₹3,999</div>
-      </div>
+        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1600&auto=format&fit=crop">
 
-    </div>
+        <div class="banner-content">
 
-    <div class="product-card">
+            <h1>WINTER SALE</h1>
 
-      <div class="product-img">
-        <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop">
-      </div>
+            <p>
+                Up To 70% Off
+            </p>
 
-      <div class="product-info">
-        <h3>Urban Jacket</h3>
-        <p>Streetwear Drop</p>
-        <div class="price">₹5,499</div>
-      </div>
+        </div>
 
     </div>
 
-    <div class="product-card">
-
-      <div class="product-img">
-        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop">
-      </div>
-
-      <div class="product-info">
-        <h3>Premium Sneakers</h3>
-        <p>Limited Edition</p>
-        <div class="price">₹6,999</div>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- SALE BANNER -->
-
-<section class="sale-banner">
-  <h1>UP TO 70% OFF</h1>
 </section>
 
 <!-- BRANDS -->
 
 <section class="section">
 
-  <h1 class="section-title">TOP BRANDS</h1>
+    <h1 class="section-title">
+        TOP BRANDS
+    </h1>
 
-  <div class="brands">
+    <div class="brands">
 
-    <div class="brand">NIKE</div>
-    <div class="brand">ZARA</div>
-    <div class="brand">PUMA</div>
-    <div class="brand">GUCCI</div>
+        <div class="brand-box">NIKE</div>
+        <div class="brand-box">PUMA</div>
+        <div class="brand-box">ADIDAS</div>
+        <div class="brand-box">ZARA</div>
 
-  </div>
-
-</section>
-
-<!-- NEWSLETTER -->
-
-<section class="newsletter">
-
-  <h1>JOIN OUR NEWSLETTER</h1>
-
-  <p>Get latest fashion updates and offers</p>
-
-  <div class="newsletter-box">
-    <input type="email" placeholder="Enter your email">
-    <button>Subscribe</button>
-  </div>
+    </div>
 
 </section>
 
 <!-- FOOTER -->
 
-<footer>
+<footer class="footer">
 
-  <div class="footer-grid">
+    <div class="footer-grid">
 
-    <div>
-      <h2>BIZLINK FASHION</h2>
-      <p>
-        Premium ecommerce clothing platform with smooth luxury experience.
-      </p>
+        <div>
+
+            <h2>BIZLINK FASHION</h2>
+
+            <p>
+                Premium men's fashion ecommerce website with modern shopping experience.
+            </p>
+
+        </div>
+
+        <div>
+
+            <h2>SHOP</h2>
+
+            <p>T-Shirts</p>
+            <p>Jackets</p>
+            <p>Shoes</p>
+            <p>Jeans</p>
+
+        </div>
+
+        <div>
+
+            <h2>SUPPORT</h2>
+
+            <p>Help Center</p>
+            <p>Shipping</p>
+            <p>Returns</p>
+
+        </div>
+
+        <div>
+
+            <h2>FOLLOW US</h2>
+
+            <p>Instagram</p>
+            <p>Facebook</p>
+            <p>YouTube</p>
+
+        </div>
+
     </div>
-
-    <div>
-      <h2>SHOP</h2>
-      <p>Men</p>
-      <p>Women</p>
-      <p>Streetwear</p>
-      <p>Accessories</p>
-    </div>
-
-    <div>
-      <h2>SUPPORT</h2>
-      <p>Help Center</p>
-      <p>Shipping</p>
-      <p>Returns</p>
-      <p>Privacy Policy</p>
-    </div>
-
-    <div>
-      <h2>FOLLOW US</h2>
-      <p>Instagram</p>
-      <p>Facebook</p>
-      <p>YouTube</p>
-    </div>
-
-  </div>
 
 </footer>
 
+<!-- SWIPER -->
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 <script>
 
-/* =========================
-LENIS SMOOTH SCROLL
-========================= */
+/* ================= LOADER ================= */
 
-const lenis = new Lenis({
-  duration:1.2,
-  smoothWheel:true
+gsap.to(".loader-line",{
+    width:"300px",
+    duration:2
 })
-
-function raf(time){
-  lenis.raf(time)
-  requestAnimationFrame(raf)
-}
-
-requestAnimationFrame(raf)
-
-/* =========================
-GSAP
-========================= */
-
-gsap.registerPlugin(ScrollTrigger)
-
-/* =========================
-LOADER
-========================= */
 
 gsap.to(".loader",{
-  opacity:0,
-  duration:1,
-  delay:2,
-  onComplete:()=>{
-    document.querySelector(".loader").style.display="none"
-  }
+    opacity:0,
+    delay:2.2,
+    duration:1,
+    onComplete:()=>{
+        document.querySelector(".loader").style.display="none"
+    }
 })
 
-/* =========================
-HERO ANIMATION
-========================= */
+/* ================= HERO SLIDER ================= */
+
+var swiper = new Swiper(".hero-slider", {
+
+    loop:true,
+
+    autoplay:{
+        delay:3000,
+        disableOnInteraction:false,
+    },
+
+    effect:"fade",
+
+    speed:1200,
+
+})
+
+/* ================= HERO TEXT ANIMATION ================= */
 
 gsap.from(".hero-content h1",{
-  y:100,
-  opacity:0,
-  duration:1.2,
-  delay:2.2
+    y:100,
+    opacity:0,
+    duration:1.2,
+    delay:2.5
 })
 
 gsap.from(".hero-content p",{
-  y:50,
-  opacity:0,
-  duration:1,
-  delay:2.5
+    y:50,
+    opacity:0,
+    duration:1,
+    delay:2.8
 })
 
 gsap.from(".hero-btn",{
-  y:50,
-  opacity:0,
-  duration:1,
-  delay:2.8
+    scale:0.8,
+    opacity:0,
+    duration:1,
+    delay:3
 })
 
-/* =========================
-CATEGORY ANIMATION
-========================= */
+/* ================= PRODUCT HOVER ================= */
 
-gsap.from(".category-card",{
-  scrollTrigger:{
-    trigger:".categories",
-    start:"top 80%"
-  },
-  y:80,
-  opacity:0,
-  stagger:0.2,
-  duration:1
-})
+const cards = document.querySelectorAll(".product-card")
 
-/* =========================
-PRODUCT ANIMATION
-========================= */
+cards.forEach(card=>{
 
-gsap.from(".product-card",{
-  scrollTrigger:{
-    trigger:".products",
-    start:"top 80%"
-  },
-  y:100,
-  opacity:0,
-  stagger:0.2,
-  duration:1
-})
+    card.addEventListener("mousemove",(e)=>{
 
-/* =========================
-BRANDS ANIMATION
-========================= */
+        let x = e.offsetX
+        let y = e.offsetY
 
-gsap.from(".brand",{
-  scrollTrigger:{
-    trigger:".brands",
-    start:"top 85%"
-  },
-  scale:0.8,
-  opacity:0,
-  stagger:0.2,
-  duration:1
+        card.style.transform = `
+        rotateY(${x/20}deg)
+        rotateX(${y/20}deg)
+        scale(1.03)
+        `
+
+    })
+
+    card.addEventListener("mouseleave",()=>{
+
+        card.style.transform = `
+        rotateY(0deg)
+        rotateX(0deg)
+        scale(1)
+        `
+
+    })
+
 })
 
 </script>
