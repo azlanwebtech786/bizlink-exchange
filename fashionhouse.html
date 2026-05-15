@@ -1,916 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>BIZLINK LUXURY MEN</title>
-
-<!-- GOOGLE FONT -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<!-- SWIPER -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-
-<!-- GSAP -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-
-<style>
-
-/* =========================
-GLOBAL
-========================= */
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-}
-
-body{
-    background:#070707;
-    color:white;
-    overflow-x:hidden;
-}
-
-/* =========================
-SCROLLBAR
-========================= */
-
-::-webkit-scrollbar{
-    width:8px;
-}
-
-::-webkit-scrollbar-track{
-    background:#111;
-}
-
-::-webkit-scrollbar-thumb{
-    background:#444;
-    border-radius:20px;
-}
-
-/* =========================
-LOADER
-========================= */
-
-.loader{
-    position:fixed;
-    width:100%;
-    height:100vh;
-    background:black;
-    z-index:999999;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    color:white;
-}
-
-.loader h1{
-    font-size:70px;
-    letter-spacing:10px;
-    font-weight:800;
-}
-
-.loader-line{
-    width:0;
-    height:3px;
-    background:white;
-    margin-top:20px;
-}
-
-/* =========================
-TOPBAR
-========================= */
-
-.topbar{
-    background:#000;
-    color:#bdbdbd;
-    text-align:center;
-    padding:12px;
-    font-size:13px;
-    letter-spacing:2px;
-    border-bottom:1px solid #1b1b1b;
-}
-
-/* =========================
-NAVBAR
-========================= */
-
-.navbar{
-    width:100%;
-    background:rgba(10,10,10,0.95);
-    backdrop-filter:blur(10px);
-    padding:18px 5%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    position:sticky;
-    top:0;
-    z-index:999;
-    border-bottom:1px solid #1a1a1a;
-}
-
-.logo{
-    font-size:32px;
-    font-weight:800;
-    color:white;
-    letter-spacing:5px;
-}
-
-.nav-links{
-    display:flex;
-    gap:30px;
-}
-
-.nav-links a{
-    text-decoration:none;
-    color:#d4d4d4;
-    font-weight:500;
-    transition:0.4s;
-    position:relative;
-}
-
-.nav-links a:hover{
-    color:white;
-}
-
-.nav-links a::after{
-    content:'';
-    width:0%;
-    height:2px;
-    background:white;
-    position:absolute;
-    left:0;
-    bottom:-6px;
-    transition:0.4s;
-}
-
-.nav-links a:hover::after{
-    width:100%;
-}
-
-.search-box{
-    width:280px;
-    padding:13px 18px;
-    border:none;
-    outline:none;
-    background:#111;
-    border:1px solid #222;
-    color:white;
-    border-radius:50px;
-}
-
-.search-box::placeholder{
-    color:#777;
-}
-
-.nav-icons{
-    display:flex;
-    gap:20px;
-    font-size:22px;
-    color:white;
-}
-
-/* =========================
-HERO SLIDER
-========================= */
-
-.hero-slider{
-    width:100%;
-    height:90vh;
-}
-
-.swiper-slide{
-    position:relative;
-}
-
-.swiper-slide img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.overlay{
-    position:absolute;
-    width:100%;
-    height:100%;
-    background:linear-gradient(
-    to right,
-    rgba(0,0,0,0.85),
-    rgba(0,0,0,0.2)
-    );
-    top:0;
-    left:0;
-}
-
-.hero-content{
-    position:absolute;
-    top:50%;
-    left:8%;
-    transform:translateY(-50%);
-    z-index:2;
-}
-
-.hero-content h1{
-    font-size:90px;
-    line-height:1;
-    font-weight:800;
-    letter-spacing:3px;
-}
-
-.hero-content p{
-    margin-top:20px;
-    font-size:18px;
-    color:#ccc;
-}
-
-.hero-btn{
-    margin-top:30px;
-    padding:16px 40px;
-    border:none;
-    background:white;
-    color:black;
-    border-radius:50px;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:0.4s;
-}
-
-.hero-btn:hover{
-    transform:translateY(-5px);
-    background:#d9d9d9;
-}
-
-/* =========================
-SECTION
-========================= */
-
-.section{
-    padding:80px 5%;
-}
-
-.section-title{
-    font-size:42px;
-    margin-bottom:40px;
-}
-
-/* =========================
-CATEGORIES
-========================= */
-
-.categories{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:25px;
-}
-
-.category-card{
-    background:#0f0f0f;
-    border:1px solid #1c1c1c;
-    border-radius:20px;
-    overflow:hidden;
-    transition:0.5s;
-    cursor:pointer;
-}
-
-.category-card:hover{
-    transform:translateY(-10px);
-    border-color:#444;
-}
-
-.category-card img{
-    width:100%;
-    height:320px;
-    object-fit:cover;
-    transition:0.7s;
-}
-
-.category-card:hover img{
-    transform:scale(1.08);
-}
-
-.category-info{
-    padding:20px;
-}
-
-.category-info h3{
-    font-size:24px;
-}
-
-.category-info p{
-    color:#8f8f8f;
-    margin-top:8px;
-}
-
-/* =========================
-PRODUCTS
-========================= */
-
-.products{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:25px;
-}
-
-.product-card{
-    background:#0e0e0e;
-    border:1px solid #1b1b1b;
-    border-radius:20px;
-    overflow:hidden;
-    transition:0.5s;
-    cursor:pointer;
-}
-
-.product-card:hover{
-    transform:translateY(-10px);
-    border-color:#444;
-}
-
-.product-card img{
-    width:100%;
-    height:320px;
-    object-fit:cover;
-    transition:0.7s;
-}
-
-.product-card:hover img{
-    transform:scale(1.08);
-}
-
-.product-info{
-    padding:18px;
-}
-
-.brand{
-    font-size:20px;
-    font-weight:700;
-}
-
-.product-name{
-    color:#8d8d8d;
-    margin-top:8px;
-}
-
-.price{
-    margin-top:14px;
-    font-size:22px;
-    font-weight:700;
-}
-
-.discount{
-    color:#32c766;
-    font-size:14px;
-}
-
-/* =========================
-BANNER
-========================= */
-
-.banner{
-    width:100%;
-    height:400px;
-    border-radius:25px;
-    overflow:hidden;
-    position:relative;
-    margin-top:60px;
-}
-
-.banner img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.banner::after{
-    content:'';
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.45);
-    position:absolute;
-    top:0;
-    left:0;
-}
-
-.banner-content{
-    position:absolute;
-    top:50%;
-    left:8%;
-    transform:translateY(-50%);
-    z-index:2;
-}
-
-.banner-content h1{
-    font-size:80px;
-    line-height:1;
-}
-
-.banner-content p{
-    margin-top:15px;
-    color:#ddd;
-}
-
-/* =========================
-BRANDS
-========================= */
-
-.brands{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:20px;
-}
-
-.brand-box{
-    background:#111;
-    border:1px solid #1f1f1f;
-    padding:45px;
-    border-radius:20px;
-    text-align:center;
-    font-size:28px;
-    font-weight:700;
-    transition:0.5s;
-}
-
-.brand-box:hover{
-    background:white;
-    color:black;
-}
-
-/* =========================
-FOOTER
-========================= */
-
-.footer{
-    background:#050505;
-    padding:80px 5%;
-    border-top:1px solid #1a1a1a;
-}
-
-.footer-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:40px;
-}
-
-.footer h2{
-    margin-bottom:20px;
-}
-
-.footer p{
-    color:#888;
-    line-height:2;
-}
-
-/* =========================
-MOBILE
-========================= */
-
-@media(max-width:768px){
-
-    .nav-links{
-        display:none;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shadow Threads</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body{
+      background:#000;
+      overflow-x:hidden;
+      font-family:Arial, sans-serif;
     }
 
-    .search-box{
-        display:none;
+    /* Spider Cursor */
+    .cursor{
+      width:20px;
+      height:20px;
+      border:2px solid red;
+      border-radius:50%;
+      position:fixed;
+      pointer-events:none;
+      transform:translate(-50%,-50%);
+      z-index:9999;
+      box-shadow:0 0 20px red;
     }
 
-    .hero-content h1{
-        font-size:48px;
+    /* Spider Web Click Effect */
+    .web{
+      position:absolute;
+      width:100px;
+      height:100px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,0.3);
+      animation:webAnim 0.6s ease-out forwards;
+      pointer-events:none;
     }
 
-    .hero-slider{
-        height:65vh;
+    @keyframes webAnim{
+      0%{
+        transform:scale(0);
+        opacity:1;
+      }
+      100%{
+        transform:scale(2);
+        opacity:0;
+      }
     }
 
-    .banner-content h1{
-        font-size:45px;
+    /* Floating Animation */
+    .float{
+      animation:float 4s ease-in-out infinite;
     }
 
-    .section-title{
-        font-size:32px;
+    @keyframes float{
+      0%{transform:translateY(0px);}
+      50%{transform:translateY(-15px);}
+      100%{transform:translateY(0px);}
     }
 
-}
+    /* Glowing Card */
+    .glow:hover{
+      box-shadow:0 0 30px rgba(255,0,0,0.5);
+      transform:translateY(-10px);
+    }
 
-</style>
+    .hero-bg{
+      background:
+      radial-gradient(circle at top left, rgba(255,0,0,0.25), transparent 40%),
+      radial-gradient(circle at bottom right, rgba(0,0,255,0.25), transparent 40%);
+    }
 
+  </style>
 </head>
 
-<body>
+<body class="text-white">
 
-<!-- LOADER -->
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
 
-<div class="loader">
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center px-8 py-5 border-b border-white/10 backdrop-blur-xl sticky top-0 bg-black/50 z-50">
 
-    <h1>BIZLINK</h1>
-
-    <div class="loader-line"></div>
-
-</div>
-
-<!-- TOPBAR -->
-
-<div class="topbar">
-    PREMIUM MEN'S COLLECTION • FREE SHIPPING ABOVE ₹999
-</div>
-
-<!-- NAVBAR -->
-
-<div class="navbar">
-
-    <div class="logo">
-        BIZLINK
-    </div>
-
-    <div class="nav-links">
-        <a href="#">MEN</a>
-        <a href="#">SHOES</a>
-        <a href="#">JACKETS</a>
-        <a href="#">JEANS</a>
-        <a href="#">TSHIRTS</a>
-    </div>
-
-    <input type="text" class="search-box" placeholder="Search for products">
-
-    <div class="nav-icons">
-        ❤️ 🛒 👤
-    </div>
-
-</div>
-
-<!-- HERO SLIDER -->
-
-<div class="swiper hero-slider">
-
-    <div class="swiper-wrapper">
-
-        <div class="swiper-slide">
-
-            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1600&auto=format&fit=crop">
-
-            <div class="overlay"></div>
-
-            <div class="hero-content">
-                <h1>NEW<br>STREETWEAR</h1>
-                <p>Luxury Premium Collection</p>
-                <button class="hero-btn">SHOP NOW</button>
-            </div>
-
-        </div>
-
-        <div class="swiper-slide">
-
-            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1600&auto=format&fit=crop">
-
-            <div class="overlay"></div>
-
-            <div class="hero-content">
-                <h1>WINTER<br>JACKETS</h1>
-                <p>Modern Fashion Experience</p>
-                <button class="hero-btn">EXPLORE</button>
-            </div>
-
-        </div>
-
-        <div class="swiper-slide">
-
-            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1600&auto=format&fit=crop">
-
-            <div class="overlay"></div>
-
-            <div class="hero-content">
-                <h1>LIMITED<br>SNEAKERS</h1>
-                <p>Exclusive New Drop</p>
-                <button class="hero-btn">BUY NOW</button>
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- CATEGORY -->
-
-<section class="section">
-
-    <h1 class="section-title">
-        SHOP BY CATEGORY
+    <h1 class="text-3xl font-black tracking-[5px] bg-gradient-to-r from-red-500 to-blue-500 text-transparent bg-clip-text">
+      SHADOW THREADS
     </h1>
 
-    <div class="categories">
+    <div class="hidden md:flex gap-8 uppercase text-sm tracking-[3px]">
+      <a href="#" class="hover:text-red-500 duration-300">Home</a>
+      <a href="#" class="hover:text-blue-500 duration-300">Collection</a>
+      <a href="#" class="hover:text-red-500 duration-300">Streetwear</a>
+      <a href="#" class="hover:text-blue-500 duration-300">Premium</a>
+    </div>
 
-        <div class="category-card">
+    <button class="bg-gradient-to-r from-red-600 to-blue-700 px-5 py-2 rounded-full hover:scale-110 duration-300">
+      Cart
+    </button>
 
-            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=1200&auto=format&fit=crop">
+  </nav>
 
-            <div class="category-info">
-                <h3>T-Shirts</h3>
-                <p>Premium Oversized Collection</p>
-            </div>
+  <!-- Hero -->
+  <section class="hero-bg min-h-screen flex flex-col lg:flex-row items-center justify-between px-8 lg:px-20 py-20 relative overflow-hidden">
 
-        </div>
+    <!-- Spider Lines -->
+    <svg class="absolute inset-0 w-full h-full opacity-10">
+      <line x1="0" y1="0" x2="100%" y2="100%" stroke="white"/>
+      <line x1="100%" y1="0" x2="0" y2="100%" stroke="white"/>
+      <line x1="50%" y1="0" x2="50%" y2="100%" stroke="white"/>
+    </svg>
 
-        <div class="category-card">
+    <div class="relative z-10 max-w-2xl">
 
-            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200&auto=format&fit=crop">
+      <div class="inline-block border border-red-500 px-5 py-2 rounded-full text-sm mb-8 animate-bounce">
+        PREMIUM MEN FASHION
+      </div>
 
-            <div class="category-info">
-                <h3>Hoodies</h3>
-                <p>Luxury Winter Fashion</p>
-            </div>
+      <h1 class="text-6xl lg:text-8xl font-black uppercase leading-none">
+        Dark
+        <span class="block bg-gradient-to-r from-red-500 via-white to-blue-500 text-transparent bg-clip-text">
+          Hero
+        </span>
+        Style
+      </h1>
 
-        </div>
+      <p class="text-gray-300 mt-8 text-lg leading-relaxed">
+        Premium Spider-Man & Batman inspired luxury streetwear for boys and men.
+        Designed with cinematic vibes, web animations and superhero energy.
+      </p>
 
-        <div class="category-card">
+      <div class="flex gap-5 mt-10 flex-wrap">
 
-            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop">
+        <button class="bg-gradient-to-r from-red-600 to-red-800 px-8 py-4 rounded-full text-lg font-bold hover:scale-110 duration-300">
+          Shop Now
+        </button>
 
-            <div class="category-info">
-                <h3>Jackets</h3>
-                <p>Streetwear Collection</p>
-            </div>
+        <button class="border border-white/30 px-8 py-4 rounded-full hover:bg-white hover:text-black duration-300">
+          Explore
+        </button>
 
-        </div>
-
-        <div class="category-card">
-
-            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop">
-
-            <div class="category-info">
-                <h3>Sneakers</h3>
-                <p>Limited Edition Shoes</p>
-            </div>
-
-        </div>
+      </div>
 
     </div>
 
-</section>
+    <!-- Hero Image -->
+    <div class="relative mt-20 lg:mt-0">
 
-<!-- PRODUCTS -->
+      <div class="absolute w-[450px] h-[450px] bg-red-600/20 blur-3xl rounded-full"></div>
 
-<section class="section">
+      <img
+        src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=1200&auto=format&fit=crop"
+        class="relative z-10 w-[400px] lg:w-[500px] rounded-[40px] border border-white/10 shadow-[0_0_50px_rgba(255,0,0,0.4)] float"
+      >
 
-    <h1 class="section-title">
-        TRENDING PRODUCTS
-    </h1>
-
-    <div class="products">
-
-        <div class="product-card">
-
-            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=1200&auto=format&fit=crop">
-
-            <div class="product-info">
-
-                <div class="brand">Nike</div>
-
-                <div class="product-name">
-                    Oversized T-Shirt
-                </div>
-
-                <div class="price">
-                    ₹999
-                    <span class="discount">
-                        40% OFF
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="product-card">
-
-            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200&auto=format&fit=crop">
-
-            <div class="product-info">
-
-                <div class="brand">Puma</div>
-
-                <div class="product-name">
-                    Premium Hoodie
-                </div>
-
-                <div class="price">
-                    ₹2,499
-                    <span class="discount">
-                        35% OFF
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="product-card">
-
-            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop">
-
-            <div class="product-info">
-
-                <div class="brand">Roadster</div>
-
-                <div class="product-name">
-                    Denim Jacket
-                </div>
-
-                <div class="price">
-                    ₹3,999
-                    <span class="discount">
-                        50% OFF
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="product-card">
-
-            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop">
-
-            <div class="product-info">
-
-                <div class="brand">Adidas</div>
-
-                <div class="product-name">
-                    Luxury Sneakers
-                </div>
-
-                <div class="price">
-                    ₹5,999
-                    <span class="discount">
-                        25% OFF
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
+      <div class="absolute top-0 right-0 text-6xl animate-bounce">
+        🕷️
+      </div>
 
     </div>
 
-    <!-- BANNER -->
+  </section>
 
-    <div class="banner">
+  <!-- Categories -->
+  <section class="px-8 lg:px-20 py-20">
 
-        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1600&auto=format&fit=crop">
+    <div class="flex justify-between items-center mb-14">
 
-        <div class="banner-content">
+      <h2 class="text-5xl font-black uppercase">
+        Hero Collections
+      </h2>
 
-            <h1>WINTER SALE</h1>
-
-            <p>
-                Up To 70% Off
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- BRANDS -->
-
-<section class="section">
-
-    <h1 class="section-title">
-        TOP BRANDS
-    </h1>
-
-    <div class="brands">
-
-        <div class="brand-box">NIKE</div>
-        <div class="brand-box">PUMA</div>
-        <div class="brand-box">ADIDAS</div>
-        <div class="brand-box">ZARA</div>
+      <button class="border border-white/20 px-5 py-2 rounded-full hover:bg-white hover:text-black duration-300">
+        View All
+      </button>
 
     </div>
 
-</section>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
 
-<!-- FOOTER -->
+      <!-- Card -->
+      <div class="glow duration-500 rounded-[30px] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-xl">
 
-<footer class="footer">
+        <img
+          src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1200&auto=format&fit=crop"
+          class="h-[400px] w-full object-cover hover:scale-110 duration-700"
+        >
 
-    <div class="footer-grid">
+        <div class="p-6">
+          <h3 class="text-2xl font-bold mb-4">
+            Spider Hoodies
+          </h3>
 
-        <div>
-
-            <h2>BIZLINK FASHION</h2>
-
-            <p>
-                Premium men's fashion ecommerce website with luxury shopping experience.
-            </p>
-
+          <button class="bg-gradient-to-r from-red-600 to-blue-700 px-5 py-2 rounded-full">
+            Explore
+          </button>
         </div>
 
-        <div>
+      </div>
 
-            <h2>SHOP</h2>
+      <!-- Card -->
+      <div class="glow duration-500 rounded-[30px] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-xl">
 
-            <p>T-Shirts</p>
-            <p>Jackets</p>
-            <p>Shoes</p>
-            <p>Jeans</p>
+        <img
+          src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=1200&auto=format&fit=crop"
+          class="h-[400px] w-full object-cover hover:scale-110 duration-700"
+        >
 
+        <div class="p-6">
+          <h3 class="text-2xl font-bold mb-4">
+            Batman Jackets
+          </h3>
+
+          <button class="bg-gradient-to-r from-red-600 to-blue-700 px-5 py-2 rounded-full">
+            Explore
+          </button>
         </div>
 
-        <div>
+      </div>
 
-            <h2>SUPPORT</h2>
+      <!-- Card -->
+      <div class="glow duration-500 rounded-[30px] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-xl">
 
-            <p>Help Center</p>
-            <p>Shipping</p>
-            <p>Returns</p>
+        <img
+          src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop"
+          class="h-[400px] w-full object-cover hover:scale-110 duration-700"
+        >
 
+        <div class="p-6">
+          <h3 class="text-2xl font-bold mb-4">
+            Dark Tees
+          </h3>
+
+          <button class="bg-gradient-to-r from-red-600 to-blue-700 px-5 py-2 rounded-full">
+            Explore
+          </button>
         </div>
 
-        <div>
+      </div>
 
-            <h2>FOLLOW US</h2>
+      <!-- Card -->
+      <div class="glow duration-500 rounded-[30px] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-xl">
 
-            <p>Instagram</p>
-            <p>Facebook</p>
-            <p>YouTube</p>
+        <img
+          src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop"
+          class="h-[400px] w-full object-cover hover:scale-110 duration-700"
+        >
 
+        <div class="p-6">
+          <h3 class="text-2xl font-bold mb-4">
+            Street Sneakers
+          </h3>
+
+          <button class="bg-gradient-to-r from-red-600 to-blue-700 px-5 py-2 rounded-full">
+            Explore
+          </button>
         </div>
+
+      </div>
 
     </div>
 
-</footer>
+  </section>
 
-<!-- SWIPER -->
+  <!-- Footer -->
+  <footer class="border-t border-white/10 py-10 px-8 lg:px-20 bg-black/60">
 
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <div class="grid md:grid-cols-3 gap-10">
 
-<script>
+      <div>
+        <h3 class="text-3xl font-black bg-gradient-to-r from-red-500 to-blue-500 text-transparent bg-clip-text">
+          SHADOW THREADS
+        </h3>
 
-/* ================= LOADER ================= */
+        <p class="text-gray-400 mt-4">
+          Premium superhero inspired fashion brand for boys and men.
+        </p>
+      </div>
 
-gsap.to(".loader-line",{
-    width:"300px",
-    duration:2
-})
+      <div>
+        <h4 class="text-xl font-bold mb-4">
+          Quick Links
+        </h4>
 
-gsap.to(".loader",{
-    opacity:0,
-    delay:2.2,
-    duration:1,
-    onComplete:()=>{
-        document.querySelector(".loader").style.display="none"
-    }
-})
+        <div class="space-y-3 text-gray-400">
+          <p class="hover:text-red-500 cursor-pointer">Home</p>
+          <p class="hover:text-red-500 cursor-pointer">Shop</p>
+          <p class="hover:text-red-500 cursor-pointer">Collections</p>
+          <p class="hover:text-red-500 cursor-pointer">Contact</p>
+        </div>
+      </div>
 
-/* ================= HERO SLIDER ================= */
+      <div>
+        <h4 class="text-xl font-bold mb-4">
+          Newsletter
+        </h4>
 
-var swiper = new Swiper(".hero-slider", {
+        <div class="flex gap-3">
+          <input
+            type="text"
+            placeholder="Enter Email"
+            class="bg-white/10 border border-white/10 rounded-full px-5 py-3 w-full outline-none"
+          >
 
-    loop:true,
+          <button class="bg-gradient-to-r from-red-600 to-blue-700 px-6 rounded-full">
+            Join
+          </button>
+        </div>
+      </div>
 
-    autoplay:{
-        delay:3000,
-        disableOnInteraction:false,
-    },
+    </div>
 
-    effect:"fade",
+    <div class="text-center text-gray-500 mt-10 border-t border-white/10 pt-6">
+      © 2026 Shadow Threads — All Rights Reserved.
+    </div>
 
-    speed:1200,
+  </footer>
 
-})
+  <!-- JavaScript -->
+  <script>
 
-/* ================= HERO TEXT ANIMATION ================= */
+    // Cursor
+    const cursor = document.getElementById('cursor');
 
-gsap.from(".hero-content h1",{
-    y:100,
-    opacity:0,
-    duration:1.2,
-    delay:2.5
-})
+    document.addEventListener('mousemove', (e)=>{
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
 
-gsap.from(".hero-content p",{
-    y:50,
-    opacity:0,
-    duration:1,
-    delay:2.8
-})
+    // Spider Web Click Effect
+    document.addEventListener('click', (e)=>{
 
-gsap.from(".hero-btn",{
-    scale:0.8,
-    opacity:0,
-    duration:1,
-    delay:3
-})
+      const web = document.createElement('div');
 
-</script>
+      web.classList.add('web');
+
+      web.style.left = e.pageX - 50 + 'px';
+      web.style.top = e.pageY - 50 + 'px';
+
+      document.body.appendChild(web);
+
+      setTimeout(()=>{
+        web.remove();
+      },600);
+
+    });
+
+  </script>
 
 </body>
 </html>
